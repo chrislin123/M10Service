@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access">
+  <Class Name="DAL.OleDb">
+    <Position X="0.5" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>QAAGAAABAAgAAAEAAABAAAAAAAAAAAAAAAAgAgAAAAA=</HashCode>
+      <FileName>Access.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DAL.MSSQL">
+    <Position X="2.75" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>QAAGAAABAAgAAAEAAABAAAAAAAAAAAAAgAAgAgAAAAA=</HashCode>
+      <FileName>MSSQL.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DAL.Mysql">
+    <Position X="5.25" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>QAAGAAABAAgAAAEAAABAAAAAAAAAAAAAAAAgAgAAAAA=</HashCode>
+      <FileName>Mysql.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DAL.UseDb">
+    <Position X="7.75" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AACGAAABAigEAAQAAIAAAEAACAAAAAAAAAAgAgCAAAA=</HashCode>
+      <FileName>UseDb.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DAL.Message" Collapsed="true">
+    <Position X="7.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQAAAAAAAAAAAAAAEAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Message.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DAL.ConnectionString" Collapsed="true">
+    <Position X="7.75" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAACABAQAAA=</HashCode>
+      <FileName>ConnectionString.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DAL.Oracle">
+    <Position X="0.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAGAAABAAgAAAEAAAAAAAAAAAAAAAAAAAAgAgAAAAA=</HashCode>
+      <FileName>Oracle.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="DAL.IQuery">
+    <Position X="4.5" Y="4" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAGAAABAAgAAAAAAAAAAAAAAAAAAAAAAAAgAgAAAAA=</HashCode>
+      <FileName>IQuery.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Tahoma" Size="8.25" />
+</ClassDiagram>
