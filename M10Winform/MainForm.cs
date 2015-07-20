@@ -52,9 +52,11 @@ namespace M10Winform
 
                 eventLog1.Source = sSource;
 
-                eventLog1.WriteEntry("Start Service：" + DateTime.Now.ToString());
-
+                //eventLog1.WriteEntry("Start Service：" + DateTime.Now.ToString());
                 
+
+                string sss = "";
+                Convert.ToInt32(sss);
 
                 //相關建立資料夾
                 if (!Directory.Exists(folderBack)) Directory.CreateDirectory(folderBack);
@@ -63,13 +65,35 @@ namespace M10Winform
             }
             catch (Exception excep)
             {
-                eventLog1.WriteEntry("Error：" + DateTime.Now.ToString());
-                excep.ToString();
+                SetEventLog(excep.ToString());
+
+
+                //eventLog1.WriteEntry(
+                //    string.Format("error : {0} /n {1} ", DateTime.Now.ToString(), excep.ToString())                    
+                //);
 
                 throw;
             }
 
             timer1.Enabled = true;
+        }
+
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                SetEventLog("轉檔啟動");
+
+                ProceStart();
+
+                SetEventLog("轉檔完畢");
+            }
+            catch (Exception exc)
+            {
+                SetEventLog("轉檔錯誤:" + exc.ToString());
+                throw;
+            }
         }
 
 
@@ -133,7 +157,7 @@ namespace M10Winform
             }
             catch (Exception e)
             {
-                eventLog1.WriteEntry("ProceStart 錯誤:" + e.ToString());
+                //eventLog1.WriteEntry("ProceStart 錯誤:" + e.ToString());
                 throw;
             }
 
@@ -328,10 +352,13 @@ namespace M10Winform
             }
         }
 
+        private void SetEventLog(string sLogString){            
 
-
-
-
+            //todo 加入換行符號
+            eventLog1.WriteEntry(
+                    string.Format("{0} [log] : {1} ", DateTime.Now.ToString(), sLogString)
+            );
+        }
 
     }
 }
