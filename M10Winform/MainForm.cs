@@ -278,32 +278,10 @@ namespace M10Winform
                 //          + " ) "
                 //          ;
                 //        oDal.CommandText = ssql;      
-
                 //    }
-
-
-
-
                 //}                
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 string ssss = string.Empty;
-
-
 
                 //加入2.0以後的交易,記得匯入System.Transactions.dll
                 using (TransactionScope myScope = new TransactionScope())
