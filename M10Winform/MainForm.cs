@@ -56,7 +56,7 @@ namespace M10Winform
                 
 
                 string sss = "";
-                Convert.ToInt32(sss);
+                //Convert.ToInt32(sss);
 
                 //相關建立資料夾
                 if (!Directory.Exists(folderBack)) Directory.CreateDirectory(folderBack);
