@@ -29,7 +29,7 @@ namespace M10Winform
         //string sConnectionString = "Data Source=.;Integrated Security=False;User ID=sa;Password=sa;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False;Initial Catalog=m10";
 
         string sConnectionString = Properties.Settings.Default.DBConnectionString;
-
+        ODAL oDal = new ODAL(Properties.Settings.Default.DBConnectionString);
 
         public MainForm()
         {
@@ -40,11 +40,9 @@ namespace M10Winform
         {
             string sLog = "M10ServiceLog";
             string sSource = "M10ServiceLog";
-
+            
             try
             {
-                //ODAL oDal = new ODAL(Properties.Settings.Default.DBConnectionString);
-
                 if (!System.Diagnostics.EventLog.SourceExists(sSource))
                 {
                     System.Diagnostics.EventLog.CreateEventSource(sSource, sLog);
@@ -52,26 +50,13 @@ namespace M10Winform
 
                 eventLog1.Source = sSource;
 
-                //eventLog1.WriteEntry("Start Service：" + DateTime.Now.ToString());
-                
-
-                string sss = "";
-                //Convert.ToInt32(sss);
-
                 //相關建立資料夾
                 if (!Directory.Exists(folderBack)) Directory.CreateDirectory(folderBack);
                 if (!Directory.Exists(folderName)) Directory.CreateDirectory(folderName);
-
             }
             catch (Exception excep)
             {
                 SetEventLog(excep.ToString());
-
-
-                //eventLog1.WriteEntry(
-                //    string.Format("error : {0} /n {1} ", DateTime.Now.ToString(), excep.ToString())                    
-                //);
-
                 throw;
             }
 
@@ -141,8 +126,15 @@ namespace M10Winform
                     //轉檔到DB
                     TransToDB(fname);
 
+                    
+
+
                     //存至備份資料夾
                     FileInfo fi = new FileInfo(fname);
+
+                    //記錄轉檔資料
+                    FileTransLog(fi.Name);
+
 
                     if (File.Exists(folderBack + fi.Name))
                     {
@@ -155,13 +147,44 @@ namespace M10Winform
                 }
 
             }
-            catch (Exception e)
+            catch (Exception )
             {
                 //eventLog1.WriteEntry("ProceStart 錯誤:" + e.ToString());
                 throw;
             }
 
 
+        }
+
+        private void FileTransLog(string pFileName)
+        {
+
+            //ssql = " select * from StationData "
+            //             + "  where STID = '" + sSTID + "' "
+            //             + "  "
+            //             + "  "
+            //             ;
+            //oDal.CommandText = ssql;
+
+            ////沒資料則寫入一筆新資料
+            //if (oDal.DataTable().Rows.Count == 0)
+            //{
+
+            
+
+
+            ssql = " insert into FileTransLog "
+                + "  ([FileTransName],[FileTransTime]) "
+                + " VALUES "
+                + " ( "
+                + " '" + pFileName + "' "
+                + " ,'" + DateTime.Now.ToString() + "' "                
+                + " ) "
+                ;
+            oDal.CommandText = ssql;
+            oDal.ExecuteSql();
+            //}
+            
         }
 
         private void FtpDownload()
@@ -251,42 +274,45 @@ namespace M10Winform
                 DataTable dttemp = new DataTable();
 
                 //轉入StationData
-                //foreach (DataRow dr in dt.Rows)
-                //{
-                //    dttemp.Clear();
-                //    string sSTID = dr["STID"].ToString();
+                foreach (DataRow dr in dt.Rows)
+                {
+                    
+                    dttemp.Clear();
+                    string sSTID = dr["STID"].ToString();
 
-                //    ssql = " select * from StationData "
-                //         + "  where STID = '" + sSTID + "' "
-                //         + "  "
-                //         + "  " 
-                //         ;
-                //    oDal.CommandText = ssql;                 
+                    ssql = " select * from StationData "
+                         + "  where STID = '" + sSTID + "' "
+                         + "  "
+                         + "  "
+                         ;
+                    oDal.CommandText = ssql;
 
-                //    //沒資料則寫入一筆新資料
-                //    if (oDal.DataTable().Rows.Count == 0)
-                //    {
+                    //沒資料則寫入一筆新資料
+                    if (oDal.DataTable().Rows.Count == 0)
+                    {
 
-                //        ssql = " insert into StationData "
-                //          + "  ([STID],[SName],[Country],[Town]) "
-                //          + " VALUES "
-                //          + " ( "
-                //          + " '" + dr["STID"].ToString() + "' "
-                //          + " ,'" + dr["STNAME"].ToString() + "' "
-                //          + " ,'" + dr["COUNTY"].ToString() + "' "
-                //          + " ,'" + dr["TOWN"].ToString() + "' "
-                //          + " ) "
-                //          ;
-                //        oDal.CommandText = ssql;      
-                //    }
-                //}                
+                        ssql = " insert into StationData "
+                          + "  ([STID],[STNAME],[COUNTY],[TOWN]) "
+                          + " VALUES "
+                          + " ( "
+                          + " '" + dr["STID"].ToString() + "' "
+                          + " ,'" + dr["STNAME"].ToString() + "' "
+                          + " ,'" + dr["COUNTY"].ToString() + "' "
+                          + " ,'" + dr["TOWN"].ToString() + "' "
+                          + " ) "
+                          ;
+                        oDal.CommandText = ssql;
+                        oDal.ExecuteSql();
+                    }
+                }                
 
                 string ssss = string.Empty;
 
                 //加入2.0以後的交易,記得匯入System.Transactions.dll
+                /*
                 using (TransactionScope myScope = new TransactionScope())
                 {
-
+                    
                     //大量寫入
                     using (SqlConnection myConn = new SqlConnection(sConnectionString))
                     {
@@ -322,7 +348,8 @@ namespace M10Winform
                             myScope.Complete();
                         }
                     }
-                }
+                 * 
+                }*/
             }
             catch (Exception)
             {
