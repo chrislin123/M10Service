@@ -40,7 +40,17 @@ namespace M10Winform
         {
             string sLog = "M10ServiceLog";
             string sSource = "M10ServiceLog";
-            
+
+            //ssql = "select * from FileTransLog";
+            //oDal.CommandText = ssql;
+            //foreach (DataRow dr in oDal.DataTable().Rows)
+            //{
+            //    DateTime dt = Convert.ToDateTime(dr["FileTransTime"].ToString());
+            //    ssql = "";
+            //}
+
+
+
             try
             {
                 if (!System.Diagnostics.EventLog.SourceExists(sSource))
@@ -124,9 +134,7 @@ namespace M10Winform
                 foreach (string fname in System.IO.Directory.GetFiles(folderName))
                 {
                     //轉檔到DB
-                    TransToDB(fname);
-
-                    
+                    TransToDB(fname);                  
 
 
                     //存至備份資料夾
@@ -158,33 +166,16 @@ namespace M10Winform
 
         private void FileTransLog(string pFileName)
         {
-
-            //ssql = " select * from StationData "
-            //             + "  where STID = '" + sSTID + "' "
-            //             + "  "
-            //             + "  "
-            //             ;
-            //oDal.CommandText = ssql;
-
-            ////沒資料則寫入一筆新資料
-            //if (oDal.DataTable().Rows.Count == 0)
-            //{
-
-            
-
-
             ssql = " insert into FileTransLog "
                 + "  ([FileTransName],[FileTransTime]) "
                 + " VALUES "
                 + " ( "
                 + " '" + pFileName + "' "
-                + " ,'" + DateTime.Now.ToString() + "' "                
+                + " ,'" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "' "                
                 + " ) "
                 ;
             oDal.CommandText = ssql;
             oDal.ExecuteSql();
-            //}
-            
         }
 
         private void FtpDownload()
@@ -305,6 +296,88 @@ namespace M10Winform
                         oDal.ExecuteSql();
                     }
                 }                
+
+                //資料寫入sql
+
+
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    ssql = " insert into RainStation "
+                            + "  ([STID] "
+                            + " ,[STNAME]"
+                            + " ,[STTIME]"
+                            + " ,[LAT]"
+                            + " ,[LON]"
+                            + " ,[ELEV]"
+                            + " ,[RAIN]"
+                            + " ,[MIN10]"
+                            + " ,[HOUR3]"
+                            + " ,[HOUR6]"
+                            + " ,[HOUR12]"
+                            + " ,[HOUR24]"
+                            + " ,[NOW]"
+                            + " ,[COUNTY]"
+                            + " ,[TOWN]"
+                            + " ,[ATTRIBUTE]"
+                            + " ,[diff]"
+                            + " ,[STATUS]"
+                            + " ,[TMX]"
+                            + " ,[TMY]"
+                            + " ,[RTime]"
+                            + " ,[SWCBID]"
+                            + " ,[DebrisRefStation]"
+                            + " ,[EffectiveRainfall]"
+                            + " ,[RT]"
+                            + " ,[Cumulation]"
+                            + " ,[Day1]"
+                            + " ,[Day2]"
+                            + " ,[Day3]"
+                            + " ,[Hour2]"
+                            + " ,[WGS84_lon]"
+                            + " ,[WGS84_lat]) "
+                            + " VALUES "
+                            + " ( "
+                            + "  '" + dr["STID"].ToString() + "' "
+                            + " ,'" + dr["STNAME"].ToString() + "'"
+                            + " ,'" + dr["STTIME"].ToString() + "'"
+                            + " ,'" + dr["LAT"].ToString() + "'"
+                            + " ,'" + dr["LON"].ToString() + "'"
+                            + " ,'" + dr["ELEV"].ToString() + "'"
+                            + " ,'" + dr["RAIN"].ToString() + "'"
+                            + " ,'" + dr["MIN10"].ToString() + "'"
+                            + " ,'" + dr["HOUR3"].ToString() + "'"
+                            + " ,'" + dr["HOUR6"].ToString() + "'"
+                            + " ,'" + dr["HOUR12"].ToString() + "'"
+                            + " ,'" + dr["HOUR24"].ToString() + "'"
+                            + " ,'" + dr["NOW"].ToString() + "'"
+                            + " ,'" + dr["COUNTY"].ToString() + "'"
+                            + " ,'" + dr["TOWN"].ToString() + "'"
+                            + " ,'" + dr["ATTRIBUTE"].ToString() + "'"
+                            + " ,'" + dr["diff"].ToString() + "'"
+                            + " ,'" + dr["STATUS"].ToString() + "'"
+                            + " ,'" + dr["TMX"].ToString() + "'"
+                            + " ,'" + dr["TMY"].ToString() + "'"
+                            + " ,'" + dr["RTime"].ToString() + "'"
+                            + " ,'" + dr["SWCBID"].ToString() + "'"
+                            + " ,'" + dr["DebrisRefStation"].ToString() + "'"
+                            + " ,'" + dr["EffectiveRainfall"].ToString() + "'"
+                            + " ,'" + dr["RT"].ToString() + "'"
+                            + " ,'" + dr["Cumulation"].ToString() + "'"
+                            + " ,'" + dr["Day1"].ToString() + "'"
+                            + " ,'" + dr["Day2"].ToString() + "'"
+                            + " ,'" + dr["Day3"].ToString() + "'"
+                            + " ,'" + dr["Hour2"].ToString() + "'"
+                            + " ,'" + dr["WGS84_lon"].ToString() + "'"
+                            + " ,'" + dr["WGS84_lat"].ToString() + "' "
+                          + " ) "
+                          ;
+                    oDal.CommandText = ssql;
+                    oDal.ExecuteSql();
+                }
+
+
+
 
                 string ssss = string.Empty;
 
