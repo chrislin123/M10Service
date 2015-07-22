@@ -38,7 +38,7 @@ namespace M10Web
 
             foreach (DataRow dr in oDal.DataTable().Rows)
             {                
-                ddlStation.Items.Add(new ListItem(dr["TOWN"].ToString() + dr["STNAME"].ToString(), dr["STID"].ToString()));
+                //ddlStation.Items.Add(new ListItem(dr["TOWN"].ToString() + dr["STNAME"].ToString(), dr["STID"].ToString()));
             }
         }
     }

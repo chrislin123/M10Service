@@ -356,6 +356,7 @@
     <Content Include="css\themes\metro\window.css" />
     <Content Include="css\themes\mobile.css" />
     <Content Include="default.aspx" />
+    <Content Include="HtmlPage1.html" />
     <Content Include="js\bootstrap.js" />
     <Content Include="js\bootstrap.min.js" />
     <Content Include="js\jquery.easyui.min.js" />
@@ -363,6 +364,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataToJson.cs" />
     <Compile Include="default.aspx.cs">
       <DependentUpon>default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
