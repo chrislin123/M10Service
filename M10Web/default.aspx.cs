@@ -17,15 +17,18 @@ namespace M10Web
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            ssql = @"   select distinct COUNTY from StationData 
+            if (IsPostBack == false)
+            {
+                ssql = @"   select distinct COUNTY from StationData 
                         order by COUNTY
                     ";
-            oDal.CommandText = ssql;
+                oDal.CommandText = ssql;
 
-            ddlCOUNTY.DataSource = oDal.DataTable();
-            ddlCOUNTY.DataValueField = "COUNTY";
-            ddlCOUNTY.DataTextField = "COUNTY";
-            ddlCOUNTY.DataBind();
+                ddlCOUNTY.DataSource = oDal.DataTable();
+                ddlCOUNTY.DataValueField = "COUNTY";
+                ddlCOUNTY.DataTextField = "COUNTY";
+                ddlCOUNTY.DataBind();   
+            }            
         }
 
         protected void ddlCOUNTY_SelectedIndexChanged(object sender, EventArgs e)
@@ -40,6 +43,15 @@ namespace M10Web
             {                
                 //ddlStation.Items.Add(new ListItem(dr["TOWN"].ToString() + dr["STNAME"].ToString(), dr["STID"].ToString()));
             }
+        }
+
+        protected void btnQuery_Click(object sender, EventArgs e)
+        {
+            ssql = "select * from RainStation where COUNTY = '" + ddlCOUNTY.SelectedValue + "' ";
+            oDal.CommandText = ssql;
+            GridView1.DataSource = oDal.DataTable();
+            GridView1.DataBind();
+
         }
     }
 }

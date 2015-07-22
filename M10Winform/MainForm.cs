@@ -40,17 +40,7 @@ namespace M10Winform
         {
             string sLog = "M10ServiceLog";
             string sSource = "M10ServiceLog";
-
-            //ssql = "select * from FileTransLog";
-            //oDal.CommandText = ssql;
-            //foreach (DataRow dr in oDal.DataTable().Rows)
-            //{
-            //    DateTime dt = Convert.ToDateTime(dr["FileTransTime"].ToString());
-            //    ssql = "";
-            //}
-
-
-
+            
             try
             {
                 if (!System.Diagnostics.EventLog.SourceExists(sSource))
@@ -303,6 +293,8 @@ namespace M10Winform
 
                 foreach (DataRow dr in dt.Rows)
                 {
+                    DateTime dtRTime = new DateTime();
+
                     ssql = " insert into RainStation "
                             + "  ([STID] "
                             + " ,[STNAME]"
@@ -436,6 +428,34 @@ namespace M10Winform
             eventLog1.WriteEntry(
                     string.Format("{0} [log] : {1} ", DateTime.Now.ToString(), sLogString)
             );
+        }
+
+        private DateTime RTimeToDateTime(string pRTime)
+        {
+            DateTime dt = new DateTime();
+
+
+
+
+            string syyyy, sMM, sdd, shh, smm, sss;
+            syyyy = pRTime.Substring(0, 4);
+            sMM = pRTime.Substring(5, 2);
+            sdd = pRTime.Substring(8, 2);
+            shh = pRTime.Substring(11, 2);
+            smm = pRTime.Substring(14, 2);
+            sss = pRTime.Substring(17, 2);
+
+
+            
+
+
+           
+
+
+
+            return dt;
+
+
         }
 
     }
