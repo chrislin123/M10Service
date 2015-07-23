@@ -12,6 +12,7 @@ using System.Xml;
 using System.Data.SqlClient;
 using System.Transactions;
 using CL.Data;
+using System.Data.Common;
 
 namespace M10Winform
 {
@@ -285,12 +286,117 @@ namespace M10Winform
                         oDal.CommandText = ssql;
                         oDal.ExecuteSql();
                     }
-                }                
+                }
+
+
+                
+                
+                Boolean bUpdateRuntim = false;
+                //取得目前資料時間比對即時資料時間
+                if (dt.Rows.Count>0)
+	            {
+                    DateTime dtRunTimeRainData = DateTime.Now.AddYears(-100);
+                    DateTime dtRTime = Convert.ToDateTime(dt.Rows[0]["RTime"].ToString());
+
+                    ssql = " select top 1 * from RunTimeRainData ";
+                    oDal.CommandText = ssql;
+                    oDal.DataTable();
+                    foreach (DataRow drRtime in oDal.DataTable().Rows)
+                    {
+                        dtRunTimeRainData = Convert.ToDateTime(drRtime["RTime"].ToString());
+                    }
+
+                    if (DateTime.Compare(dtRTime,dtRunTimeRainData) > 0)
+                    {
+                        bUpdateRuntim = true;
+                    }
+	            }
+
+                if (bUpdateRuntim == true)
+                {
+                    //清空runtime 資料表
+                    ssql = " delete RunTimeRainData ";
+                    oDal.CommandText = ssql;
+                    oDal.ExecuteSql();
+                    
+                    //寫入RuntimeRainData
+                    foreach (DataRow dr in dt.Rows)
+                    {
+                        ssql = " insert into RunTimeRainData "
+                                + "  ([STID] "
+                                + " ,[STNAME]"
+                                + " ,[STTIME]"
+                                + " ,[LAT]"
+                                + " ,[LON]"
+                                + " ,[ELEV]"
+                                + " ,[RAIN]"
+                                + " ,[MIN10]"
+                                + " ,[HOUR3]"
+                                + " ,[HOUR6]"
+                                + " ,[HOUR12]"
+                                + " ,[HOUR24]"
+                                + " ,[NOW]"
+                                + " ,[COUNTY]"
+                                + " ,[TOWN]"
+                                + " ,[ATTRIBUTE]"
+                                + " ,[diff]"
+                                + " ,[STATUS]"
+                                + " ,[TMX]"
+                                + " ,[TMY]"
+                                + " ,[RTime]"
+                                + " ,[SWCBID]"
+                                + " ,[DebrisRefStation]"
+                                + " ,[EffectiveRainfall]"
+                                + " ,[RT]"
+                                + " ,[Cumulation]"
+                                + " ,[Day1]"
+                                + " ,[Day2]"
+                                + " ,[Day3]"
+                                + " ,[Hour2]"
+                                + " ,[WGS84_lon]"
+                                + " ,[WGS84_lat]) "
+                                + " VALUES "
+                                + " ( "
+                                + "  '" + dr["STID"].ToString() + "' "
+                                + " ,'" + dr["STNAME"].ToString() + "'"
+                                + " ,'" + dr["STTIME"].ToString() + "'"
+                                + " ,'" + dr["LAT"].ToString() + "'"
+                                + " ,'" + dr["LON"].ToString() + "'"
+                                + " ,'" + dr["ELEV"].ToString() + "'"
+                                + " ,'" + RainDataValid(dr["RAIN"].ToString()) + "'"
+                                + " ,'" + RainDataValid(dr["MIN10"].ToString()) + "'"
+                                + " ,'" + RainDataValid(dr["HOUR3"].ToString()) + "'"
+                                + " ,'" + RainDataValid(dr["HOUR6"].ToString()) + "'"
+                                + " ,'" + RainDataValid(dr["HOUR12"].ToString()) + "'"
+                                + " ,'" + RainDataValid(dr["HOUR24"].ToString()) + "'"
+                                + " ,'" + RainDataValid(dr["NOW"].ToString()) + "'"
+                                + " ,'" + dr["COUNTY"].ToString() + "'"
+                                + " ,'" + dr["TOWN"].ToString() + "'"
+                                + " ,'" + dr["ATTRIBUTE"].ToString() + "'"
+                                + " ,'" + dr["diff"].ToString() + "'"
+                                + " ,'" + dr["STATUS"].ToString() + "'"
+                                + " ,'" + dr["TMX"].ToString() + "'"
+                                + " ,'" + dr["TMY"].ToString() + "'"
+                                + " ,'" + dr["RTime"].ToString() + "'"
+                                + " ,'" + dr["SWCBID"].ToString() + "'"
+                                + " ,'" + dr["DebrisRefStation"].ToString() + "'"
+                                + " ,'" + dr["EffectiveRainfall"].ToString() + "'"
+                                + " ,'" + dr["RT"].ToString() + "'"
+                                + " ,'" + dr["Cumulation"].ToString() + "'"
+                                + " ,'" + dr["Day1"].ToString() + "'"
+                                + " ,'" + dr["Day2"].ToString() + "'"
+                                + " ,'" + dr["Day3"].ToString() + "'"
+                                + " ,'" + dr["Hour2"].ToString() + "'"
+                                + " ,'" + dr["WGS84_lon"].ToString() + "'"
+                                + " ,'" + dr["WGS84_lat"].ToString() + "' "
+                              + " ) "
+                              ;
+                        oDal.CommandText = ssql;
+                        oDal.ExecuteSql();
+                    }
+                }
 
                 //資料寫入sql
-
-
-
                 foreach (DataRow dr in dt.Rows)
                 {
                     DateTime dtRTime = new DateTime();
@@ -444,18 +550,36 @@ namespace M10Winform
             shh = pRTime.Substring(11, 2);
             smm = pRTime.Substring(14, 2);
             sss = pRTime.Substring(17, 2);
-
-
-            
-
-
-           
-
-
-
             return dt;
+        }
 
 
+        private string RainDataValid(string pRainData)
+        {
+            string sResult = "0";
+
+            try
+            {
+                double dResult = 0;
+
+                if (double.TryParse(pRainData, out dResult))
+                {
+                    		 
+                }
+
+                if (dResult < 0)
+                {
+                    dResult = 0;
+                }
+
+                sResult = dResult.ToString();
+            }
+            catch (Exception ex)
+            {
+   
+            }
+
+            return sResult;
         }
 
     }

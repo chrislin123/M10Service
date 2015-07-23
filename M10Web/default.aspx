@@ -26,6 +26,21 @@
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.easyui.min.js"></script>
 
+    <style>
+
+        th.sortasc a  
+    {
+        display:block; padding:0 4px 0 15px; 
+        background:url(images/arrow-asc.png) no-repeat;  
+    }
+     
+    th.sortdesc a 
+    {
+        display:block; padding:0 4px 0 15px; 
+       background:url(images/sort-asc-alt.png) no-repeat;
+   }
+    </style>
+
 </head>
 <body>
     <form id="form1" runat="server">
@@ -41,29 +56,38 @@
                 <div class="panel-body">
                     <div class="form-inline">
                         <label class="label label-success" style="font-size: 20px">縣市</label>
-                        <asp:DropDownList ID="ddlCOUNTY" runat="server" CssClass="form-control"></asp:DropDownList>
-                        <asp:Button ID="btnQuery" runat="server" Text="查詢" CssClass="btn btn-success" OnClick="btnQuery_Click" />
+                        <asp:DropDownList ID="ddlCOUNTY" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlCOUNTY_SelectedIndexChanged" ></asp:DropDownList>
+                        <asp:Button ID="btnQuery" runat="server" Text="查詢" CssClass="btn btn-success" OnClick="btnQuery_Click"  Visible="false" />
+
+                        <div style="float:right;font-size: 20px"><asp:Label ID="lblDataTime" runat="server" Text="資料時間:"></asp:Label></div>
+                        
                     </div>
                     <%--footable--%>
                     <%--table table-hover table-striped--%>
-                    <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="false" CssClass="table table-striped table-bordered table-condensed">
+                    <%--CssClass="table table-striped table-bordered table-condensed"--%>
+                    <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" 
+                         AllowSorting="True" CssClass="table table-striped table-bordered table-condensed"
+                        OnRowCreated="GridView1_RowCreated" OnSorting="GridView1_Sorting">
                         <Columns>
-                            <asp:BoundField DataField="STNAME" HeaderText="名稱" />
+                            <asp:BoundField DataField="STNAME" HeaderText="名稱"  />
                             <asp:BoundField DataField="STID" HeaderText="編號" />
                             <asp:BoundField DataField="COUNTY" HeaderText="縣市" />
                             <asp:BoundField DataField="TOWN" HeaderText="鄉鎮" />
-                            <asp:BoundField DataField="MIN10" HeaderText="10分鐘" />
-                            <asp:BoundField DataField="RAIN" HeaderText="1小時" />
-                            <asp:BoundField DataField="HOUR3" HeaderText="3小時" />
-                            <asp:BoundField DataField="HOUR6" HeaderText="6小時" />
-                            <asp:BoundField DataField="HOUR12" HeaderText="12小時" />
-                            <asp:BoundField DataField="HOUR24" HeaderText="24小時" />
-                            <asp:BoundField DataField="NOW" HeaderText="本日" />
+                            <asp:BoundField DataField="MIN10" HeaderText="10分鐘" SortExpression="MIN10" />
+                            <asp:BoundField DataField="RAIN" HeaderText="1小時" SortExpression="RAIN" />
+                            <asp:BoundField DataField="HOUR3" HeaderText="3小時" SortExpression="HOUR3" DataFormatString="{0:D}"/>
+                            <asp:BoundField DataField="HOUR6" HeaderText="6小時" SortExpression="HOUR6" />
+                            <asp:BoundField DataField="HOUR12" HeaderText="12小時" SortExpression="HOUR12" />
+                            <asp:BoundField DataField="HOUR24" HeaderText="24小時" SortExpression="HOUR24" />
+                            <asp:BoundField DataField="NOW" HeaderText="本日" SortExpression="NOW" />
                             <asp:BoundField DataField="RT" HeaderText="Rt." />
                             <asp:BoundField HeaderText="LRTI" />
                             <asp:BoundField HeaderText="警戒LRTI" />
                             <asp:BoundField DataField="ATTRIBUTE" HeaderText="屬性" />
                         </Columns>
+                        <SortedAscendingHeaderStyle CssClass="sortasc" />
+                        <SortedDescendingHeaderStyle CssClass="sortdesc" />
+                        
                     </asp:GridView>
                 </div>
             </div>

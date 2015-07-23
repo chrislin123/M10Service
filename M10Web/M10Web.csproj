@@ -360,6 +360,8 @@
     <Content Include="css\themes\mobile.css" />
     <Content Include="default.aspx" />
     <Content Include="HtmlPage1.html" />
+    <Content Include="images\arrow-asc.png" />
+    <Content Include="images\sort-asc-alt.png" />
     <Content Include="js\bootstrap.js" />
     <Content Include="js\bootstrap.min.js" />
     <Content Include="js\jquery.easyui.min.js" />
