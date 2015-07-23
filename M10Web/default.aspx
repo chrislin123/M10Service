@@ -75,8 +75,8 @@
                             <asp:BoundField DataField="TOWN" HeaderText="鄉鎮" />
                             <asp:BoundField DataField="MIN10" HeaderText="10分鐘" SortExpression="MIN10" />
                             <asp:BoundField DataField="RAIN" HeaderText="1小時" SortExpression="RAIN" />
-                            <asp:BoundField DataField="HOUR3" HeaderText="3小時" SortExpression="HOUR3" DataFormatString="{0:D}"/>
-                            <asp:BoundField DataField="HOUR6" HeaderText="6小時" SortExpression="HOUR6" />
+                            <asp:BoundField DataField="HOUR3" HeaderText="3小時" SortExpression="HOUR3" />
+                            <asp:BoundField DataField="HOUR6" HeaderText="6小時" SortExpression="HOUR6"  />
                             <asp:BoundField DataField="HOUR12" HeaderText="12小時" SortExpression="HOUR12" />
                             <asp:BoundField DataField="HOUR24" HeaderText="24小時" SortExpression="HOUR24" />
                             <asp:BoundField DataField="NOW" HeaderText="本日" SortExpression="NOW" />

@@ -83,7 +83,19 @@ namespace M10Web
 
         public void BindNodeInfo()
         {
-            ssql = " SELECT * FROM RunTimeRainData where COUNTY = '" + ddlCOUNTY.SelectedValue + "' ";
+            //ssql = " SELECT * FROM RunTimeRainData where COUNTY = '" + ddlCOUNTY.SelectedValue + "' ";
+
+            //預先轉型態，Gridview可直接排序   
+            ssql = @"   select CONVERT(float, MIN10) as MIN10
+                        ,CONVERT(float, RAIN) as RAIN
+                        ,CONVERT(float, HOUR3) as HOUR3
+                        ,CONVERT(float, HOUR6) as HOUR6
+                        ,CONVERT(float, HOUR12) as HOUR12
+                        ,CONVERT(float, HOUR24) as HOUR24
+                        ,CONVERT(float, NOW) as NOW
+                        ,* from RunTimeRainData
+                    ";
+            ssql += "where COUNTY = '" + ddlCOUNTY.SelectedValue + "' ";
             oDal.CommandText = ssql;
             DataTable dt = oDal.DataTable();
 
