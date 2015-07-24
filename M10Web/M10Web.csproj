@@ -62,6 +62,7 @@
     <Content Include="css\css\bootstrap-theme.css.map" />
     <Content Include="css\css\bootstrap.css.map" />
     <Content Include="CRUDHandler.ashx" />
+    <None Include="Properties\PublishProfiles\m10web.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

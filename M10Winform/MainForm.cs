@@ -34,6 +34,7 @@ namespace M10Winform
 
         public MainForm()
         {
+            //SetEventLog("test");
             InitializeComponent();
         }
 
@@ -67,19 +68,30 @@ namespace M10Winform
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            timer1.Enabled = false;
+
+
             try
             {
+                ShowMessageToFront("轉檔啟動");
                 SetEventLog("轉檔啟動");
 
                 ProceStart();
 
                 SetEventLog("轉檔完畢");
+                ShowMessageToFront("轉檔完畢");
             }
             catch (Exception exc)
             {
                 SetEventLog("轉檔錯誤:" + exc.ToString());
                 throw;
             }
+
+
+
+            System.Threading.Thread.Sleep(5000);
+            
+            this.Close();
         }
 
 
@@ -117,15 +129,18 @@ namespace M10Winform
         {
             try
             {
+                
                 // FTP 下載資料到本機
-                //FtpDownload();
+                FtpDownload();
 
 
                 // 取得資料夾內所有檔案
                 foreach (string fname in System.IO.Directory.GetFiles(folderName))
                 {
+                    //ShowMessageToFront("轉檔啟動");
                     //轉檔到DB
-                    TransToDB(fname);                  
+                    TransToDB(fname);
+                    //ShowMessageToFront("轉檔完畢");
 
 
                     //存至備份資料夾
@@ -171,46 +186,98 @@ namespace M10Winform
 
         private void FtpDownload()
         {
-            string sIP = "192.168.13.155";
-            string sUser = "iot";
-            string sPassword = "iot";
+            //string sIP = "192.168.13.155";
+            //string sUser = "iot";
+            //string sPassword = "iot";
 
-            /* Create Object Instance */
-            ftp ftpClient = new ftp(@"ftp://" + sIP + "/", sUser, sPassword);
+            string sIP = "140.116.38.195";
+            string sUser = "yuchao2013";
+            string sPassword = "yuchao2013";
+            ftp ftpClient;
+            try
+            {
+                ShowMessageToFront("Ftp連線");
+                /* Create Object Instance */
+                ftpClient = new ftp(@"ftp://" + sIP + "/", sUser, sPassword);
 
-            /* Upload a File */
-            //ftpClient.upload("test/test.txt", @"C:\test.txt");
-
-
-            /* Download a File */
-            //ftpClient.download("test/test.txt", @"d:\test111.txt");
-
-            /* Delete a File */
-            //ftpClient.delete("etc/test.txt");
-
-            /* Rename a File */
-            //ftpClient.rename("etc/test.txt", "test2.txt");
-
-            /* Create a New Directory */
-            //ftpClient.createDirectory("etc/test");
-
-            /* Get the Date/Time a File was Created */
-            //string fileDateTime = ftpClient.getFileCreatedDateTime("etc/test.txt");
+                /* Upload a File */
+                //ftpClient.upload("test/test.txt", @"C:\test.txt");
 
 
-            /* Get the Size of a File */
-            //string fileSize = ftpClient.getFileSize("etc/test.txt");
+                /* Download a File */
+                //ftpClient.download("test/test.txt", @"d:\test111.txt");
+
+                /* Delete a File */
+                //ftpClient.delete("etc/test.txt");
+
+                /* Rename a File */
+                //ftpClient.rename("etc/test.txt", "test2.txt");
+
+                /* Create a New Directory */
+                //ftpClient.createDirectory("etc/test");
+
+                /* Get the Date/Time a File was Created */
+                //string fileDateTime = ftpClient.getFileCreatedDateTime("etc/test.txt");
 
 
-            /* Get Contents of a Directory (Names Only) */
-            string[] simpleDirectoryListing = ftpClient.directoryListDetailed("/test");
-            //for (int i = 0; i < simpleDirectoryListing.Count(); i++) { Console.WriteLine(simpleDirectoryListing[i]); }
-
-            /* Get Contents of a Directory with Detailed File/Directory Info */
-            string[] detailDirectoryListing = ftpClient.directoryListDetailed("/test");
-            //for (int i = 0; i < detailDirectoryListing.Count(); i++) { Console.WriteLine(detailDirectoryListing[i]); }
+                /* Get the Size of a File */
+                //string fileSize = ftpClient.getFileSize("etc/test.txt");
 
 
+                ShowMessageToFront("Ftp取得清單");
+                /* Get Contents of a Directory (Names Only) */
+                string[] simpleDirectoryListing = ftpClient.directoryListDetailed("14_FCU_raindata/M10");
+                //for (int i = 0; i < simpleDirectoryListing.Count(); i++) { Console.WriteLine(simpleDirectoryListing[i]); }
+
+                /* Get Contents of a Directory with Detailed File/Directory Info */
+                //string[] detailDirectoryListing = ftpClient.directoryListDetailed("/test");
+                //for (int i = 0; i < detailDirectoryListing.Count(); i++) { Console.WriteLine(detailDirectoryListing[i]); }
+
+
+                //取得檔案名稱清單
+                List<string> lstFileName = new List<string>();
+
+                foreach (string sFullName in simpleDirectoryListing)
+                {
+                    
+                    if (sFullName != "")
+                    {
+                        //字串空白
+                        string[] sary = sFullName.Split(' ');
+
+                        string sFileName = sary[sary.Length - 1];
+                        lstFileName.Add(sFileName);
+                    }
+                }
+
+
+                foreach (string sFileName in lstFileName)
+                {
+                    //判斷是否已轉檔
+                    ssql = @" select * from FileTransLog  
+                            where 1=1 and FileTransName = '" + sFileName + @"'
+                        ";
+                    oDal.CommandText = ssql;
+                    //沒有下載紀錄則下載
+                    if (oDal.DataTable().Rows.Count == 0)
+                    {
+                        
+                        /* Download a File */
+                        ftpClient.download("14_FCU_raindata/M10/" + sFileName, folderName + sFileName);
+                        //預防下載時，後續檔案異動會造成Error
+                        ShowMessageToFront("Ftp下載檔案到" +  folderName + sFileName);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowMessageToFront(ex.ToString());
+                throw;
+            }
+
+            
+
+            System.Threading.Thread.Sleep(5000);
 
 
             /* Release Resources */
@@ -224,6 +291,8 @@ namespace M10Winform
         {
             try
             {
+                ShowMessageToFront("轉檔:" + sFilePath);
+
                 XmlDocument xd = new XmlDocument();
 
                 xd.Load(sFilePath);
@@ -286,10 +355,7 @@ namespace M10Winform
                         oDal.CommandText = ssql;
                         oDal.ExecuteSql();
                     }
-                }
-
-
-                
+                }                
                 
                 Boolean bUpdateRuntim = false;
                 //取得目前資料時間比對即時資料時間
@@ -399,9 +465,18 @@ namespace M10Winform
                 //資料寫入sql
                 foreach (DataRow dr in dt.Rows)
                 {
-                    DateTime dtRTime = new DateTime();
+                    //判斷資料不存在才寫入
+                    ssql = " select * from RainStation "
+                         + " where 1=1 " 
+                         + " and STID = '" + dr["STID"].ToString() + "' "
+                         + " and RTime = '" + dr["RTime"].ToString() + "' " 
+                         ;
 
-                    ssql = " insert into RainStation "
+                    oDal.CommandText = ssql;
+
+                    if (oDal.DataTable().Rows.Count == 0)
+                    {
+                        ssql = " insert into RainStation "
                             + "  ([STID] "
                             + " ,[STNAME]"
                             + " ,[STTIME]"
@@ -442,13 +517,13 @@ namespace M10Winform
                             + " ,'" + dr["LAT"].ToString() + "'"
                             + " ,'" + dr["LON"].ToString() + "'"
                             + " ,'" + dr["ELEV"].ToString() + "'"
-                            + " ,'" + dr["RAIN"].ToString() + "'"
-                            + " ,'" + dr["MIN10"].ToString() + "'"
-                            + " ,'" + dr["HOUR3"].ToString() + "'"
-                            + " ,'" + dr["HOUR6"].ToString() + "'"
-                            + " ,'" + dr["HOUR12"].ToString() + "'"
-                            + " ,'" + dr["HOUR24"].ToString() + "'"
-                            + " ,'" + dr["NOW"].ToString() + "'"
+                            + " ,'" + RainDataValid(dr["RAIN"].ToString()) + "'"
+                            + " ,'" + RainDataValid(dr["MIN10"].ToString()) + "'"
+                            + " ,'" + RainDataValid(dr["HOUR3"].ToString()) + "'"
+                            + " ,'" + RainDataValid(dr["HOUR6"].ToString()) + "'"
+                            + " ,'" + RainDataValid(dr["HOUR12"].ToString()) + "'"
+                            + " ,'" + RainDataValid(dr["HOUR24"].ToString()) + "'"
+                            + " ,'" + RainDataValid(dr["NOW"].ToString()) + "'"
                             + " ,'" + dr["COUNTY"].ToString() + "'"
                             + " ,'" + dr["TOWN"].ToString() + "'"
                             + " ,'" + dr["ATTRIBUTE"].ToString() + "'"
@@ -470,10 +545,11 @@ namespace M10Winform
                             + " ,'" + dr["WGS84_lat"].ToString() + "' "
                           + " ) "
                           ;
-                    oDal.CommandText = ssql;
-                    oDal.ExecuteSql();
+                        oDal.CommandText = ssql;
+                        oDal.ExecuteSql();                     
+   
+                    }
                 }
-
 
 
 
@@ -540,9 +616,6 @@ namespace M10Winform
         {
             DateTime dt = new DateTime();
 
-
-
-
             string syyyy, sMM, sdd, shh, smm, sss;
             syyyy = pRTime.Substring(0, 4);
             sMM = pRTime.Substring(5, 2);
@@ -580,6 +653,14 @@ namespace M10Winform
             }
 
             return sResult;
+        }
+
+
+        private void ShowMessageToFront(string pMsg)
+        {
+
+            richTextBox1.AppendText(pMsg + "\r\n");
+            richTextBox1.Refresh();
         }
 
     }
