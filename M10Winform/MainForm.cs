@@ -133,7 +133,7 @@ namespace M10Winform
             {
                 
                 // FTP 下載資料到本機
-                //FtpDownload();
+                FtpDownload();
 
 
                 // 取得資料夾內所有檔案
@@ -236,7 +236,7 @@ namespace M10Winform
                 //for (int i = 0; i < simpleDirectoryListing.Count(); i++) { Console.WriteLine(simpleDirectoryListing[i]); }
 
                 /* Get Contents of a Directory with Detailed File/Directory Info */
-                //string[] detailDirectoryListing = ftpClient.directoryListDetailed("/test");
+                string[] detailDirectoryListing = ftpClient.directoryListDetailed("/test");
                 //for (int i = 0; i < detailDirectoryListing.Count(); i++) { Console.WriteLine(detailDirectoryListing[i]); }
 
 
@@ -694,7 +694,8 @@ namespace M10Winform
         {
 
             richTextBox1.AppendText(pMsg + "\r\n");
-            this.Refresh();
+            //this.Refresh();
+            this.Update();
             //richTextBox1.Refresh();
         }
 
