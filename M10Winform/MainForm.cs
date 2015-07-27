@@ -21,6 +21,7 @@ namespace M10Winform
         private Timer MyTimer;
         string folderName = @"D:\m10\temp\";
         string folderBack = @"D:\m10\back\";
+        string folderError = @"D:\m10\xmlerror\";
         string ssql = string.Empty;
 
         //string sConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False;Initial Catalog=m10;"; 
@@ -55,6 +56,7 @@ namespace M10Winform
                 //相關建立資料夾
                 if (!Directory.Exists(folderBack)) Directory.CreateDirectory(folderBack);
                 if (!Directory.Exists(folderName)) Directory.CreateDirectory(folderName);
+                if (!Directory.Exists(folderError)) Directory.CreateDirectory(folderError);
             }
             catch (Exception excep)
             {
@@ -131,7 +133,7 @@ namespace M10Winform
             {
                 
                 // FTP 下載資料到本機
-                FtpDownload();
+                //FtpDownload();
 
 
                 // 取得資料夾內所有檔案
@@ -150,14 +152,18 @@ namespace M10Winform
                     FileTransLog(fi.Name);
 
 
-                    if (File.Exists(folderBack + fi.Name))
+                    if (File.Exists(fname))
                     {
-                        fi.Delete();
+                        if (File.Exists(folderBack + fi.Name))
+                        {
+                            fi.Delete();
+                        }
+                        else
+                        {
+                            fi.MoveTo(folderBack + fi.Name);
+                        }    
                     }
-                    else
-                    {
-                        fi.MoveTo(folderBack + fi.Name);
-                    }
+                    
                 }
 
             }
@@ -295,7 +301,35 @@ namespace M10Winform
 
                 XmlDocument xd = new XmlDocument();
 
-                xd.Load(sFilePath);
+                try
+                {
+                    xd.Load(sFilePath);
+                }
+                catch (Exception)
+                {
+                    //XML解析錯誤，將檔案搬到錯誤資料夾
+
+                    //存至備份資料夾
+                    FileInfo fi = new FileInfo(sFilePath);
+                    //記錄轉檔資料
+                    FileTransLog(fi.Name);
+                    if (File.Exists(folderError + fi.Name))
+                    {
+                        fi.Delete();
+                    }
+                    else
+                    {
+                        fi.MoveTo(folderError + fi.Name);
+                    }
+
+                    return;
+                    //throw;
+                }
+
+                
+
+
+                
 
                 XmlNodeList nodelist = xd.SelectNodes("//Rain");
 
@@ -453,11 +487,11 @@ namespace M10Winform
                                 + " ,'" + dr["Day2"].ToString() + "'"
                                 + " ,'" + dr["Day3"].ToString() + "'"
                                 + " ,'" + dr["Hour2"].ToString() + "'"
-                                + " ,'" + dr["WGS84_lon"].ToString() + "'"
-                                + " ,'" + dr["WGS84_lat"].ToString() + "' "
+                                + " ,'" + dr["WGS84_lon"].ToString().Trim() + "'"
+                                + " ,'" + dr["WGS84_lat"].ToString().Trim() + "' "
                               + " ) "
                               ;
-                        oDal.CommandText = ssql;
+                        oDal.CommandText = ssql;   
                         oDal.ExecuteSql();
                     }
                 }
@@ -541,8 +575,8 @@ namespace M10Winform
                             + " ,'" + dr["Day2"].ToString() + "'"
                             + " ,'" + dr["Day3"].ToString() + "'"
                             + " ,'" + dr["Hour2"].ToString() + "'"
-                            + " ,'" + dr["WGS84_lon"].ToString() + "'"
-                            + " ,'" + dr["WGS84_lat"].ToString() + "' "
+                            + " ,'" + dr["WGS84_lon"].ToString().Trim() + "'"
+                            + " ,'" + dr["WGS84_lat"].ToString().Trim() + "' "
                           + " ) "
                           ;
                         oDal.CommandText = ssql;
@@ -660,7 +694,8 @@ namespace M10Winform
         {
 
             richTextBox1.AppendText(pMsg + "\r\n");
-            richTextBox1.Refresh();
+            this.Refresh();
+            //richTextBox1.Refresh();
         }
 
     }
