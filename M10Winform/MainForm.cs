@@ -325,12 +325,7 @@ namespace M10Winform
 
                     return;
                     //throw;
-                }
-
-                
-
-
-                
+                }                
 
                 XmlNodeList nodelist = xd.SelectNodes("//Rain");
 
@@ -356,16 +351,39 @@ namespace M10Winform
                     dt.Rows.Add(dr);
                 }
 
+                //變更縣市資料 台北縣->新北市 台中縣->台中市 桃園縣->桃園市
+                foreach (DataRow dr in dt.Rows)
+                {
+                    if (dr["COUNTY"].ToString() == "台北縣")
+                    {
+                        dr["COUNTY"] = "新北市";
+                    }
+                    if (dr["COUNTY"].ToString() == "台中縣")
+                    {
+                        dr["COUNTY"] = "台中市";
+                    }
+                    if (dr["COUNTY"].ToString() == "桃園縣")
+                    {
+                        dr["COUNTY"] = "桃園市";
+                    }
+                }
 
                 DataTable dttemp = new DataTable();
 
                 //轉入StationData
                 foreach (DataRow dr in dt.Rows)
                 {
-                    
+                    //判斷異常資料，則不進行轉入資料
+                    string sSTNAME = dr["STNAME"].ToString();
+                    if (sSTNAME.Contains("?"))
+                    {
+                        continue;
+                    }
+
+
                     dttemp.Clear();
                     string sSTID = dr["STID"].ToString();
-
+                    
                     ssql = " select * from StationData "
                          + "  where STID = '" + sSTID + "' "
                          + "  "

@@ -29,6 +29,8 @@ namespace M10Web
                 ddlCOUNTY.DataTextField = "COUNTY";
                 ddlCOUNTY.DataBind();
 
+                ddlCOUNTY.Items.Insert(0, new ListItem("全部", "全部"));
+
                 ViewState["sortExpression"] = "STNAME";
                 ViewState["sort"] = " ASC"; //or DESC
                 //ViewState["sort"] = " DESC";
@@ -93,9 +95,14 @@ namespace M10Web
                         ,CONVERT(float, HOUR12) as HOUR12
                         ,CONVERT(float, HOUR24) as HOUR24
                         ,CONVERT(float, NOW) as NOW
+                        ,CONVERT(float, RT) as RT
                         ,* from RunTimeRainData
                     ";
-            ssql += "where COUNTY = '" + ddlCOUNTY.SelectedValue + "' ";
+            if (ddlCOUNTY.SelectedValue != "全部")
+            {
+                ssql += "where COUNTY = '" + ddlCOUNTY.SelectedValue + "' ";                
+            }
+            
             oDal.CommandText = ssql;
             DataTable dt = oDal.DataTable();
 
@@ -151,7 +158,7 @@ namespace M10Web
 
         protected void Timer1_Tick(object sender, EventArgs e)
         {
-            Label1.Text = "目前時間: " + DateTime.Now.ToLongTimeString();
+            //Label1.Text = "目前時間: " + DateTime.Now.ToLongTimeString();
 
         }
     }
