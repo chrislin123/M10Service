@@ -148,5 +148,11 @@ namespace M10Web
                 }
             }
         }
+
+        protected void Timer1_Tick(object sender, EventArgs e)
+        {
+            Label1.Text = "目前時間: " + DateTime.Now.ToLongTimeString();
+
+        }
     }
 }
