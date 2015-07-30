@@ -162,5 +162,10 @@ namespace M10Web
             //Label1.Text = "目前時間: " + DateTime.Now.ToLongTimeString();
 
         }
+
+        protected void btnExport_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("RainDataExport.aspx", true);
+        }
     }
 }

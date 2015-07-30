@@ -58,6 +58,15 @@ namespace M10Web {
         protected global::System.Web.UI.WebControls.Button btnQuery;
         
         /// <summary>
+        /// btnExport 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnExport;
+        
+        /// <summary>
         /// lblDataTime 控制項。
         /// </summary>
         /// <remarks>
