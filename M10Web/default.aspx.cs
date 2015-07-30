@@ -96,6 +96,7 @@ namespace M10Web
                         ,CONVERT(float, HOUR24) as HOUR24
                         ,CONVERT(float, NOW) as NOW
                         ,CONVERT(float, RT) as RT
+                        ,CONVERT(float, LRTI) as LRTI
                         ,* from RunTimeRainData
                     ";
             if (ddlCOUNTY.SelectedValue != "全部")

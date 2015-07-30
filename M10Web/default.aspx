@@ -89,7 +89,7 @@
                                     <asp:BoundField DataField="HOUR24" HeaderText="24小時" SortExpression="HOUR24" />
                                     <asp:BoundField DataField="NOW" HeaderText="本日" SortExpression="NOW" />
                                     <asp:BoundField DataField="RT" HeaderText="Rt." SortExpression="RT"  />
-                                    <asp:BoundField HeaderText="LRTI" />
+                                    <asp:BoundField DataField="LRTI" HeaderText="LRTI" SortExpression="LRTI" />
                                     <asp:BoundField HeaderText="警戒LRTI"  />
                                     <asp:BoundField DataField="ATTRIBUTE" HeaderText="屬性" />
                                 </Columns>

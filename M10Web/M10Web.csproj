@@ -367,6 +367,7 @@
     <Content Include="js\bootstrap.min.js" />
     <Content Include="js\jquery.easyui.min.js" />
     <Content Include="js\jquery.min.js" />
+    <Content Include="RainDataExport.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -384,6 +385,13 @@
       <DependentUpon>default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RainDataExport.aspx.cs">
+      <DependentUpon>RainDataExport.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RainDataExport.aspx.designer.cs">
+      <DependentUpon>RainDataExport.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CLDataAccessLayer\DAL.csproj">
