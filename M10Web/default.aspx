@@ -63,7 +63,7 @@
                                 <label class="label label-success" style="font-size: 20px">縣市</label>
                                 <asp:DropDownList ID="ddlCOUNTY" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlCOUNTY_SelectedIndexChanged"></asp:DropDownList>
                                 <asp:Button ID="btnQuery" runat="server" Text="查詢" CssClass="btn btn-success" OnClick="btnQuery_Click" Visible="false" />
-                                <asp:Button ID="btnExport" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExport_Click"  />
+                                <asp:Button ID="btnExport" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExport_Click" Visible="false"   />
 
                                 <div style="float: right; font-size: 20px">
                                     <asp:Label ID="lblDataTime" runat="server" Text="資料時間:"></asp:Label>

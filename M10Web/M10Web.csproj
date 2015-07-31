@@ -38,6 +38,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ClosedXML">
+      <HintPath>..\packages\ClosedXML.0.76.0\lib\net40-client\ClosedXML.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.5.5631.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.5\lib\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel.Web" />
@@ -62,6 +69,7 @@
     <Content Include="css\css\bootstrap-theme.css.map" />
     <Content Include="css\css\bootstrap.css.map" />
     <Content Include="CRUDHandler.ashx" />
+    <Content Include="packages.config" />
     <None Include="Properties\PublishProfiles\m10web.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -365,6 +373,7 @@
     <Content Include="images\sort-asc-alt.png" />
     <Content Include="js\bootstrap.js" />
     <Content Include="js\bootstrap.min.js" />
+    <Content Include="js\easyui-lang-zh_TW.js" />
     <Content Include="js\jquery.easyui.min.js" />
     <Content Include="js\jquery.min.js" />
     <Content Include="RainDataExport.aspx" />

@@ -95,7 +95,7 @@ namespace M10Web
                         ,CONVERT(float, HOUR12) as HOUR12
                         ,CONVERT(float, HOUR24) as HOUR24
                         ,CONVERT(float, NOW) as NOW
-                        ,CONVERT(float, RT) as RT
+                        ,ROUND(CONVERT(float, RT),2) as RT
                         ,CONVERT(float, LRTI) as LRTI
                         ,* from RunTimeRainData
                     ";
