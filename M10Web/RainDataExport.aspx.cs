@@ -205,20 +205,25 @@ namespace M10Web
                             
 
             var workbook = new XLWorkbook();
+//            ssql = @" select * from RainStation 
+//                        where COUNTY = '{0}'   
+//                        and RTime between '{1}' and '{2}'
+//                    ";
+//            oDal.CommandText = string.Format(ssql, sCountry, dtS.ToString("s"), dtE.ToString("s"));
+
             ssql = @" select * from RainStation 
-                        where COUNTY = '{0}'   
-                        and RTime between '{1}' and '{2}'
+                        where 1=1   
+                        and RTime between '{0}' and '{1}'
                     ";
 
 
-
-
-            oDal.CommandText = string.Format(ssql, sCountry, dtS.ToString("s"), dtE.ToString("s"));
+            oDal.CommandText = string.Format(ssql,  dtS.ToString("s"), dtE.ToString("s"));
             DataTable dt = oDal.DataTable();
             try
             {
                 workbook.AddWorksheet(dt, "CountryData");
 
+                
                 //XLWorkbook workbook = new XLWorkbook();
                 //workbook.AddWorksheet(dt, "Sheet1");
                 //workbook.SaveAs(fileName);
