@@ -28,9 +28,10 @@
 <body>
     <form id="form1" runat="server">
         <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
-        <asp:UpdatePanel ID="UpdatePanel1" runat="server">
-            <ContentTemplate>
-                <div class="container">
+        <div class="container">
+            <asp:UpdatePanel ID="UpdatePanel1" runat="server">
+                <ContentTemplate>
+
                     <h1>查詢</h1>
                     <div class="panel panel-info">
                         <div class="panel-heading">
@@ -54,13 +55,16 @@
                                 <asp:DropDownList ID="ddlCOUNTY" runat="server" CssClass="form-control"></asp:DropDownList>
                             </div>
                             <br />
-                            <asp:Label ID="lblDataTime" runat="server" Text="開始日期："></asp:Label>
-                            <input id="sDate" type="text" class="easyui-datebox">
-                            <asp:Label ID="Label1" runat="server" Text="結束日期："></asp:Label>
-                            <input id="eDate" type="text" class="easyui-datebox">
+                            <asp:Label ID="lblDataTime" runat="server" Text="開始時間："></asp:Label>
+                            <input id="CountryDateS" type="text" class="easyui-datebox" runat="server">
+                            <asp:DropDownList ID="ddlTimeCountryS" runat="server"  ></asp:DropDownList>
+                            <asp:Label ID="Label1" runat="server" Text="結束時間："></asp:Label>
+                            <input id="CountryDateE" type="text" class="easyui-datebox" runat="server">
+                            <asp:DropDownList ID="ddlTimeCountryE" runat="server"  ></asp:DropDownList>
                             <br />
+                            <asp:Button ID="btnExportCounty" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExportCounty_Click"   />
                             
-
+                            
                         </div>
                         <div id="menu1" class="tab-pane fade">
                             <br />
@@ -79,7 +83,7 @@
                             <asp:Label ID="Label3" runat="server" Text="結束日期："></asp:Label>
                             <input id="eDate" type="text" class="easyui-datebox">
                             <br />
-                            <asp:Button ID="Button1" runat="server" Text="資料匯出" CssClass="btn btn-success" />
+                            <asp:Button ID="btnExportStation" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExportStation_Click" />
                         </div>
                         <div id="menu2" class="tab-pane fade">
                             <br />
@@ -88,20 +92,35 @@
                             <asp:Label ID="Label5" runat="server" Text="結束日期："></asp:Label>
                             <input id="eDate" type="text" class="easyui-datebox">
                             <br />
-                            <asp:Button ID="Button2" runat="server" Text="資料匯出" CssClass="btn btn-success" />
+                            <asp:Button ID="btnExportSHP" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExportSHP_Click"  />
                         </div>
 
                     </div>
-                </div>
-            </ContentTemplate>
-        </asp:UpdatePanel>
 
-        <asp:Button ID="btnExport" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExport_Click" />
+                </ContentTemplate>
+                <Triggers>
+                    <asp:PostBackTrigger ControlID="btnExportCounty" />
+                    <asp:PostBackTrigger ControlID="btnExportStation" />
+                    <asp:PostBackTrigger ControlID="btnExportSHP" />
+                </Triggers>
+            </asp:UpdatePanel>
+
+
+
+        </div>
     </form>
     <script type="text/javascript">
         $('#dd').datebox({
             //required: true
         });
+
+
+        $('#Button2').click(
+            function () {
+                Button3.click();
+
+            }
+            );
 
 
 

@@ -58,6 +58,24 @@ namespace M10Web {
         protected global::System.Web.UI.WebControls.Label lblDataTime;
         
         /// <summary>
+        /// CountryDateS 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText CountryDateS;
+        
+        /// <summary>
+        /// ddlTimeCountryS 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlTimeCountryS;
+        
+        /// <summary>
         /// Label1 控制項。
         /// </summary>
         /// <remarks>
@@ -65,6 +83,33 @@ namespace M10Web {
         /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
         /// </remarks>
         protected global::System.Web.UI.WebControls.Label Label1;
+        
+        /// <summary>
+        /// CountryDateE 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText CountryDateE;
+        
+        /// <summary>
+        /// ddlTimeCountryE 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList ddlTimeCountryE;
+        
+        /// <summary>
+        /// btnExportCounty 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnExportCounty;
         
         /// <summary>
         /// ddlCOUNTY2 控制項。
@@ -103,13 +148,13 @@ namespace M10Web {
         protected global::System.Web.UI.WebControls.Label Label3;
         
         /// <summary>
-        /// Button1 控制項。
+        /// btnExportStation 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Button1;
+        protected global::System.Web.UI.WebControls.Button btnExportStation;
         
         /// <summary>
         /// Label4 控制項。
@@ -130,21 +175,12 @@ namespace M10Web {
         protected global::System.Web.UI.WebControls.Label Label5;
         
         /// <summary>
-        /// Button2 控制項。
+        /// btnExportSHP 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Button2;
-        
-        /// <summary>
-        /// btnExport 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnExport;
+        protected global::System.Web.UI.WebControls.Button btnExportSHP;
     }
 }

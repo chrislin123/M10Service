@@ -35,6 +35,12 @@ namespace M10Web
                 ddlCOUNTY2.DataValueField = "COUNTY";
                 ddlCOUNTY2.DataTextField = "COUNTY";
                 ddlCOUNTY2.DataBind();
+
+                for (int i = 0  ; i < 24; i++)
+                {
+                    ddlTimeCountryS.Items.Add(new ListItem(i.ToString(), i.ToString()));
+                    ddlTimeCountryE.Items.Add(new ListItem(i.ToString(), i.ToString()));
+                }
                 
 
                 //ddlCOUNTY.Items.Insert(0, new ListItem("全部", "全部"));
@@ -74,15 +80,17 @@ namespace M10Web
             if (File.Exists(xFile))
             {
                 try
-                {
+                {   
                     FileInfo xpath_file = new FileInfo(xFile);  //要 using System.IO;
+                    //xpath_file.Name
                     // 將傳入的檔名以 FileInfo 來進行解析（只以字串無法做）
                     System.Web.HttpContext.Current.Response.Clear(); //清除buffer
                     System.Web.HttpContext.Current.Response.ClearHeaders(); //清除 buffer 表頭
                     System.Web.HttpContext.Current.Response.Buffer = false;
                     System.Web.HttpContext.Current.Response.ContentType = "application/octet-stream";
                     // 檔案類型還有下列幾種"application/pdf"、"application/vnd.ms-excel"、"text/xml"、"text/HTML"、"image/JPEG"、"image/GIF"
-                    System.Web.HttpContext.Current.Response.AppendHeader("Content-Disposition", "attachment;filename=" + System.Web.HttpUtility.UrlEncode(out_file, System.Text.Encoding.UTF8));
+                    //System.Web.HttpContext.Current.Response.AppendHeader("Content-Disposition", "attachment;filename=" + System.Web.HttpUtility.UrlEncode(out_file, System.Text.Encoding.UTF8));
+                    System.Web.HttpContext.Current.Response.AppendHeader("Content-Disposition", "attachment;filename=" + System.Web.HttpUtility.UrlEncode(xpath_file.Name, System.Text.Encoding.UTF8));
                     // 考慮 utf-8 檔名問題，以 out_file 設定另存的檔名
                     System.Web.HttpContext.Current.Response.AppendHeader("Content-Length", xpath_file.Length.ToString()); //表頭加入檔案大小
                     System.Web.HttpContext.Current.Response.WriteFile(xpath_file.FullName);
@@ -106,17 +114,11 @@ namespace M10Web
         {
 
             var workbook = new XLWorkbook();
-
-            //var worksheet = workbook.Worksheets.Add("Sample Sheet");
-
-
-
-
             ssql = "select * from RunTimeRainData";
             oDal.CommandText = ssql;
             DataTable dt = oDal.DataTable();
 
-            workbook.AddWorksheet(dt, "testsheet");
+            workbook.AddWorksheet(dt, "CountryData");
 
             //XLWorkbook workbook = new XLWorkbook();
             //workbook.AddWorksheet(dt, "Sheet1");
@@ -130,8 +132,7 @@ namespace M10Web
 
             FileInfo file = new FileInfo(PathToExcelFile);
             if (file.Exists)
-            {
-                
+            {   
                 Response.Clear();
                 Response.ClearHeaders();
                 Response.ClearContent();
@@ -148,7 +149,7 @@ namespace M10Web
             }
 
 
-            xDownload(@"d:\temp\closedXml.xlsx", @"d:\temp\closedXmltest.xlsx");
+            //xDownload(@"d:\temp\closedXml.xlsx", @"d:\temp\closedXmltest.xlsx");
 
             //var wb = new XLWorkbook();
             //var ws = wb.Worksheets.First();
@@ -157,6 +158,103 @@ namespace M10Web
             //wb.SaveAs(@"d:\temp\closedXml.xlsx");
 
 
+
+        }
+
+
+        private DateTime TransQueryTime(string sDate, string sTime)
+        {
+            //08/13/2015
+            //0123456789
+            //string sResult = string.Empty;
+
+            DateTime dt = DateTime.Now;
+
+            string syyyy, sMM, sdd, shh, smm, sss;
+            syyyy = sDate.Substring(6, 4);
+            sMM = sDate.Substring(0, 2);
+            sdd = sDate.Substring(3, 2);
+            shh = sTime;
+            smm = "0";
+            sss = "0";
+
+
+
+            dt = new DateTime(Convert.ToInt32(syyyy), Convert.ToInt32(sMM), Convert.ToInt32(sdd), Convert.ToInt32(shh), 0, 0);
+
+
+            return dt;
+        }
+
+        protected void btnExportCounty_Click(object sender, EventArgs e)
+        {
+            string sSaveFilePath = @"d:\temp\" +  "CountyData_" + Guid.NewGuid().ToString() + ".xlsx";
+            //string sName = ;
+
+
+
+            string sCountry = ddlCOUNTY.SelectedValue;
+            string sSDate = CountryDateS.Value;
+            string sEDate = CountryDateE.Value;
+            string sSTime = ddlTimeCountryS.SelectedValue;
+            string sETime = ddlTimeCountryE.SelectedValue;
+
+            DateTime dtS = TransQueryTime(sSDate, sSTime);
+            DateTime dtE = TransQueryTime(sEDate, sETime);
+            
+                            
+
+            var workbook = new XLWorkbook();
+            ssql = @" select * from RainStation 
+                        where COUNTY = '{0}'   
+                        and RTime between '{1}' and '{2}'
+                    ";
+
+
+
+
+            oDal.CommandText = string.Format(ssql, sCountry, dtS.ToString("s"), dtE.ToString("s"));
+            DataTable dt = oDal.DataTable();
+            try
+            {
+                workbook.AddWorksheet(dt, "CountryData");
+
+                //XLWorkbook workbook = new XLWorkbook();
+                //workbook.AddWorksheet(dt, "Sheet1");
+                //workbook.SaveAs(fileName);
+                //workbook.Dispose();
+                //worksheet.Cell("A1").Value = "Hello World!";
+
+
+                workbook.SaveAs(sSaveFilePath);
+                //string PathToExcelFile = @"d:\temp\closedXml.xlsx";
+
+                FileInfo file = new FileInfo(sSaveFilePath);
+                if (file.Exists)
+                {
+                    xDownload(sSaveFilePath, sSaveFilePath);
+                }
+                else
+                {
+                    Response.Write("This file does not exist.");
+                }            
+            }
+            catch (Exception ex)
+            {
+                
+                throw;
+            }
+           
+
+        }
+
+        protected void btnExportStation_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        protected void btnExportSHP_Click(object sender, EventArgs e)
+        {
 
         }
     }
