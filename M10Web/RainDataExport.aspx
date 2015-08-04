@@ -35,14 +35,22 @@
                     <h1>查詢</h1>
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            <h1 class="panel-title"></h1>
+                            
+                            <table  style="width:100%;" >
+                                <tr>
+                                    <td></td>
+                                    <td style="width:20%;text-align:right;"><asp:Button ID="btnBack" runat="server" Text="返回雨量查詢" CssClass="btn btn-success" OnClick="btnBack_Click"  /></td>
+                                </tr>
+                            </table>
+                            
+
                         </div>
                     </div>
                     <%--<ul class="nav nav-tabs">--%>
                     <ul class="nav nav-pills">
                         <li class="active"><a data-toggle="tab" href="#home">縣市雨量站 逐時雨量下載</a></li>
                         <li><a data-toggle="tab" href="#menu1">單站雨量站 逐時雨量下載</a></li>
-                        <li><a data-toggle="tab" href="#menu2">各雨量站累積雨量SharpFile下載</a></li>
+                        <li><a data-toggle="tab" href="#menu2">各雨量站累積雨量座標下載</a></li>
                     </ul>
 
                     <div class="tab-content">
@@ -70,8 +78,8 @@
                             <br />
                             <div class="form-inline">
 
-                                <label class="label label-success" style="font-size: 20px">縣市：</label>
-                                <asp:DropDownList ID="ddlCOUNTY2" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlCOUNTY2_SelectedIndexChanged"></asp:DropDownList>
+                                <%--<label class="label label-success" style="font-size: 20px">縣市：</label>
+                                <asp:DropDownList ID="ddlCOUNTY2" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlCOUNTY2_SelectedIndexChanged"></asp:DropDownList>--%>
                                 <label class="label label-success" style="font-size: 20px">雨量站：</label>
                                 <asp:DropDownList ID="ddlRainStation" runat="server" CssClass="form-control"></asp:DropDownList>
 
@@ -79,18 +87,22 @@
                             <br />
 
                             <asp:Label ID="Label2" runat="server" Text="開始日期："></asp:Label>
-                            <input id="sDate" type="text" class="easyui-datebox">
+                            <input id="RainDateS" type="text" class="easyui-datebox" runat="server">
+                            <asp:DropDownList ID="ddlTimeRainS" runat="server"  ></asp:DropDownList>
                             <asp:Label ID="Label3" runat="server" Text="結束日期："></asp:Label>
-                            <input id="eDate" type="text" class="easyui-datebox">
+                            <input id="RainDateE" type="text" class="easyui-datebox" runat="server">
+                            <asp:DropDownList ID="ddlTimeRainE" runat="server"  ></asp:DropDownList>
                             <br />
                             <asp:Button ID="btnExportStation" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExportStation_Click" />
                         </div>
                         <div id="menu2" class="tab-pane fade">
                             <br />
                             <asp:Label ID="Label4" runat="server" Text="開始日期："></asp:Label>
-                            <input id="sDate" type="text" class="easyui-datebox">
+                            <input id="DateShpS" type="text" class="easyui-datebox" runat="server">
+                            <asp:DropDownList ID="ddlTimeShpS" runat="server"  ></asp:DropDownList>
                             <asp:Label ID="Label5" runat="server" Text="結束日期："></asp:Label>
-                            <input id="eDate" type="text" class="easyui-datebox">
+                            <input id="DateShpE" type="text" class="easyui-datebox" runat="server">
+                            <asp:DropDownList ID="ddlTimeShpE" runat="server"  ></asp:DropDownList>
                             <br />
                             <asp:Button ID="btnExportSHP" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExportSHP_Click"  />
                         </div>
@@ -102,6 +114,8 @@
                     <asp:PostBackTrigger ControlID="btnExportCounty" />
                     <asp:PostBackTrigger ControlID="btnExportStation" />
                     <asp:PostBackTrigger ControlID="btnExportSHP" />
+                    <%--<asp:PostBackTrigger ControlID="ddlCOUNTY2" />--%>
+                    
                 </Triggers>
             </asp:UpdatePanel>
 

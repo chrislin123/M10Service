@@ -9,6 +9,10 @@ using System.Data;
 using ClosedXML;
 using ClosedXML.Excel;
 using System.IO;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml;
+using System.Data.SqlClient;
 
 namespace M10Web
 {
@@ -31,44 +35,47 @@ namespace M10Web
                 ddlCOUNTY.DataTextField = "COUNTY";
                 ddlCOUNTY.DataBind();
 
-                ddlCOUNTY2.DataSource = oDal.DataTable();
-                ddlCOUNTY2.DataValueField = "COUNTY";
-                ddlCOUNTY2.DataTextField = "COUNTY";
-                ddlCOUNTY2.DataBind();
+                //ddlCOUNTY2.DataSource = oDal.DataTable();
+                //ddlCOUNTY2.DataValueField = "COUNTY";
+                //ddlCOUNTY2.DataTextField = "COUNTY";
+                //ddlCOUNTY2.DataBind();
 
                 for (int i = 0  ; i < 24; i++)
                 {
                     ddlTimeCountryS.Items.Add(new ListItem(i.ToString(), i.ToString()));
                     ddlTimeCountryE.Items.Add(new ListItem(i.ToString(), i.ToString()));
+                    ddlTimeRainS.Items.Add(new ListItem(i.ToString(), i.ToString()));
+                    ddlTimeRainE.Items.Add(new ListItem(i.ToString(), i.ToString()));
+                    ddlTimeShpS.Items.Add(new ListItem(i.ToString(), i.ToString()));                
+                    ddlTimeShpE.Items.Add(new ListItem(i.ToString(), i.ToString()));
                 }
-                
+
+                bindRainStation();               
 
                 //ddlCOUNTY.Items.Insert(0, new ListItem("全部", "全部"));
 
-                ViewState["sortExpression"] = "STNAME";
-                ViewState["sort"] = " ASC"; //or DESC
+                //ViewState["sortExpression"] = "STNAME";
+                //ViewState["sort"] = " ASC"; //or DESC
                 //ViewState["sort"] = " DESC";
                 //ViewState["sortExpression"] = "STNAME";
                 //ViewState["sort"] = " ASC";
 
-                ddlCOUNTY2_SelectedIndexChanged(sender, new EventArgs());
+                //ddlCOUNTY2_SelectedIndexChanged(sender, new EventArgs());
             }
-        }
+        }      
 
-
-        protected void ddlCOUNTY2_SelectedIndexChanged(object sender, EventArgs e)
+        private void bindRainStation()
         {
             ddlRainStation.Items.Clear();
             //return;
-            ssql = @"   select * from StationData 
-                        where COUNTY = '" + ddlCOUNTY2.SelectedValue + @"'
-                        order by TOWN
+            ssql = @"   select * from StationData                         
+                        order by county,stname
                     ";
             oDal.CommandText = ssql;
 
             foreach (DataRow dr in oDal.DataTable().Rows)
             {
-                string sText = string.Format("{0}({1}{2})",dr["STID"].ToString() , dr["TOWN"].ToString() , dr["STNAME"].ToString());
+                string sText = string.Format("{0}({1}-{2})", dr["STID"].ToString(), dr["county"].ToString(), dr["STNAME"].ToString());
                 ddlRainStation.Items.Add(new ListItem(sText, dr["STID"].ToString()));
             }
         }
@@ -109,59 +116,7 @@ namespace M10Web
             else
                 return false;
         } // EOS xDownload(string xFile, string out_file)
-
-        protected void btnExport_Click(object sender, EventArgs e)
-        {
-
-            var workbook = new XLWorkbook();
-            ssql = "select * from RunTimeRainData";
-            oDal.CommandText = ssql;
-            DataTable dt = oDal.DataTable();
-
-            workbook.AddWorksheet(dt, "CountryData");
-
-            //XLWorkbook workbook = new XLWorkbook();
-            //workbook.AddWorksheet(dt, "Sheet1");
-            //workbook.SaveAs(fileName);
-            //workbook.Dispose();
-            //worksheet.Cell("A1").Value = "Hello World!";
-
-
-            workbook.SaveAs(@"d:\temp\closedXml.xlsx");
-            string PathToExcelFile = @"d:\temp\closedXml.xlsx";
-
-            FileInfo file = new FileInfo(PathToExcelFile);
-            if (file.Exists)
-            {   
-                Response.Clear();
-                Response.ClearHeaders();
-                Response.ClearContent();
-                Response.AddHeader("content-disposition", "attachment; filename=" + file.Name);
-                Response.AddHeader("Content-Type", "application/Excel");
-                Response.ContentType = "application/vnd.xls";
-                Response.AddHeader("Content-Length", file.Length.ToString());
-                Response.WriteFile(file.FullName);
-                Response.End();
-            }
-            else
-            {
-                Response.Write("This file does not exist.");
-            }
-
-
-            //xDownload(@"d:\temp\closedXml.xlsx", @"d:\temp\closedXmltest.xlsx");
-
-            //var wb = new XLWorkbook();
-            //var ws = wb.Worksheets.First();
-            //ws.Cells("A1").Value = "已修改";
-            //ws.Protect("LetMeEdit");
-            //wb.SaveAs(@"d:\temp\closedXml.xlsx");
-
-
-
-        }
-
-
+        
         private DateTime TransQueryTime(string sDate, string sTime)
         {
             //08/13/2015
@@ -178,8 +133,6 @@ namespace M10Web
             smm = "0";
             sss = "0";
 
-
-
             dt = new DateTime(Convert.ToInt32(syyyy), Convert.ToInt32(sMM), Convert.ToInt32(sdd), Convert.ToInt32(shh), 0, 0);
 
 
@@ -189,9 +142,6 @@ namespace M10Web
         protected void btnExportCounty_Click(object sender, EventArgs e)
         {
             string sSaveFilePath = @"d:\temp\" +  "CountyData_" + Guid.NewGuid().ToString() + ".xlsx";
-            //string sName = ;
-
-
 
             string sCountry = ddlCOUNTY.SelectedValue;
             string sSDate = CountryDateS.Value;
@@ -201,38 +151,17 @@ namespace M10Web
 
             DateTime dtS = TransQueryTime(sSDate, sSTime);
             DateTime dtE = TransQueryTime(sEDate, sETime);
-            
-                            
-
-            var workbook = new XLWorkbook();
-//            ssql = @" select * from RainStation 
-//                        where COUNTY = '{0}'   
-//                        and RTime between '{1}' and '{2}'
-//                    ";
-//            oDal.CommandText = string.Format(ssql, sCountry, dtS.ToString("s"), dtE.ToString("s"));
-
-            ssql = @" select * from RainStation 
-                        where 1=1   
-                        and RTime between '{0}' and '{1}'
-                    ";
-
-
-            oDal.CommandText = string.Format(ssql,  dtS.ToString("s"), dtE.ToString("s"));
-            DataTable dt = oDal.DataTable();
             try
             {
-                workbook.AddWorksheet(dt, "CountryData");
+                ssql = @" select * from RainStation 
+                            where COUNTY = '{0}'   
+                            and RTime between '{1}' and '{2}'
+                            and datepart(mi,RTime) = 0 and datepart(ss,RTime) = 0
+                            order by RTime
+                        ";
+                string sSqlStr = string.Format(ssql, sCountry, dtS.ToString("s"), dtE.ToString("s"));
+                ExportBigDataToExcel(sSqlStr,oDal.objCon.ConString, sSaveFilePath);
 
-                
-                //XLWorkbook workbook = new XLWorkbook();
-                //workbook.AddWorksheet(dt, "Sheet1");
-                //workbook.SaveAs(fileName);
-                //workbook.Dispose();
-                //worksheet.Cell("A1").Value = "Hello World!";
-
-
-                workbook.SaveAs(sSaveFilePath);
-                //string PathToExcelFile = @"d:\temp\closedXml.xlsx";
 
                 FileInfo file = new FileInfo(sSaveFilePath);
                 if (file.Exists)
@@ -245,22 +174,305 @@ namespace M10Web
                 }            
             }
             catch (Exception ex)
-            {
-                
+            {   
                 throw;
             }
-           
-
         }
 
         protected void btnExportStation_Click(object sender, EventArgs e)
         {
+            string sSaveFilePath = @"d:\temp\" + "RainStationData_" + Guid.NewGuid().ToString() + ".xlsx";
 
+            string sRainStation = ddlRainStation.SelectedValue;
+            string sSDate = RainDateS.Value;
+            string sEDate = RainDateE.Value;
+            string sSTime = ddlTimeRainS.SelectedValue;
+            string sETime = ddlTimeRainE.SelectedValue;
+            
+            DateTime dtS = TransQueryTime(sSDate, sSTime);
+            DateTime dtE = TransQueryTime(sEDate, sETime);
+            try
+            {
+                ssql = @" select * from RainStation 
+                            where STID = '{0}'   
+                            and RTime between '{1}' and '{2}'
+                            and datepart(mi,RTime) = 0 and datepart(ss,RTime) = 0
+                            order by RTime
+                        ";
+                string sSqlStr = string.Format(ssql, sRainStation, dtS.ToString("s"), dtE.ToString("s"));
+                ExportBigDataToExcel(sSqlStr, oDal.objCon.ConString, sSaveFilePath);
+
+
+                FileInfo file = new FileInfo(sSaveFilePath);
+                if (file.Exists)
+                {
+                    xDownload(sSaveFilePath, sSaveFilePath);
+                }
+                else
+                {
+                    Response.Write("This file does not exist.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
 
         protected void btnExportSHP_Click(object sender, EventArgs e)
         {
+            string sSaveFilePath = @"d:\temp\" + "RainShpData_" + Guid.NewGuid().ToString() + ".xlsx";
 
+            
+            string sSDate = DateShpS.Value;
+            string sEDate = DateShpE.Value;
+            string sSTime = ddlTimeShpS.SelectedValue;
+            string sETime = ddlTimeShpE.SelectedValue;
+
+            DateTime dtS = TransQueryTime(sSDate, sSTime);
+            DateTime dtE = TransQueryTime(sEDate, sETime);
+            try
+            {
+                ssql = @" select STID,STNAME,COUNTY,RAIN,LAT,LON,RTIME from RainStation 
+                            where 1 = 1   
+                            and RTime between '{0}' and '{1}'
+                            and datepart(mi,RTime) = 0 and datepart(ss,RTime) = 0
+                            order by RTime
+                        ";
+                string sSqlStr = string.Format(ssql, dtS.ToString("s"), dtE.ToString("s"));
+                ExportBigDataToExcel(sSqlStr, oDal.objCon.ConString, sSaveFilePath);
+
+
+                FileInfo file = new FileInfo(sSaveFilePath);
+                if (file.Exists)
+                {
+                    xDownload(sSaveFilePath, sSaveFilePath);
+                }
+                else
+                {
+                    Response.Write("This file does not exist.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
+
+        static private int rowsPerSheet = 100000;
+        static private DataTable ResultsData = new DataTable();
+
+        private void ExportBigDataToExcel(string sSqlText,string sConnStr,string sfileName)
+        {
+            string queryString = sSqlText;
+            ResultsData = new DataTable();
+
+            using (var connection = new SqlConnection(sConnStr))
+            {
+                var command = new SqlCommand(queryString, connection);
+                connection.Open();
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                int c = 0;
+                bool firstTime = true;
+
+                //Get the Columns names, types, this will help when we need to format the cells in the excel sheet.
+                DataTable dtSchema = reader.GetSchemaTable();
+                var listCols = new List<DataColumn>();
+                if (dtSchema != null)
+                {
+                    foreach (DataRow drow in dtSchema.Rows)
+                    {
+                        string columnName = Convert.ToString(drow["ColumnName"]);
+                        var column = new DataColumn(columnName, (Type)(drow["DataType"]));
+                        column.Unique = (bool)drow["IsUnique"];
+                        column.AllowDBNull = (bool)drow["AllowDBNull"];
+                        column.AutoIncrement = (bool)drow["IsAutoIncrement"];
+                        listCols.Add(column);
+                        ResultsData.Columns.Add(column);
+                    }
+                }
+
+                // Call Read before accessing data. 
+                while (reader.Read())
+                {
+                    DataRow dataRow = ResultsData.NewRow();
+                    for (int i = 0; i < listCols.Count; i++)
+                    {
+                        dataRow[(listCols[i])] = reader[i];
+                    }
+                    ResultsData.Rows.Add(dataRow);
+                    c++;
+                    if (c == rowsPerSheet)
+                    {
+                        c = 0;
+                        ExportToOxml(firstTime,sfileName);
+                        ResultsData.Clear();
+                        firstTime = false;
+                    }
+                }
+                if (ResultsData.Rows.Count > 0)
+                {
+                    ExportToOxml(firstTime, sfileName);
+                    ResultsData.Clear();
+                }
+                // Call Close when done reading.
+                reader.Close();
+            }
+        }
+
+
+        private static void ExportToOxml(bool firstTime, string fileName)
+        {
+            //const string fileName = @"C:\MyExcel.xlsx";
+
+            //Delete the file if it exists. 
+            if (firstTime && File.Exists(fileName))
+            {
+                File.Delete(fileName);
+            }
+
+            uint sheetId = 1; //Start at the first sheet in the Excel workbook.
+
+            if (firstTime)
+            {
+                //This is the first time of creating the excel file and the first sheet.
+                // Create a spreadsheet document by supplying the filepath.
+                // By default, AutoSave = true, Editable = true, and Type = xlsx.
+                SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.
+                    Create(fileName, SpreadsheetDocumentType.Workbook);
+
+                // Add a WorkbookPart to the document.
+                WorkbookPart workbookpart = spreadsheetDocument.AddWorkbookPart();
+                workbookpart.Workbook = new Workbook();
+
+                // Add a WorksheetPart to the WorkbookPart.
+                var worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
+                var sheetData = new SheetData();
+                worksheetPart.Worksheet = new Worksheet(sheetData);
+
+
+                var bold1 = new Bold();
+                CellFormat cf = new CellFormat();
+
+
+                // Add Sheets to the Workbook.
+                Sheets sheets;
+                sheets = spreadsheetDocument.WorkbookPart.Workbook.
+                    AppendChild<Sheets>(new Sheets());
+
+                // Append a new worksheet and associate it with the workbook.
+                var sheet = new Sheet()
+                {
+                    Id = spreadsheetDocument.WorkbookPart.
+                        GetIdOfPart(worksheetPart),
+                    SheetId = sheetId,
+                    Name = "Sheet" + sheetId
+                };
+                sheets.Append(sheet);
+
+                //Add Header Row.
+                var headerRow = new Row();
+                foreach (DataColumn column in ResultsData.Columns)
+                {
+                    var cell = new Cell { DataType = CellValues.String, CellValue = new CellValue(column.ColumnName) };
+                    headerRow.AppendChild(cell);
+                }
+                sheetData.AppendChild(headerRow);
+
+                foreach (DataRow row in ResultsData.Rows)
+                {
+                    var newRow = new Row();
+                    foreach (DataColumn col in ResultsData.Columns)
+                    {
+                        var cell = new Cell
+                        {
+                            DataType = CellValues.String,
+                            CellValue = new CellValue(row[col].ToString())
+                        };
+                        newRow.AppendChild(cell);
+                    }
+
+                    sheetData.AppendChild(newRow);
+                }
+                workbookpart.Workbook.Save();
+
+                spreadsheetDocument.Close();
+            }
+            else
+            {
+                // Open the Excel file that we created before, and start to add sheets to it.
+                var spreadsheetDocument = SpreadsheetDocument.Open(fileName, true);
+
+                var workbookpart = spreadsheetDocument.WorkbookPart;
+                if (workbookpart.Workbook == null)
+                    workbookpart.Workbook = new Workbook();
+
+                var worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
+                var sheetData = new SheetData();
+                worksheetPart.Worksheet = new Worksheet(sheetData);
+                var sheets = spreadsheetDocument.WorkbookPart.Workbook.Sheets;
+
+                if (sheets.Elements<Sheet>().Any())
+                {
+                    //Set the new sheet id
+                    sheetId = sheets.Elements<Sheet>().Max(s => s.SheetId.Value) + 1;
+                }
+                else
+                {
+                    sheetId = 1;
+                }
+
+                // Append a new worksheet and associate it with the workbook.
+                var sheet = new Sheet()
+                {
+                    Id = spreadsheetDocument.WorkbookPart.
+                        GetIdOfPart(worksheetPart),
+                    SheetId = sheetId,
+                    Name = "Sheet" + sheetId
+                };
+                sheets.Append(sheet);
+
+                //Add the header row here.
+                var headerRow = new Row();
+
+                foreach (DataColumn column in ResultsData.Columns)
+                {
+                    var cell = new Cell { DataType = CellValues.String, CellValue = new CellValue(column.ColumnName) };
+                    headerRow.AppendChild(cell);
+                }
+                sheetData.AppendChild(headerRow);
+
+                foreach (DataRow row in ResultsData.Rows)
+                {
+                    var newRow = new Row();
+
+                    foreach (DataColumn col in ResultsData.Columns)
+                    {
+                        var cell = new Cell
+                        {
+                            DataType = CellValues.String,
+                            CellValue = new CellValue(row[col].ToString())
+                        };
+                        newRow.AppendChild(cell);
+                    }
+
+                    sheetData.AppendChild(newRow);
+                }
+
+                workbookpart.Workbook.Save();
+
+                // Close the document.
+                spreadsheetDocument.Close();
+            }
+        }
+
+        protected void btnBack_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("default.aspx", true);
+        }
+
+       
     }
 }

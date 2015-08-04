@@ -22,9 +22,9 @@
     <link rel="stylesheet" type="text/css" href="css/themes/default/easyui.css">
     <link rel="stylesheet" type="text/css" href="css/themes/icon.css">
     <link rel="stylesheet" type="text/css" href="../demo.css">
-
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    
     <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/jquery.easyui.min.js"></script>
 
     <style>
@@ -43,13 +43,10 @@
 
 </head>
 <body>
-
     <form id="form1" runat="server">
         <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
         <div class="container">
-
             <h1>雨量查詢</h1>
-
             <div class="panel panel-info">
                 <div class="panel-heading">
                     <h1 class="panel-title"></h1>
@@ -57,13 +54,16 @@
                 <div class="panel-body">
                     <asp:UpdatePanel ID="UpdatePanel1" runat="server">
                         <ContentTemplate>
+                            
                             <div class="form-inline">
                                 <%--<asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>--%>
 
                                 <label class="label label-success" style="font-size: 20px">縣市</label>
                                 <asp:DropDownList ID="ddlCOUNTY" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlCOUNTY_SelectedIndexChanged"></asp:DropDownList>
-                                <asp:Button ID="btnQuery" runat="server" Text="查詢" CssClass="btn btn-success" OnClick="btnQuery_Click" Visible="false" />
-                                <asp:Button ID="btnExport" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExport_Click" Visible="false"   />
+                                <div style="display:none;">
+                                <asp:Button ID="btnQuery" runat="server" Text="查詢" CssClass="btn btn-success" OnClick="btnQuery_Click"  />
+                                </div>
+                                <asp:Button ID="btnExport" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExport_Click" />
 
                                 <div style="float: right; font-size: 20px">
                                     <asp:Label ID="lblDataTime" runat="server" Text="資料時間:"></asp:Label>
@@ -81,7 +81,7 @@
                                     <asp:BoundField DataField="STNAME" HeaderText="名稱" />
                                     <asp:BoundField DataField="STID" HeaderText="編號" />
                                     <asp:BoundField DataField="COUNTY" HeaderText="縣市" SortExpression="COUNTY" />
-                                    <asp:BoundField DataField="TOWN" HeaderText="鄉鎮" SortExpression="TOWN"  />
+                                    <asp:BoundField DataField="TOWN" HeaderText="鄉鎮" SortExpression="TOWN" />
                                     <asp:BoundField DataField="MIN10" HeaderText="10分鐘" SortExpression="MIN10" />
                                     <asp:BoundField DataField="RAIN" HeaderText="1小時" SortExpression="RAIN" />
                                     <asp:BoundField DataField="HOUR3" HeaderText="3小時" SortExpression="HOUR3" />
@@ -89,195 +89,35 @@
                                     <asp:BoundField DataField="HOUR12" HeaderText="12小時" SortExpression="HOUR12" />
                                     <asp:BoundField DataField="HOUR24" HeaderText="24小時" SortExpression="HOUR24" />
                                     <asp:BoundField DataField="NOW" HeaderText="本日" SortExpression="NOW" />
-                                    <asp:BoundField DataField="RT" HeaderText="Rt." SortExpression="RT"  />
+                                    <asp:BoundField DataField="RT" HeaderText="Rt." SortExpression="RT" />
                                     <asp:BoundField DataField="LRTI" HeaderText="LRTI" SortExpression="LRTI" />
-                                    <asp:BoundField HeaderText="警戒LRTI"  />
+                                    <asp:BoundField HeaderText="警戒LRTI" />
                                     <asp:BoundField DataField="ATTRIBUTE" HeaderText="屬性" />
                                 </Columns>
                                 <SortedAscendingHeaderStyle CssClass="sortasc" />
                                 <SortedDescendingHeaderStyle CssClass="sortdesc" />
                             </asp:GridView>
                             <%--<asp:Timer ID="Timer1" runat="server" OnTick="Timer1_Tick" Interval="1000"></asp:Timer>--%>
-                        </ContentTemplate>                        
-                    </asp:UpdatePanel>
+                    </ContentTemplate>
+                        
+                    </asp:UpdatePanel>    
                 </div>
             </div>
-
             <div class="page-header"></div>
-
-
-            <%--   <table id="grid">
-           <thead>
-                <tr>
-                    <th>STID</th>
-                    <th>STNAME</th>
-                </tr>
-            </thead>
-        </table>--%>
         </div>
-
-
-
-
 
         <script type="text/javascript">
+
+            function myrefresh() {
+                //window.location.reload();
+                $("#btnQuery").click();
+            }            
+
             $(function () {
-                var qParams = { mode: 'Qry', id: $("#txtid").val(), name: $("#txtname").val() }; //取得查詢參數
-                var oldRowIndex;
-                var opt = $('#grid');
-                opt.datagrid({
-                    width: "auto", //自動寬度
-                    height: 320,  //固定高度
-                    nowrap: false, //不截斷內文
-                    striped: true,  //列背景切換
-                    fitColumns: true,  //自動適應欄寬
-                    singleSelect: true,  //單選列
-                    queryParams: qParams,  //參數
-                    url: 'CRUDHandler.ashx',  //資料處理頁
-                    idField: 'id',  //主索引
-                    frozenColumns: [[{ field: 'ck', checkbox: true }]], //顯示核取方塊
-                    pageList: [10, 15, 20], //每頁顯示筆數清單
-                    pagination: true, //是否啟用分頁
-                    rownumbers: true, //是否顯示列數
-                    toolbar: [{
-                        id: 'btnAdd',
-                        text: '新增',
-                        iconCls: 'icon-add',
-                        handler: function () {
-                            insertRow($(this));
-                        }
-                    }],
-                    onClickRow: function (rowIndex) {
-                        if (oldRowIndex == rowIndex) {
-                            opt.datagrid('clearSelections', oldRowIndex);
-                        }
-                        var selectRow = opt.datagrid('getSelected');
-                        oldRowIndex = opt.datagrid('getRowIndex', selectRow);
-                    }
-                }).datagrid("getPager").pagination({
-                    buttons: [{
-                        id: 'btnEdit',
-                        iconCls: 'icon-edit',
-                        text: '編輯',
-                        handler: function () {
-                            editRow();
-                        }
-                    }, '-', {
-                        id: 'btnDel',
-                        text: '刪除',
-                        iconCls: 'icon-remove',
-                        handler: function () {
-                            removeRow();
-                        }
-                    }],
-                    onBeforeRefresh: function () {
-                        return true;
-                    }
-                });
+                setInterval(myrefresh, 60000); //指定10秒刷新一次
             });
-
-            //alert("test");
-
-            $('#grid').datagrid({
-                url: 'CRUDHandler.ashx',  //處理資料面程式   
-                columns: [[   //設定欄位
-                    { field: 'id', title: 'ID', width: 100 },
-                    { field: 'name', title: 'Name', width: 100 },
-                    { field: 'age', title: 'Age', width: 100, align: 'right' },
-                    { field: 'address', title: 'Address', width: 100 }
-                ]]
-            });
-
-
-            function Query() {
-                var qid, qname;
-                if ($("#txtid").val() != "")
-                    qid = $("#txtid").val();
-                else
-                    qid = "";
-                if ($("#txtname").val() != "")
-                    qname = $("#txtname").val();
-                else
-                    qname = "";
-
-                qParams = { id: qid, name: qname };
-                $('#grid').datagrid('options').queryParams = qParams;
-                $('#grid').datagrid('options').pageNumber = 1;
-                var p = $('#grid').datagrid('getPager');
-                if (p) {
-                    $(p).pagination({ pageNumber: 1 });
-                }
-                $("#grid").datagrid('reload');
-                return false;
-            }
-
 
         </script>
-
-
-
-        <%--        <div class="row">
-            <div class="col-sm-4">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Panel title</h3>
-                    </div>
-                    <div class="panel-body">
-                        Panel content
-                    </div>
-                </div>
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Panel title</h3>
-                    </div>
-                    <div class="panel-body">
-                        Panel content
-                    </div>
-                </div>
-            </div>
-            <!-- /.col-sm-4 -->
-            <div class="col-sm-4">
-                <div class="panel panel-success">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Panel title</h3>
-                    </div>
-                    <div class="panel-body">
-                        Panel content
-                    </div>
-                </div>
-                <div class="panel panel-info">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Panel title</h3>
-                    </div>
-                    <div class="panel-body">
-                        Panel content
-                    </div>
-                </div>
-            </div>
-            <!-- /.col-sm-4 -->
-            <div class="col-sm-4">
-                <div class="panel panel-warning">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Panel title</h3>
-                    </div>
-                    <div class="panel-body">
-                        Panel content
-                    </div>
-                </div>
-                <div class="panel panel-danger">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Panel title</h3>
-                    </div>
-                    <div class="panel-body">
-                        Panel content
-                    </div>
-                </div>
-            </div>
-            <!-- /.col-sm-4 -->
-        </div>
-
-
-        --%>
     </form>
 </body>
 </html>

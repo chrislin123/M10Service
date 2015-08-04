@@ -65,6 +65,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="css\css\bootstrap-theme.css.map" />
@@ -369,7 +370,6 @@
     <Content Include="css\themes\metro\window.css" />
     <Content Include="css\themes\mobile.css" />
     <Content Include="default.aspx" />
-    <Content Include="HtmlPage1.html" />
     <Content Include="images\arrow-asc.png" />
     <Content Include="images\sort-asc-alt.png" />
     <Content Include="js\bootstrap.js" />
