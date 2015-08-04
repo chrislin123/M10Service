@@ -233,11 +233,18 @@ namespace M10Web
             DateTime dtE = TransQueryTime(sEDate, sETime);
             try
             {
-                ssql = @" select STID,STNAME,COUNTY,RAIN,LAT,LON,RTIME from RainStation 
+                //1040804 修改總額顯示
+//                ssql = @" select STID,STNAME,COUNTY,RAIN,LAT,LON,RTIME from RainStation 
+//                            where 1 = 1   
+//                            and RTime between '{0}' and '{1}'
+//                            and datepart(mi,RTime) = 0 and datepart(ss,RTime) = 0
+//                            order by RTime
+//                        ";
+
+                ssql = @" select STID,STNAME,COUNTY,LAT,LON,sum(CONVERT(float, RAIN)) as RAIN from RainStation 
                             where 1 = 1   
-                            and RTime between '{0}' and '{1}'
-                            and datepart(mi,RTime) = 0 and datepart(ss,RTime) = 0
-                            order by RTime
+                            and RTime between '{0}' and '{1}'                            
+                            group by STID,STNAME,COUNTY,LAT,LON
                         ";
                 string sSqlStr = string.Format(ssql, dtS.ToString("s"), dtE.ToString("s"));
                 ExportBigDataToExcel(sSqlStr, oDal.objCon.ConString, sSaveFilePath);
