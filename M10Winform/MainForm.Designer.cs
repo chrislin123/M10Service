@@ -46,7 +46,7 @@
             // 
             // timer1
             // 
-            this.timer1.Interval = 1000;
+            this.timer1.Interval = 5000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // richTextBox1
@@ -91,6 +91,7 @@
             // 
             // chkdownload
             // 
+            this.chkdownload.AutoEllipsis = true;
             this.chkdownload.AutoSize = true;
             this.chkdownload.Checked = true;
             this.chkdownload.CheckState = System.Windows.Forms.CheckState.Checked;

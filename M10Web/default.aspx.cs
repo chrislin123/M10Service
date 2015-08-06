@@ -221,15 +221,19 @@ namespace M10Web
                 }
                 
                 //警戒值超過要變色
-                double dLRTI = 0;
-                double dELRTI = 0;
-                double.TryParse(e.Row.Cells[12].Text,out dLRTI);
-                double.TryParse(e.Row.Cells[13].Text, out dELRTI);
-                
-                if (dLRTI > dELRTI)
+                if (e.Row.Cells[13].Text != "" && e.Row.Cells[13].Text != "&nbsp;")
                 {
-                    e.Row.ForeColor = System.Drawing.Color.Red; 
+                    double dLRTI = 0;
+                    double dELRTI = 0;
+                    double.TryParse(e.Row.Cells[12].Text, out dLRTI);
+                    double.TryParse(e.Row.Cells[13].Text, out dELRTI);
+
+                    if (dLRTI > dELRTI)
+                    {
+                        e.Row.ForeColor = System.Drawing.Color.Red;
+                    } 
                 }
+                
 
             } 
 

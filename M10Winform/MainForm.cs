@@ -368,7 +368,7 @@ namespace M10Winform
                     string sLRTI = "0";
                     string sWLRTI = "0";
 
-                    sLRTI = CalLRTI(dr["STID"].ToString(), dr["RTIME"].ToString());
+                    sLRTI = CalLRTI(dr);
                     dr["LRTI"] = sLRTI;
                 }
 
@@ -836,10 +836,10 @@ namespace M10Winform
             ProceStart();
         }
 
-        private string CalLRTI(string sSTID,string sRTIME)
+        private string CalLRTI(DataRow pDr)
         {
-            //sSTID = "C0R280";
-            //sRTIME = "2015-07-06T08:50:00";
+            string sSTID = pDr["STID"].ToString().Trim();
+            string sRTIME = pDr["RTime"].ToString();
             string sResult = string.Empty;
 
             //轉換datetime
@@ -853,20 +853,26 @@ namespace M10Winform
             double dRain3 = 0;
             double dRT = 0;
 
-            string sFsql = " select * from RainStation "
-                            + " where STID = '{0}' "
-                            + " and RTime = '{1}' "
-                            + "  "
-                            + "  ";
+            string sFsql = string.Empty;
+            //sFsql = " select * from RainStation "
+            //                + " where STID = '{0}' "
+            //                + " and RTime = '{1}' "
+            //                + "  "
+            //                + "  ";
 
-            ssql = string.Format(sFsql, sSTID, dtRTime1.ToString("s"));
-            oDal.CommandText = ssql;
-            DataRow dr = oDal.DataRow();
-            if (dr != null)
-            {
-                double.TryParse(dr["RAIN"].ToString(), out dRain1);
-                double.TryParse(dr["RT"].ToString(), out dRT);
-            }
+            //ssql = string.Format(sFsql, sSTID, dtRTime1.ToString("s"));
+            //oDal.CommandText = ssql;
+            //DataRow dr = oDal.DataRow();
+            //if (dr != null)
+            //{
+            //    double.TryParse(dr["RAIN"].ToString(), out dRain1);
+            //    double.TryParse(dr["RT"].ToString(), out dRT);
+            //}
+
+            //由傳進來的資料解析
+            double.TryParse(pDr["RAIN"].ToString(), out dRain1);
+            double.TryParse(pDr["RT"].ToString(), out dRT);
+
 
             sFsql = " select RAIN from RainStation "
                         + " where STID = '{0}' "
