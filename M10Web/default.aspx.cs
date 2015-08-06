@@ -97,7 +97,9 @@ namespace M10Web
                         ,CONVERT(float, NOW) as NOW
                         ,ROUND(CONVERT(float, RT),2) as RT
                         ,CONVERT(float, LRTI) as LRTI
-                        ,* from RunTimeRainData
+                        ,ROUND(CONVERT(float, b.ELRTI),2) as ELRTI
+                        ,* from RunTimeRainData a
+                        left join StationErrLRTI b on a.STID = b.STID 
                     ";
             if (ddlCOUNTY.SelectedValue != "全部")
             {
@@ -113,6 +115,24 @@ namespace M10Web
                 lblDataTime.Text = "資料時間:" + dt.Rows[0]["RTime"].ToString();
             }
 
+            //1040806 處理資料異常，所有數值改為0
+            foreach (DataRow dr in dt.Rows)
+            {
+                if (dr["STATUS"].ToString() == "-99")
+                {
+                    dr["MIN10"] = 0;
+                    dr["RAIN"] = 0;
+                    dr["HOUR3"] = 0;
+                    dr["HOUR6"] = 0;
+                    dr["HOUR12"] = 0;
+                    dr["HOUR24"] = 0;
+                    dr["NOW"] = 0;
+                    dr["RT"] = 0;
+                    dr["LRTI"] = 0;
+
+                }
+            }
+
             DataView myview = dt.DefaultView;
             myview.Sort = ViewState["sortExpression"].ToString() + " " + ViewState["sort"].ToString();
             GridView1.DataSource = myview;
@@ -122,6 +142,16 @@ namespace M10Web
 
         protected void GridView1_RowCreated(object sender, GridViewRowEventArgs e)
         {
+            //隱藏欄位
+            if (e.Row.RowType == DataControlRowType.DataRow || e.Row.RowType == DataControlRowType.Header)
+            {
+
+                //e.Row.Cells[15].Visible = false;
+                
+            }
+               
+            
+
             if (e.Row.RowType == DataControlRowType.Header)
             {
                 foreach (TableCell tc in e.Row.Cells)
@@ -166,6 +196,45 @@ namespace M10Web
         protected void btnExport_Click(object sender, EventArgs e)
         {
             Response.Redirect("RainDataExport.aspx", true);
+        }
+
+        protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                if (e.Row.Cells[15].Text == "-99")
+                {                    
+                    e.Row.Cells[15].Text = "異常";
+                    //e.Row.Cells[4].Text = "0";
+                    //e.Row.Cells[5].Text = "0";
+                    //e.Row.Cells[6].Text = "0";
+                    //e.Row.Cells[7].Text = "0";
+                    //e.Row.Cells[8].Text = "0";
+                    //e.Row.Cells[9].Text = "0";
+                    //e.Row.Cells[10].Text = "0";
+                    //e.Row.Cells[11].Text = "0";
+                    //e.Row.Cells[12].Text = "0";
+                }
+                else
+                {
+                    e.Row.Cells[15].Text = "";
+                }
+                
+                //警戒值超過要變色
+                double dLRTI = 0;
+                double dELRTI = 0;
+                double.TryParse(e.Row.Cells[12].Text,out dLRTI);
+                double.TryParse(e.Row.Cells[13].Text, out dELRTI);
+                
+                if (dLRTI > dELRTI)
+                {
+                    e.Row.ForeColor = System.Drawing.Color.Red; 
+                }
+
+            } 
+
+
+
         }
     }
 }

@@ -35,14 +35,16 @@
                     <h1>查詢</h1>
                     <div class="panel panel-info">
                         <div class="panel-heading">
-                            
-                            <table  style="width:100%;" >
+
+                            <table style="width: 100%;">
                                 <tr>
                                     <td></td>
-                                    <td style="width:20%;text-align:right;"><asp:Button ID="btnBack" runat="server" Text="返回雨量查詢" CssClass="btn btn-success" OnClick="btnBack_Click"  /></td>
+                                    <td style="width: 20%; text-align: right;">
+                                        密碼：<input id="txtpass" type="text" runat="server">
+                                        <asp:Button ID="btnBack" runat="server" Text="返回雨量查詢" CssClass="btn btn-success" OnClick="btnBack_Click" /></td>
                                 </tr>
                             </table>
-                            
+
 
                         </div>
                     </div>
@@ -65,14 +67,14 @@
                             <br />
                             <asp:Label ID="lblDataTime" runat="server" Text="開始時間："></asp:Label>
                             <input id="CountryDateS" type="text" class="easyui-datebox" runat="server">
-                            <asp:DropDownList ID="ddlTimeCountryS" runat="server"  ></asp:DropDownList>
+                            <asp:DropDownList ID="ddlTimeCountryS" runat="server"></asp:DropDownList>
                             <asp:Label ID="Label1" runat="server" Text="結束時間："></asp:Label>
                             <input id="CountryDateE" type="text" class="easyui-datebox" runat="server">
-                            <asp:DropDownList ID="ddlTimeCountryE" runat="server"  ></asp:DropDownList>
+                            <asp:DropDownList ID="ddlTimeCountryE" runat="server"></asp:DropDownList>
                             <br />
-                            <asp:Button ID="btnExportCounty" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExportCounty_Click"   />
-                            
-                            
+                            <asp:Button ID="btnExportCounty" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExportCounty_Click" />
+
+
                         </div>
                         <div id="menu1" class="tab-pane fade">
                             <br />
@@ -88,10 +90,10 @@
 
                             <asp:Label ID="Label2" runat="server" Text="開始日期："></asp:Label>
                             <input id="RainDateS" type="text" class="easyui-datebox" runat="server">
-                            <asp:DropDownList ID="ddlTimeRainS" runat="server"  ></asp:DropDownList>
+                            <asp:DropDownList ID="ddlTimeRainS" runat="server"></asp:DropDownList>
                             <asp:Label ID="Label3" runat="server" Text="結束日期："></asp:Label>
                             <input id="RainDateE" type="text" class="easyui-datebox" runat="server">
-                            <asp:DropDownList ID="ddlTimeRainE" runat="server"  ></asp:DropDownList>
+                            <asp:DropDownList ID="ddlTimeRainE" runat="server"></asp:DropDownList>
                             <br />
                             <asp:Button ID="btnExportStation" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExportStation_Click" />
                         </div>
@@ -99,12 +101,12 @@
                             <br />
                             <asp:Label ID="Label4" runat="server" Text="開始日期："></asp:Label>
                             <input id="DateShpS" type="text" class="easyui-datebox" runat="server">
-                            <asp:DropDownList ID="ddlTimeShpS" runat="server"  ></asp:DropDownList>
+                            <asp:DropDownList ID="ddlTimeShpS" runat="server"></asp:DropDownList>
                             <asp:Label ID="Label5" runat="server" Text="結束日期："></asp:Label>
                             <input id="DateShpE" type="text" class="easyui-datebox" runat="server">
-                            <asp:DropDownList ID="ddlTimeShpE" runat="server"  ></asp:DropDownList>
+                            <asp:DropDownList ID="ddlTimeShpE" runat="server"></asp:DropDownList>
                             <br />
-                            <asp:Button ID="btnExportSHP" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExportSHP_Click"  />
+                            <asp:Button ID="btnExportSHP" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExportSHP_Click" />
                         </div>
 
                     </div>
@@ -115,7 +117,6 @@
                     <asp:PostBackTrigger ControlID="btnExportStation" />
                     <asp:PostBackTrigger ControlID="btnExportSHP" />
                     <%--<asp:PostBackTrigger ControlID="ddlCOUNTY2" />--%>
-                    
                 </Triggers>
             </asp:UpdatePanel>
 

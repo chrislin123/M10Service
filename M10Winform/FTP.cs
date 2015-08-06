@@ -274,20 +274,23 @@ namespace M10Winform
                 /* When in doubt, use these options */
                 ftpRequest.UseBinary = true;
                 ftpRequest.UsePassive = true;
-                ftpRequest.KeepAlive = true;
+                ftpRequest.KeepAlive = false;
                 /* Specify the Type of FTP Request */
                 ftpRequest.Method = WebRequestMethods.Ftp.ListDirectory;
                 /* Establish Return Communication with the FTP Server */
+                System.Threading.Thread.Sleep(1000);
                 ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
                 /* Establish Return Communication with the FTP Server */
-                ftpStream = ftpResponse.GetResponseStream();
+                System.Threading.Thread.Sleep(1000);
+                ftpStream = ftpResponse.GetResponseStream();                
                 /* Get the FTP Server's Response Stream */
+                System.Threading.Thread.Sleep(1000);
                 StreamReader ftpReader = new StreamReader(ftpStream);
                 /* Store the Raw Response */
                 string directoryRaw = null;
                 /* Read Each Line of the Response and Append a Pipe to Each Line for Easy Parsing */
                 try { while (ftpReader.Peek() != -1) { directoryRaw += ftpReader.ReadLine() + "|"; } }
-                catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+                catch (Exception ex) { Console.WriteLine(ex.ToString()); throw; }
                 /* Resource Cleanup */
                 ftpReader.Close();
                 ftpStream.Close();
@@ -307,23 +310,26 @@ namespace M10Winform
         public string[] directoryListDetailed(string directory)
         {
             try
-            {
-                
+            {   
                 /* Create an FTP Request */
                 ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host + "/" + directory);
                 /* Log in to the FTP Server with the User Name and Password Provided */
+                //ftpRequest.AuthenticationLevel = System.Net.Security.AuthenticationLevel.MutualAuthRequested;
                 ftpRequest.Credentials = new NetworkCredential(user, pass);
                 /* When in doubt, use these options */
                 ftpRequest.UseBinary = true;
                 ftpRequest.UsePassive = true;
-                ftpRequest.KeepAlive = true;
+                ftpRequest.KeepAlive = true;                
                 /* Specify the Type of FTP Request */
                 ftpRequest.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
                 /* Establish Return Communication with the FTP Server */
+                System.Threading.Thread.Sleep(1000);
                 ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
                 /* Establish Return Communication with the FTP Server */
+                System.Threading.Thread.Sleep(1000);
                 ftpStream = ftpResponse.GetResponseStream();
                 /* Get the FTP Server's Response Stream */
+                System.Threading.Thread.Sleep(1000);
                 StreamReader ftpReader = new StreamReader(ftpStream);
                 /* Store the Raw Response */
                 string directoryRaw = null;
@@ -339,7 +345,7 @@ namespace M10Winform
                 try { string[] directoryList = directoryRaw.Split("|".ToCharArray()); return directoryList; }
                 catch (Exception ex) { Console.WriteLine(ex.ToString()); }
             }
-            catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+            catch (Exception ex) { Console.WriteLine(ex.ToString()); throw; }
             /* Return an Empty string Array if an Exception Occurs */
             return new string[] { "" };
         }

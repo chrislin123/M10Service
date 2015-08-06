@@ -34,8 +34,8 @@
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.chktimer = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.chkdownload = new System.Windows.Forms.CheckBox();
             this.btnStart = new System.Windows.Forms.Button();
+            this.chkdownload = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -46,7 +46,7 @@
             // 
             // timer1
             // 
-            this.timer1.Interval = 5000;
+            this.timer1.Interval = 1000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // richTextBox1
@@ -79,6 +79,16 @@
             this.panel1.Size = new System.Drawing.Size(132, 172);
             this.panel1.TabIndex = 3;
             // 
+            // btnStart
+            // 
+            this.btnStart.Location = new System.Drawing.Point(30, 79);
+            this.btnStart.Name = "btnStart";
+            this.btnStart.Size = new System.Drawing.Size(75, 23);
+            this.btnStart.TabIndex = 4;
+            this.btnStart.Text = "開始";
+            this.btnStart.UseVisualStyleBackColor = true;
+            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
+            // 
             // chkdownload
             // 
             this.chkdownload.AutoSize = true;
@@ -90,16 +100,6 @@
             this.chkdownload.TabIndex = 3;
             this.chkdownload.Text = "是否下載";
             this.chkdownload.UseVisualStyleBackColor = true;
-            // 
-            // btnStart
-            // 
-            this.btnStart.Location = new System.Drawing.Point(30, 79);
-            this.btnStart.Name = "btnStart";
-            this.btnStart.Size = new System.Drawing.Size(75, 23);
-            this.btnStart.TabIndex = 4;
-            this.btnStart.Text = "開始";
-            this.btnStart.UseVisualStyleBackColor = true;
-            this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
             // MainForm
             // 

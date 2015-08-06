@@ -66,10 +66,10 @@
 
                             <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False"
                                 AllowSorting="True" CssClass="table table-striped table-bordered table-condensed"
-                                OnRowCreated="GridView1_RowCreated" OnSorting="GridView1_Sorting">
+                                OnRowCreated="GridView1_RowCreated" OnSorting="GridView1_Sorting" OnRowDataBound="GridView1_RowDataBound">
                                 <Columns>
-                                    <asp:BoundField DataField="STNAME" HeaderText="名稱" />
-                                    <asp:BoundField DataField="STID" HeaderText="編號" />
+                                    <asp:BoundField DataField="STNAME" HeaderText="名稱" SortExpression="STNAME"/>
+                                    <asp:BoundField DataField="STID" HeaderText="編號" SortExpression="STID"/>
                                     <asp:BoundField DataField="COUNTY" HeaderText="縣市" SortExpression="COUNTY" />
                                     <asp:BoundField DataField="TOWN" HeaderText="鄉鎮" SortExpression="TOWN" />
                                     <asp:BoundField DataField="MIN10" HeaderText="10分鐘" SortExpression="MIN10" />
@@ -81,8 +81,9 @@
                                     <asp:BoundField DataField="NOW" HeaderText="本日" SortExpression="NOW" />
                                     <asp:BoundField DataField="RT" HeaderText="Rt." SortExpression="RT" />
                                     <asp:BoundField DataField="LRTI" HeaderText="LRTI" SortExpression="LRTI" />
-                                    <asp:BoundField HeaderText="警戒LRTI" />
+                                    <asp:BoundField DataField="ELRTI" HeaderText="警戒LRTI" SortExpression="ELRTI"  />
                                     <asp:BoundField DataField="ATTRIBUTE" HeaderText="屬性" />
+                                    <asp:BoundField DataField="STATUS" HeaderText="狀態"  />
                                 </Columns>
                                 <SortedAscendingHeaderStyle CssClass="sortasc" />
                                 <SortedDescendingHeaderStyle CssClass="sortdesc" />

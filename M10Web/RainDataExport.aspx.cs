@@ -141,6 +141,14 @@ namespace M10Web
 
         protected void btnExportCounty_Click(object sender, EventArgs e)
         {
+            string spass = txtpass.Value;
+
+            if (spass.ToUpper() != "ESWCRC2015")
+            {
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "msg", "alert('密碼錯誤!')", true);
+                return;
+            }        
+
             string sSaveFilePath = @"d:\temp\" +  "CountyData_" + Guid.NewGuid().ToString() + ".xlsx";
 
             string sCountry = ddlCOUNTY.SelectedValue;
@@ -181,6 +189,16 @@ namespace M10Web
 
         protected void btnExportStation_Click(object sender, EventArgs e)
         {
+            string spass = txtpass.Value;
+
+            if (spass.ToUpper() != "ESWCRC2015")
+            {
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "msg", "alert('密碼錯誤!')", true);
+                return;
+            }            
+
+
+
             string sSaveFilePath = @"d:\temp\" + "RainStationData_" + Guid.NewGuid().ToString() + ".xlsx";
 
             string sRainStation = ddlRainStation.SelectedValue;
@@ -221,6 +239,14 @@ namespace M10Web
 
         protected void btnExportSHP_Click(object sender, EventArgs e)
         {
+            string spass = txtpass.Value;
+
+            if (spass.ToUpper() != "ESWCRC2015")
+            {
+                ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "msg", "alert('密碼錯誤!')", true);
+                return;
+            }        
+
             string sSaveFilePath = @"d:\temp\" + "RainShpData_" + Guid.NewGuid().ToString() + ".xlsx";
 
             

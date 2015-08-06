@@ -19,10 +19,19 @@ namespace M10Winform
     public partial class MainForm : Form
     {
         private Timer MyTimer;
+        string ssql = string.Empty;
         string folderName = @"D:\m10\temp\";
         string folderBack = @"D:\m10\back\";
         string folderError = @"D:\m10\xmlerror\";
-        string ssql = string.Empty;
+        
+        //string sIP = "140.116.38.195";
+        //string sUser = "yuchao2013";
+        //string sPassword = "yuchao2013";
+
+        //1040806 新的ftp主機
+        string sIP = "140.116.38.196";
+        string sUser = "FCU2015";
+        string sPassword = "FCU2015";
 
         //string sConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False;Initial Catalog=m10;"; 
 
@@ -196,9 +205,7 @@ namespace M10Winform
             //string sUser = "iot";
             //string sPassword = "iot";
 
-            string sIP = "140.116.38.195";
-            string sUser = "yuchao2013";
-            string sPassword = "yuchao2013";
+            
             ftp ftpClient;
             try
             {
@@ -232,11 +239,11 @@ namespace M10Winform
 
                 ShowMessageToFront("Ftp取得清單");
                 /* Get Contents of a Directory (Names Only) */
-                string[] simpleDirectoryListing = ftpClient.directoryListDetailed("14_FCU_raindata/M10");
+                //string[] simpleDirectoryListing = ftpClient.directoryListSimple("14_FCU_raindata/M10");
                 //for (int i = 0; i < simpleDirectoryListing.Count(); i++) { Console.WriteLine(simpleDirectoryListing[i]); }
 
                 /* Get Contents of a Directory with Detailed File/Directory Info */
-                string[] detailDirectoryListing = ftpClient.directoryListDetailed("/test");
+                string[] detailDirectoryListing = ftpClient.directoryListDetailed("14_FCU_raindata/M10");
                 //for (int i = 0; i < detailDirectoryListing.Count(); i++) { Console.WriteLine(detailDirectoryListing[i]); }
 
 
@@ -244,7 +251,7 @@ namespace M10Winform
                 List<string> lstFileName = new List<string>();
                 string sssssssss;
 
-                foreach (string sFullName in simpleDirectoryListing)
+                foreach (string sFullName in detailDirectoryListing)
                 {
                     
                     if (sFullName != "")
@@ -817,6 +824,7 @@ namespace M10Winform
             //this.Refresh();
             this.Update();
             //richTextBox1.Refresh();
+            Application.DoEvents();
         }
 
         private void btnStart_Click(object sender, EventArgs e)
