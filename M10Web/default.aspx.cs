@@ -32,7 +32,7 @@ namespace M10Web
                 ddlCOUNTY.Items.Insert(0, new ListItem("全部", "全部"));
 
                 ViewState["sortExpression"] = "STNAME";
-                ViewState["sort"] = " ASC"; //or DESC
+                ViewState["sort"] = " DESC"; //or DESC
                 //ViewState["sort"] = " DESC";
                 //ViewState["sortExpression"] = "STNAME";
                 //ViewState["sort"] = " ASC";
@@ -68,16 +68,21 @@ namespace M10Web
             if (ViewState["SortExpression"] == null)
             {
                 ViewState["sortExpression"] = e.SortExpression;
-                if (ViewState["sort"].ToString() == " DESC")
-                {
-                    ViewState["sort"] = " ASC";
-                    BindNodeInfo();
-                }
-                else
-                {
-                    ViewState["sort"] = " DESC";
-                    BindNodeInfo();
-                }
+
+
+                ViewState["sort"] = " DESC";
+                BindNodeInfo();
+
+                //if (ViewState["sort"].ToString() == " DESC")
+                //{
+                //    ViewState["sort"] = " ASC";
+                //    BindNodeInfo();
+                //}
+                //else
+                //{
+                //    ViewState["sort"] = " DESC";
+                //    BindNodeInfo();
+                //}
             }
             
 
