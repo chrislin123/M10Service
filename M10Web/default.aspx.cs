@@ -219,6 +219,8 @@ namespace M10Web
                     //e.Row.Cells[10].Text = "0";
                     //e.Row.Cells[11].Text = "0";
                     //e.Row.Cells[12].Text = "0";
+
+                    e.Row.ForeColor = System.Drawing.Color.LightGray;
                 }
                 else
                 {
