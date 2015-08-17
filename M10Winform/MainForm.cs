@@ -70,7 +70,7 @@ namespace M10Winform
             catch (Exception excep)
             {
                 SetEventLog(excep.ToString());
-                throw;
+                
             }
 
             timer1.Enabled = true;
@@ -100,7 +100,7 @@ namespace M10Winform
             catch (Exception exc)
             {
                 SetEventLog("轉檔錯誤:" + exc.ToString());
-                throw;
+                
             }
 
             System.Threading.Thread.Sleep(5000);
@@ -181,7 +181,7 @@ namespace M10Winform
             catch (Exception )
             {
                 //eventLog1.WriteEntry("ProceStart 錯誤:" + e.ToString());
-                throw;
+                
             }
         }
 
@@ -286,7 +286,7 @@ namespace M10Winform
             catch (Exception ex)
             {
                 ShowMessageToFront(ex.ToString());
-                throw;
+                
             }
 
             
@@ -331,7 +331,7 @@ namespace M10Winform
                     }
 
                     return;
-                    //throw;
+                    //
                 }                
 
                 XmlNodeList nodelist = xd.SelectNodes("//Rain");
@@ -766,7 +766,7 @@ namespace M10Winform
             }
             catch (Exception)
             {
-                throw;
+                
             }
         }
 

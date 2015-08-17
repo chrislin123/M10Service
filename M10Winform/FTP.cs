@@ -290,7 +290,7 @@ namespace M10Winform
                 string directoryRaw = null;
                 /* Read Each Line of the Response and Append a Pipe to Each Line for Easy Parsing */
                 try { while (ftpReader.Peek() != -1) { directoryRaw += ftpReader.ReadLine() + "|"; } }
-                catch (Exception ex) { Console.WriteLine(ex.ToString()); throw; }
+                catch (Exception ex) { Console.WriteLine(ex.ToString());  }
                 /* Resource Cleanup */
                 ftpReader.Close();
                 ftpStream.Close();
@@ -300,7 +300,7 @@ namespace M10Winform
                 try { string[] directoryList = directoryRaw.Split("|".ToCharArray()); return directoryList; }
                 catch (Exception ex) { Console.WriteLine(ex.ToString()); }
             }
-            catch (Exception ex) { Console.WriteLine(ex.ToString()); throw; }
+            catch (Exception ex) { Console.WriteLine(ex.ToString());  }
             /* Return an Empty string Array if an Exception Occurs */
             return new string[] { "" };
         }
@@ -345,7 +345,7 @@ namespace M10Winform
                 try { string[] directoryList = directoryRaw.Split("|".ToCharArray()); return directoryList; }
                 catch (Exception ex) { Console.WriteLine(ex.ToString()); }
             }
-            catch (Exception ex) { Console.WriteLine(ex.ToString()); throw; }
+            catch (Exception ex) { Console.WriteLine(ex.ToString());  }
             /* Return an Empty string Array if an Exception Occurs */
             return new string[] { "" };
         }
