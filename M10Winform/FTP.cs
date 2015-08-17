@@ -317,7 +317,7 @@ namespace M10Winform
                 //ftpRequest.AuthenticationLevel = System.Net.Security.AuthenticationLevel.MutualAuthRequested;
                 ftpRequest.Credentials = new NetworkCredential(user, pass);
                 /* When in doubt, use these options */
-                ftpRequest.UseBinary = true;
+                ftpRequest.UseBinary = false;
                 ftpRequest.UsePassive = true;
                 ftpRequest.KeepAlive = true;                
                 /* Specify the Type of FTP Request */
