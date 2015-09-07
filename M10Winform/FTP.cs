@@ -323,13 +323,13 @@ namespace M10Winform
                 /* Specify the Type of FTP Request */
                 ftpRequest.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
                 /* Establish Return Communication with the FTP Server */
-                System.Threading.Thread.Sleep(1000);
+                System.Threading.Thread.Sleep(3000);
                 ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
                 /* Establish Return Communication with the FTP Server */
-                System.Threading.Thread.Sleep(1000);
+                System.Threading.Thread.Sleep(3000);
                 ftpStream = ftpResponse.GetResponseStream();
                 /* Get the FTP Server's Response Stream */
-                System.Threading.Thread.Sleep(1000);
+                System.Threading.Thread.Sleep(3000);
                 StreamReader ftpReader = new StreamReader(ftpStream);
                 /* Store the Raw Response */
                 string directoryRaw = null;
