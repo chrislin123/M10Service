@@ -40,15 +40,6 @@ namespace M10Web {
         protected global::System.Web.UI.UpdatePanel UpdatePanel1;
         
         /// <summary>
-        /// txtpass 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlInputText txtpass;
-        
-        /// <summary>
         /// btnBack 控制項。
         /// </summary>
         /// <remarks>
@@ -121,6 +112,15 @@ namespace M10Web {
         protected global::System.Web.UI.WebControls.DropDownList ddlTimeCountryE;
         
         /// <summary>
+        /// txtpass 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText txtpass;
+        
+        /// <summary>
         /// btnExportCounty 控制項。
         /// </summary>
         /// <remarks>
@@ -137,6 +137,24 @@ namespace M10Web {
         /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlRainStation;
+        
+        /// <summary>
+        /// txtStationQuery 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtStationQuery;
+        
+        /// <summary>
+        /// btnStationQuery 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnStationQuery;
         
         /// <summary>
         /// Label2 控制項。
@@ -191,6 +209,15 @@ namespace M10Web {
         /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList ddlTimeRainE;
+        
+        /// <summary>
+        /// txtpass2 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText txtpass2;
         
         /// <summary>
         /// btnExportStation 控制項。
@@ -256,6 +283,15 @@ namespace M10Web {
         protected global::System.Web.UI.WebControls.DropDownList ddlTimeShpE;
         
         /// <summary>
+        /// txtpass3 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlInputText txtpass3;
+        
+        /// <summary>
         /// btnExportSHP 控制項。
         /// </summary>
         /// <remarks>
@@ -263,5 +299,14 @@ namespace M10Web {
         /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnExportSHP;
+        
+        /// <summary>
+        /// HiddevActiveTab 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField HiddevActiveTab;
     }
 }

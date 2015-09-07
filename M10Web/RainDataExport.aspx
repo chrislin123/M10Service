@@ -31,6 +31,9 @@
         <div class="container">
             <asp:UpdatePanel ID="UpdatePanel1" runat="server">
                 <ContentTemplate>
+                    <script type="text/javascript" language="javascript">
+                        //Sys.Application.add_load(jScript);
+                    </script>
 
                     <h1>查詢</h1>
                     <div class="panel panel-info">
@@ -40,7 +43,7 @@
                                 <tr>
                                     <td></td>
                                     <td style="width: 20%; text-align: right;">
-                                        密碼：<input id="txtpass" type="text" runat="server">
+                                        
                                         <asp:Button ID="btnBack" runat="server" Text="返回雨量查詢" CssClass="btn btn-success" OnClick="btnBack_Click" /></td>
                                 </tr>
                             </table>
@@ -49,18 +52,17 @@
                         </div>
                     </div>
                     <%--<ul class="nav nav-tabs">--%>
-                    <ul class="nav nav-pills">
-                        <li class="active"><a data-toggle="tab" href="#home">縣市雨量站 逐時雨量下載</a></li>
-                        <li><a data-toggle="tab" href="#menu1">單站雨量站 逐時雨量下載</a></li>
-                        <li><a data-toggle="tab" href="#menu2">各雨量站累積雨量座標下載</a></li>
-                    </ul>
+                    
 
                     <div class="tab-content">
-
+                        <ul class="nav nav-pills">
+                        <li class="active"><a data-toggle="tab" href="#home" >縣市雨量站 逐時雨量下載</a></li>
+                        <li><a data-toggle="tab" href="#menu1">單站雨量站 逐時雨量下載</a></li>
+                        <li><a data-toggle="tab" href="#menu2">各雨量站累積雨量座標下載</a></li>
+                        </ul>
                         <div id="home" class="tab-pane fade in active">
                             <br />
                             <div class="form-inline">
-
                                 <label class="label label-success" style="font-size: 20px">縣市：</label>
                                 <asp:DropDownList ID="ddlCOUNTY" runat="server" CssClass="form-control"></asp:DropDownList>
                             </div>
@@ -72,6 +74,7 @@
                             <input id="CountryDateE" type="text" class="easyui-datebox" runat="server">
                             <asp:DropDownList ID="ddlTimeCountryE" runat="server"></asp:DropDownList>
                             <br />
+                            密碼：<input id="txtpass" type="text" runat="server">
                             <asp:Button ID="btnExportCounty" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExportCounty_Click" />
 
 
@@ -84,7 +87,9 @@
                                 <asp:DropDownList ID="ddlCOUNTY2" runat="server" CssClass="form-control" AutoPostBack="true" OnSelectedIndexChanged="ddlCOUNTY2_SelectedIndexChanged"></asp:DropDownList>--%>
                                 <label class="label label-success" style="font-size: 20px">雨量站：</label>
                                 <asp:DropDownList ID="ddlRainStation" runat="server" CssClass="form-control"></asp:DropDownList>
-
+                                <label class="label label-success" style="font-size: 20px">搜尋(雨量站代碼)：</label>
+                                <asp:TextBox ID="txtStationQuery" runat="server" ></asp:TextBox>
+                                <asp:Button ID="btnStationQuery" runat="server" Text="搜尋" CssClass="btn btn-success" OnClick="btnStationQuery_Click"  />
                             </div>
                             <br />
 
@@ -95,6 +100,7 @@
                             <input id="RainDateE" type="text" class="easyui-datebox" runat="server">
                             <asp:DropDownList ID="ddlTimeRainE" runat="server"></asp:DropDownList>
                             <br />
+                            密碼：<input id="txtpass2" type="text" runat="server">
                             <asp:Button ID="btnExportStation" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExportStation_Click" />
                         </div>
                         <div id="menu2" class="tab-pane fade">
@@ -106,11 +112,53 @@
                             <input id="DateShpE" type="text" class="easyui-datebox" runat="server">
                             <asp:DropDownList ID="ddlTimeShpE" runat="server"></asp:DropDownList>
                             <br />
+                            密碼：<input id="txtpass3" type="text" runat="server">
                             <asp:Button ID="btnExportSHP" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExportSHP_Click" />
                         </div>
 
                     </div>
+                    <asp:HiddenField ID="HiddevActiveTab" runat="server" />
 
+                    <script type="text/javascript">
+                        $('#dd').datebox({
+                            //required: true
+                        });
+
+
+                        $('#Button2').click(
+                            function () {
+                                Button3.click();
+
+                            }
+                            );
+
+                       
+
+                        function InitForm() {
+                            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                                var target = $(e.target).attr("href") // activated tab
+                                //alert(target);
+                                localStorage.setItem('lastTab1', target);
+                            });
+
+                            var lastTab = localStorage.getItem('lastTab1');
+                            if (lastTab) {
+                                $('[href="' + lastTab + '"]').tab('show');
+                            }
+                        }
+
+                        var prm = Sys.WebForms.PageRequestManager.getInstance();
+
+                        prm.add_endRequest(function () {
+                            InitForm();
+                        });
+
+                        $(document).ready(function () {
+                            InitForm();
+                        });
+
+
+                    </script>
                 </ContentTemplate>
                 <Triggers>
                     <asp:PostBackTrigger ControlID="btnExportCounty" />
@@ -124,21 +172,6 @@
 
         </div>
     </form>
-    <script type="text/javascript">
-        $('#dd').datebox({
-            //required: true
-        });
-
-
-        $('#Button2').click(
-            function () {
-                Button3.click();
-
-            }
-            );
-
-
-
-    </script>
+    
 </body>
 </html>

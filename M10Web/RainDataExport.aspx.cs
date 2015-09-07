@@ -20,6 +20,7 @@ namespace M10Web
     {
         ODAL oDal = new ODAL("DBConnectionString");
         string ssql = string.Empty;
+        protected string ActiveTab { get; private set; }
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -62,10 +63,25 @@ namespace M10Web
 
                 //ddlCOUNTY2_SelectedIndexChanged(sender, new EventArgs());
             }
+
+            if (!Page.IsPostBack)
+            {
+                // 0 is the first tab
+                this.ActiveTab = "0";
+            }
+            else
+            {   
+                this.ActiveTab = HiddevActiveTab.Value;
+                if (string.IsNullOrWhiteSpace(this.ActiveTab))
+                {
+                    this.ActiveTab = "0";
+                }
+            }
         }      
 
         private void bindRainStation()
         {
+
             ddlRainStation.Items.Clear();
             //return;
             ssql = @"   select * from StationData                         
@@ -161,7 +177,35 @@ namespace M10Web
             DateTime dtE = TransQueryTime(sEDate, sETime);
             try
             {
-                ssql = @" select * from RainStation 
+                ssql = @" select 
+                            STID                            
+                            ,STNAME
+                            ,LAT
+                            ,LON
+                            ,WGS84_lon
+                            ,WGS84_lat
+                            ,ELEV
+                            ,RTime
+                            ,MIN10
+                            ,RAIN
+                            ,Hour2
+                            ,HOUR3
+                            ,HOUR6
+                            ,HOUR12
+                            ,HOUR24
+                            ,NOW
+                            ,Day1
+                            ,Day2
+                            ,Day3
+                            ,COUNTY
+                            ,TOWN
+                            ,ATTRIBUTE
+                            ,STATUS
+                            ,DebrisRefStation
+                            ,RT
+                            ,LRTI
+                            ,WLRTI 
+                            from RainStation 
                             where COUNTY = '{0}'   
                             and RTime between '{1}' and '{2}'
                             and datepart(mi,RTime) = 0 and datepart(ss,RTime) = 0
@@ -189,15 +233,13 @@ namespace M10Web
 
         protected void btnExportStation_Click(object sender, EventArgs e)
         {
-            string spass = txtpass.Value;
-
+            string spass = txtpass2.Value;
+            
             if (spass.ToUpper() != "ESWCRC2015")
             {
                 ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "msg", "alert('密碼錯誤!')", true);
                 return;
             }            
-
-
 
             string sSaveFilePath = @"d:\temp\" + "RainStationData_" + Guid.NewGuid().ToString() + ".xlsx";
 
@@ -211,7 +253,35 @@ namespace M10Web
             DateTime dtE = TransQueryTime(sEDate, sETime);
             try
             {
-                ssql = @" select * from RainStation 
+                ssql = @" select 
+                            STID                            
+                            ,STNAME
+                            ,LAT
+                            ,LON
+                            ,WGS84_lon
+                            ,WGS84_lat
+                            ,ELEV
+                            ,RTime
+                            ,MIN10
+                            ,RAIN
+                            ,Hour2
+                            ,HOUR3
+                            ,HOUR6
+                            ,HOUR12
+                            ,HOUR24
+                            ,NOW
+                            ,Day1
+                            ,Day2
+                            ,Day3
+                            ,COUNTY
+                            ,TOWN
+                            ,ATTRIBUTE
+                            ,STATUS
+                            ,DebrisRefStation
+                            ,RT
+                            ,LRTI
+                            ,WLRTI 
+                            from RainStation 
                             where STID = '{0}'   
                             and RTime between '{1}' and '{2}'
                             and datepart(mi,RTime) = 0 and datepart(ss,RTime) = 0
@@ -239,8 +309,8 @@ namespace M10Web
 
         protected void btnExportSHP_Click(object sender, EventArgs e)
         {
-            string spass = txtpass.Value;
-
+            string spass = txtpass3.Value;
+            
             if (spass.ToUpper() != "ESWCRC2015")
             {
                 ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "msg", "alert('密碼錯誤!')", true);
@@ -504,6 +574,43 @@ namespace M10Web
         protected void btnBack_Click(object sender, EventArgs e)
         {
             Response.Redirect("default.aspx", true);
+        }
+
+        private void bindRainStationById(string pStationId)
+        {
+
+            ddlRainStation.Items.Clear();
+            //return;
+            ssql = @"   select * from StationData 
+                        where STID = '{0}'                        
+                        order by county,stname
+                    ";
+            oDal.CommandText = string.Format(ssql, pStationId);
+
+            foreach (DataRow dr in oDal.DataTable().Rows)
+            {
+                string sText = string.Format("{0}({1}-{2})", dr["STID"].ToString(), dr["county"].ToString(), dr["STNAME"].ToString());
+                ddlRainStation.Items.Add(new ListItem(sText, dr["STID"].ToString()));
+            }
+        }
+
+        protected void btnStationQuery_Click(object sender, EventArgs e)
+        {
+
+            if (txtStationQuery.Text.Trim() == "")
+            {
+                bindRainStation();
+            }
+            else
+            {
+                bindRainStationById(txtStationQuery.Text.Trim());
+            }
+            
+
+
+
+            //ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "msg", "debugger;gotab();", true);
+            //return;
         }
 
        
