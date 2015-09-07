@@ -22,6 +22,9 @@ namespace M10Web
         string ssql = string.Empty;
         protected string ActiveTab { get; private set; }
 
+        string[] aPsw = new string[] { "ESWCRC2015", "ADMIN" };
+        
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (IsPostBack == false)
@@ -157,9 +160,7 @@ namespace M10Web
 
         protected void btnExportCounty_Click(object sender, EventArgs e)
         {
-            string spass = txtpass.Value;
-
-            if (spass.ToUpper() != "ESWCRC2015")
+            if (chkPassword( txtpass.Value) == false)
             {
                 ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "msg", "alert('密碼錯誤!')", true);
                 return;
@@ -233,9 +234,7 @@ namespace M10Web
 
         protected void btnExportStation_Click(object sender, EventArgs e)
         {
-            string spass = txtpass2.Value;
-            
-            if (spass.ToUpper() != "ESWCRC2015")
+            if (chkPassword(txtpass2.Value) == false)
             {
                 ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "msg", "alert('密碼錯誤!')", true);
                 return;
@@ -309,9 +308,7 @@ namespace M10Web
 
         protected void btnExportSHP_Click(object sender, EventArgs e)
         {
-            string spass = txtpass3.Value;
-            
-            if (spass.ToUpper() != "ESWCRC2015")
+            if (chkPassword(txtpass3.Value) == false)
             {
                 ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "msg", "alert('密碼錯誤!')", true);
                 return;
@@ -339,7 +336,8 @@ namespace M10Web
 
                 ssql = @" select STID,STNAME,COUNTY,LAT,LON,sum(CONVERT(float, RAIN)) as RAIN from RainStation 
                             where 1 = 1   
-                            and RTime between '{0}' and '{1}'                            
+                            and RTime between '{0}' and '{1}'   
+                            and datepart(mi,RTime) = 0 and datepart(ss,RTime) = 0                            
                             group by STID,STNAME,COUNTY,LAT,LON
                         ";
                 string sSqlStr = string.Format(ssql, dtS.ToString("s"), dtE.ToString("s"));
@@ -582,7 +580,7 @@ namespace M10Web
             ddlRainStation.Items.Clear();
             //return;
             ssql = @"   select * from StationData 
-                        where STID = '{0}'                        
+                        where STID like '%{0}%'                        
                         order by county,stname
                     ";
             oDal.CommandText = string.Format(ssql, pStationId);
@@ -611,6 +609,22 @@ namespace M10Web
 
             //ScriptManager.RegisterClientScriptBlock(this, this.GetType(), "msg", "debugger;gotab();", true);
             //return;
+        }
+
+        private Boolean chkPassword(string sPsw) {
+            Boolean bResult = false;
+            
+            for (int i = 0; i < aPsw.Length; i++) 
+	        {
+                if (string.Compare(sPsw.ToUpper(), aPsw[i], true) == 0)
+                {
+                    bResult = true;
+                }       
+	        } 
+
+	        //return false, 执行false处理. 
+
+            return bResult;
         }
 
        
