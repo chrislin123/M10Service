@@ -161,8 +161,7 @@ namespace M10Winform
 
                     //記錄轉檔資料
                     FileTransLog(fi.Name);
-
-
+                                      
                     if (File.Exists(fname))
                     {
                         if (File.Exists(folderBack + fi.Name))
@@ -178,8 +177,9 @@ namespace M10Winform
                 }
 
             }
-            catch (Exception )
+            catch (Exception ex)
             {
+                SetEventLog("ProceStart 錯誤:" + ex.ToString(),System.Diagnostics.EventLogEntryType.Error);
                 //eventLog1.WriteEntry("ProceStart 錯誤:" + e.ToString());
                 
             }
@@ -451,6 +451,10 @@ namespace M10Winform
                         bUpdateRuntim = true;
                     }
 	            }
+
+                //1040915 一律更新
+                bUpdateRuntim = true;
+
 
                 if (bUpdateRuntim == true)
                 {
@@ -770,13 +774,26 @@ namespace M10Winform
             }
         }
 
-        private void SetEventLog(string sLogString){            
+        public void SetEventLog(string sLogString){            
 
             //todo 加入換行符號
             eventLog1.WriteEntry(
                     string.Format("{0} [log] : {1} ", DateTime.Now.ToString(), sLogString)
+                   
+            );            
+        }
+
+        public void SetEventLog(string sLogString, System.Diagnostics.EventLogEntryType EntryType)
+        {
+
+            //todo 加入換行符號
+            eventLog1.WriteEntry(
+                    string.Format("{0} [log] : {1} ", DateTime.Now.ToString(), sLogString)
+                    , EntryType
             );
         }
+
+
 
         private DateTime RTimeToDateTime(string pRTime)
         {
