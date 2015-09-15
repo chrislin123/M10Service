@@ -92,6 +92,17 @@ namespace M10Web
         {
             //ssql = " SELECT * FROM RunTimeRainData where COUNTY = '" + ddlCOUNTY.SelectedValue + "' ";
 
+            //取得更新最新時間
+            ssql = " select MAX(RTime) as RTime from RunTimeRainData ";
+            oDal.CommandText = ssql;
+            DataTable dttime = oDal.DataTable();
+
+            if (dttime.Rows.Count > 0)
+            {
+                lblDataTime.Text = "資料時間:" + dttime.Rows[0]["RTime"].ToString();
+            }
+
+
             //預先轉型態，Gridview可直接排序   
             ssql = @"   select CONVERT(float, MIN10) as MIN10
                         ,CONVERT(float, RAIN) as RAIN
@@ -115,10 +126,7 @@ namespace M10Web
             DataTable dt = oDal.DataTable();
 
 
-            if (dt.Rows.Count > 0)
-            {
-                lblDataTime.Text = "資料時間:" + dt.Rows[0]["RTime"].ToString();
-            }
+            
 
             //1040806 處理資料異常，所有數值改為0
             foreach (DataRow dr in dt.Rows)
