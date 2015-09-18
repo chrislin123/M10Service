@@ -228,7 +228,10 @@ namespace M10Winform
         {
             try
             {
+                //string filepath = host + "/" + fileName;
                 /* Create an FTP Request */
+                //ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host + "/" + fileName);
+
                 ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host + "/" + fileName);
                 /* Log in to the FTP Server with the User Name and Password Provided */
                 ftpRequest.Credentials = new NetworkCredential(user, pass);
@@ -446,5 +449,83 @@ namespace M10Winform
             /* Return an Empty string Array if an Exception Occurs */
             return new string[] { "" };
         }
+
+
+        public void Move(string remoteFile, string newFile)
+        {
+            //string url = "ftp://192.168.1.1/origFolder/origFile.txt";
+            //FtpWebRequest req = FtpWebRequest.Create(url) as FtpWebRequest;
+            //req.Credentials = new NetworkCredential("username", "password");
+            //req.Method = WebRequestMethods.Ftp.Rename;
+            //req.RenameTo = "/newFolder/newFileName.txt";
+            //try
+            //{
+            //    using (StreamReader sr =
+            //        new StreamReader(req.GetResponse().GetResponseStream()))
+            //    {
+            //        //測試發現，正常時傳回的是空字串，不用處理
+            //        string result = sr.ReadToEnd();
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    //... 錯誤處理 ...
+            //}
+
+            try
+            {
+                /* Create an FTP Request */
+                ftpRequest = (FtpWebRequest)FtpWebRequest.Create(host + "/" + remoteFile);
+                /* Log in to the FTP Server with the User Name and Password Provided */
+                ftpRequest.Credentials = new NetworkCredential(user, pass);
+                /* When in doubt, use these options */
+                ftpRequest.UseBinary = true;
+                ftpRequest.UsePassive = true;
+                ftpRequest.KeepAlive = true;
+                /* Specify the Type of FTP Request */
+                //ftpRequest.Method = WebRequestMethods.Ftp.DownloadFile;
+
+                ftpRequest.Method = WebRequestMethods.Ftp.Rename;
+                ftpRequest.RenameTo = newFile;
+                
+
+                /* Establish Return Communication with the FTP Server */
+
+                using (StreamReader sr = new StreamReader(ftpRequest.GetResponse().GetResponseStream()))
+                {
+                    //測試發現，正常時傳回的是空字串，不用處理
+                    string result = sr.ReadToEnd();
+                }
+                //ftpResponse = (FtpWebResponse)ftpRequest.GetResponse();
+                ///* Get the FTP Server's Response Stream */
+                //ftpStream = ftpResponse.GetResponseStream();
+                ///* Open a File Stream to Write the Downloaded File */
+                //FileStream localFileStream = new FileStream(localFile, FileMode.Create);
+                ///* Buffer for the Downloaded Data */
+                //byte[] byteBuffer = new byte[bufferSize];
+                //int bytesRead = ftpStream.Read(byteBuffer, 0, bufferSize);
+                ///* Download the File by Writing the Buffered Data Until the Transfer is Complete */
+                //try
+                //{
+                //    while (bytesRead > 0)
+                //    {
+                //        localFileStream.Write(byteBuffer, 0, bytesRead);
+                //        bytesRead = ftpStream.Read(byteBuffer, 0, bufferSize);
+                //    }
+                //}
+                //catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+                /* Resource Cleanup */
+                //localFileStream.Close();
+                ftpStream.Close();
+                ftpResponse.Close();
+                ftpRequest = null;
+            }
+            catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+            return;
+        }
+
+
+
+        
     } 
 }

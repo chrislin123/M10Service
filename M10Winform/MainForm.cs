@@ -13,6 +13,7 @@ using System.Data.SqlClient;
 using System.Transactions;
 using CL.Data;
 using System.Data.Common;
+using System.Globalization;
 
 namespace M10Winform
 {
@@ -199,6 +200,8 @@ namespace M10Winform
             oDal.ExecuteSql();
         }
 
+        
+
         private void FtpDownload()
         {
             //string sIP = "192.168.13.155";
@@ -265,6 +268,34 @@ namespace M10Winform
                 }
 
 
+                //移動FTP檔案到FTP的備份區
+                foreach (string sFileName in lstFileName)
+                {
+                    //移動兩天前的資料
+                    DateTime dtRunTimeRainData = DateTime.Now.AddDays(-2);
+
+                    IFormatProvider yyyymmddFormat = new CultureInfo(String.Empty, false);
+                    string f = "yyyy_MM_dd_HH_mm";
+
+                     
+
+                    //dtRTime = Convert.ToDateTime(sFileName.Split('.')[0]);
+
+                    DateTime dtRTime = DateTime.ParseExact(sFileName.Split('.')[0], f, yyyymmddFormat);
+
+
+                    if (DateTime.Compare(dtRTime, dtRunTimeRainData) <= 0)
+                    {
+                        ftpClient.getFileSize("14_FCU_raindata/M10/" + sFileName);
+
+
+                        ftpClient.Move("14_FCU_raindata/M10/" + sFileName, "14_FCU_raindata/M10/bak/" + sFileName);
+                        //移動檔案
+                        //bUpdateRuntim = true;
+                    }                    
+                }
+
+
                 foreach (string sFileName in lstFileName)
                 {
                     //判斷是否已轉檔
@@ -282,6 +313,9 @@ namespace M10Winform
                         ShowMessageToFront("Ftp下載檔案到" +  folderName + sFileName);
                     }
                 }
+
+
+                
             }
             catch (Exception ex)
             {
