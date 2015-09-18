@@ -33,6 +33,8 @@ namespace M10Winform
         string sIP = "140.116.38.196";
         string sUser = "FCU2015";
         string sPassword = "FCU2015";
+        //string sUser = "test";
+        //string sPassword = "test";
 
         //string sConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False;Initial Catalog=m10;"; 
 
@@ -269,31 +271,32 @@ namespace M10Winform
 
 
                 //移動FTP檔案到FTP的備份區
-                foreach (string sFileName in lstFileName)
-                {
-                    //移動兩天前的資料
-                    DateTime dtRunTimeRainData = DateTime.Now.AddDays(-2);
+                //foreach (string sFileName in lstFileName)
+                //{
+                //    //移動兩天前的資料
+                //    DateTime dtRunTimeRainData = DateTime.Now.AddDays(-2);
 
-                    IFormatProvider yyyymmddFormat = new CultureInfo(String.Empty, false);
-                    string f = "yyyy_MM_dd_HH_mm";
+                //    IFormatProvider yyyymmddFormat = new CultureInfo(String.Empty, false);
+                //    string f = "yyyy_MM_dd_HH_mm";
 
                      
 
-                    //dtRTime = Convert.ToDateTime(sFileName.Split('.')[0]);
+                //    //dtRTime = Convert.ToDateTime(sFileName.Split('.')[0]);
 
-                    DateTime dtRTime = DateTime.ParseExact(sFileName.Split('.')[0], f, yyyymmddFormat);
-
-
-                    if (DateTime.Compare(dtRTime, dtRunTimeRainData) <= 0)
-                    {
-                        ftpClient.getFileSize("14_FCU_raindata/M10/" + sFileName);
+                //    DateTime dtRTime = DateTime.ParseExact(sFileName.Split('.')[0], f, yyyymmddFormat);
 
 
-                        ftpClient.Move("14_FCU_raindata/M10/" + sFileName, "14_FCU_raindata/M10/bak/" + sFileName);
-                        //移動檔案
-                        //bUpdateRuntim = true;
-                    }                    
-                }
+                //    if (DateTime.Compare(dtRTime, dtRunTimeRainData) <= 0)
+                //    {
+                //        ftpClient.rename("14_FCU_raindata/M10/" + sFileName, "//14_FCU_raindata/M10/bak/" + sFileName);
+                //        ftpClient.getFileSize("14_FCU_raindata/M10/" + sFileName);
+
+
+                //        ftpClient.Move("14_FCU_raindata/M10/" + sFileName, "//14_FCU_raindata/M10/bak/" + sFileName);
+                //        //移動檔案
+                //        //bUpdateRuntim = true;
+                //    }                    
+                //}
 
 
                 foreach (string sFileName in lstFileName)
