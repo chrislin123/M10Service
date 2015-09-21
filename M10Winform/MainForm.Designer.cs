@@ -36,6 +36,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnStart = new System.Windows.Forms.Button();
             this.chkdownload = new System.Windows.Forms.CheckBox();
+            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.eventLog1)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -91,7 +92,6 @@
             // 
             // chkdownload
             // 
-            this.chkdownload.AutoEllipsis = true;
             this.chkdownload.AutoSize = true;
             this.chkdownload.Checked = true;
             this.chkdownload.CheckState = System.Windows.Forms.CheckState.Checked;
@@ -102,11 +102,23 @@
             this.chkdownload.Text = "是否下載";
             this.chkdownload.UseVisualStyleBackColor = true;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(538, 353);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 5;
+            this.button1.Text = "測試";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Visible = false;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(644, 409);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.chktimer);
             this.Controls.Add(this.richTextBox1);
@@ -130,6 +142,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.CheckBox chkdownload;
+        private System.Windows.Forms.Button button1;
     }
 }
 
