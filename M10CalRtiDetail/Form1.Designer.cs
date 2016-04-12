@@ -42,6 +42,9 @@
             this.lblrti50 = new System.Windows.Forms.Label();
             this.lblrti70 = new System.Windows.Forms.Label();
             this.lblrti90 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.ddlstation = new System.Windows.Forms.ComboBox();
+            this.btnInsert = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
@@ -51,8 +54,8 @@
             // 
             this.ddlver.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddlver.FormattingEnabled = true;
-            this.ddlver.Location = new System.Drawing.Point(216, 20);
-            this.ddlver.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.ddlver.Location = new System.Drawing.Point(216, 4);
+            this.ddlver.Margin = new System.Windows.Forms.Padding(5);
             this.ddlver.Name = "ddlver";
             this.ddlver.Size = new System.Drawing.Size(199, 28);
             this.ddlver.TabIndex = 0;
@@ -60,17 +63,17 @@
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(14, 101);
-            this.dataGridView1.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.dataGridView1.Location = new System.Drawing.Point(14, 85);
+            this.dataGridView1.Margin = new System.Windows.Forms.Padding(5);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(1417, 666);
+            this.dataGridView1.Size = new System.Drawing.Size(943, 735);
             this.dataGridView1.TabIndex = 1;
             // 
             // btnstart
             // 
-            this.btnstart.Location = new System.Drawing.Point(489, 53);
-            this.btnstart.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.btnstart.Location = new System.Drawing.Point(425, 41);
+            this.btnstart.Margin = new System.Windows.Forms.Padding(5);
             this.btnstart.Name = "btnstart";
             this.btnstart.Size = new System.Drawing.Size(125, 38);
             this.btnstart.TabIndex = 2;
@@ -87,8 +90,8 @@
             "1",
             "2",
             "3"});
-            this.ddlTimeDelay.Location = new System.Drawing.Point(216, 63);
-            this.ddlTimeDelay.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.ddlTimeDelay.Location = new System.Drawing.Point(216, 47);
+            this.ddlTimeDelay.Margin = new System.Windows.Forms.Padding(5);
             this.ddlTimeDelay.Name = "ddlTimeDelay";
             this.ddlTimeDelay.Size = new System.Drawing.Size(199, 28);
             this.ddlTimeDelay.TabIndex = 3;
@@ -96,7 +99,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(70, 65);
+            this.label1.Location = new System.Drawing.Point(70, 49);
             this.label1.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(89, 20);
@@ -106,16 +109,16 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(70, 25);
+            this.label2.Location = new System.Drawing.Point(70, 9);
             this.label2.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(54, 20);
+            this.label2.Size = new System.Drawing.Size(99, 20);
             this.label2.TabIndex = 5;
-            this.label2.Text = "label2";
+            this.label2.Text = "版本(日期)：";
             // 
             // btnRTI10
             // 
-            this.btnRTI10.Location = new System.Drawing.Point(642, 53);
+            this.btnRTI10.Location = new System.Drawing.Point(750, 41);
             this.btnRTI10.Margin = new System.Windows.Forms.Padding(5);
             this.btnRTI10.Name = "btnRTI10";
             this.btnRTI10.Size = new System.Drawing.Size(125, 38);
@@ -127,27 +130,27 @@
             // dataGridView2
             // 
             this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView2.Location = new System.Drawing.Point(42, 123);
+            this.dataGridView2.Location = new System.Drawing.Point(967, 85);
             this.dataGridView2.Margin = new System.Windows.Forms.Padding(5);
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.RowTemplate.Height = 24;
-            this.dataGridView2.Size = new System.Drawing.Size(572, 534);
+            this.dataGridView2.Size = new System.Drawing.Size(572, 361);
             this.dataGridView2.TabIndex = 7;
             // 
             // dataGridView3
             // 
             this.dataGridView3.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView3.Location = new System.Drawing.Point(701, 123);
+            this.dataGridView3.Location = new System.Drawing.Point(967, 456);
             this.dataGridView3.Margin = new System.Windows.Forms.Padding(5);
             this.dataGridView3.Name = "dataGridView3";
             this.dataGridView3.RowTemplate.Height = 24;
-            this.dataGridView3.Size = new System.Drawing.Size(572, 534);
+            this.dataGridView3.Size = new System.Drawing.Size(572, 364);
             this.dataGridView3.TabIndex = 8;
             // 
             // lblrti10
             // 
             this.lblrti10.AutoSize = true;
-            this.lblrti10.Location = new System.Drawing.Point(786, 66);
+            this.lblrti10.Location = new System.Drawing.Point(894, 54);
             this.lblrti10.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.lblrti10.Name = "lblrti10";
             this.lblrti10.Size = new System.Drawing.Size(89, 20);
@@ -157,7 +160,7 @@
             // lblrti30
             // 
             this.lblrti30.AutoSize = true;
-            this.lblrti30.Location = new System.Drawing.Point(904, 66);
+            this.lblrti30.Location = new System.Drawing.Point(1012, 54);
             this.lblrti30.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.lblrti30.Name = "lblrti30";
             this.lblrti30.Size = new System.Drawing.Size(89, 20);
@@ -167,7 +170,7 @@
             // lblrti50
             // 
             this.lblrti50.AutoSize = true;
-            this.lblrti50.Location = new System.Drawing.Point(1022, 66);
+            this.lblrti50.Location = new System.Drawing.Point(1130, 54);
             this.lblrti50.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.lblrti50.Name = "lblrti50";
             this.lblrti50.Size = new System.Drawing.Size(89, 20);
@@ -177,7 +180,7 @@
             // lblrti70
             // 
             this.lblrti70.AutoSize = true;
-            this.lblrti70.Location = new System.Drawing.Point(1140, 66);
+            this.lblrti70.Location = new System.Drawing.Point(1248, 54);
             this.lblrti70.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.lblrti70.Name = "lblrti70";
             this.lblrti70.Size = new System.Drawing.Size(89, 20);
@@ -187,18 +190,52 @@
             // lblrti90
             // 
             this.lblrti90.AutoSize = true;
-            this.lblrti90.Location = new System.Drawing.Point(1258, 66);
+            this.lblrti90.Location = new System.Drawing.Point(1366, 54);
             this.lblrti90.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.lblrti90.Name = "lblrti90";
             this.lblrti90.Size = new System.Drawing.Size(89, 20);
             this.lblrti90.TabIndex = 13;
             this.lblrti90.Text = "工作延時：";
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(776, 9);
+            this.label3.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(57, 20);
+            this.label3.TabIndex = 15;
+            this.label3.Text = "站號：";
+            // 
+            // ddlstation
+            // 
+            this.ddlstation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddlstation.FormattingEnabled = true;
+            this.ddlstation.Location = new System.Drawing.Point(922, 4);
+            this.ddlstation.Margin = new System.Windows.Forms.Padding(5);
+            this.ddlstation.Name = "ddlstation";
+            this.ddlstation.Size = new System.Drawing.Size(199, 28);
+            this.ddlstation.TabIndex = 14;
+            // 
+            // btnInsert
+            // 
+            this.btnInsert.Location = new System.Drawing.Point(560, 41);
+            this.btnInsert.Margin = new System.Windows.Forms.Padding(5);
+            this.btnInsert.Name = "btnInsert";
+            this.btnInsert.Size = new System.Drawing.Size(125, 38);
+            this.btnInsert.TabIndex = 16;
+            this.btnInsert.Text = "匯入資料";
+            this.btnInsert.UseVisualStyleBackColor = true;
+            this.btnInsert.Click += new System.EventHandler(this.btnInsert_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1445, 781);
+            this.ClientSize = new System.Drawing.Size(1769, 834);
+            this.Controls.Add(this.btnInsert);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.ddlstation);
             this.Controls.Add(this.lblrti90);
             this.Controls.Add(this.lblrti70);
             this.Controls.Add(this.lblrti50);
@@ -214,7 +251,7 @@
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.ddlver);
             this.Font = new System.Drawing.Font("微軟正黑體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.Margin = new System.Windows.Forms.Padding(5);
             this.Name = "MainForm";
             this.Text = "M10_Cal_RtiDetail";
             this.Load += new System.EventHandler(this.MainForm_Load);
@@ -242,6 +279,9 @@
         private System.Windows.Forms.Label lblrti50;
         private System.Windows.Forms.Label lblrti70;
         private System.Windows.Forms.Label lblrti90;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox ddlstation;
+        private System.Windows.Forms.Button btnInsert;
     }
 }
 
