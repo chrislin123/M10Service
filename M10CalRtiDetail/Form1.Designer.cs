@@ -44,7 +44,8 @@
             this.lblrti90 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.ddlstation = new System.Windows.Forms.ComboBox();
-            this.btnInsert = new System.Windows.Forms.Button();
+            this.btnAll = new System.Windows.Forms.Button();
+            this.ddltype = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView3)).BeginInit();
@@ -217,23 +218,38 @@
             this.ddlstation.Size = new System.Drawing.Size(199, 28);
             this.ddlstation.TabIndex = 14;
             // 
-            // btnInsert
+            // btnAll
             // 
-            this.btnInsert.Location = new System.Drawing.Point(560, 41);
-            this.btnInsert.Margin = new System.Windows.Forms.Padding(5);
-            this.btnInsert.Name = "btnInsert";
-            this.btnInsert.Size = new System.Drawing.Size(125, 38);
-            this.btnInsert.TabIndex = 16;
-            this.btnInsert.Text = "匯入資料";
-            this.btnInsert.UseVisualStyleBackColor = true;
-            this.btnInsert.Click += new System.EventHandler(this.btnInsert_Click);
+            this.btnAll.Location = new System.Drawing.Point(560, 41);
+            this.btnAll.Margin = new System.Windows.Forms.Padding(5);
+            this.btnAll.Name = "btnAll";
+            this.btnAll.Size = new System.Drawing.Size(125, 38);
+            this.btnAll.TabIndex = 16;
+            this.btnAll.Text = "全部轉檔";
+            this.btnAll.UseVisualStyleBackColor = true;
+            this.btnAll.Click += new System.EventHandler(this.btnAll_Click);
+            // 
+            // ddltype
+            // 
+            this.ddltype.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddltype.FormattingEnabled = true;
+            this.ddltype.Items.AddRange(new object[] {
+            "RTI",
+            "RTI3"});
+            this.ddltype.Location = new System.Drawing.Point(425, 6);
+            this.ddltype.Margin = new System.Windows.Forms.Padding(5);
+            this.ddltype.Name = "ddltype";
+            this.ddltype.Size = new System.Drawing.Size(199, 28);
+            this.ddltype.TabIndex = 17;
+            this.ddltype.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1769, 834);
-            this.Controls.Add(this.btnInsert);
+            this.Controls.Add(this.ddltype);
+            this.Controls.Add(this.btnAll);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.ddlstation);
             this.Controls.Add(this.lblrti90);
@@ -281,7 +297,8 @@
         private System.Windows.Forms.Label lblrti90;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ComboBox ddlstation;
-        private System.Windows.Forms.Button btnInsert;
+        private System.Windows.Forms.Button btnAll;
+        private System.Windows.Forms.ComboBox ddltype;
     }
 }
 

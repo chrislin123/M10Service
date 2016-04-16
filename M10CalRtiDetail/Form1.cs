@@ -34,6 +34,8 @@ namespace M10CalRtiDetail
 
             try
             {
+                ddltype.SelectedIndex = 0;
+
                 //建立資料表基本資料
                 buildtable();
                 
@@ -52,7 +54,7 @@ namespace M10CalRtiDetail
                     ddlver.Items.Add(dr["ver"].ToString());
                 }
 
-                ddlver.SelectedIndex = 0;
+                ddlver.SelectedIndex = dt.Rows.Count - 1;
                 ddlTimeDelay.SelectedIndex = 0;
 
                 //取得所有站號
@@ -110,10 +112,12 @@ namespace M10CalRtiDetail
                     
                     //取得總筆數                
                     ssql = " select count(*) as total from RtiData "
-                         + " where station = '" + sStation + "' ";
+                         + " where station = '" + sStation + "' "
+                         + " and ver = '" + ddlver.Text + "' "
+                         ;
                     if (ddlTimeDelay.Text != "0")
                     {
-                        ssql += " and maxraintime > " + ddlTimeDelay.Text + " ";
+                        ssql += " and raindelay > " + ddlTimeDelay.Text + " ";
                     }
                     oDal.CommandText = ssql;
                     string sTotalcount = oDal.Value().ToString().Trim();
@@ -123,10 +127,12 @@ namespace M10CalRtiDetail
 
                     //取得開始時間
                     ssql = " select MIN(date)  from RtiData "
-                         + " where station = '" + sStation + "' ";
+                         + " where station = '" + sStation + "' "
+                         + " and ver = '" + ddlver.Text + "' "
+                         ;
                     if (ddlTimeDelay.Text != "0")
                     {
-                        ssql += " and maxraintime > " + ddlTimeDelay.Text + " ";
+                        ssql += " and raindelay > " + ddlTimeDelay.Text + " ";
                     }
                     oDal.CommandText = ssql;
                     string sStartDate = oDal.Value().ToString().Trim();
@@ -137,10 +143,12 @@ namespace M10CalRtiDetail
 
                     //取得結束時間
                     ssql = " select MAX(date)  from RtiData "
-                         + " where station = '" + sStation + "' ";
+                         + " where station = '" + sStation + "' "
+                         + " and ver = '" + ddlver.Text + "' "
+                         ;
                     if (ddlTimeDelay.Text != "0")
                     {
-                        ssql += " and maxraintime > " + ddlTimeDelay.Text + " ";
+                        ssql += " and raindelay > " + ddlTimeDelay.Text + " ";
                     }
                     oDal.CommandText = ssql;
                     string sEndDate = oDal.Value().ToString().Trim();
@@ -149,7 +157,7 @@ namespace M10CalRtiDetail
                     Application.DoEvents();
 
 
-                    RtiProc oRtiProc = new RtiProc(ddlver.Text, sStation, ddlTimeDelay.Text, sConnectionString);
+                    RtiProc oRtiProc = new RtiProc(ddlver.Text, sStation, ddlTimeDelay.Text, sConnectionString,ddltype.Text);
                     //進行計算
                     oRtiProc.RtiCal();
 
@@ -194,7 +202,7 @@ namespace M10CalRtiDetail
                 //string sStation = "C0A530";
                 string sStation = ddlstation.Text;
 
-                RtiProc oRtiProc = new RtiProc(ddlver.Text, sStation, ddlTimeDelay.Text, sConnectionString);
+                RtiProc oRtiProc = new RtiProc(ddlver.Text, sStation, ddlTimeDelay.Text, sConnectionString,ddltype.Text);
                 //進行計算
                 oRtiProc.RtiCal();
 
@@ -222,19 +230,7 @@ namespace M10CalRtiDetail
 
         private void btnInsert_Click(object sender, EventArgs e)
         {
-            try
-            {
-                foreach (DataRow dr in dt_rtidetail.Rows)
-                {
-                    InsertData(dr);                 
-                }
-
-                MessageBox.Show("寫入完畢");
-            }
-            catch (Exception)
-            {   
-                throw;
-            }
+            
         }
 
 
@@ -243,53 +239,110 @@ namespace M10CalRtiDetail
         {
             try
             {
-                //刪除資料
-                ssql = " delete RtiDetail "
-                     + " where station = '" + dr["station"].ToString() + "' "
-                     + " and delaytime = '" + dr["delaytime"].ToString() + "' "
-                     ;
-                oDal.CommandText = ssql;
-                oDal.ExecuteSql();
+                if (ddltype.Text == "RTI")
+                {
+                    //刪除資料
+                    ssql = " delete RtiDetail "
+                         + " where station = '" + dr["station"].ToString() + "' "
+                         + " and delaytime = '" + dr["delaytime"].ToString() + "' "
+                         ;
+                    oDal.CommandText = ssql;
+                    oDal.ExecuteSql();
 
-                //寫入資料
-                ssql = " INSERT INTO RtiDetail "
-                        + " ([station]"
-                    + " ,[delaytime]"
-                    + " ,[totalcount]"
-                    + " ,[startdate]"
-                    + " ,[enddate]"
-                    + " ,[rti10]"
-                    + " ,[rti30]"
-                    + " ,[rti50]"
-                    + " ,[rti70]"
-                    + " ,[rti90])"
-                    + " VALUES "
-                    + " ( "
-                    + " '" + dr["station"].ToString() + "' "
-                    + " ,'" + dr["delaytime"].ToString() + "' "
-                    + " ,'" + dr["totalcount"].ToString() + "' "
-                    + " ,'" + dr["startdate"].ToString() + "' "
-                    + " ,'" + dr["enddate"].ToString() + "' "
-                    + " ,'" + dr["rti10"].ToString() + "' "
-                    + " ,'" + dr["rti30"].ToString() + "' "
-                    + " ,'" + dr["rti50"].ToString() + "' "
-                    + " ,'" + dr["rti70"].ToString() + "' "
-                    + " ,'" + dr["rti90"].ToString() + "' "
-                        + " ) "
-                        ;
+                    //寫入資料
+                    ssql = " INSERT INTO RtiDetail "
+                            + " ([station]"
+                        + " ,[delaytime]"
+                        + " ,[totalcount]"
+                        + " ,[startdate]"
+                        + " ,[enddate]"
+                        + " ,[rti10]"
+                        + " ,[rti30]"
+                        + " ,[rti50]"
+                        + " ,[rti70]"
+                        + " ,[rti90])"
+                        + " VALUES "
+                        + " ( "
+                        + " '" + dr["station"].ToString() + "' "
+                        + " ,'" + dr["delaytime"].ToString() + "' "
+                        + " ,'" + dr["totalcount"].ToString() + "' "
+                        + " ,'" + dr["startdate"].ToString() + "' "
+                        + " ,'" + dr["enddate"].ToString() + "' "
+                        + " ,'" + dr["rti10"].ToString() + "' "
+                        + " ,'" + dr["rti30"].ToString() + "' "
+                        + " ,'" + dr["rti50"].ToString() + "' "
+                        + " ,'" + dr["rti70"].ToString() + "' "
+                        + " ,'" + dr["rti90"].ToString() + "' "
+                            + " ) "
+                            ;
 
-                oDal.CommandText = ssql;
-                oDal.ExecuteSql();
+                    oDal.CommandText = ssql;
+                    oDal.ExecuteSql();
 
+                }
 
+                if (ddltype.Text == "RTI3")
+                {
+                    //刪除資料
+                    ssql = " delete Rti3Detail "
+                         + " where station = '" + dr["station"].ToString() + "' "
+                         + " and delaytime = '" + dr["delaytime"].ToString() + "' "
+                         ;
+                    oDal.CommandText = ssql;
+                    oDal.ExecuteSql();
+
+                    //寫入資料
+                    ssql = " INSERT INTO Rti3Detail "
+                            + " ([station]"
+                        + " ,[delaytime]"
+                        + " ,[totalcount]"
+                        + " ,[startdate]"
+                        + " ,[enddate]"
+                        + " ,[rti10]"
+                        + " ,[rti30]"
+                        + " ,[rti50]"
+                        + " ,[rti70]"
+                        + " ,[rti90])"
+                        + " VALUES "
+                        + " ( "
+                        + " '" + dr["station"].ToString() + "' "
+                        + " ,'" + dr["delaytime"].ToString() + "' "
+                        + " ,'" + dr["totalcount"].ToString() + "' "
+                        + " ,'" + dr["startdate"].ToString() + "' "
+                        + " ,'" + dr["enddate"].ToString() + "' "
+                        + " ,'" + dr["rti10"].ToString() + "' "
+                        + " ,'" + dr["rti30"].ToString() + "' "
+                        + " ,'" + dr["rti50"].ToString() + "' "
+                        + " ,'" + dr["rti70"].ToString() + "' "
+                        + " ,'" + dr["rti90"].ToString() + "' "
+                            + " ) "
+                            ;
+
+                    oDal.CommandText = ssql;
+                    oDal.ExecuteSql();
+
+                }
             }
             catch (Exception)
             {
                 throw;
             }
+        }
 
+        private void btnAll_Click(object sender, EventArgs e)
+        {
+            //全部轉檔rti
+            for (int i = 0; i < ddlTimeDelay.Items.Count; i++)
+            {
+                ddlTimeDelay.SelectedIndex = i;
+                Application.DoEvents();
 
+                btnstart_Click(sender, e);
+            }
+        }
 
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
 
         }
 
@@ -301,6 +354,7 @@ namespace M10CalRtiDetail
         string sver = string.Empty;
         string sstation = string.Empty;
         string sdelaytime = string.Empty;
+        string stype = string.Empty;
         //string sConnectionString = Properties.Settings.Default.DBConnectionString;
         ODAL oDal;        
         public DataTable dt_rti = new DataTable();
@@ -314,11 +368,12 @@ namespace M10CalRtiDetail
 
 
 
-        public RtiProc(string ver, string station, string delaytime, string sConnectionString)
+        public RtiProc(string ver, string station, string delaytime, string sConnectionString,string type)
         {
             sver = ver;
             sstation = station;
             sdelaytime = delaytime;
+            stype = type;
 
             oDal = new ODAL(sConnectionString);
             buildtableRTI();
@@ -332,12 +387,13 @@ namespace M10CalRtiDetail
 
                 //取得總筆數                
                 ssql = " select count(*) as total from RtiData "
-                     + " where station = '" + sstation + "' "                     
+                     + " where station = '" + sstation + "' "
+                     + " and ver = '" + sver + "' "
                      ;
 
                 if (sdelaytime != "0")
                 {
-                    ssql += " and maxraintime > " + sdelaytime + " ";
+                    ssql += " and raindelay > " + sdelaytime + " ";
                 }
 
                 oDal.CommandText = ssql;
@@ -347,14 +403,17 @@ namespace M10CalRtiDetail
                 //取得所有站號
                 ssql = " select * from RtiData"
                      + "  where station = '" + sstation + "'  "
+                     + " and ver = '" + sver + "' "
                      ;
 
                 if (sdelaytime != "0")
                 {
-                    ssql += " and maxraintime > " + sdelaytime + " ";
+                    ssql += " and raindelay > " + sdelaytime + " ";
                 }
 
-                ssql += " order by rti  ";
+                if (stype == "RTI") ssql += " order by rti  ";
+                if (stype == "RTI3") ssql += " order by rti3  ";
+                
 
                 oDal.CommandText = ssql;
                 dt.Clear();
@@ -367,7 +426,8 @@ namespace M10CalRtiDetail
 
                     newdr["index"] = iIndex.ToString();
                     newdr["station"] = dr["station"].ToString();
-                    newdr["rti"] = dr["rti"].ToString();
+                    if (stype == "RTI") newdr["rti"] = dr["rti"].ToString();
+                    if (stype == "RTI3") newdr["rti"] = dr["rti3"].ToString();
                     newdr["totalcount"] = sTotalcount;
                     dt_rti.Rows.Add(newdr);
 

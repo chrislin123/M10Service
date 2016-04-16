@@ -255,5 +255,15 @@ namespace M10Web
 
 
         }
+
+        protected void btnRTI_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("RtiData.aspx", true);
+        }
+
+        protected void btnRTI3_Click(object sender, EventArgs e)
+        {
+            Response.Redirect("Rti3Data.aspx", true);
+        }
     }
 }
