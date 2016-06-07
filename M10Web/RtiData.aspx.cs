@@ -205,5 +205,10 @@ namespace M10Web
         {
             Response.Redirect("default.aspx", true);
         }
+
+        protected void btnQuery_Click(object sender, EventArgs e)
+        {
+            BindNodeInfo();
+        }
     }
 }

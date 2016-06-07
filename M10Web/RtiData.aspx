@@ -66,7 +66,17 @@
                                                 <asp:ListItem>3</asp:ListItem>
                                             </asp:RadioButtonList></td>
                                         <td>
-                                            <%--<asp:Label ID="lblDataTime" runat="server" Text="資料時間:"></asp:Label>--%></td>
+
+
+                                            <asp:Label ID="lblDataTime" class="label label-success" style="font-size: 20px" runat="server" Text="關鍵字:"></asp:Label>
+
+                                        </td>
+                                        <td>
+                                            <asp:TextBox ID="txtkey" runat="server"></asp:TextBox>
+                                            <asp:Button ID="btnQuery" runat="server" Text="Button" OnClick="btnQuery_Click" />
+                                            <%--<asp:Label ID="lblDataTime" runat="server" Text="資料時間:"></asp:Label>--%>
+
+                                        </td>
                                     </tr>
                                 </table>
 
