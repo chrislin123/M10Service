@@ -58,6 +58,33 @@ namespace M10Web {
         protected global::System.Web.UI.WebControls.RadioButtonList rDelaytime;
         
         /// <summary>
+        /// lblDataTime 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblDataTime;
+        
+        /// <summary>
+        /// txtkey 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtkey;
+        
+        /// <summary>
+        /// btnQuery 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnQuery;
+        
+        /// <summary>
         /// GridView1 控制項。
         /// </summary>
         /// <remarks>
