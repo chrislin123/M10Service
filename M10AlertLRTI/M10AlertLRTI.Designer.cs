@@ -28,7 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btnStart = new System.Windows.Forms.Button();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // btnStart
@@ -40,6 +42,12 @@
             this.btnStart.Text = "開始";
             this.btnStart.UseVisualStyleBackColor = true;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
+            // 
+            // timer1
+            // 
+            this.timer1.Enabled = true;
+            this.timer1.Interval = 1000;
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // M10AlertLRTI
             // 
@@ -57,6 +65,7 @@
         #endregion
 
         private System.Windows.Forms.Button btnStart;
+        private System.Windows.Forms.Timer timer1;
     }
 }
 

@@ -74,16 +74,6 @@ namespace M10AlertLRTI
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            string sss = string.Empty;
-
-
-
-            //我的測試
-
-
-
-
-
             DateTime dt = DateTime.Now;
 
             sLritAlertTimeString = Convert.ToString(dt.Year - 1911) 
@@ -125,7 +115,7 @@ namespace M10AlertLRTI
             send_gmail("", "全台村里崩塌警戒提醒" + sLritAlertTimeString, sMailSendList, oAttachments);//呼叫send_gmail函式測試
             
             //開啟excel
-            OpenExcel(sAttachFileName);
+            //OpenExcel(sAttachFileName);
 
         }
 
@@ -314,7 +304,7 @@ namespace M10AlertLRTI
                 //取得目前超過警戒值的雨量站
                 ssql = " select * from RunTimeRainData a "
                      + " left join StationErrLRTI b on a.STID = b.STID "
-                     + " where a.LRTI > b.ELRTI ";
+                     + " where CAST(a.LRTI AS decimal(8, 2))  > CAST(b.ELRTI AS decimal(8, 2)) ";
                 oDal.CommandText = ssql;
                 dt.Clear();
                 dt = oDal.DataTable();
@@ -463,6 +453,15 @@ namespace M10AlertLRTI
             sMailSendList = string.Join(",", lMail);
 
 
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            btnStart_Click(sender, e);
+
+            System.Threading.Thread.Sleep(2000);
+
+            this.Close();
         }
     }
 }
