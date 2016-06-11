@@ -32,6 +32,10 @@ namespace M10AlertLRTI
 
         string sLritAlertTimeString = "";
 
+        static private DataTable LrtiAlertAll = new DataTable();
+        static private DataTable LrtiAlertNew = new DataTable();
+        static private DataTable LrtiAlertDel = new DataTable();
+
 
         public M10AlertLRTI()
         {
@@ -85,25 +89,10 @@ namespace M10AlertLRTI
             //Alert LRTI資料處理
             LRTIAlertProc();
 
-            //取得文件資料
-            ssql = " select country,town,village from LRTIAlert "
-                     + " where status in ('C','I') "
-                     + " order by country,town ";
-            oDal.CommandText = ssql;
-            LrtiAlertAll.Clear();
-            LrtiAlertAll = oDal.DataTable();
-            ssql = " select country,town,village from LRTIAlert "
-                     + " where status = 'I' "
-                     + " order by country,town ";
-            oDal.CommandText = ssql;
-            LrtiAlertNew.Clear();
-            LrtiAlertNew = oDal.DataTable();
-            ssql = " select country,town,village from LRTIAlert "
-                     + " where status = 'D' "
-                     + " order by country,town ";
-            oDal.CommandText = ssql;
-            LrtiAlertDel.Clear();
-            LrtiAlertDel = oDal.DataTable();
+            //取得警戒通知資料
+            getLRTIAlertData();
+
+            
 
             //文件產生
             //LRTIAlertReport();
@@ -119,9 +108,38 @@ namespace M10AlertLRTI
 
         }
 
-        static private DataTable LrtiAlertAll = new DataTable();
-        static private DataTable LrtiAlertNew = new DataTable();
-        static private DataTable LrtiAlertDel = new DataTable();
+
+        private void getLRTIAlertData()
+        {
+
+            try
+            {
+                ssql = " select country,town,village from LRTIAlert "
+                     + " where status in ('C','I') "
+                     + " order by country,town ";
+                oDal.CommandText = ssql;
+                LrtiAlertAll.Clear();
+                LrtiAlertAll = oDal.DataTable();
+                ssql = " select country,town,village from LRTIAlert "
+                         + " where status = 'I' "
+                         + " order by country,town ";
+                oDal.CommandText = ssql;
+                LrtiAlertNew.Clear();
+                LrtiAlertNew = oDal.DataTable();
+                ssql = " select country,town,village from LRTIAlert "
+                         + " where status = 'D' "
+                         + " order by country,town ";
+                oDal.CommandText = ssql;
+                LrtiAlertDel.Clear();
+                LrtiAlertDel = oDal.DataTable();
+            }
+            catch (Exception ex)
+            {  
+                
+            }            
+        }
+
+        
 
         private string LRTIAlertReport()
         {
