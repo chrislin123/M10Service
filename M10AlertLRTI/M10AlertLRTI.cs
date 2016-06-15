@@ -90,12 +90,10 @@ namespace M10AlertLRTI
             LRTIAlertProc();
 
             //取得警戒通知資料
-            getLRTIAlertData();
-
-
-            string sssss = string.Empty;
-
-            
+            getLRTIAlertData();    
+        
+            //1050615 判斷有資料才進行警戒提醒
+            if (LrtiAlertAll.Rows.Count == 0 && LrtiAlertNew.Rows.Count == 0 && LrtiAlertDel.Rows.Count == 0) return;
 
             //文件產生
             //LRTIAlertReport();
