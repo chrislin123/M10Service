@@ -31,5 +31,14 @@ namespace M10AlertLRTI.Properties {
                 return ((string)(this["DBConnectionString"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("test")]
+        public string test {
+            get {
+                return ((string)(this["test"]));
+            }
+        }
     }
 }

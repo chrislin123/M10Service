@@ -92,6 +92,9 @@ namespace M10AlertLRTI
             //取得警戒通知資料
             getLRTIAlertData();
 
+
+            string sssss = string.Empty;
+
             
 
             //文件產生
