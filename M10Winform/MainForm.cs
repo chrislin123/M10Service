@@ -395,28 +395,22 @@ namespace M10Winform
 
                 //變更縣市資料 台北縣->新北市 台中縣->台中市 桃園縣->桃園市
                 //1050703 變更縣市資料 臺北市->台北市 臺中市->台中市
+                //1050705 變更縣市資料 台北市->臺北市 台中市->臺中市 台南市->臺南市
                 foreach (DataRow dr in dt.Rows)
                 {
-                    if (dr["COUNTY"].ToString() == "台北縣")
-                    {
-                        dr["COUNTY"] = "新北市";
-                    }
-                    if (dr["COUNTY"].ToString() == "台中縣")
-                    {
-                        dr["COUNTY"] = "台中市";
-                    }
-                    if (dr["COUNTY"].ToString() == "桃園縣")
-                    {
-                        dr["COUNTY"] = "桃園市";
-                    }
-                    if (dr["COUNTY"].ToString() == "臺北市")
-                    {
-                        dr["COUNTY"] = "台北市";
-                    }
-                    if (dr["COUNTY"].ToString() == "臺中市")
-                    {
-                        dr["COUNTY"] = "台中市";
-                    }
+                    //臺北
+                    if (dr["COUNTY"].ToString() == "台北縣") dr["COUNTY"] = "新北市";
+                    if (dr["COUNTY"].ToString() == "台北市") dr["COUNTY"] = "臺北市";                    
+
+                    //桃園
+                    if (dr["COUNTY"].ToString() == "桃園縣") dr["COUNTY"] = "桃園市";
+
+                    //臺中
+                    if (dr["COUNTY"].ToString() == "台中縣") dr["COUNTY"] = "臺中市";
+                    if (dr["COUNTY"].ToString() == "台中市") dr["COUNTY"] = "臺中市";
+
+                    //臺南
+                    if (dr["COUNTY"].ToString() == "台南市") dr["COUNTY"] = "臺南市";
                 }
 
                 DataTable dttemp = new DataTable();

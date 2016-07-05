@@ -88,7 +88,7 @@ namespace M10Web
             ddlRainStation.Items.Clear();
             //return;
             ssql = @"   select * from StationData                         
-                        order by county,stname
+                        order by stid,county,stname
                     ";
             oDal.CommandText = ssql;
 
