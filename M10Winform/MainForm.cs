@@ -398,8 +398,10 @@ namespace M10Winform
                 //1050705 變更縣市資料 台北市->臺北市 台中市->臺中市 台南市->臺南市
                 foreach (DataRow dr in dt.Rows)
                 {
-                    //臺北
+                    //新北
                     if (dr["COUNTY"].ToString() == "台北縣") dr["COUNTY"] = "新北市";
+
+                    //臺北                    
                     if (dr["COUNTY"].ToString() == "台北市") dr["COUNTY"] = "臺北市";                    
 
                     //桃園

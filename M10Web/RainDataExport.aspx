@@ -164,6 +164,9 @@
                     <asp:PostBackTrigger ControlID="btnExportCounty" />
                     <asp:PostBackTrigger ControlID="btnExportStation" />
                     <asp:PostBackTrigger ControlID="btnExportSHP" />
+                    <asp:PostBackTrigger ControlID="btnStationQuery" />
+
+                    
                     <%--<asp:PostBackTrigger ControlID="ddlCOUNTY2" />--%>
                 </Triggers>
             </asp:UpdatePanel>
