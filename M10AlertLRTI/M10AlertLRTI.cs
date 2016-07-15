@@ -115,19 +115,19 @@ namespace M10AlertLRTI
 
             try
             {
-                ssql = " select country,town,village from LRTIAlert "
+                ssql = " select country,town,village,HOUR3,RT,LRTI,ELRTI from LRTIAlert "
                      + " where status in ('C','I') "
                      + " order by country,town ";
                 oDal.CommandText = ssql;
                 LrtiAlertAll.Clear();
                 LrtiAlertAll = oDal.DataTable();
-                ssql = " select country,town,village from LRTIAlert "
+                ssql = " select country,town,village,HOUR3,RT,LRTI,ELRTI from LRTIAlert "
                          + " where status = 'I' "
                          + " order by country,town ";
                 oDal.CommandText = ssql;
                 LrtiAlertNew.Clear();
                 LrtiAlertNew = oDal.DataTable();
-                ssql = " select country,town,village from LRTIAlert "
+                ssql = " select country,town,village,HOUR3,RT,LRTI,ELRTI from LRTIAlert "
                          + " where status = 'D' "
                          + " order by country,town ";
                 oDal.CommandText = ssql;
@@ -208,10 +208,16 @@ namespace M10AlertLRTI
             lHead.Add("縣市");
             lHead.Add("鄉鎮區");
             lHead.Add("警戒區範圍");
+            lHead.Add("3hr");
+            lHead.Add("Rt");
+            lHead.Add("LRTI");
+            lHead.Add("警戒LRTI");
+         
 
             workSheet.Cell(iRowIndex, 1).Value = sLrtiTime;
             workSheet.Range(iRowIndex, 1, iRowIndex, 1).Style.Font.Bold = true;
 
+            //目前警戒明細
             if (LrtiAlertAll.Rows.Count > 0)
             {
                 iRowIndex++;
@@ -238,6 +244,7 @@ namespace M10AlertLRTI
             }
 
 
+            //新增明細
             if (LrtiAlertNew.Rows.Count > 0)
             {
                 iRowIndex++;
@@ -263,6 +270,7 @@ namespace M10AlertLRTI
                 }
             }
 
+            //解除明細
             if (LrtiAlertDel.Rows.Count > 0)
             {
                 iRowIndex++;
@@ -316,9 +324,52 @@ namespace M10AlertLRTI
                      ;
                 oDal.CommandText = ssql;
                 oDal.ExecuteSql();
-
+                
 
                 DataTable dt = new DataTable();
+
+                //更新目前警戒中的即時雨量資料
+                //取得目前超過警戒值的雨量站
+                ssql = " select * from LRTIAlert ";                     
+                oDal.CommandText = ssql;
+                dt.Clear();
+                dt = oDal.DataTable();
+                foreach (DataRow dr in dt.Rows)
+                {
+                    DataTable dt_temp = new DataTable();
+                    ssql = " select * from RunTimeRainData "
+                     + " where STID = '" + dr["STID"].ToString() + "' ";
+                    oDal.CommandText = ssql;                    
+                    dt_temp = oDal.DataTable();
+                    foreach (DataRow dr_temp in dt_temp.Rows)
+                    {
+                        string sHOUR3 = dr_temp["HOUR3"].ToString();
+                        string sRT = dr_temp["RT"].ToString();
+                        string sLRTI = dr_temp["LRTI"].ToString();
+                        //string sELRTI = dr_temp["ELRTI"].ToString();
+
+                        if (dr_temp["STATUS"].ToString() == "-99")
+                        {
+                            sHOUR3 = "異常";
+                            sRT = "異常";
+                            sLRTI = "異常";
+                            //sELRTI = "異常";
+                        }
+
+                        ssql = " update LRTIAlert "
+                            + " set HOUR3 = '" + sHOUR3 + "'  "
+                            + " , RT = '" + sRT + "'  "
+                            + " , LRTI = '" + sLRTI + "'  "
+                            //+ " , ELRTI = '" + sELRTI + "'  "
+                            + " where STID = '" + dr["STID"].ToString() + "' "
+                            ;
+                        oDal.CommandText = ssql;
+                        oDal.ExecuteSql();
+                    }
+
+                }
+
+
 
                 //取得目前超過警戒值的雨量站
                 ssql = " select * from RunTimeRainData a "
@@ -329,11 +380,14 @@ namespace M10AlertLRTI
                 dt = oDal.DataTable();
                 foreach (DataRow dr in dt.Rows)
                 {
+                    //1050715 即時雨量資料異常，則不發報
+                    if (dr["STATUS"].ToString() == "-99") continue;
+
+
                     DataTable dt_temp = new DataTable();
                     string sSTID = dr["STID"].ToString();
 
                     //判斷狀態
-
                     ssql = " select STID from  LRTIAlert "
                             + " where STID = '" + sSTID + "' "
                             ;
@@ -343,9 +397,13 @@ namespace M10AlertLRTI
                     if (oValue == null)
                     {
                         //取得雨量站相關資料
-                        ssql = " select * from StationData a "
-                             + " left join StationVillageLRTI b on a.STID = b.STID "
-                             + " where a.STID = '" + sSTID + "' "
+                        //ssql = " select * from StationData a "
+                        //     + " left join StationVillageLRTI b on a.STID = b.STID "
+                        //     + " where a.STID = '" + sSTID + "' "
+                        //     ;
+                        //1050715 修改抓警戒資料的鄉鎮資料
+                        ssql = " select * from StationVillageLRTI "                             
+                             + " where STID = '" + sSTID + "' "
                              ;
                         oDal.CommandText = ssql;
                         dt_temp = oDal.DataTable();
@@ -357,10 +415,14 @@ namespace M10AlertLRTI
                             + " values  "
                             + " ( "
                             + " '" + dr_temp["STID"].ToString() + "' "
-                            + " ,'" + dr_temp["COUNTY"].ToString() + "' "
-                            + " ,'" + dr_temp["TOWN"].ToString() + "' "
+                            + " ,'" + dr_temp["Country"].ToString() + "' "
+                            + " ,'" + dr_temp["Town"].ToString() + "' "
                             + " ,'" + dr_temp["Village"].ToString() + "' "
                             + " ,'I' "
+                            + " ,'" + dr["HOUR3"].ToString() + "' "
+                            + " ,'" + dr["RT"].ToString() + "' "
+                            + " ,'" + dr["LRTI"].ToString() + "' "
+                            + " ,'" + dr["ELRTI"].ToString() + "' "
                             + " ) "
                             ;
                             oDal.CommandText = ssql;
@@ -372,6 +434,10 @@ namespace M10AlertLRTI
                         //寫入警戒雨量站資料，註記持續(C)
                         ssql = " update LRTIAlert "
                             + " set status = 'C'  "
+                            + " , HOUR3 = '" + dr["HOUR3"].ToString() + "'  "
+                            + " , RT = '" + dr["RT"].ToString() + "'  "
+                            + " , LRTI = '" + dr["LRTI"].ToString() + "'  "
+                            + " , ELRTI = '" + dr["ELRTI"].ToString() + "'  "
                             + " where STID = '" + sSTID + "' "
                             ;
                         oDal.CommandText = ssql;
