@@ -38,6 +38,21 @@ namespace M10Web
                 //ViewState["sort"] = " ASC";
 
                 ddlCOUNTY_SelectedIndexChanged(sender, new EventArgs());
+
+                ssql = " select value from LRTIAlertMail where type = 'isal' and value = 'Y' ";
+                oDal.CommandText = ssql;
+                DataTable dt = oDal.DataTable();
+
+                if (dt.Rows.Count > 0)
+                {
+                    btnRTIControl.Text = "崩塌警戒發報-已啟動";
+                    btnRTIControl.CssClass = "btn btn-warning";
+                }
+                else
+                {
+                    btnRTIControl.Text = "崩塌警戒發報-已關閉";
+                    btnRTIControl.CssClass = "btn btn-success";                    
+                }
             }
         }
 
@@ -264,6 +279,13 @@ namespace M10Web
         protected void btnRTI3_Click(object sender, EventArgs e)
         {
             Response.Redirect("Rti3Data.aspx", true);
+        }
+
+        protected void btnRTIControl_Click(object sender, EventArgs e)
+        {
+
+            Response.Redirect("RtiControl.aspx", true);
+
         }
     }
 }

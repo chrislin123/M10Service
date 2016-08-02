@@ -379,6 +379,7 @@
     <Content Include="js\jquery.min.js" />
     <Content Include="RainDataExport.aspx" />
     <Content Include="Rti3Data.aspx" />
+    <Content Include="RtiControl.aspx" />
     <Content Include="RtiData.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -410,6 +411,13 @@
     </Compile>
     <Compile Include="Rti3Data.aspx.designer.cs">
       <DependentUpon>Rti3Data.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="RtiControl.aspx.cs">
+      <DependentUpon>RtiControl.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="RtiControl.aspx.designer.cs">
+      <DependentUpon>RtiControl.aspx</DependentUpon>
     </Compile>
     <Compile Include="RtiData.aspx.cs">
       <DependentUpon>RtiData.aspx</DependentUpon>

@@ -78,6 +78,9 @@ namespace M10AlertLRTI
 
         private void btnStart_Click(object sender, EventArgs e)
         {
+            
+
+
             DateTime dt = DateTime.Now;
 
             sLritAlertTimeString = Convert.ToString(dt.Year - 1911) 
@@ -98,6 +101,14 @@ namespace M10AlertLRTI
             //文件產生
             //LRTIAlertReport();
             string sAttachFileName = LRTIAlertReport();
+
+
+            //1050802 判斷是否啟動發報功能
+            ssql = " select value from LRTIAlertMail where type = 'isal' and value = 'Y' ";
+            oDal.CommandText = ssql;
+            DataTable dt1 = oDal.DataTable();
+
+            if (dt1.Rows.Count == 0) return;
 
             //寄送mail
             List<Attachment> oAttachments = new List<Attachment>();

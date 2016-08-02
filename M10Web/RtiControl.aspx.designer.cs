@@ -10,7 +10,7 @@
 namespace M10Web {
     
     
-    public partial class _default {
+    public partial class RtiControl {
         
         /// <summary>
         /// form1 控制項。
@@ -31,6 +31,15 @@ namespace M10Web {
         protected global::System.Web.UI.ScriptManager ScriptManager1;
         
         /// <summary>
+        /// btnBack 控制項。
+        /// </summary>
+        /// <remarks>
+        /// 自動產生的欄位。
+        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnBack;
+        
+        /// <summary>
         /// UpdatePanel1 控制項。
         /// </summary>
         /// <remarks>
@@ -40,75 +49,30 @@ namespace M10Web {
         protected global::System.Web.UI.UpdatePanel UpdatePanel1;
         
         /// <summary>
-        /// ddlCOUNTY 控制項。
+        /// rRtiControl 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlCOUNTY;
+        protected global::System.Web.UI.WebControls.RadioButtonList rRtiControl;
         
         /// <summary>
-        /// btnQuery 控制項。
+        /// btnsave 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnQuery;
+        protected global::System.Web.UI.WebControls.Button btnsave;
         
         /// <summary>
-        /// btnExport 控制項。
+        /// txtPassword 控制項。
         /// </summary>
         /// <remarks>
         /// 自動產生的欄位。
         /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnExport;
-        
-        /// <summary>
-        /// btnRTI 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnRTI;
-        
-        /// <summary>
-        /// btnRTI3 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnRTI3;
-        
-        /// <summary>
-        /// btnRTIControl 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnRTIControl;
-        
-        /// <summary>
-        /// lblDataTime 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblDataTime;
-        
-        /// <summary>
-        /// GridView1 控制項。
-        /// </summary>
-        /// <remarks>
-        /// 自動產生的欄位。
-        /// 將移動欄位宣告從設計檔案修改為程式碼後置檔案。
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView GridView1;
+        protected global::System.Web.UI.WebControls.TextBox txtPassword;
     }
 }
