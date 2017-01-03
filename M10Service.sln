@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M10CalRtiDetail", "M10CalRt
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M10AlertLRTI", "M10AlertLRTI\M10AlertLRTI.csproj", "{7A157FC2-9C67-4F58-8BAE-9BBBFB44B829}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DhoePortal", "DhoePortal\DhoePortal.csproj", "{AF7738E1-AED2-4D48-8CEF-F33C62722E50}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +50,10 @@ Global
 		{7A157FC2-9C67-4F58-8BAE-9BBBFB44B829}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A157FC2-9C67-4F58-8BAE-9BBBFB44B829}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A157FC2-9C67-4F58-8BAE-9BBBFB44B829}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF7738E1-AED2-4D48-8CEF-F33C62722E50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF7738E1-AED2-4D48-8CEF-F33C62722E50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF7738E1-AED2-4D48-8CEF-F33C62722E50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF7738E1-AED2-4D48-8CEF-F33C62722E50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
