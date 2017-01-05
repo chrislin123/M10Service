@@ -52,7 +52,7 @@
 </head>
 <body>
 
-    <a href="default.aspx">
+    <a href="Professor.aspx">
         <img src="images/index.jpg" alt="Smiley face" height="768" width="1024" style="display: block; margin: auto;">
     </a>
 

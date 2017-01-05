@@ -25,6 +25,15 @@
     padding: 9px 0;
 }*/
 
+
+
+        /*全部設定字體*/
+        body {
+           font-family:'Microsoft JhengHei';
+        }
+
+
+
         .dropdown-menu .sub-menu {
             left: 100%;
             position: absolute;
@@ -63,44 +72,93 @@
             top: 11px;
             left: -6px;
         }
+
+        .title {
+            border-bottom: 3px solid #e5e5e5;
+            margin-bottom: 15px;
+        }
+
+        .container {
+            width: 1040px;
+            margin: 0 auto;
+            position: relative;
+            border: 0px solid #000;
+        }
     </style>
+
+    <script type="text/javascript">
+        //start 
+        $(function () {
+            //alert("test");
+
+            //$('#Research a').click(function (e) {
+            //    //e.preventDefault()
+            //    //$(this).tab('show')
+            //    location.href = "Research.aspx";
+            //})
+
+            $("#Research").click(function () { location.href = "Research.aspx"; });
+            $("#Professor").click(function () { location.href = "Professor.aspx"; });
+            $("#Photo").click(function () { location.href = "Photo.aspx"; });
+            $("#Connect").click(function () { location.href = "Connect.aspx"; });
+            $("#News").click(function () { location.href = "News.aspx"; });
+
+
+            //document.getElementById("Research").onclick = function () {
+            //    location.href = "Research.aspx";
+            //};
+        });
+
+
+
+
+    </script>
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
-<body>
+<body >
     <form id="form1" runat="server">
-        <table border="1">
-            <tr>
-                <td>
-                    <img src="images/logo.jpg" height="60px" /></td>
-                <td>
-                    <div class="container-fluid">                        
-                        <ul class="nav navbar-nav">
-                            <li><a data-toggle="tab" href="#home">Home</a></li>
-                            <li><a data-toggle="tab" href="#menu1">Professor</a></li>                            
-                            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Publications<span class="caret"></span></a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#">專書 Books</a></li>
-                                    <li><a href="#">期刊論文 Journal Paper</a></li>
-                                    <li><a href="#">研討會論文 Conference Paper</a></li>
-                                    <li><a href="#">專書論文 Other Publications</a></li>
-                                </ul>
-                            </li>
-                            <li><a data-toggle="tab" href="#menu1">Research</a></li>                            
-                            <li><a data-toggle="tab" href="#menu1">News</a></li>                            
-                            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Members<span class="caret"></span></a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#">水土保持生態工程研究中心</a></li>
-                                    <li><a href="#">學生</a></li>                                    
-                                </ul>
-                            </li>
-                            <li><a data-toggle="tab" href="#menu1">Photo Albums</a></li>                            
-                            <li><a data-toggle="tab" href="#menu1">Connect</a></li>                            
-                        </ul>
-                    </div>
-                </td>
-            </tr>
-        </table>
+
+        <div class="container">
+            <table border="0">
+                <tr>
+                    <td>
+                        <img src="images/logo.jpg" height="60px" /></td>
+                    <td>
+                        <div class="container-fluid">
+                            <ul class="nav navbar-nav">
+                                <%--<li><a data-toggle="tab" href="#home">Home</a></li>--%>
+                                <li><a data-toggle="tab" href="#" id="Professor">Professor</a></li>
+                                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="default.aspx">Publications<span class="caret"></span></a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="Books.aspx">專書 Books</a></li>
+                                        <li><a href="JournalPaper.aspx">期刊論文 Journal Paper</a></li>
+                                        <li><a href="ConferencePaper.aspx">研討會論文 Conference Paper</a></li>
+                                        <li><a href="Publications.aspx">專書論文 Other Publications</a></li>
+                                    </ul>
+                                </li>
+                                <li><a data-toggle="tab" href="#" id="Research">Research</a></li>
+                                <li><a data-toggle="tab" href="#" id="News">News</a></li>
+                                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Members<span class="caret"></span></a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="CenterMember.aspx">水土保持生態工程研究中心</a></li>
+                                        <li><a href="Students.aspx">學生</a></li>
+                                    </ul>
+                                </li>
+                                <li><a data-toggle="tab" href="#" id="Photo">Photo Albums</a></li>
+                                <li><a data-toggle="tab" href="#" id="Connect">Connect</a></li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+
+
+        <div class="title">
+            <%-- <h3>科別介紹</h3>--%>
+        </div>
 
         <div>
             <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
