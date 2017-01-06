@@ -69,6 +69,7 @@
     <Content Include="Professor.aspx" />
     <Content Include="Publications.aspx" />
     <Content Include="Research.aspx" />
+    <None Include="Properties\PublishProfiles\test.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

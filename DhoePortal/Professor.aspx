@@ -1,6 +1,12 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/default.Master" AutoEventWireup="true" CodeBehind="Professor.aspx.cs" Inherits="DhoePortal.Professor1" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+    <style type="text/css">
+        .auto-style1 {
+            width: 40%;
+            height: 200px;
+        }
+    </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
@@ -10,9 +16,10 @@
 
 
         <table style="width: 100%;" border="0">
-            <tr style="height: 200px;">
-                <td style="width: 40%">
+            <tr>
+                <td class="auto-style1">
                     <h1><span style="font-weight: bold;">詹錢登特聘教授</span></h1>
+                    
                     國立成功大學總務長
                     <br />
                     國立成功大學水利及海洋工程學系特聘教授
@@ -77,12 +84,7 @@
                     2011 碩士生張家豪第20屆水利工程研討會學生論文獎<br />
                     2010 博士生張家榮中華民國力學學會力學期刊論文獎<br />
                     <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-
+                  
 
                 </td>
             </tr>

@@ -29,9 +29,82 @@
 
         /*全部設定字體*/
         body {
-           font-family:'Microsoft JhengHei';
+            font-family: 'Microsoft JhengHei';
+            font-size: 18px;
         }
 
+        .copyrights {
+            position: relative;
+            padding: 30px 30px 15px 30px;
+            line-height: 23px;
+            font-size: 18px;
+            background-color: #f2f2f2;
+            overflow: hidden;
+            color: #666;
+        }
+
+        .col_full { width: 100%; }
+        .col_half,
+        .landing-offer-half {
+	        width: 48%;
+        }
+
+        .col_one_third {
+            width: 30.63%;
+        }
+
+        .col_two_third {
+            width: 65.33%;
+        }
+
+        .col_one_fourth {
+            width: 22%;
+        }
+
+        .col_three_fourth {
+            width: 74%;
+        }
+
+        .col_one_fifth {
+            width: 16.8%;
+        }
+
+        .col_two_fifth {
+            width: 37.6%;
+        }
+
+        .col_three_fifth {
+            width: 58.4%;
+        }
+
+        .col_four_fifth {
+            width: 79.2%;
+        }
+
+        .col_one_sixth {
+            width: 13.33%;
+        }
+
+        .col_five_sixth {
+            width: 82.67%;
+        }
+
+        .col_one_third,
+        .col_two_third,
+        .col_three_fourth,
+        .col_one_fourth,
+        .col_one_fifth,
+        .col_two_fifth,
+        .col_three_fifth,
+        .col_four_fifth,
+        .col_one_sixth,
+        .col_five_sixth {
+	        display: block;
+	        position: relative;
+	        margin-right: 4%;
+	        margin-bottom: 20px;
+	        float: left;
+        }
 
 
         .dropdown-menu .sub-menu {
@@ -116,7 +189,7 @@
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
-<body >
+<body>
     <form id="form1" runat="server">
 
         <div class="container">
@@ -163,6 +236,29 @@
         <div>
             <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
             </asp:ContentPlaceHolder>
+        </div>
+
+        <div class="copyrights">
+            <div class="container clearfix">
+                <%--<div class="col_one_third contact">
+                    <p>
+                        服務專線 : <span>04-3611-3611</span><br>
+                        選號服務專線 : <span>04-3611-3611</span><br>
+                        聲明：禁止任何網際網路服務業者轉錄本院網路資訊內容。
+                    </p>
+                </div>--%>
+                <div  class="col_one_third address" style="width:45%">
+                    &copy; 2016 <a href="#">成功大學 水利及海洋工程學系</a> 版權所有    
+                </div>
+                <div class=" col_one_third col_last copyright " style="width:45%">
+                    <p>
+                        70101台南市東區大學路1號<br>
+                        <span class="hide-phone">No.1, University Road, Tainan 70101, Taiwan </span>
+                    </p>
+                </div>
+
+
+            </div>
         </div>
     </form>
 </body>
