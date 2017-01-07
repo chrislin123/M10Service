@@ -192,14 +192,14 @@
 <body>
     <form id="form1" runat="server">
 
-        <div class="container">
+        <div class="container" >
             <table border="0">
                 <tr>
                     <td>
                         <img src="images/logo.jpg" height="60px" /></td>
                     <td>
-                        <div class="container-fluid">
-                            <ul class="nav navbar-nav">
+                        <div class="container-fluid" >
+                            <ul class="nav navbar-nav" >
                                 <%--<li><a data-toggle="tab" href="#home">Home</a></li>--%>
                                 <li><a data-toggle="tab" href="#" id="Professor">Professor</a></li>
                                 <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="default.aspx">Publications<span class="caret"></span></a>
@@ -247,10 +247,10 @@
                         聲明：禁止任何網際網路服務業者轉錄本院網路資訊內容。
                     </p>
                 </div>--%>
-                <div  class="col_one_third address" style="width:45%">
-                    &copy; 2016 <a href="#">成功大學 水利及海洋工程學系</a> 版權所有    
+                <div  class="col_one_third address" style="width:50%">
+                    &copy; 2016 <a href="#">成功大學 水利及海洋工程學系 詹錢登研究室</a> 版權所有    
                 </div>
-                <div class=" col_one_third col_last copyright " style="width:45%">
+                <div class=" col_one_third col_last copyright " style="width:40%">
                     <p>
                         70101台南市東區大學路1號<br>
                         <span class="hide-phone">No.1, University Road, Tainan 70101, Taiwan </span>

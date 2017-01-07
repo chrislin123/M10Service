@@ -61,6 +61,7 @@
     <Content Include="CenterMember.aspx" />
     <Content Include="ConferencePaper.aspx" />
     <Content Include="Connect.aspx" />
+    <Content Include="css\the-big-picture.css" />
     <Content Include="default.Master" />
     <Content Include="images\Professor.jpg" />
     <Content Include="JournalPaper.aspx" />
