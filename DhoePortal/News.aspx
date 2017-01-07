@@ -5,7 +5,11 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div class="container">
         <h1><span style="font-weight: bold;color:#31708f;">最新消息</span></h1>
-        <table class="table">
+
+        <asp:PlaceHolder ID = "PlaceHolder1" runat="server" />
+
+
+        <%--<table class="table">
             <tbody>
                 <tr style="width: 100px;" class="active">
                     <td>2016/01/19</td>
@@ -40,6 +44,6 @@
                 </tr>
                 
             </tbody>
-        </table>
+        </table>--%>
     </div>
 </asp:Content>
