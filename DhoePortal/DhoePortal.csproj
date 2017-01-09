@@ -61,9 +61,11 @@
     <Content Include="CenterMember.aspx" />
     <Content Include="ConferencePaper.aspx" />
     <Content Include="Connect.aspx" />
+    <Content Include="css\fix.css" />
     <Content Include="css\the-big-picture.css" />
     <Content Include="default.Master" />
     <Content Include="images\Professor.jpg" />
+    <Content Include="images\p_bg01.png" />
     <Content Include="JournalPaper.aspx" />
     <Content Include="News.aspx" />
     <Content Include="Photo.aspx" />
@@ -192,6 +194,13 @@
       <Project>{f4ca59ed-2026-4af8-a343-456399d87676}</Project>
       <Name>DAL</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="photo\N\2013\" />
+    <Folder Include="photo\N\2014\" />
+    <Folder Include="photo\N\2015\" />
+    <Folder Include="photo\N\2016\" />
+    <Folder Include="photo\Q\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
