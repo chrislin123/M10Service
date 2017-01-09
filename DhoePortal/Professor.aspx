@@ -28,14 +28,12 @@
                     <br />
                 </td>
                 <td style="width: 60%" rowspan="3">
-                    <h3><span style="font-weight: bold;">學歷</span></h3>
-                    <br />
+                    <h3><span style="font-weight: bold;">學歷</span></h3>                    
                     加州大學柏克萊分校土木工程系博士
                     <br />
                     國立臺灣大學土木工程學系(水利組) 碩士<br />
                     國立臺灣海洋大學海洋學系(工程組) 學士<br />
-                    <h3><span  style="font-weight:bold;">經歷</span></h3>
-                    <br />
+                    <h3><span  style="font-weight:bold;">經歷</span></h3>                    
                     美國環境及水資源學會會士<br />
                     美國土木工程師學會會士<br />
                     大學考試入學分發委員會分發組主任<br />

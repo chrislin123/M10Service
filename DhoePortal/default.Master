@@ -193,6 +193,7 @@
     <form id="form1" runat="server">
 
         <div class="container" >
+            <br />
             <table border="0">
                 <tr>
                     <td>
@@ -215,7 +216,7 @@
                                 <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Members<span class="caret"></span></a>
                                     <ul class="dropdown-menu">
                                         <li><a href="CenterMember.aspx">水土保持生態工程研究中心</a></li>
-                                        <li><a href="Students.aspx">學生</a></li>
+                                        <li><a href="Students.aspx">詹錢登研究室</a></li>
                                     </ul>
                                 </li>
                                 <li><a data-toggle="tab" href="#" id="Photo">Photo Albums</a></li>
