@@ -5,7 +5,17 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
     <div class="container">
-        <div class="panel panel-info">
+
+        <h1><span style="font-weight: bold;color:#31708f;">研究中心成員</span></h1>
+
+        <asp:PlaceHolder ID = "PlaceHolder1" runat="server" />
+
+        <h1><span style="font-weight: bold;color:#31708f;">計畫執行項目</span></h1>
+
+        <asp:PlaceHolder ID = "PlaceHolder2" runat="server" />
+
+
+      <%--  <div class="panel panel-info">
             <div class="panel-heading">
                 <h3><span style="font-weight: bold;">計畫項目</span></h3>
             </div>
@@ -51,7 +61,7 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+        </div>--%>
     </div>
 
 </asp:Content>

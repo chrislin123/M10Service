@@ -11,7 +11,8 @@ body {
 }
 
 .full {
-  background: url(http://140.116.38.211/dhoeportal/images/index.jpg) no-repeat center center fixed; 
+  /*background: url(http://140.116.38.211/dhoeportal/images/index.jpg) no-repeat center center fixed;*/ 
+  background: url(../images/index2.jpg) no-repeat center center fixed; 
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;

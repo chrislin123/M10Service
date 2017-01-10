@@ -6,7 +6,69 @@
 
     <div class="container">
 
-        <div class="panel panel-info">
+        <h1><span style="font-weight: bold;color:#31708f;">專書</span></h1>
+
+        <asp:PlaceHolder ID = "PlaceHolder1" runat="server" />
+
+
+<%--        <table class="table">
+            <tbody>
+                <tr style="width: 100px;" class="active">
+                    <td>2016</td>
+                    <td>
+                        詹錢登, “土石流防災降雨警戒”，財團法人中興工程科技研究發展基金會出版(排版印刷中)。                        
+                    </td>
+                </tr>
+                <tr>
+                    <td>2014</td>
+                    <td>
+                        Jan, C.D., Gradually-varied Flow in Open Channel. Springer, Heidelberg.
+                    </td>
+                </tr>
+                
+                <tr class="active">
+                    <td>2014</td>
+                    <td>
+                        王裕宜、詹錢登、嚴壁玉“泥石流體的流變特性與運移特徵”湖南科學技術出版社。
+                    </td>
+                </tr>
+                <tr >
+                    <td>2005</td>
+                    <td>
+                        Jan, C.D., and C.L. Chen, Debris flow caused by Typhoon Herb in Taiwan, Chapter 21 in the book of Debris-Flow
+                Hazards and Related Phenomena, edited by M. Jakob and O. Hungr, Springer, Praxis Publishing Ltd., UK.
+                    </td>
+                </tr>
+                <tr class="active">
+                    <td>2001</td>
+                    <td>
+                        王裕宜、詹錢登、嚴壁玉“泥石流體結構和流變特性”湖南科學技術出版社。
+                    </td>
+                </tr>
+                <tr >
+                    <td>2000</td>
+                    <td>
+                        詹錢登, “土石流概論”，科技圖書股份有限公司。
+                    </td>
+                </tr>
+                <tr class="active">
+                    <td>1999</td>
+                    <td>
+                        詹錢登(1999), "土石流及其防治對策"，教育部土木工程防災教育教材。
+                    </td>
+                </tr>
+                <tr >
+                    <td>1997</td>
+                    <td>
+                        詹錢登(1997), "土石流理論"，教育部土木工程防災教育教材，86-土木-教材-C011。
+                    </td>
+                </tr>
+            </tbody>
+        </table>--%>
+
+
+
+        <%--<div class="panel panel-info">
             <div class="panel-heading">
                 <h3><span style="font-weight: bold;">專書</span></h3>
             </div>
@@ -22,7 +84,7 @@
                 1997 詹錢登(1997), "土石流理論"，教育部土木工程防災教育教材，86-土木-教材-C011。<br /><br />
 
             </div>
-        </div>
+        </div>--%>
         
 
         

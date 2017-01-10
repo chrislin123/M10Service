@@ -9,8 +9,13 @@
 
 
     <div class="container">
+        <h1><span style="font-weight: bold;color:#31708f;">期刊論文</span></h1>
 
-        <div class="panel panel-info">
+        <asp:PlaceHolder ID = "PlaceHolder1" runat="server" />
+
+        
+
+        <%--<div class="panel panel-info">
             <div class="panel-heading">
                 <h3><span style="font-weight: bold;">期刊論文</span></h3>
             </div>
@@ -44,7 +49,7 @@ stream watershed, Taiwan.” Natural Hazards and Earth System Sciences (NHESS), 
                 <br />
 
             </div>
-        </div>
+        </div>--%>
 
 
 

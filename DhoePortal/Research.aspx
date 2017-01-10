@@ -53,10 +53,45 @@
                 </tr>
             </tbody>
         </table>
+        <h1><span style="font-weight: bold;color:#31708f;">產學研究</span></h1>
+        <table class="table">
+            <tbody>
+                <tr style="width: 100px;" class="active">
+                    <td>土石流警戒基準值檢討與更新</td>
+                    
+                </tr>
+                <tr>
+                    <td>集水區大規模土砂災害風險辨識與耐受力盤查</td>
+                    
+                </tr>
+                
+                <tr class="active">
+                    <td>水災災情蒐集服務團計畫</td>
+                    
+                </tr>
+                <tr >
+                    <td>曾文南化烏山頭水庫集水區實施計畫檢討及因應對策</td>
+                    
+                </tr>
+                <tr class="active">
+                    <td>河道固床構造物及其鄰近河床變遷之現地調查研究-以旗山溪十張犁至二仁月眉進水口固床工為例</td>
+                    
+                </tr>
+                <tr >
+                    <td>衛星影像與地理資訊系統應用於農地利用調查之研究-以旗山灌區中壇工作站為例</td>
+                    
+                </tr>
+                <tr class="active">
+                    <td>土石流驅動因子暨警戒機制之研究</td>
+                    
+                </tr>
+              
+            </tbody>
+        </table>
 
 
 
-        <div class="panel panel-info">
+<%--        <div class="panel panel-info">
             <div class="panel-heading">
                 <h3><span style="font-weight: bold;">科技部</span></h3>
             </div>
@@ -89,7 +124,7 @@
                 土石流驅動因子暨警戒機制之研究<br /><br />
 
             </div>
-        </div>
+        </div>--%>
         
 
         

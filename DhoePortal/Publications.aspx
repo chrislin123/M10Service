@@ -7,12 +7,15 @@
 
     <div class="container">
 
+        <h1><span style="font-weight: bold;color:#31708f;">專書論文</span></h1>
+
+        <asp:PlaceHolder ID = "PlaceHolder1" runat="server" />
 
 
-        <div class="panel panel-info">
+        <%--<div class="panel panel-info">
             <div class="panel-heading">
                 <h3><span style="font-weight: bold;">專書論文</span></h3>
-                <%--<h3 class="panel-title">Panel title</h3>--%>
+                
             </div>
             <div class="panel-body">
                 2014 H. Y. Yin, C. Y. Lee, and C. D. Jan.’’AWeb-Based Decision Support System for Debris Flow Disaster Management in Taiwan ‘’Engineering Geology
@@ -28,7 +31,7 @@ Geo-Disaster Mitigation Technology in Asia, edited by F.Wang et.al., 77-103, Spr
                 <br />
 
             </div>
-        </div>
+        </div>--%>
 
 
 

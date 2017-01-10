@@ -2,7 +2,8 @@
 
 <!DOCTYPE html >
 
-<html xmlns="http://www.w3.org/1999/xhtml" class="full" >
+<%--<html xmlns="http://www.w3.org/1999/xhtml" class="full" >--%>
+<html xmlns="http://www.w3.org/1999/xhtml"  >
 <head runat="server">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title></title>
@@ -34,7 +35,12 @@
     
 <body >
     <a href="Professor.aspx">
-    <div style="height:1080px;width:100%" > 
+    <div style="width:100%;padding:30px 0px 0px 0px;" > 
+
+        <img src="images/index2.jpg" class="img-rounded" alt="Cinque Terre" width="100%" >
+
+
+
     </div></a>
     
         <%--<img src="images/index.jpg" alt="Smiley face" height="768" width="1024" style="display: block; margin: auto;">--%>

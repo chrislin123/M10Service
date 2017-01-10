@@ -7,7 +7,14 @@
 
 
     <div class="container">
-        <div class="panel panel-info">
+
+        <h1><span style="font-weight: bold;color:#31708f;">研討會論文</span></h1>
+
+        <asp:PlaceHolder ID = "PlaceHolder1" runat="server" />
+
+
+
+        <%--<div class="panel panel-info">
             <div class="panel-heading">
                 <h3><span style="font-weight: bold;">研討會論文</span></h3>
             </div>
@@ -32,7 +39,7 @@
 台灣。<br />
 
             </div>
-        </div>
+        </div>--%>
     </div>
 
 </asp:Content>
