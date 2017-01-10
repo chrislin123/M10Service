@@ -77,7 +77,8 @@ namespace DhoePortal
                 
 
                 //照片表頭
-                string sHref = string.Format("<a href='{0}' class='{1}'>{2}</a>", "//photo.xuite.net/j73025448/19904265", "album_info_title_hy", sName);
+                //string sHref = string.Format("<a href='{0}' class='{1}'>{2}</a>", "//photo.xuite.net/j73025448/19904265", "album_info_title_hy", sName);
+                string sHref = string.Format("<a href='{0}' class='{1}'>{2}</a>", "#", "album_info_title_hy", sName);
 
                 PlaceHolder pht = (PlaceHolder)item.FindControl("phtitle");
                 if (pht != null)
@@ -101,7 +102,8 @@ namespace DhoePortal
 
                 sImgSrc = string.Format(@"photo/n/{0}/{1}", sName, sImgSrc);
                
-                html.Append("<a href='//photo.xuite.net/j73025448/19904265'>");
+                //html.Append("<a href='//photo.xuite.net/j73025448/19904265'>");
+                html.Append("<a href='#'>");
 
                 html.Append(string.Format("<img src='{0}'  border='0' class='img-thumbnail' style='width: 100%;'>", sImgSrc));
                 //html.Append("<img src='images/logo.jpg'  border='0' class='img-thumbnail' style='width: 100%;'>");

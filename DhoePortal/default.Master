@@ -30,7 +30,7 @@
         /*全部設定字體*/
         body {
             font-family: 'Microsoft JhengHei';
-            font-size: 18px;
+            font-size: 16px;
         }
 
         .copyrights {
@@ -197,7 +197,8 @@
             <table border="0">
                 <tr>
                     <td>
-                        <img src="images/logo2.jpg" height="60px" /></td>
+                        <asp:Image ID="Image1" runat="server" Height="60px" ImageUrl="~/images/logo.jpg"  />
+                        <%--<img src="images/logo2.jpg" height="60px" id="maslogo" runat="server" />--%></td>
                     <td>
                         <div class="container-fluid" >
                             <ul class="nav navbar-nav" >
@@ -216,7 +217,7 @@
                                 <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Members<span class="caret"></span></a>
                                     <ul class="dropdown-menu">
                                         <li><a href="CenterMember.aspx">水土保持生態工程研究中心</a></li>
-                                        <li><a href="Students.aspx">詹錢登研究室</a></li>
+                                        <li><a href="Students.aspx">詹錢登教授研究室</a></li>
                                     </ul>
                                 </li>
                                 <li><a data-toggle="tab" href="#" id="Photo">Photo Albums</a></li>
@@ -249,7 +250,7 @@
                     </p>
                 </div>--%>
                 <div  class="col_one_third address" style="width:50%">
-                    &copy; 2016 <a href="#">成功大學 水利及海洋工程學系 詹錢登研究室</a> 版權所有    
+                    &copy; 2016 <a href="#">成功大學 水利及海洋工程學系 詹錢登教授研究室</a> <br />版權所有    
                 </div>
                 <div class=" col_one_third col_last copyright " style="width:40%">
                     <p>

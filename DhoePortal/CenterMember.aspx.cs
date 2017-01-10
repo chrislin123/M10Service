@@ -17,8 +17,21 @@ namespace DhoePortal
 
         protected void Page_Load(object sender, EventArgs e)
         {
+
+
+            
+
+
             if (IsPostBack == false)
             {
+                //研究中心使用不同logo
+                
+                Image imglogo = Master.FindControl("Image1") as Image;
+                imglogo.ImageUrl = "~/images/logo2.jpg";
+
+
+
+
                 ssql = @"   select * from CenterMember";                      
                     
                 oDal.CommandText = ssql;
