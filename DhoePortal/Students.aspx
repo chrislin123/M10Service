@@ -1,19 +1,52 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/default.Master" AutoEventWireup="true" CodeBehind="Students.aspx.cs" Inherits="DhoePortal.Students" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip({
+                html: true,
+                //title: $('#' + $(this).data('tip')).html(),
+                title: $('#my-tip').html(),
+                //title: "Hooray!", 
+                trigger: "click"
+            });
+
+
+            $('.btn').tooltip({ title: "<h1><strong>HTML</strong> inside <code>the</code> <em>tooltip</em></h1>", html: true, placement: "right" });
+        });
+
+        
+    </script>
+
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
 
-
+    <!-- Tooltip content -->
+    <div id="my-tip" class="tip-content hidden">
+        <h2>Tip title</h2>
+        <p>This is my tip content</p>
+    </div>
     <div class="container">
+        <a class="test" href="#" data-toggle="tooltip" data-placement="top" title="Hooray!test" >Top</a>
+        <span data-toggle="tooltip"   >test</span>
+        <h1><span style="font-weight: bold; color: #31708f;" data-toggle="tooltip" >在校生</span></h1>
+
+        <asp:PlaceHolder ID="PlaceHolder1" runat="server" />
+
+        <h1><span style="font-weight: bold; color: #31708f;">博士</span></h1>
+
+        <asp:PlaceHolder ID="PlaceHolder2" runat="server" />
+
+        <h1><span style="font-weight: bold; color: #31708f;">碩士</span></h1>
+
+        <asp:PlaceHolder ID="PlaceHolder3" runat="server" />
 
 
-
-        <div class="panel panel-info">
+        <%--        <div class="panel panel-info">
             <div class="panel-heading">
                 <h3><span style="font-weight: bold;">在校生</span></h3>
-                <%--<h3 class="panel-title">Panel title</h3>--%>
+              
             </div>
             <div class="panel-body">
                 <table class="table">                   
@@ -37,7 +70,7 @@
         <div class="panel panel-info">
             <div class="panel-heading">
                 <h3><span style="font-weight: bold;">博士</span></h3>
-                <%--<h3 class="panel-title">Panel title</h3>--%>
+                
             </div>
             <div class="panel-body">
                 <table class="table">
@@ -82,7 +115,7 @@
         <div class="panel panel-info">
             <div class="panel-heading">
                 <h3><span style="font-weight: bold;">碩士</span></h3>
-                <%--<h3 class="panel-title">Panel title</h3>--%>
+                
             </div>
             <div class="panel-body">
                 <table class="table">
@@ -139,13 +172,7 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-
-
-
-
-
-
+        </div>--%>
     </div>
 
 </asp:Content>
