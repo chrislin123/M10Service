@@ -1,9 +1,8 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/default.Master" AutoEventWireup="true" CodeBehind="Photo.aspx.cs" Inherits="DhoePortal.Photo" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/default.Master" AutoEventWireup="true" CodeBehind="PhotoD.aspx.cs" Inherits="DhoePortal.PhotoD" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
-
-
-
+    <script src="js/lightbox-plus-jquery.min.js"></script>
+    <link rel="stylesheet" href="css/lightbox.min.css">
     <link rel="stylesheet" href="css/fix.css">
 
     <style>
@@ -17,19 +16,29 @@
             text-decoration: none;
         }
 
+        .album_info_title_hy {
+            color: #936f4a;
+            text-decoration: none;
+        }
+
+
+        .album_info {
+            PADDING: 0px 5px 5px;
+            FONT-SIZE: 16px;
+            WIDTH: auto;
+            text-align: left;
+            /*文字強迫換行*/
+            word-break: break-all;
+        }
+
         .breadcrumb > li + li:before {
             color: #CCCCCC;
             content: "/ ";
             padding: 0 5px;
         }
 
-        /*.album_info {
-            PADDING: 0px 5px 5px;
-            FONT-SIZE: 16px;
-            WIDTH: auto;
-            text-align: left;
-        }
 
+        /*
         .album_cover {
             text-align: center;
             width: 169px;
@@ -52,9 +61,6 @@
             font-weight: bold;
             font-size: 15px;
         }
-
-        
-
         
         /*p {
             display: block;
@@ -64,16 +70,16 @@
             -webkit-margin-end: 0px;
         }*/ */
     </style>
-
-
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
-
-    
     <div class="container">
-        <ol class="breadcrumb">
-            <li><a href="#" class="active">Albums</a></li>            
-        </ol>
+        <asp:PlaceHolder ID="phBread" runat="server" />
+        <%--<ol class="breadcrumb">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">2013</a></li>
+            <li class="active">十一月</li>
+        </ol>--%>
+        <a href="Photo.aspx"></a>
         <asp:DataList ID="DataList1" runat="server" OnItemDataBound="DataList1_ItemDataBound" RepeatColumns="3" RepeatDirection="Horizontal" Width="100%">
             <ItemTemplate>
 
@@ -83,8 +89,8 @@
 
 
 
-                        <asp:PlaceHolder ID = "phphoto" runat="server" />
-                      
+                        <asp:PlaceHolder ID="phphoto" runat="server" />
+
                         <%--<a href="//photo.xuite.net/j73025448/19904265">
                             <img src="images/logo.jpg" onerror="javascript:this.src='/images/blank.gif'" border="0" class="img-thumbnail " style="width: 100%;">
                         </a>--%>
@@ -92,7 +98,7 @@
                     <div class="album_info">
                         <p class="album_info_title">
 
-                            <asp:PlaceHolder ID = "phtitle" runat="server" />
+                            <asp:PlaceHolder ID="phtitle" runat="server" />
 
 
                             <%--<asp:HyperLink ID="HyperLink1" runat="server" class="album_info_title_hy">HyperLink</asp:HyperLink>--%>

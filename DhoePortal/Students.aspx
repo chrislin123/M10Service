@@ -12,7 +12,7 @@
             });
 
 
-            $('.btn').tooltip({ title: "<h1><strong>HTML</strong> inside <code>the</code> <em>tooltip</em></h1>", html: true, placement: "right" });
+            //$('.btn').tooltip({ title: "<h1><strong>HTML</strong> inside <code>the</code> <em>tooltip</em></h1>", html: true, placement: "right" });
         });
 
         
@@ -21,11 +21,13 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-
+    <br /><br /><br /><br /><br /><br /><br />
     <!-- Tooltip content -->
     <div id="my-tip" class="tip-content hidden">
+        
         <h2>Tip title</h2>
         <p>This is my tip content</p>
+        <iframe src="Photo.aspx" width="50px"></iframe>
     </div>
     <div class="container">
         <a class="test" href="#" data-toggle="tooltip" data-placement="top" title="Hooray!test" >Top</a>
