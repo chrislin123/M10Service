@@ -21,14 +21,14 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
-    <br /><br /><br /><br /><br /><br /><br />
+    <%--<br /><br /><br /><br /><br /><br /><br />--%>
     <!-- Tooltip content -->
-    <div id="my-tip" class="tip-content hidden">
+    <%--<div id="my-tip" class="tip-content hidden">
         
         <h2>Tip title</h2>
         <p>This is my tip content</p>
         <iframe src="Photo.aspx" width="50px"></iframe>
-    </div>
+    </div>--%>
     <div class="container">
         <a class="test" href="#" data-toggle="tooltip" data-placement="top" title="Hooray!test" >Top</a>
         <span data-toggle="tooltip"   >test</span>

@@ -1,7 +1,7 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/default.Master" AutoEventWireup="true" CodeBehind="PhotoD.aspx.cs" Inherits="DhoePortal.PhotoD" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
-    <script src="js/lightbox-plus-jquery.min.js"></script>
+    
     <link rel="stylesheet" href="css/lightbox.min.css">
     <link rel="stylesheet" href="css/fix.css">
 
@@ -79,7 +79,9 @@
             <li><a href="#">2013</a></li>
             <li class="active">十一月</li>
         </ol>--%>
-        <a href="Photo.aspx"></a>
+        <%--<a href="Photo.aspx"></a>
+
+        <img src="images/logo.jpg" onerror="javascript:this.src='/images/blank.gif'" border="0" class="img-thumbnail " style="width: 100%;">--%>
         <asp:DataList ID="DataList1" runat="server" OnItemDataBound="DataList1_ItemDataBound" RepeatColumns="3" RepeatDirection="Horizontal" Width="100%">
             <ItemTemplate>
 
@@ -133,4 +135,7 @@
 
 
     </div>
+
+
+    <script src="js/lightbox-plus-jquery.min.js"></script>
 </asp:Content>
