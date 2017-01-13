@@ -164,7 +164,7 @@ namespace DhoePortal
                 {
                     string sName = dRow["name"].ToString();
 
-                    string sData = string.Format("<a href='#' data-trigger='hover' rel='popover' data-html='true' title='{0}' data-content=\"<iframe frameborder='0' scrolling='no' height='500' width='500' src='StudentsD.aspx'></iframe>\">{0}</a>", sName);
+                    string sData = string.Format("<a href='#' data-trigger='hover' rel='popover' data-html='true' title='Demo{0}' data-content=\"<iframe frameborder='0' scrolling='no' height='500' width='500' src='StudentsD.aspx'></iframe>\">{0}</a>", sName);
                     sContent += sData + "　";
                 }
 
