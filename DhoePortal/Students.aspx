@@ -8,31 +8,75 @@
                 //title: $('#' + $(this).data('tip')).html(),
                 title: $('#my-tip').html(),
                 //title: "Hooray!", 
-                trigger: "click"
+                //trigger: "click"
+                trigger: "hover"
+
             });
 
-
+            $('[rel="popover"]').popover();
             //$('.btn').tooltip({ title: "<h1><strong>HTML</strong> inside <code>the</code> <em>tooltip</em></h1>", html: true, placement: "right" });
         });
 
-        
+
+        //$(window).load(function () {
+        //    //var img = '<iframe frameborder="0" scrolling="no" height="220" width="420" src="http://dxlite.g7vjr.org/?dx=LU5DX&limit=10"></iframe>';
+        //    //$("#blob").popover({ title: 'Last 10 spots for the selected station', content: img, html: true });
+        //    $('[rel="popover"]').popover();
+        //})
+
     </script>
+    <style>
+        /* Popover */
+        .popover {
+            max-width: 100%;
+            width: auto;
+            /*border: 2px dotted red;*/
+        }
+        
+
+        /* Popover Header */
+        .popover-title {
+            /*background-color: #73AD21;*/
+            /*color: #FFFFFF;*/
+            font-size: 28px;
+            text-align: center;
+        }
+
+        /* Popover Body */
+        .popover-content {
+            /*background-color: coral;
+            color: #FFFFFF;
+            padding: 25px;*/
+        }
+
+        /* Popover Arrow */
+        .arrow {
+            /*border-right-color: red !important;*/
+        }
+    </style>
 
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
+
+    <%--<a href="#" id="blob" class="btn large primary" rel="popover" style="margin-top:100px">hover for popover</a>--%>
+
+    <%--<a href="#" id="blob2" class="btn large primary" data-trigger="hover" rel="popover" data-html="true" data-content='<iframe frameborder="0" scrolling="no" height="220" width="420"src="http://dxlite.g7vjr.org/?dx=LU5DX&limit=10"></iframe>' style="margin-top: 100px">hover for popover</a>--%>
+    <%--<a href="#" id="blob2" data-trigger="hover" rel="popover" data-html="true" title="我的測試" data-content='<iframe frameborder="0" scrolling="no" height="500" width="500" src="Photo.aspx"></iframe>'>hover for popover</a>--%>
+    <%--<a href="#" id="blob2" data-trigger="focus" rel="popover" data-html="true" title="我的測試" data-content='<iframe frameborder="0" scrolling="no" height="220" width="420" src="Photo.aspx"></iframe>'>hover for popover</a>--%>
+
     <%--<br /><br /><br /><br /><br /><br /><br />--%>
     <!-- Tooltip content -->
-    <%--<div id="my-tip" class="tip-content hidden">
-        
+    <%--<div id="my-tip" class="tip-content hidden" style="width: 500px">
+
         <h2>Tip title</h2>
         <p>This is my tip content</p>
-        <iframe src="Photo.aspx" width="50px"></iframe>
+        <iframe src="Photo.aspx" width="250px"></iframe>
     </div>--%>
     <div class="container">
-        <a class="test" href="#" data-toggle="tooltip" data-placement="top" title="Hooray!test" >Top</a>
-        <span data-toggle="tooltip"   >test</span>
-        <h1><span style="font-weight: bold; color: #31708f;" data-toggle="tooltip" >在校生</span></h1>
+        <%--<a class="test" href="#" data-toggle="tooltip" data-placement="right" title="Hooray!test">Top</a>
+        <span data-toggle="tooltip" data-placement="right">test</span>--%>
+        <h1><span style="font-weight: bold; color: #31708f;" data-toggle="tooltip">在校生</span></h1>
 
         <asp:PlaceHolder ID="PlaceHolder1" runat="server" />
 

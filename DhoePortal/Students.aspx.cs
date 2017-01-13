@@ -162,7 +162,10 @@ namespace DhoePortal
                 dttemp = oDal.DataTable();
                 foreach (DataRow dRow in dttemp.Rows)
                 {
-                    sContent += dRow["name"].ToString() + "　";
+                    string sName = dRow["name"].ToString();
+
+                    string sData = string.Format("<a href='#' data-trigger='hover' rel='popover' data-html='true' title='{0}' data-content=\"<iframe frameborder='0' scrolling='no' height='500' width='500' src='StudentsD.aspx'></iframe>\">{0}</a>", sName);
+                    sContent += sData + "　";
                 }
 
 

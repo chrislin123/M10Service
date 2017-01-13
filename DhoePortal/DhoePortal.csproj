@@ -95,6 +95,7 @@
     <Content Include="images\logo.jpg" />
     <Content Include="Index.aspx" />
     <Content Include="Students.aspx" />
+    <Content Include="StudentsD.aspx" />
     <Content Include="Web.config" />
     <Content Include="default.aspx" />
   </ItemGroup>
@@ -204,6 +205,13 @@
     </Compile>
     <Compile Include="Students.aspx.designer.cs">
       <DependentUpon>Students.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="StudentsD.aspx.cs">
+      <DependentUpon>StudentsD.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="StudentsD.aspx.designer.cs">
+      <DependentUpon>StudentsD.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
