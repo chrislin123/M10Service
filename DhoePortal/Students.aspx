@@ -76,15 +76,15 @@
     <div class="container">
         <%--<a class="test" href="#" data-toggle="tooltip" data-placement="right" title="Hooray!test">Top</a>
         <span data-toggle="tooltip" data-placement="right">test</span>--%>
-        <h1><span style="font-weight: bold; color: #31708f;" data-toggle="tooltip">在校生</span></h1>
+        <h2><span style="font-weight: bold; color: #31708f;" data-toggle="tooltip">在校生</span></h2>
 
         <asp:PlaceHolder ID="PlaceHolder1" runat="server" />
 
-        <h1><span style="font-weight: bold; color: #31708f;">博士</span></h1>
+        <h2><span style="font-weight: bold; color: #31708f;">博士</span></h2>
 
         <asp:PlaceHolder ID="PlaceHolder2" runat="server" />
 
-        <h1><span style="font-weight: bold; color: #31708f;">碩士</span></h1>
+        <h2><span style="font-weight: bold; color: #31708f;">碩士</span></h2>
 
         <asp:PlaceHolder ID="PlaceHolder3" runat="server" />
 

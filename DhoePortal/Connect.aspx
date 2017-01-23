@@ -3,7 +3,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
        <div class="container">
-        <h1><span style="font-weight: bold; color:#31708f;">相關連結</span></h1>
+        <h2><span style="font-weight: bold; color:#31708f;">相關連結</span></h2>
         <table class="table">
             <tbody>
                 <tr style="width: 100px;" class="active">

@@ -71,9 +71,10 @@
 
     
     <div class="container">
-        <ol class="breadcrumb">
+        <%--<ol class="breadcrumb">
             <li><a href="#" class="active">Albums</a></li>            
-        </ol>
+        </ol>--%>
+        <h2><span style="font-weight: bold;color:#31708f;">Albums</span></h2>
         <asp:DataList ID="DataList1" runat="server" OnItemDataBound="DataList1_ItemDataBound" RepeatColumns="3" RepeatDirection="Horizontal" Width="100%">
             <ItemTemplate>
 

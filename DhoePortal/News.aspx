@@ -4,7 +4,7 @@
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div class="container">
-        <h1><span style="font-weight: bold;color:#31708f;">最新消息</span></h1>
+        <h2><span style="font-weight: bold;color:#31708f;">最新消息</span></h2>
 
         <asp:PlaceHolder ID = "PlaceHolder1" runat="server" />
 

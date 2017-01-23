@@ -17,27 +17,27 @@
 
     <style>
         /*body {
-    padding-top: 60px;
-    padding-bottom: 40px;
-}*/
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }*/
 
-        /*.sidebar-nav {
-    padding: 9px 0;
-}*/
+                /*.sidebar-nav {
+            padding: 9px 0;
+        }*/
 
 
 
         /*全部設定字體*/
         body {
             font-family: 'Microsoft JhengHei';
-            font-size: 16px;
+            font-size: 15px;
         }
 
         .copyrights {
             position: relative;
             padding: 30px 30px 15px 30px;
             line-height: 23px;
-            font-size: 18px;
+            font-size: 15px;
             background-color: #f2f2f2;
             overflow: hidden;
             color: #666;
@@ -194,6 +194,8 @@
 
         <div class="container" >
             <br />
+            <br />
+            <br />
             <table border="0">
                 <tr>
                     <td>
@@ -203,6 +205,7 @@
                         <div class="container-fluid" >
                             <ul class="nav navbar-nav" >
                                 <%--<li><a data-toggle="tab" href="#home">Home</a></li>--%>
+                                <li><a data-toggle="tab" href="#" id="News">News</a></li>
                                 <li><a data-toggle="tab" href="#" id="Professor">Professor</a></li>
                                 <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="default.aspx">Publications<span class="caret"></span></a>
                                     <ul class="dropdown-menu">
@@ -213,7 +216,7 @@
                                     </ul>
                                 </li>
                                 <li><a data-toggle="tab" href="#" id="Research">Research</a></li>
-                                <li><a data-toggle="tab" href="#" id="News">News</a></li>
+                                
                                 <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Members<span class="caret"></span></a>
                                     <ul class="dropdown-menu">
                                         <li><a href="CenterMember.aspx">水土保持生態工程研究中心</a></li>
@@ -229,7 +232,7 @@
             </table>
 
         </div>
-
+        <br />
 
         <div class="title">
             <%-- <h3>科別介紹</h3>--%>

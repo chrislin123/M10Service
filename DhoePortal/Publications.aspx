@@ -7,7 +7,7 @@
 
     <div class="container">
 
-        <h1><span style="font-weight: bold;color:#31708f;">專書論文</span></h1>
+        <h2><span style="font-weight: bold;color:#31708f;">專書論文</span></h2>
 
         <asp:PlaceHolder ID = "PlaceHolder1" runat="server" />
 

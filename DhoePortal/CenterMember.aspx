@@ -6,11 +6,11 @@
 
     <div class="container">
 
-        <h1><span style="font-weight: bold;color:#31708f;">研究中心成員</span></h1>
+        <h2><span style="font-weight: bold;color:#31708f;">研究中心成員</span></h2>
 
         <asp:PlaceHolder ID = "PlaceHolder1" runat="server" />
 
-        <h1><span style="font-weight: bold;color:#31708f;">計畫執行項目</span></h1>
+        <h2><span style="font-weight: bold;color:#31708f;">計畫執行項目</span></h2>
 
         <asp:PlaceHolder ID = "PlaceHolder2" runat="server" />
 

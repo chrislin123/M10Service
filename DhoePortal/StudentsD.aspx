@@ -17,7 +17,7 @@
 <body>
     <form id="form1" runat="server">
         <div class="container">
-            <h4><span style="font-weight: bold; color: #31708f;">經歷</span></h4>
+            <h5><span style="font-weight: bold; color: #31708f;">經歷</span></h5>
             <table class="table">
                 <tbody>
                     <tr class='active'>
@@ -39,7 +39,7 @@
 
                 </tbody>
             </table>
-            <h4><span style="font-weight: bold; color: #31708f;">相關研究</span></h4>
+            <h5><span style="font-weight: bold; color: #31708f;">相關研究</span></h5>
             <table class="table">
                 <tbody>
                     <tr class='active'>
