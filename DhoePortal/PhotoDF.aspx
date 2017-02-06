@@ -1,75 +1,57 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/default.Master" AutoEventWireup="true" CodeBehind="PhotoDF.aspx.cs" Inherits="DhoePortal.PhotoDF" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+    <!-- Add jQuery library -->
+	<%--<script type="text/javascript" src="../lib/jquery-1.10.2.min.js"></script>--%>
+    <script type="text/javascript" src="fancyBox/lib/jquery-1.10.2.min.js"></script>
+
+	<!-- Add mousewheel plugin (this is optional) -->
+	<%--<script type="text/javascript" src="../lib/jquery.mousewheel.pack.js?v=3.1.3"></script>--%>
+    <script type="text/javascript" src="fancyBox/lib/jquery.mousewheel.pack.js"></script>
+
+	<!-- Add fancyBox main JS and CSS files -->
+	<%--<script type="text/javascript" src="../source/jquery.fancybox.pack.js?v=2.1.5"></script>
+	<link rel="stylesheet" type="text/css" href="../source/jquery.fancybox.css?v=2.1.5" media="screen" />--%>
+    <script type="text/javascript" src="fancyBox/source/jquery.fancybox.js?v=2.1.5"></script>
+	<link rel="stylesheet" type="text/css" href="fancyBox/source/jquery.fancybox.css?v=2.1.5" media="screen" />
+
+	<!-- Add Button helper (this is optional) -->
+	<link rel="stylesheet" type="text/css" href="fancyBox/source/helpers/jquery.fancybox-buttons.css?v=1.0.5" />
+	<script type="text/javascript" src="fancyBox/source/helpers/jquery.fancybox-buttons.js?v=1.0.5"></script>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+		
+
+			$('.fancybox-buttons').fancybox({
+				openEffect  : 'none',
+				closeEffect : 'none',
+
+				prevEffect : 'none',
+				nextEffect : 'none',
+                autoPlay : 'true',
+
+				closeBtn  : true,
+
+				helpers : {
+					title : {
+						type : 'inside'
+					},
+					buttons	: {}
+				},
+
+				afterLoad : function() {
+					this.title = 'Image ' + (this.index + 1) + ' of ' + this.group.length + (this.title ? ' - ' + this.title : '');
+				}
+			});
+
+
+		});
+	</script>
     
-    <link rel="stylesheet" href="css/lightbox.min.css">
-    <link rel="stylesheet" href="css/fix.css">
-
-    <style>
-        A.album_info_title_hy:link {
-            color: #936f4a;
-            text-decoration: none;
-        }
-
-        A.album_info_title_hy:visited {
-            color: #936f4a;
-            text-decoration: none;
-        }
-
-        .album_info_title_hy {
-            color: #936f4a;
-            text-decoration: none;
-        }
 
 
-        .album_info {
-            PADDING: 0px 5px 5px;
-            FONT-SIZE: 16px;
-            WIDTH: auto;
-            text-align: left;
-            /*文字強迫換行*/
-            word-break: break-all;
-        }
 
-        .breadcrumb > li + li:before {
-            color: #CCCCCC;
-            content: "/ ";
-            padding: 0 5px;
-        }
-
-
-        /*
-        .album_cover {
-            text-align: center;
-            width: 169px;
-            height: 169px;
-            padding: 6px 13px 13px 6px;
-            background: url(/images/p_bg01.png) no-repeat;
-        }
-
-        .album_item {
-            width: 200px;
-            margin: 0px 0px 0px 0px;
-            padding: 5px 0px;
-            text-align: center;
-            vertical-align: top;
-            position: relative;
-        }
-
-        album_info_title {
-            margin: 2px;
-            font-weight: bold;
-            font-size: 15px;
-        }
-        
-        /*p {
-            display: block;
-            -webkit-margin-before: 1em;
-            -webkit-margin-after: 1em;
-            -webkit-margin-start: 0px;
-            -webkit-margin-end: 0px;
-        }*/ */
-    </style>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
     <div class="container">
@@ -138,6 +120,6 @@
     </div>
 
 
-    <script src="js/lightbox-plus-jquery.min.js"></script>
+    <%--<script src="js/lightbox-plus-jquery.min.js"></script>--%>
 </asp:Content>
 
