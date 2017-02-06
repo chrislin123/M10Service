@@ -65,6 +65,23 @@
     <Content Include="css\lightbox.min.css" />
     <Content Include="css\the-big-picture.css" />
     <Content Include="default.Master" />
+    <Content Include="fancyBox\lib\jquery-1.10.2.min.js" />
+    <Content Include="fancyBox\lib\jquery.mousewheel.pack.js" />
+    <Content Include="fancyBox\source\blank.gif" />
+    <Content Include="fancyBox\source\fancybox_loading%402x.gif" />
+    <Content Include="fancyBox\source\fancybox_loading.gif" />
+    <Content Include="fancyBox\source\fancybox_overlay.png" />
+    <Content Include="fancyBox\source\fancybox_sprite%402x.png" />
+    <Content Include="fancyBox\source\fancybox_sprite.png" />
+    <Content Include="fancyBox\source\helpers\fancybox_buttons.png" />
+    <Content Include="fancyBox\source\helpers\jquery.fancybox-buttons.css" />
+    <Content Include="fancyBox\source\helpers\jquery.fancybox-buttons.js" />
+    <Content Include="fancyBox\source\helpers\jquery.fancybox-media.js" />
+    <Content Include="fancyBox\source\helpers\jquery.fancybox-thumbs.css" />
+    <Content Include="fancyBox\source\helpers\jquery.fancybox-thumbs.js" />
+    <Content Include="fancyBox\source\jquery.fancybox.css" />
+    <Content Include="fancyBox\source\jquery.fancybox.js" />
+    <Content Include="fancyBox\source\jquery.fancybox.pack.js" />
     <Content Include="images\close.png" />
     <Content Include="images\index2.jpg" />
     <Content Include="images\loading.gif" />
@@ -79,6 +96,7 @@
     <Content Include="News.aspx" />
     <Content Include="Photo.aspx" />
     <Content Include="PhotoD.aspx" />
+    <Content Include="PhotoDF.aspx" />
     <Content Include="Professor.aspx" />
     <Content Include="Publications.aspx" />
     <Content Include="Research.aspx" />
@@ -169,6 +187,13 @@
     </Compile>
     <Compile Include="PhotoD.aspx.designer.cs">
       <DependentUpon>PhotoD.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="PhotoDF.aspx.cs">
+      <DependentUpon>PhotoDF.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="PhotoDF.aspx.designer.cs">
+      <DependentUpon>PhotoDF.aspx</DependentUpon>
     </Compile>
     <Compile Include="Professor.aspx.cs">
       <DependentUpon>Professor.aspx</DependentUpon>

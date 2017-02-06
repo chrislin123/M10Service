@@ -97,7 +97,8 @@ namespace DhoePortal
                 sImgSrc = string.Format(@"photo/n/{0}/{1}", sName, sImgSrc);
                
                 //html.Append("<a href='//photo.xuite.net/j73025448/19904265'>");
-                html.Append(string.Format("<a href='PhotoD.aspx?name={0}'>", sName));
+                //html.Append(string.Format("<a href='PhotoD.aspx?name={0}'>", sName));
+                html.Append(string.Format("<a href='PhotoDF.aspx?name={0}'>", sName));
 
                 html.Append(string.Format("<img src='{0}'  border='0' class='img-thumbnail' style='width: 100%;'>", sImgSrc));
                 //html.Append("<img src='images/logo.jpg'  border='0' class='img-thumbnail' style='width: 100%;'>");
