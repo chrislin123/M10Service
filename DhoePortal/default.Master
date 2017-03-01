@@ -21,7 +21,7 @@
             padding-bottom: 40px;
         }*/
 
-                /*.sidebar-nav {
+        /*.sidebar-nav {
             padding: 9px 0;
         }*/
 
@@ -43,10 +43,13 @@
             color: #666;
         }
 
-        .col_full { width: 100%; }
+        .col_full {
+            width: 100%;
+        }
+
         .col_half,
         .landing-offer-half {
-	        width: 48%;
+            width: 48%;
         }
 
         .col_one_third {
@@ -99,11 +102,11 @@
         .col_four_fifth,
         .col_one_sixth,
         .col_five_sixth {
-	        display: block;
-	        position: relative;
-	        margin-right: 4%;
-	        margin-bottom: 20px;
-	        float: left;
+            display: block;
+            position: relative;
+            margin-right: 4%;
+            margin-bottom: 20px;
+            float: left;
         }
 
 
@@ -192,39 +195,62 @@
 <body>
     <form id="form1" runat="server">
 
-        <div class="container" >
+        <div class="container">
             <br />
             <br />
             <br />
             <table border="0">
                 <tr>
                     <td>
-                        <asp:Image ID="Image1" runat="server" Height="60px" ImageUrl="~/images/logo.jpg"  />
+                        <asp:Image ID="Image1" runat="server" Height="60px" ImageUrl="~/images/logo.jpg" />
                         <%--<img src="images/logo2.jpg" height="60px" id="maslogo" runat="server" />--%></td>
                     <td>
-                        <div class="container-fluid" >
-                            <ul class="nav navbar-nav" >
+                        <div class="container-fluid">
+                            <ul class="nav navbar-nav">
                                 <%--<li><a data-toggle="tab" href="#home">Home</a></li>--%>
-                                <li><a data-toggle="tab" href="#" id="News">News</a></li>
-                                <li><a data-toggle="tab" href="#" id="Professor">Professor</a></li>
-                                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="default.aspx">Publications<span class="caret"></span></a>
+                                <li><a data-toggle="tab" href="#" id="News">News<br />
+                                    最新消息</a></li>
+                                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#" id="Professor">Professor<br />
+                                    教授<span class="caret"></span></a>
+
+                                    <ul class="dropdown-menu">
+                                        <li><a href="Experience.aspx">學經歷 Education and Professional Experience</a></li>
+                                        <li><a href="JournalPaper.aspx">專長領域 Research Interests</a></li>
+                                        <%--<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#" href="ConferencePaper.aspx">著作 Publications<span class="caret"></span></a>
+                                            <ul class="dropdown-menu">
+                                            </ul>
+                                        </li>--%>
+                                        <li><a href="#">著作 Publications</a></li>
+                                        <li><a href="Books.aspx">&nbsp;&nbsp;&nbsp;&nbsp;專書 Books</a></li>
+                                        <li><a href="JournalPaper.aspx">&nbsp;&nbsp;&nbsp;&nbsp;期刊論文 Journal Paper</a></li>
+                                        <li><a href="ConferencePaper.aspx">&nbsp;&nbsp;&nbsp;&nbsp;研討會論文 Conference Paper</a></li>
+                                        <li><a href="Publications.aspx">&nbsp;&nbsp;&nbsp;&nbsp;專書論文 Other Publications</a></li>
+                                        <li><a id="Research">研究計畫 Research Project</a></li>
+                                        <li><a href="#">榮譽與獎項 Honors and Awards</a></li>
+                                    </ul>
+                                </li>
+                                <%-- <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="default.aspx">Publications<br/>著作<span class="caret"></span></a>
                                     <ul class="dropdown-menu">
                                         <li><a href="Books.aspx">專書 Books</a></li>
                                         <li><a href="JournalPaper.aspx">期刊論文 Journal Paper</a></li>
                                         <li><a href="ConferencePaper.aspx">研討會論文 Conference Paper</a></li>
                                         <li><a href="Publications.aspx">專書論文 Other Publications</a></li>
                                     </ul>
-                                </li>
-                                <li><a data-toggle="tab" href="#" id="Research">Research</a></li>
-                                
-                                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Members<span class="caret"></span></a>
+                                </li>--%>
+                                <%--<li><a data-toggle="tab" href="#" id="Research">Research</a></li>--%>
+
+                                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Members<br />
+                                    成員<span class="caret"></span></a>
                                     <ul class="dropdown-menu">
-                                        <li><a href="CenterMember.aspx">水土保持生態工程研究中心</a></li>
-                                        <li><a href="Students.aspx">詹錢登教授研究室</a></li>
+                                        <li><a href="Students.aspx">詹錢登教授研究室 <br />Students</a></li>
+                                        <li><a href="CenterMember.aspx">水土保持生態工程研究中心 <br />Ecological Soil and Water Conservation Research Center</a></li>
+                                        
                                     </ul>
                                 </li>
-                                <li><a data-toggle="tab" href="#" id="Photo">Photo Albums</a></li>
-                                <li><a data-toggle="tab" href="#" id="Connect">Connect</a></li>
+                                <li><a data-toggle="tab" href="#" id="Photo">Photo Albums<br />
+                                    活動花絮</a></li>
+                                <li><a data-toggle="tab" href="#" id="Connect">Connect<br />
+                                    相關連結</a></li>
                             </ul>
                         </div>
                     </td>
@@ -252,10 +278,13 @@
                         聲明：禁止任何網際網路服務業者轉錄本院網路資訊內容。
                     </p>
                 </div>--%>
-                <div  class="col_one_third address" style="width:50%">
-                    &copy; 2016 <a href="#">成功大學 水利及海洋工程學系 詹錢登教授研究室</a> <br />版權所有    
+                <div class="col_one_third address" style="width: 50%">
+                    &copy; 2016 <a href="#">成功大學 水利及海洋工程學系 詹錢登教授研究室</a>
+                    <br />
+                    版權所有    
+               
                 </div>
-                <div class=" col_one_third col_last copyright " style="width:40%">
+                <div class=" col_one_third col_last copyright " style="width: 40%">
                     <p>
                         70101台南市東區大學路1號<br>
                         <span class="hide-phone">No.1, University Road, Tainan 70101, Taiwan </span>

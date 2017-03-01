@@ -35,9 +35,9 @@
     
 <body >
     <a href="Professor.aspx">
-    <div style="width:100%;padding:30px 0px 0px 0px;" > 
+    <div style="width:100%;padding:0px 0px 0px 0px;" > 
 
-        <img src="images/index2.jpg" class="img-rounded" alt="Cinque Terre" width="100%" >
+        <img src="images/index.jpg" class="img-rounded" alt="Cinque Terre" width="100%" >
 
 
 

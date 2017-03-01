@@ -65,6 +65,7 @@
     <Content Include="css\lightbox.min.css" />
     <Content Include="css\the-big-picture.css" />
     <Content Include="default.Master" />
+    <Content Include="Interests.aspx" />
     <Content Include="images\close.png" />
     <Content Include="images\index2.jpg" />
     <Content Include="images\loading.gif" />
@@ -79,6 +80,7 @@
     <Content Include="News.aspx" />
     <Content Include="Photo.aspx" />
     <Content Include="PhotoD.aspx" />
+    <Content Include="Experience.aspx" />
     <Content Include="Professor.aspx" />
     <Content Include="Publications.aspx" />
     <Content Include="Research.aspx" />
@@ -96,7 +98,9 @@
     <Content Include="Index.aspx" />
     <Content Include="Students.aspx" />
     <Content Include="StudentsD.aspx" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="default.aspx" />
   </ItemGroup>
   <ItemGroup>
@@ -135,6 +139,13 @@
     <Compile Include="default.Master.designer.cs">
       <DependentUpon>default.Master</DependentUpon>
     </Compile>
+    <Compile Include="Interests.aspx.cs">
+      <DependentUpon>Interests.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Interests.aspx.designer.cs">
+      <DependentUpon>Interests.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Index.aspx.cs">
       <DependentUpon>Index.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -169,6 +180,13 @@
     </Compile>
     <Compile Include="PhotoD.aspx.designer.cs">
       <DependentUpon>PhotoD.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Experience.aspx.cs">
+      <DependentUpon>Experience.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Experience.aspx.designer.cs">
+      <DependentUpon>Experience.aspx</DependentUpon>
     </Compile>
     <Compile Include="Professor.aspx.cs">
       <DependentUpon>Professor.aspx</DependentUpon>

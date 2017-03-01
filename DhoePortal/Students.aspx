@@ -76,7 +76,7 @@
     <div class="container">
         <%--<a class="test" href="#" data-toggle="tooltip" data-placement="right" title="Hooray!test">Top</a>
         <span data-toggle="tooltip" data-placement="right">test</span>--%>
-        <h2><span style="font-weight: bold; color: #31708f;" data-toggle="tooltip">在校生</span></h2>
+        <h2><span style="font-weight: bold; color: #31708f;" data-toggle="tooltip">在學生</span></h2>
 
         <asp:PlaceHolder ID="PlaceHolder1" runat="server" />
 
