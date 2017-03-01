@@ -1,4 +1,4 @@
-﻿<%@ Page Title="" Language="C#" MasterPageFile="~/default.Master" AutoEventWireup="true" CodeBehind="Interests.aspx.cs" Inherits="DhoePortal.Interests" %>
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/default.Master" AutoEventWireup="true" CodeBehind="Experience.aspx.cs" Inherits="DhoePortal.Experience" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
     <style type="text/css">
@@ -18,7 +18,7 @@
         <table style="width: 100%;" border="0">
             <tr>
                 <td class="auto-style1">
-                    <h1><span style="font-weight: bold;">Interests詹錢登特聘教授</span></h1>
+                    <h1><span style="font-weight: bold;">Experience詹錢登特聘教授</span></h1>
                     
                     國立成功大學總務長
                     <br />
