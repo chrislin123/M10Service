@@ -208,24 +208,24 @@
                         <div class="container-fluid">
                             <ul class="nav navbar-nav">
                                 <%--<li><a data-toggle="tab" href="#home">Home</a></li>--%>
-                                <li><a data-toggle="tab" href="#" id="News">News<br />
+                                <li><a data-toggle="tab" href="#" id="News">News&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
                                     最新消息</a></li>
-                                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#" id="Professor">Professor<br />
+                                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#" id="Professor">Professor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
                                     教授<span class="caret"></span></a>
 
                                     <ul class="dropdown-menu">
                                         <li><a href="Experience.aspx">學經歷 Education and Professional Experience</a></li>
-                                        <li><a href="JournalPaper.aspx">專長領域 Research Interests</a></li>
+                                        <li><a href="Interests.aspx">專長領域 Research Interests</a></li>
                                         <%--<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#" href="ConferencePaper.aspx">著作 Publications<span class="caret"></span></a>
                                             <ul class="dropdown-menu">
                                             </ul>
                                         </li>--%>
-                                        <li><a href="#">著作 Publications</a></li>
+                                        <li><a >著作 Publications</a></li>
                                         <li><a href="Books.aspx">&nbsp;&nbsp;&nbsp;&nbsp;專書 Books</a></li>
                                         <li><a href="JournalPaper.aspx">&nbsp;&nbsp;&nbsp;&nbsp;期刊論文 Journal Paper</a></li>
                                         <li><a href="ConferencePaper.aspx">&nbsp;&nbsp;&nbsp;&nbsp;研討會論文 Conference Paper</a></li>
                                         <li><a href="Publications.aspx">&nbsp;&nbsp;&nbsp;&nbsp;專書論文 Other Publications</a></li>
-                                        <li><a id="Research">研究計畫 Research Project</a></li>
+                                        <li><a href="#" id="Research">研究計畫 Research Project</a></li>
                                         <li><a href="#">榮譽與獎項 Honors and Awards</a></li>
                                     </ul>
                                 </li>
@@ -239,7 +239,7 @@
                                 </li>--%>
                                 <%--<li><a data-toggle="tab" href="#" id="Research">Research</a></li>--%>
 
-                                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Members<br />
+                                <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Members&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
                                     成員<span class="caret"></span></a>
                                     <ul class="dropdown-menu">
                                         <li><a href="Students.aspx">詹錢登教授研究室 <br />Students</a></li>
@@ -247,7 +247,7 @@
                                         
                                     </ul>
                                 </li>
-                                <li><a data-toggle="tab" href="#" id="Photo">Photo Albums<br />
+                                <li><a data-toggle="tab" href="#" id="Photo">Photo Albums&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
                                     活動花絮</a></li>
                                 <li><a data-toggle="tab" href="#" id="Connect">Connect<br />
                                     相關連結</a></li>

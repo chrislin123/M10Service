@@ -14,7 +14,30 @@
 
     <div class="container">
 
+        <h3><span style="font-weight: bold;">專業證照</span></h3>
+        P.E. in hydraulic engineering (Taiwan), License number: Water – 0466, Initial date of issuance: November 25, 1983.                   
+        <br />
 
+        <h3><span style="font-weight: bold;">專長領域 Research Interests</span></h3>
+        土石流<br />
+        海岸工程學<br />
+        河道水理學<br />
+        泥砂運行學<br />
+        水土保持學<br />
+        明渠水力學<br />
+        Evaluation of Debris-Flow Occurrence Potential and Flooding Area.<br />
+        Rainfall-based Debris Flow Warning Model<br />
+        Rheological Behavior of Debris Flow<br />
+        Sediment Transport in River Flow<br />
+        Open Chennel Flow.<br />
+
+        <h3><span style="font-weight: bold;">開設課程 Courses</span></h3>
+        Undergraduate Courses:<br />
+        Engineering mathematics, Hydraulic engineering, Water resources engineering, Soil and water conservation.<br />
+        Graduate Courses:<br />
+        Sediment transport mechanics, Debris flow mechanics.<br />
+
+        <%--
         <table style="width: 100%;" border="0">
             <tr>
                 <td class="auto-style1">
@@ -114,8 +137,7 @@
             </tr>
         </table>
 
-
-
+--%>
     </div>
 
 

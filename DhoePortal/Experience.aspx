@@ -18,16 +18,26 @@
         <table style="width: 100%;" border="0">
             <tr>
                 <td class="auto-style1">
-                    <h1><span style="font-weight: bold;">Experience詹錢登特聘教授</span></h1>
+                    <h1><span style="font-weight: bold;">詹錢登特聘教授</span></h1>
                     
-                    國立成功大學總務長
+                    
                     <br />
-                    國立成功大學水利及海洋工程學系特聘教授
+                    <h1><span style="font-weight: bold;">Prof. Jan, Chyan-Deng</span></h1>
                     <br />
-                    國立成功大學水土保持生態工程研究中心主任
+                    
                     <br />
                 </td>
                 <td style="width: 60%" rowspan="3">
+                    <h3><span style="font-weight: bold;">現職</span></h3>
+                    國立成功大學總務長
+                    <br />
+                    
+                    國立成功大學水利及海洋工程學系 特聘教授
+                    <br />
+
+                    國立成功大學水土保持生態工程研究中心主任
+
+                    <br />
                     <h3><span style="font-weight: bold;">學歷</span></h3>                    
                     加州大學柏克萊分校土木工程系博士
                     <br />
@@ -45,7 +55,7 @@
                     國立成功大學推廣教育中心主任<br />
                     美國地質調查所(USGS)加州Menlo Park分部客座研究員<br />
                     加州大學柏克萊分校土木工程系博士後研究<br />
-                    <h3><span  style="font-weight:bold;">專業證照</span></h3>
+                   <%-- <h3><span  style="font-weight:bold;">專業證照</span></h3>
 
                     P.E. in hydraulic engineering (Taiwan), License number: Water – 0466,<br />
                     Initial date of issuance: November 25, 1983.<br />
@@ -81,6 +91,7 @@
                     2011 博士生徐郁超中華水土保持學會論文獎<br />
                     2011 碩士生張家豪第20屆水利工程研討會學生論文獎<br />
                     2010 博士生張家榮中華民國力學學會力學期刊論文獎<br />
+                       --%>
                     <br />
                   
 
@@ -96,7 +107,7 @@
                 </td>
                 <td></td>
             </tr>
-            <tr style="height: auto;">
+           <%-- <tr style="height: auto;">
                 <td style="vertical-align: text-top;">
                     <br />
                     Email：cdjan@mail.ncku.edu.tw
@@ -111,7 +122,7 @@
                     <br />
                 </td>
                 <td></td>
-            </tr>
+            </tr>--%>
         </table>
 
 
