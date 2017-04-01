@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M10Service", "M10Service\M10Service.csproj", "{3088FF9F-E249-4A71-8451-22B5D45B38B7}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M10AlertLRTI", "M10AlertLRTI\M10AlertLRTI.csproj", "{7A157FC2-9C67-4F58-8BAE-9BBBFB44B829}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DhoePortal", "DhoePortal\DhoePortal.csproj", "{AF7738E1-AED2-4D48-8CEF-F33C62722E50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M10_XmlArrange", "M10_XmlArrange\M10_XmlArrange.csproj", "{C7F258C4-4FAA-4D81-A277-D50B30331F12}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,6 +56,10 @@ Global
 		{AF7738E1-AED2-4D48-8CEF-F33C62722E50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF7738E1-AED2-4D48-8CEF-F33C62722E50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF7738E1-AED2-4D48-8CEF-F33C62722E50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7F258C4-4FAA-4D81-A277-D50B30331F12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7F258C4-4FAA-4D81-A277-D50B30331F12}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7F258C4-4FAA-4D81-A277-D50B30331F12}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7F258C4-4FAA-4D81-A277-D50B30331F12}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
