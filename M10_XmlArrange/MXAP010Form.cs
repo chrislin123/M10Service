@@ -12,33 +12,31 @@ using Ionic.Zip;
 
 namespace M10_XmlArrange
 {
-  public partial class Form1 : Form
-  {
-    const string sBakFilePath = @"C:\m10\bak";
-    const string sFilePathArrange = @"C:\m10\Arrange";
-    const string sFilePathProblem = @"C:\m10\Problem";
-    string sZipTarDirectory = @"c:\m10\Arrange";
-    string sZipDesDirectory = @"c:\m10\ArrangeZip"; 
-    public Form1()
+  public partial class MXAP010Form : Form
+  { 
+    string sFilePathXml = string.Format(@"{0}\{1}", Directory.GetCurrentDirectory(),"XML");
+    string sFilePathArrange = string.Format(@"{0}\{1}", Directory.GetCurrentDirectory(), "Arrange"); 
+    string sFilePathProblem = string.Format(@"{0}\{1}", Directory.GetCurrentDirectory(), "Problem"); 
+    string sZipTarDirectory = string.Format(@"{0}\{1}", Directory.GetCurrentDirectory(), "Arrange"); 
+    string sZipDesDirectory = string.Format(@"{0}\{1}", Directory.GetCurrentDirectory(), "ArrangeZip");
+    public MXAP010Form()
     {
-      InitializeComponent();
-
-
-      
+      InitializeComponent();      
     }
 
     private void Form1_Load(object sender, EventArgs e)
     {
       lblProcCount.Text = "";
       lblProc.Text = "";
+      lblStatus.Text = "";      
 
-      if (!Directory.Exists(sBakFilePath)) Directory.CreateDirectory(sBakFilePath);
+      if (!Directory.Exists(sFilePathXml)) Directory.CreateDirectory(sFilePathXml);
       if (!Directory.Exists(sFilePathArrange)) Directory.CreateDirectory(sFilePathArrange);
     }
 
     private void btnStart_Click(object sender, EventArgs e)
     {
-      List<string> ListFile = Directory.GetFiles(sBakFilePath).ToList<string>();
+      List<string> ListFile = Directory.GetFiles(sFilePathXml).ToList<string>();
 
       int iIndex = 0;
       //取得所有檔案
@@ -93,14 +91,18 @@ namespace M10_XmlArrange
       using (ZipFile zip = new ZipFile(Encoding.Default))
       { 
         zip.SaveProgress += zipProgress;
+        
         //大檔壓縮
         zip.UseZip64WhenSaving = Zip64Option.AsNecessary;       
 
         //檔案名稱
         string sZipName = DateTime.Now.ToString("yyyy_MM_dd_HH_mm");
+        //設定密碼
+        zip.Password = "pass@word1";
+
         //忽略重複檔案
         zip.IgnoreDuplicateFiles = true;
-        zip.AddDirectory(sZipTarDirectory,"123");
+        zip.AddDirectory(sZipTarDirectory,"");
         zip.Save(string.Format(@"{0}\{1}.zip",sZipDesDirectory, sZipName));
       }
     }
