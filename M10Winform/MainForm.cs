@@ -284,17 +284,20 @@ namespace M10Winform
         }
 
         //FTP檔案整理
-        //foreach (string sFileName in lstFileName)
-        //{
-        //  //==1060406 自動化歸檔
-        //  //建立歸屬資料夾
-        //  List<string> slist = sFileName.Split('_').ToList<string>();
-        //  string sSaveFolder = string.Format(@"{0}/{1}/{2}/{3}", sFTPArrangePath, slist[0], slist[1], slist[2]);
-        //  ftpClient.createDirectory(sSaveFolder);
+        foreach (string sFileName in lstFileName)
+        {
+          //==1060406 自動化歸檔
+          //建立歸屬資料夾
+          List<string> slist = sFileName.Split('_').ToList<string>();
+          string sSaveFolder = string.Format(@"{0}/{1}/{2}/{3}", sFTPArrangePath, slist[0], slist[1], slist[2]);
+          ftpClient.createDirectory(sSaveFolder);
+          string sDestPath = string.Format(@"{0}/{1}", sSaveFolder, sFileName);
 
-        //  //移動檔案
-        //  ftpClient.rename(string.Format(@"{0}/{1}", sFTPXmlPath, sFileName), string.Format(@"../../{0}/{1}", sSaveFolder, sFileName));
-        //}
+          string fileDateTime = ftpClient.getFileCreatedDateTime(sDestPath);
+
+          //移動檔案
+          ftpClient.rename(string.Format(@"{0}/{1}", sFTPXmlPath, sFileName), string.Format(@"../../{0}/{1}", sSaveFolder, sFileName));
+        }
 
         //FTP檔案整理
         foreach (string sFileName in lstFileName)
