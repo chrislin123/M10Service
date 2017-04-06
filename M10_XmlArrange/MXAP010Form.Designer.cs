@@ -33,10 +33,8 @@
       this.label2 = new System.Windows.Forms.Label();
       this.lblProcCount = new System.Windows.Forms.Label();
       this.lblProc = new System.Windows.Forms.Label();
-      this.btnTest = new System.Windows.Forms.Button();
       this.progressBar1 = new System.Windows.Forms.ProgressBar();
       this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-      this.btnBack = new System.Windows.Forms.Button();
       this.lblProgress = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
       this.lblStatus = new System.Windows.Forms.Label();
@@ -92,16 +90,6 @@
       this.lblProc.TabIndex = 4;
       this.lblProc.Text = "程序";
       // 
-      // btnTest
-      // 
-      this.btnTest.Location = new System.Drawing.Point(442, 284);
-      this.btnTest.Name = "btnTest";
-      this.btnTest.Size = new System.Drawing.Size(75, 23);
-      this.btnTest.TabIndex = 5;
-      this.btnTest.Text = "測試";
-      this.btnTest.UseVisualStyleBackColor = true;
-      this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
-      // 
       // progressBar1
       // 
       this.progressBar1.Location = new System.Drawing.Point(12, 205);
@@ -115,16 +103,7 @@
       this.backgroundWorker1.WorkerSupportsCancellation = true;
       this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
       this.backgroundWorker1.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker1_ProgressChanged);
-      // 
-      // btnBack
-      // 
-      this.btnBack.Location = new System.Drawing.Point(523, 284);
-      this.btnBack.Name = "btnBack";
-      this.btnBack.Size = new System.Drawing.Size(75, 23);
-      this.btnBack.TabIndex = 7;
-      this.btnBack.Text = "背景";
-      this.btnBack.UseVisualStyleBackColor = true;
-      this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+      this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
       // 
       // lblProgress
       // 
@@ -164,9 +143,7 @@
       this.Controls.Add(this.lblStatus);
       this.Controls.Add(this.label3);
       this.Controls.Add(this.lblProgress);
-      this.Controls.Add(this.btnBack);
       this.Controls.Add(this.progressBar1);
-      this.Controls.Add(this.btnTest);
       this.Controls.Add(this.lblProc);
       this.Controls.Add(this.lblProcCount);
       this.Controls.Add(this.label2);
@@ -174,6 +151,8 @@
       this.Controls.Add(this.btnStart);
       this.Name = "MXAP010Form";
       this.Text = "M10彙整XML功能";
+      this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MXAP010Form_FormClosing);
+      this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MXAP010Form_FormClosed);
       this.Load += new System.EventHandler(this.Form1_Load);
       this.ResumeLayout(false);
       this.PerformLayout();
@@ -187,10 +166,8 @@
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label lblProcCount;
     private System.Windows.Forms.Label lblProc;
-    private System.Windows.Forms.Button btnTest;
     private System.Windows.Forms.ProgressBar progressBar1;
     private System.ComponentModel.BackgroundWorker backgroundWorker1;
-    private System.Windows.Forms.Button btnBack;
     private System.Windows.Forms.Label lblProgress;
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.Label lblStatus;

@@ -19,6 +19,7 @@ namespace M10_XmlArrange
     string sFilePathProblem = string.Format(@"{0}\{1}", Directory.GetCurrentDirectory(), "Problem"); 
     string sZipTarDirectory = string.Format(@"{0}\{1}", Directory.GetCurrentDirectory(), "Arrange"); 
     string sZipDesDirectory = string.Format(@"{0}\{1}", Directory.GetCurrentDirectory(), "ArrangeZip");
+    string sZipTempDirectory = string.Format(@"{0}\{1}", Directory.GetCurrentDirectory(), "ZipTemp");
     public MXAP010Form()
     {
       InitializeComponent();      
@@ -32,11 +33,18 @@ namespace M10_XmlArrange
 
       if (!Directory.Exists(sFilePathXml)) Directory.CreateDirectory(sFilePathXml);
       if (!Directory.Exists(sFilePathArrange)) Directory.CreateDirectory(sFilePathArrange);
+      if (!Directory.Exists(sFilePathProblem)) Directory.CreateDirectory(sFilePathProblem);
+      if (!Directory.Exists(sZipTarDirectory)) Directory.CreateDirectory(sZipTarDirectory);
+      if (!Directory.Exists(sZipDesDirectory)) Directory.CreateDirectory(sZipDesDirectory);
+      if (!Directory.Exists(sZipTempDirectory)) Directory.CreateDirectory(sZipTempDirectory);
     }
 
     private void btnStart_Click(object sender, EventArgs e)
     {
       List<string> ListFile = Directory.GetFiles(sFilePathXml).ToList<string>();
+
+      lblStatus.Text = "歸檔";
+      lblStatus.Refresh();
 
       int iIndex = 0;
       //取得所有檔案
@@ -51,10 +59,6 @@ namespace M10_XmlArrange
         FileInfo fi = new FileInfo(sFile);
 
         //解析檔案年月日
-        string sYear = "";
-        string sMonth = "";
-        string sDay = "";
-
         List<string> slist = fi.Name.Split('_').ToList<string>();
 
         if (slist.Count < 4) continue;
@@ -67,50 +71,50 @@ namespace M10_XmlArrange
         //檔案移至整理路徑
         lblProc.Text = string.Format("{0}：移動至{1}", fi.Name, sSaveFolder + fi.Name);
         lblProc.Refresh();
-        File.Move(fi.FullName, sSaveFolder + fi.Name);
+
+        fi.CopyTo(sSaveFolder + fi.Name, true);
+        fi.Delete();    
 
       }
 
-      //壓縮
-      //using (ZipFile zip = new ZipFile(@"c:\test.zip"))
-      //{
-      //  zip.AddFile("");
+      //壓縮非同步
+      lblStatus.Text = "非同步壓縮";
+      lblStatus.Refresh();
 
-
-      //  zip.Save();
-
-      //}
-
-
+      if (backgroundWorker1.IsBusy == false)
+      {
+        backgroundWorker1.RunWorkerAsync("test");
+      }
+      
 
     }
 
-    private void btnTest_Click(object sender, EventArgs e)
+    private void ProcZip()
     {
       //壓縮
       using (ZipFile zip = new ZipFile(Encoding.Default))
-      { 
+      {
         zip.SaveProgress += zipProgress;
-        
-        //大檔壓縮
-        zip.UseZip64WhenSaving = Zip64Option.AsNecessary;       
 
+        zip.TempFileFolder = sZipTempDirectory;
+        //大檔壓縮
+        zip.UseZip64WhenSaving = Zip64Option.AsNecessary;
         //檔案名稱
-        string sZipName = DateTime.Now.ToString("yyyy_MM_dd_HH_mm");
+        string sZipName = DateTime.Now.ToString("yyyy_MM_dd_HH_mm_ss");
         //設定密碼
         zip.Password = "pass@word1";
 
         //忽略重複檔案
         zip.IgnoreDuplicateFiles = true;
-        zip.AddDirectory(sZipTarDirectory,"");
-        zip.Save(string.Format(@"{0}\{1}.zip",sZipDesDirectory, sZipName));
+        zip.AddDirectory(sZipTarDirectory, "");
+        zip.Save(string.Format(@"{0}\{1}.zip", sZipDesDirectory, sZipName));
       }
     }
 
     private void zipProgress(object sender, SaveProgressEventArgs e)
     {
       if (e.EventType == ZipProgressEventType.Saving_AfterWriteEntry)
-      {
+      { 
         backgroundWorker1.ReportProgress(e.EntriesSaved * 100 / e.EntriesTotal);
         
         //this.progressBar1.Value = e.EntriesSaved * 100 / e.EntriesTotal;
@@ -127,20 +131,44 @@ namespace M10_XmlArrange
         
     }
 
-    private void btnBack_Click(object sender, EventArgs e)
-    {
-      backgroundWorker1.RunWorkerAsync();
-    }
 
     private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
     {
-      btnTest_Click(sender, e);
+      ProcZip();
+      //btnTest_Click(sender, e);
     }
 
     private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
     {
       progressBar1.Value = e.ProgressPercentage;
       lblProgress.Text = string.Format("壓縮執行進度：{0}%", e.ProgressPercentage.ToString());
+    }
+
+    private void MXAP010Form_FormClosed(object sender, FormClosedEventArgs e)
+    { 
+
+      //if (backgroundWorker1.WorkerSupportsCancellation == true && backgroundWorker1.IsBusy)
+      //{
+      //  backgroundWorker1.CancelAsync();
+      //}
+    }
+
+    private void MXAP010Form_FormClosing(object sender, FormClosingEventArgs e)
+    {
+      if (backgroundWorker1.WorkerSupportsCancellation == true && backgroundWorker1.IsBusy)
+      {
+        backgroundWorker1.CancelAsync();
+      }
+    }
+
+    private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+    {
+      //清空temp 資料表
+      List<string> ListFile = Directory.GetFiles(sZipTempDirectory).ToList<string>();
+      foreach (string sFile in ListFile)
+      {
+        File.Delete(sFile);
+      }
     }
   }
 }
