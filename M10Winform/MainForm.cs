@@ -151,10 +151,7 @@ namespace M10Winform
         if (chkdownload.Checked == true)
         {
           FtpDownload();
-        }
-
-
-        return;
+        }        
 
         // 取得資料夾內所有檔案
         foreach (string fname in System.IO.Directory.GetFiles(folderName))
@@ -165,23 +162,27 @@ namespace M10Winform
           //ShowMessageToFront("轉檔完畢");
 
 
-          //存至備份資料夾
+          
           FileInfo fi = new FileInfo(fname);
 
           //記錄轉檔資料
           FileTransLog(fi.Name);
 
-          if (File.Exists(fname))
-          {
-            if (File.Exists(folderBack + fi.Name))
-            {
-              fi.Delete();
-            }
-            else
-            {
-              fi.MoveTo(folderBack + fi.Name);
-            }
-          }
+          //存至備份資料夾
+          fi.CopyTo(folderBack + fi.Name, true);
+          fi.Delete();
+
+          //if (File.Exists(fname))
+          //{
+          //  if (File.Exists(folderBack + fi.Name))
+          //  {
+          //    fi.Delete();
+          //  }
+          //  else
+          //  {
+          //    fi.MoveTo(folderBack + fi.Name);
+          //  }
+          //}
 
         }
 
