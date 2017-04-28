@@ -56,7 +56,7 @@
                                 <asp:Button ID="btnExport" runat="server" Text="資料匯出" CssClass="btn btn-success" OnClick="btnExport_Click" />
                                 <asp:Button ID="btnRTI" runat="server" Text="土石流警戒基準值" CssClass="btn btn-success" OnClick="btnRTI_Click" />
                                 <asp:Button ID="btnRTI3" runat="server" Text="崩塌警戒基準值" CssClass="btn btn-success" OnClick="btnRTI3_Click"  />
-                                <asp:Button ID="btnRTIControl" runat="server" Text="崩塌警戒發報-已啟動" CssClass="btn btn-warning" OnClick="btnRTIControl_Click"  />
+                                <asp:Button ID="btnRTIControl" runat="server" Text="警戒發報-已啟動" CssClass="btn btn-warning" OnClick="btnRTIControl_Click"  />
 
                                 <div style="float: right; font-size: 20px">
                                     <asp:Label ID="lblDataTime" runat="server" Text="資料時間:"></asp:Label>
