@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>JS Bin</title>
+  <style type="text/css">
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      #map {
+        height: 100%;
+      }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
+  <script type="text/javascript">
+
+    var map;
+    var myLatLng = {lat: 25.04, lng: 121.512};
+    var markers = [];
+
+    function initMap() {
+      //地圖初始化
+      map = new google.maps.Map(document.getElementById('map'), {
+        center: { lat: 24.2825, lng: 121.019 },
+        zoom: 10
+        ,zoomControl: true
+      });
+
+
+
+      //標註地點
+      var marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        title:'這是總統府'
+        //,icon: 'http://files.softicons.com/download/game-icons/super-mario-icons-by-sandro-pereira/ico/Mushroom%20-%201UP.ico',
+      });
+
+      marker.setMap(map);
+
+      var marker_config = [];
+
+
+      $.ajax({
+        type: 'GET',
+        url: 'rti/getstationdata',
+        //data: { "STID": "test123456", "country": "台中" },
+        dataType: 'JSON',
+        async: false,   // 先把這隻js執行完後，再跑下面的程式，如果不寫此參數，jQuery預設AJAX為異步執行
+        success: function (response) {
+
+          response.forEach(function (data, i) {
+            
+            var itemPs = {};
+            itemPs["lat"] = Number(data.lat);
+            itemPs["lng"] = Number(data.lon);
+
+            var item = {};
+            item["position"] = itemPs;
+            item["map"] = map;
+            item["title"] = data.STID;
+            
+
+            marker_config.push(item);
+            
+            //$('<li>', { text: data.STID }).appendTo($('#products'));
+            //alert(data.STID);
+          });
+
+
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          alert('error');
+        },
+      });
+
+
+
+
+      //建立地圖 marker 的集合
+      //var marker_config = [{
+      //  position: {lat: 25.04, lng: 121.512},
+      //  map: map,
+      //  title:'總統府'
+      //},{
+      //  position: {lat: 25.035, lng: 121.519},
+      //  map: map,
+      //  title:'中正紀念堂'
+      //}];
+
+      //只開啟一個infowindow，所以宣告在外層
+      var infowindow = new google.maps.InfoWindow();
+      //var infowindow = new google.maps.InfoWindow({
+      //  content: contentString
+      //});
+
+      //標出 marker，如果使用 .setMap(null) 就可以清除該 marker
+      marker_config.forEach(function (e, i) {
+        //點選出現資訊視窗
+        var contentString = '<h2>網頁內容</h2><br/>' + e.title; //要顯示的 HTML 內容
+        
+
+
+        markers[i] = new google.maps.Marker(e);
+        markers[i].addListener('click', function () {
+          infowindow.setContent(contentString);
+          infowindow.open(map, markers[i]); //設定點選 marker 打開資訊視窗事件
+        });
+        markers[i].setMap(map);
+      });
+
+
+
+      
+
+      //marker.addListener('click', function() {
+      //  infowindow.open(map, marker); //設定點選 marker 打開資訊視窗事件
+      //});
+
+
+    }
+
+
+
+
+
+
+
+  </script>
+  <script async defer
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAvbrBg_2x0ke4k3Zy6KQtd6wccUr-P9c&callback=initMap">
+  </script>
+</body>
+</html>
+

@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
+
 namespace M10Api
 {
   public class RouteConfig
@@ -12,6 +13,9 @@ namespace M10Api
     public static void RegisterRoutes(RouteCollection routes)
     {
       routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+
+      //MVC5 RoutePrefix設定
+      routes.MapMvcAttributeRoutes();            
 
       routes.MapRoute(
           name: "Default",

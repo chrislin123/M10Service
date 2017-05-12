@@ -12,53 +12,71 @@ using Newtonsoft.Json;
 namespace M10Api.Controllers
 {
   [RoutePrefix("rti")]
-  public class TestJsonController : BaseApiController
+  public class TestapiController : BaseApiController
   {
-    public Dictionary<string, string> Get()
-    {
-      var result = new Dictionary<string, string>()
-            {
-                {"001", "Banana3333"},
-                {"002", "Apple222"},
-                {"003", "Orange"}
-            };
-      return result;
-    }
+    //public Dictionary<string, string> Get()
+    //{
+    //  var result = new Dictionary<string, string>()
+    //        {
+    //            {"001", "Banana3333"},
+    //            {"002", "Apple222"},
+    //            {"003", "Orange"}
+    //        };
+    //  return result;
+    //}
+
+    //[HttpGet]
+    //public Dictionary<string, string> HandMadeJson()
+    //{
+
+    //  var result = new Dictionary<string, string>()
+    //        {
+    //            {"001", "Banana1111"},
+    //            {"002", "Apple2222"},
+    //            {"003", "Orange"}
+    //        };
+    //  return result;
+    //}
+
+    //[HttpGet]
+    //public dynamic HandMadeJsonok()
+    //{
+
+
+    //  var list = db.Query(@" 
+
+    //      select a.STID,a.LAT,a.LON,b.COUNTY from RunTimeRainData a
+    //      left join StationData b on a.STID = b.STID
+    //    "
+    //    );
+
+    //  return list;
+
+    //}
+
 
     [HttpGet]
-    public Dictionary<string, string> HandMadeJson()
+    [Route("getStationData")]
+    public List<dynamic> getStationData()
     {
-
-      var result = new Dictionary<string, string>()
-            {
-                {"001", "Banana1111"},
-                {"002", "Apple2222"},
-                {"003", "Orange"}
-            };
-      return result;
-    }
-
-    [HttpGet]
-    public dynamic HandMadeJsonok()
-    {
-
-
-      var list = db.Query(@" 
+      var list = db.Query(@" select a.*,b.lat,b.lon from StationData a 
+        left join runtimeraindata b on a.stid = b.stid 
         
-          select a.STID,a.LAT,a.LON,b.COUNTY from RunTimeRainData a
-          left join StationData b on a.STID = b.STID
         "
         );
-
+      //where a.COUNTY = '臺中市'
       return list;
-      
     }
 
 
     [HttpGet]
-    [Route("getdata1")]
+    [Route("getdata")]
     public List<dynamic> HandRtidata()
     {
+
+
+
+
 
       //var list = db.Query(" select top 10 * from RtiData ");
 
@@ -134,7 +152,9 @@ namespace M10Api.Controllers
 
       //var test = HttpContext.Current.Request.Form["STID"];
 
-      string STID = json.Property("STID").Value.ToString();
+      
+
+      string STID = json.Property("STID").Value.ToString();      
       string country = json.Property("country").Value.ToString();
 
       //var list = db.Query(" select top 10 * from RtiData ");
