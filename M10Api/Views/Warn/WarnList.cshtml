@@ -1,0 +1,100 @@
+﻿@model IEnumerable<M10Api.Models.RunTimeRainData>
+
+
+@{
+  ViewBag.Title = "WarnList";
+  Layout = "~/Views/Shared/_WarnLayout.cshtml";
+}
+
+@*<h2>WarnList</h2>*@
+
+<div class="row">
+  <div class="col-md-12">
+    <h1 class="page-header">
+      降雨已達崩塌警戒值之區域一覽表 <small>預報時間：@ViewBag.nowdate</small>
+    </h1>
+  </div>
+</div>
+
+<div class="panel panel-success">
+  <div class="panel-heading">查詢結果 - 共 @ViewBag.count 筆</div>
+  <div class="panel-body">
+
+
+    <div class="col-md-12">
+      <div class="row">
+
+        <table class="table table-striped table-condensed">
+          <thead>
+            <tr>
+              <th style="min-width: 40px;">縣市</th>
+              <th style="min-width: 80px;">鄉鎮</th>
+              <th style="min-width: 80px;">警戒區範圍</th>
+              <th style="min-width: 80px;">1hr</th>
+              <th style="min-width: 80px;">2hr</th>
+              <th style="min-width: 80px;">3hr</th>
+              <th style="min-width: 80px;">LRTI</th>
+              <th style="min-width: 80px;">警戒LRTI</th>
+              <th style="min-width: 80px;">崩塌發布狀態</th>
+              <th style="min-width: 80px;">RT</th>
+              @*<th style="width:20px;"> </th>
+              <th style="width:20px;"> </th>*@
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var item in ViewData["LRTIAlert"] as List<dynamic>)
+            {
+
+              <tr>
+                <td>@item.country</td>
+                <td>@item.town</td>
+                <td>@item.village</td>
+                <td>@item.HOUR1</td>
+                <td>@item.HOUR2</td>
+                <td>@item.HOUR3</td>
+                <td>@item.LRTI</td>
+                <td>@item.ELRTI</td>
+                <td>@item.status</td>
+                <td>@item.RT</td>
+                @*<td><a ng-click="editUser(user.id)" class="btn btn-small btn-primary" title="修改"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
+                <td><a ng-click="deleteUser(user.id)" class="btn btn-small btn-danger" title="刪除"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>*@
+              </tr>
+            }
+
+            @*@foreach (var item in Model)
+            {
+              <tr>
+                <td>@item.STID</td>
+                <td>@item.TOWN</td>
+                <td>@item.STNAME</td>
+                <td>@item.LAT</td>
+                <td>@item.LON</td>
+                <td><a ng-click="editUser(user.id)" class="btn btn-small btn-primary" title="修改"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
+                <td><a ng-click="deleteUser(user.id)" class="btn btn-small btn-danger" title="刪除"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
+              </tr>
+             
+            }*@
+
+            @*<tr ng-repeat="user in data.items">
+                <td>{{ user.id }}</td>
+                <td>{{ user.name }}</td>
+                <td>{{ user.social_id }}</td>
+                <td>{{ user.nickname }}</td>
+                <td>{{ user.phone }}</td>
+                <td><a ng-click="editUser(user.id)" class="btn btn-small btn-primary" title="修改"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
+                <td><a ng-click="deleteUser(user.id)" class="btn btn-small btn-danger" title="刪除"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
+              </tr>*@
+          </tbody>
+        </table>
+        <div class="text-center">
+          <uib-pagination data-total-items="totalItems" ng-model="currentPage"
+                          data-max-size="NumberOfPageButtons" class=" pagination-sm"
+                          data-boundary-links="true" data-rotate="false"
+                          ng-change="pageChanged()" data-items-per-page="recordsPerPage"></uib-pagination>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

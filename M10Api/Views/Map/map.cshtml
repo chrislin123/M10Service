@@ -1,33 +1,48 @@
-﻿<!DOCTYPE html>
-<html>
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>JS Bin</title>
+﻿@section Styles {
   <style type="text/css">
       html, body {
         height: 100%;
+         display: flex;
         margin: 0;
         padding: 0;
       }
 
       #map {
         height: 100%;
+        background: black;
       }
   </style>
-</head>
-<body>
-  <br />
-  <br />
-  <br />
-  <br />
-  <br />
-  <br />
-  <br />
-  <div id="map"></div>
-  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>
-  <script type="text/javascript">
+}
+
+
+
+@*<style type="text/css">
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      height: 100%;
+    }
+</style>*@
+
+
+<br />
+<br />
+<br />
+<br />
+<br />
+
+<div id="map" @*style="height:600px;"*@></div>
+
+
+@*<script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.0.3.min.js"></script>*@
+
+
+
+<script type="text/javascript">
 
     var map;
     var myLatLng = {lat: 25.04, lng: 121.512};
@@ -58,14 +73,14 @@
 
       $.ajax({
         type: 'GET',
-        url: 'rti/getstationdata',
+        url: '/rti/getstationdata',
         //data: { "STID": "test123456", "country": "台中" },
         dataType: 'JSON',
         async: false,   // 先把這隻js執行完後，再跑下面的程式，如果不寫此參數，jQuery預設AJAX為異步執行
         success: function (response) {
 
           response.forEach(function (data, i) {
-            
+
             var itemPs = {};
             itemPs["lat"] = Number(data.lat);
             itemPs["lng"] = Number(data.lon);
@@ -74,10 +89,10 @@
             item["position"] = itemPs;
             item["map"] = map;
             item["title"] = data.STID;
-            
+
 
             marker_config.push(item);
-            
+
             //$('<li>', { text: data.STID }).appendTo($('#products'));
             //alert(data.STID);
           });
@@ -113,7 +128,7 @@
       marker_config.forEach(function (e, i) {
         //點選出現資訊視窗
         var contentString = '<h2>網頁內容</h2><br/>' + e.title; //要顯示的 HTML 內容
-        
+
 
 
         markers[i] = new google.maps.Marker(e);
@@ -126,7 +141,7 @@
 
 
 
-      
+
 
       //marker.addListener('click', function() {
       //  infowindow.open(map, marker); //設定點選 marker 打開資訊視窗事件
@@ -141,10 +156,9 @@
 
 
 
-  </script>
-  <script async defer
-          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAvbrBg_2x0ke4k3Zy6KQtd6wccUr-P9c&callback=initMap">
-  </script>
-</body>
-</html>
+</script>
 
+
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAvbrBg_2x0ke4k3Zy6KQtd6wccUr-P9c&callback=initMap">
+</script>

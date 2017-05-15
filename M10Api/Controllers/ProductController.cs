@@ -5,9 +5,11 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using M10Api.Models;
+//using System.Web.Mvc;
 
 namespace M10Api.Controllers
 {
+  [RoutePrefix("prod")]
   public class ProductController : ApiController
   {
     Product[] products = new Product[]
@@ -17,11 +19,15 @@ namespace M10Api.Controllers
               new Product { Id = 3, Name = "Hammer", Category = "Hardware", Price = 16.99M }
        };
 
+    [HttpGet]
+    [Route("product")]
     public IEnumerable<Product> GetAllProducts()
     {
 
 
       return products;
     }
+
+    
   }
 }
