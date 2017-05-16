@@ -5,6 +5,8 @@ using System.Web;
 using System.Web.Mvc;
 using M10Api.Class;
 using Dapper;
+using Dapper.Contrib.Extensions;
+
 
 namespace M10Api.Controllers
 {
@@ -18,76 +20,92 @@ namespace M10Api.Controllers
 
     public ActionResult warnlist()
     {
-      //var data = 
-      //var data = (from News in db.HotNews
-      //            where News.chCancel == "N"
-      //            orderby News.intNewsID descending
-      //            select News).Take(10);
-
-      //var data = db.Query(@" select a.*,b.lat,b.lon from StationData a 
-      //  left join runtimeraindata b on a.stid = b.stid 
-
-      //  "
-      //  );
+      var AlertUpdateTm = db.Query(@" select * from LRTIAlertMail where type = 'altm' ");
 
 
 
-      
+      ViewBag.nowdate = "";
+      if (AlertUpdateTm.Count > 0)
+      {
+        ViewBag.nowdate = AlertUpdateTm[0].value;
+      }
 
-      var data = db.Query(@" select * from RunTimeRainData ");
-      //List<Models.RunTimeRainData> rdata = new List<Models.RunTimeRainData>();
+      string ssql = @" select * from LRTIAlert where status = '{0}' order by country,town ";
+      //新增
+      var dataI = db.Query(string.Format(ssql, "I"));
+      //持續
+      var dataC = db.Query(string.Format(ssql, "C"));
+      //解除
+      var dataD = db.Query(string.Format(ssql, "D"));
 
 
-      //foreach (var item in data)
-      //{
-      //  Models.RunTimeRainData rtr = new Models.RunTimeRainData();
-      //  rtr.STID = item.STID;
+      List<dynamic> data = new List<dynamic>();
+      data.AddRange(dataI);
+      data.AddRange(dataC);
+      data.AddRange(dataD);
+
+      foreach (var item in data)
+      {
+        //處理狀態改中文顯示
+        if (item.status == "I") item.status = "新增";
+        if (item.status == "C") item.status = "持續";
+        if (item.status == "D") item.status = "刪除";
+
+        
+        //處理ELRTI無條件捨去
+        decimal dELRTI = 0;
+        if (decimal.TryParse(Convert.ToString( item.ELRTI), out dELRTI))
+        { 
+          item.ELRTI = Math.Floor(dELRTI).ToString();
+        } 
+        
+      }
 
 
-      //  rdata.Add(rtr);
-      
-      //}
-
-      ViewBag.nowdate = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
       ViewBag.count = data.Count;
-
-      
       ViewData["LRTIAlert"] = data;
-
-      //var rdata;
-      //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-      //{
-      //  rdata = cn.Query<Models.RunTimeRainData>(sql);
-      //  return cn.Query(sql).ToList();
-      //}
-
-
-      //rdata = data.ToList<Models.RunTimeRainData>();
 
       return View();
     }
 
     public ActionResult warndatatables()
     {
-     
-      var data = db.Query(@" select * from RunTimeRainData ");
-      //List<Models.RunTimeRainData> rdata = new List<Models.RunTimeRainData>();
+
+      //var data = db.Query(@" select * from RunTimeRainData ");
+
+      var AlertUpdateTm = db.Query(@" select * from LRTIAlertMail where type = 'altm' ");
+      
 
 
-      //foreach (var item in data)
-      //{
-      //  Models.RunTimeRainData rtr = new Models.RunTimeRainData();
-      //  rtr.STID = item.STID;
+      ViewBag.nowdate = "";
+      if (AlertUpdateTm.Count > 0)
+      {
+        ViewBag.nowdate = AlertUpdateTm[0].value;
+      }
+      
+      
+      //新增
+      var dataI = db.Query(@" select * from LRTIAlert where status = 'I' order by country,town ");
+      //持續
+      var dataC = db.Query(@" select * from LRTIAlert where status = 'C' order by country,town ");
+      //解除
+      var dataD = db.Query(@" select * from LRTIAlert where status = 'D' order by country,town ");
 
 
-      //  rdata.Add(rtr);
+      List<dynamic> data = new List<dynamic>();
+      data.AddRange(dataI);
+      data.AddRange(dataC);
+      data.AddRange(dataD);
 
-      //}
+      foreach (var item in data)
+      {
+        if (item.status == "I") item.status = "新增";
+        if (item.status == "C") item.status = "持續";
+        if (item.status == "D") item.status = "刪除";
+      }
 
-      ViewBag.nowdate = DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss");
+
       ViewBag.count = data.Count;
-
-
       ViewData["LRTIAlert"] = data;
 
       //var rdata;

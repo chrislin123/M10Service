@@ -9,12 +9,14 @@
     @Scripts.Render("~/bundles/modernizr")
     @Scripts.Render("~/bundles/modernizr")
 
+    @*ChildAttachStyles*@
     @RenderSection("Styles", required: false)
     
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+    @*ChildAttachScripts*@
+    @RenderSection("Scripts", required: false)
 </head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <body>
@@ -41,7 +43,7 @@
         @RenderBody()
         <hr />
         <footer>
-            <p>&copy; @DateTime.Now.Year - 我的 ASP.NET 應用程式</p>
+            <p>&copy; @DateTime.Now.Year - 水土保持生態工程研究中心 雨量資料系統</p>
         </footer>
     </div>
 
