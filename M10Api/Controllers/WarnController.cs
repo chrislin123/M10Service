@@ -121,7 +121,7 @@ namespace M10Api.Controllers
       return View();
     }
 
-    [HttpPost]
+    [HttpGet]
     public ActionResult warnhislistq(JObject json)
     {
       //var AlertUpdateTm = db.Query(@" select * from LRTIAlertMail where type = 'altm' ");

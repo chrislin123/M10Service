@@ -129,8 +129,10 @@
     //alert('test');
     //return;
     $.ajax({
-      type: 'POST',
-      url: '@Url.Action("warnhislistq", "warn")',
+      type: 'GET',
+      @*url: '@Url.Action("warnhislistq", "warn")',*@
+      url: '@Url.Action("warnhislistq")',
+      
       //url: 'warn/warnhislist',
       data: { "STID": "test123456", "country": "台中" },
       dataType: 'JSON',
