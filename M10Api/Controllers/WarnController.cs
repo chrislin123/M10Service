@@ -8,6 +8,9 @@ using Dapper;
 using Dapper.Contrib.Extensions;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.IO;
+using M10.lib;
+using System.Data;
 //using System.Web.Http;
 
 
@@ -74,61 +77,15 @@ namespace M10Api.Controllers
     
     public ActionResult warnhislist(string StartDate,string EndDate)
     {
-
-
-      DateTime dtStart;
-      DateTime dtEnd;
-
       if (StartDate == null || EndDate == null)
       {
-        dtStart = DateTime.Now;
-        dtEnd = DateTime.Now;
-      }
-      else
-      {
-        string[] aSdt = StartDate.Split('-');
-        string[] aEdt = EndDate.Split('-');
-
-        dtStart = new DateTime(Convert.ToInt32(aSdt[0]), Convert.ToInt32(aSdt[1]), Convert.ToInt32(aSdt[2]),0,0,1);
-        dtEnd = new DateTime(Convert.ToInt32(aEdt[0]), Convert.ToInt32(aEdt[1]), Convert.ToInt32(aEdt[2]),23,59,59);
+        return View();
       }
 
+      ViewBag.StartDate = StartDate;
+      ViewBag.EndDate = EndDate;
 
-    
-      string sStartDate = dtStart.ToString("yyyy-MM-ddTHH:mm:ss");
-      string sEndDate = dtEnd.ToString("yyyy-MM-ddTHH:mm:ss");
-      string ssql = @" select * from LRTIAlertHis where status = '{0}' 
-                      and RecTime between '{1}' and '{2}'
-                      order by country,town ";
-      //新增
-      var dataI = db.Query(string.Format(ssql, "I", sStartDate, sEndDate));
-      //持續
-      var dataC = db.Query(string.Format(ssql, "C", sStartDate, sEndDate));
-      //解除
-      var dataD = db.Query(string.Format(ssql, "D", sStartDate, sEndDate));
-
-
-      List<dynamic> data = new List<dynamic>();
-      data.AddRange(dataI);
-      data.AddRange(dataC);
-      data.AddRange(dataD);
-
-      foreach (var item in data)
-      {
-        //處理狀態改中文顯示
-        if (item.status == "I") item.status = "新增";
-        if (item.status == "C") item.status = "持續";
-        if (item.status == "D") item.status = "刪除";
-
-
-        //處理ELRTI無條件捨去
-        decimal dELRTI = 0;
-        if (decimal.TryParse(Convert.ToString(item.ELRTI), out dELRTI))
-        {
-          item.ELRTI = Math.Floor(dELRTI).ToString();
-        }
-
-      }
+      var data = getHisData(StartDate, EndDate);
 
 
       ViewBag.count = data.Count;
@@ -136,56 +93,89 @@ namespace M10Api.Controllers
       
       return View();
     }
+    
 
     [HttpPost]
-    public ActionResult warnhislistq(testclass tc)
+    public ActionResult ExportExcel(string StartDate, string EndDate)
     {
-      //var AlertUpdateTm = db.Query(@" select * from LRTIAlertMail where type = 'altm' ");
+      string sSaveFilePath = @"d:\temp\" + "AlertLRTI_" + Guid.NewGuid().ToString() + ".xlsx";
 
 
 
-      //ViewBag.nowdate = "";
-      //if (AlertUpdateTm.Count > 0)
-      //{
-      //  ViewBag.nowdate = AlertUpdateTm[0].value;
-      //}
+      // 將資料寫入串流
+      MemoryStream files = new MemoryStream();
+      using (FileStream fs = System.IO.File.OpenRead(@"c:\test.xls"))
+      {
+        fs.CopyTo(files);
+      }
 
-      string ssql = @" select * from LRTIAlert where status = '{0}' order by country,town ";
-      //新增
-      var dataI = db.Query(string.Format(ssql, "I"));
-      //持續
-      var dataC = db.Query(string.Format(ssql, "C"));
-      //解除
-      var dataD = db.Query(string.Format(ssql, "D"));
+      //workSpase.Write(files);
+      files.Close();
 
+      return this.File(files.ToArray(), "application/vnd.ms-excel", "Download.xlsx"); ;
+    }
 
-      List<dynamic> data = new List<dynamic>();
-      data.AddRange(dataI);
-      data.AddRange(dataC);
-      data.AddRange(dataD);
+   
+    public ActionResult down(string StartDate, string EndDate)
+    {
+      var data = getHisData(StartDate, EndDate);
+
+      ViewBag.StartDate = StartDate;
+      ViewBag.EndDate = EndDate;
+
+      string sSaveFilePath = @"d:\temp\" + "AlertLRTI_" + Guid.NewGuid().ToString() + ".xlsx";
+
+      DataTable dt = new DataTable();
+      dt.Columns.Add("RecTime");
+      dt.Columns.Add("country");
+      dt.Columns.Add("town");
+      dt.Columns.Add("village");
+      dt.Columns.Add("status");
+      dt.Columns.Add("HOUR1");
+      dt.Columns.Add("HOUR2");
+      dt.Columns.Add("HOUR3");
+      dt.Columns.Add("LRTI");
+      dt.Columns.Add("ELRTI");
+      dt.Columns.Add("RT");
 
       foreach (var item in data)
       {
-        //處理狀態改中文顯示
-        if (item.status == "I") item.status = "新增";
-        if (item.status == "C") item.status = "持續";
-        if (item.status == "D") item.status = "刪除";
+        DataRow NewRow = dt.NewRow();
+        NewRow["RecTime"] = item.RecTime;
+        NewRow["country"] = item.country;
+        NewRow["town"] = item.town;
+        NewRow["village"] = item.village;
+        NewRow["status"] = item.status;
+        NewRow["HOUR1"] = item.HOUR1;
+        NewRow["HOUR2"] = item.HOUR2;
+        NewRow["HOUR3"] = item.HOUR3;
+        NewRow["LRTI"] = item.LRTI;
+        NewRow["ELRTI"] = item.ELRTI;
+        NewRow["RT"] = item.RT;
 
-
-        //處理ELRTI無條件捨去
-        decimal dELRTI = 0;
-        if (decimal.TryParse(Convert.ToString(item.ELRTI), out dELRTI))
-        {
-          item.ELRTI = Math.Floor(dELRTI).ToString();
-        }
-
+        dt.Rows.Add(NewRow);
       }
 
+      DataExport de = new DataExport();
+      de.ExportBigDataToExcel(sSaveFilePath, dt);
 
-      ViewBag.count = data.Count;
-      ViewData["LRTIAlert"] = data;
+
+      if (System.IO.File.Exists(sSaveFilePath))
+      {
+        //我要下載的檔案位置
+        //string filepath = Server.MapPath("~/test.xls");
+        //取得檔案名稱
+        //string filename = System.IO.Path.GetFileName(sSaveFilePath);
+        string filename = "AlertLRTI_" + StartDate + "_" + EndDate + ".xlsx";
+        filename = filename.Replace("-", "");
+        //讀成串流
+        Stream iStream = new FileStream(sSaveFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        //回傳出檔案
+        return File(iStream, "application/vnd.ms-excel", filename);
+      }
 
       return View("warnhislist");
+     
     }
 
     public ActionResult warndatatables()
@@ -239,6 +229,66 @@ namespace M10Api.Controllers
       //rdata = data.ToList<Models.RunTimeRainData>();
 
       return View();
+    }
+
+
+    private List<dynamic> getHisData(string StartDate, string EndDate)
+    {
+      List<dynamic> ResultList = new List<dynamic>();
+
+      DateTime dtStart;
+      DateTime dtEnd;
+
+      if (StartDate == null || EndDate == null)
+      {
+        dtStart = DateTime.Now;
+        dtEnd = DateTime.Now;
+      }
+      else
+      {
+        string[] aSdt = StartDate.Split('-');
+        string[] aEdt = EndDate.Split('-');
+
+        dtStart = new DateTime(Convert.ToInt32(aSdt[0]), Convert.ToInt32(aSdt[1]), Convert.ToInt32(aSdt[2]), 0, 0, 1);
+        dtEnd = new DateTime(Convert.ToInt32(aEdt[0]), Convert.ToInt32(aEdt[1]), Convert.ToInt32(aEdt[2]), 23, 59, 59);
+      }
+
+      string sStartDate = dtStart.ToString("yyyy-MM-ddTHH:mm:ss");
+      string sEndDate = dtEnd.ToString("yyyy-MM-ddTHH:mm:ss");
+      string ssql = @" select * from LRTIAlertHis where status = '{0}' 
+                      and RecTime between '{1}' and '{2}'
+                      order by country,town ";
+      //新增
+      var dataI = db.Query(string.Format(ssql, "I", sStartDate, sEndDate));
+      //持續
+      var dataC = db.Query(string.Format(ssql, "C", sStartDate, sEndDate));
+      //解除
+      var dataD = db.Query(string.Format(ssql, "D", sStartDate, sEndDate));
+
+
+      //List<dynamic> data = new List<dynamic>();
+      ResultList.AddRange(dataI);
+      ResultList.AddRange(dataC);
+      ResultList.AddRange(dataD);
+
+      foreach (var item in ResultList)
+      {
+        //處理狀態改中文顯示
+        if (item.status == "I") item.status = "新增";
+        if (item.status == "C") item.status = "持續";
+        if (item.status == "D") item.status = "刪除";
+
+
+        //處理ELRTI無條件捨去
+        decimal dELRTI = 0;
+        if (decimal.TryParse(Convert.ToString(item.ELRTI), out dELRTI))
+        {
+          item.ELRTI = Math.Floor(dELRTI).ToString();
+        }
+
+      }
+
+      return ResultList;
     }
   }
 
