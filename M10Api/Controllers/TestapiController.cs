@@ -59,9 +59,8 @@ namespace M10Api.Controllers
     [Route("getStationData")]
     public List<dynamic> getStationData()
     {
-      var list = db.Query(@" select a.*,b.lat,b.lon from StationData a 
+      var list = db.Query(@" select a.*,b.lat,b.lon from LRTIAlert a 
         left join runtimeraindata b on a.stid = b.stid 
-        
         "
         );
       //where a.COUNTY = '臺中市'
