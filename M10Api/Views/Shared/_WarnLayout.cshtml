@@ -1,51 +1,53 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>@ViewBag.Title</title>
-    @Styles.Render("~/Content/css")
-    @Scripts.Render("~/bundles/modernizr")
-    @Scripts.Render("~/bundles/modernizr")
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>@ViewBag.Title</title>
+  @Styles.Render("~/Content/css")
+  @Scripts.Render("~/bundles/modernizr")
+  @*@Scripts.Render("~/bundles/modernizr")*@
 
-    @RenderSection("Styles", required: false)
-    
+  @RenderSection("Styles", required: false)
 
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/bootstrap")
-    @RenderSection("scripts", required: false)
+
+  @Scripts.Render("~/bundles/jquery")
+  @Scripts.Render("~/bundles/bootstrap")
+  @RenderSection("scripts", required: false)
 </head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("應用程式名稱", "warnlist", "warn", new { area = "" }, new { @class = "navbar-brand" })
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    
-                    <li>@Html.ActionLink("歷史", "warnhislist", "warn", new { area = "" }, null)</li>
-                    <li>@Html.ActionLink("即時", "warnlist", "warn", new { area = "" }, null)</li>
-                    <li>@Html.ActionLink("地圖", "map", "map", new { area = "" }, null)</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - 水土保持生態工程研究中心 雨量資料系統</p>
-        </footer>
-    </div>
+  <div class="navbar navbar-inverse navbar-fixed-top">
+    @*<div class="navbar navbar-light navbar-fixed-top" style="background-color: #e3f2fd;">*@
 
-    
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        @Html.ActionLink("雨量崩塌警戒平台", "warnlist", "warn", new { area = "" }, new { @class = "navbar-brand" })
+      </div>
+      <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav">
+
+          <li>@Html.ActionLink("歷史", "warnhislist", "warn", new { area = "" }, null)</li>
+          <li>@Html.ActionLink("即時", "warnlist", "warn", new { area = "" }, null)</li>
+          <li>@Html.ActionLink("地圖", "map", "map", new { area = "" }, null)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="container body-content">
+    @RenderBody()
+    <hr />
+    <footer>
+      <p>&copy; @DateTime.Now.Year - 水土保持生態工程研究中心 雨量資料系統</p>
+    </footer>
+  </div>
+
+
 </body>
 </html>

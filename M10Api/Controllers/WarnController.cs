@@ -71,25 +71,41 @@ namespace M10Api.Controllers
       return View();
     }
 
-    public ActionResult warnhislist()
+    
+    public ActionResult warnhislist(string StartDate,string EndDate)
     {
-      //var AlertUpdateTm = db.Query(@" select * from LRTIAlertMail where type = 'altm' ");
 
 
+      DateTime dtStart;
+      DateTime dtEnd;
 
-      //ViewBag.nowdate = "";
-      //if (AlertUpdateTm.Count > 0)
-      //{
-      //  ViewBag.nowdate = AlertUpdateTm[0].value;
-      //}
+      if (StartDate == null || EndDate == null)
+      {
+        dtStart = DateTime.Now;
+        dtEnd = DateTime.Now;
+      }
+      else
+      {
+        string[] aSdt = StartDate.Split('-');
+        string[] aEdt = EndDate.Split('-');
 
-      string ssql = @" select * from LRTIAlert where status = '{0}' order by country,town ";
+        dtStart = new DateTime(Convert.ToInt32(aSdt[0]), Convert.ToInt32(aSdt[1]), Convert.ToInt32(aSdt[2]),0,0,1);
+        dtEnd = new DateTime(Convert.ToInt32(aEdt[0]), Convert.ToInt32(aEdt[1]), Convert.ToInt32(aEdt[2]),23,59,59);
+      }
+
+
+    
+      string sStartDate = dtStart.ToString("yyyy-MM-ddTHH:mm:ss");
+      string sEndDate = dtEnd.ToString("yyyy-MM-ddTHH:mm:ss");
+      string ssql = @" select * from LRTIAlertHis where status = '{0}' 
+                      and RecTime between '{1}' and '{2}'
+                      order by country,town ";
       //新增
-      var dataI = db.Query(string.Format(ssql, "I"));
+      var dataI = db.Query(string.Format(ssql, "I", sStartDate, sEndDate));
       //持續
-      var dataC = db.Query(string.Format(ssql, "C"));
+      var dataC = db.Query(string.Format(ssql, "C", sStartDate, sEndDate));
       //解除
-      var dataD = db.Query(string.Format(ssql, "D"));
+      var dataD = db.Query(string.Format(ssql, "D", sStartDate, sEndDate));
 
 
       List<dynamic> data = new List<dynamic>();
@@ -117,12 +133,12 @@ namespace M10Api.Controllers
 
       ViewBag.count = data.Count;
       ViewData["LRTIAlert"] = data;
-
+      
       return View();
     }
 
-    [HttpGet]
-    public ActionResult warnhislistq(JObject json)
+    [HttpPost]
+    public ActionResult warnhislistq(testclass tc)
     {
       //var AlertUpdateTm = db.Query(@" select * from LRTIAlertMail where type = 'altm' ");
 
@@ -169,7 +185,7 @@ namespace M10Api.Controllers
       ViewBag.count = data.Count;
       ViewData["LRTIAlert"] = data;
 
-      return View();
+      return View("warnhislist");
     }
 
     public ActionResult warndatatables()
@@ -224,5 +240,12 @@ namespace M10Api.Controllers
 
       return View();
     }
+  }
+
+  public class testclass {
+    public string StartDate;
+    public string EndDate;
+
+
   }
 }

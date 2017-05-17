@@ -17,6 +17,7 @@ using ClosedXML.Excel;
 using Dapper;
 using Dapper.Contrib.Extensions;
 using System.Configuration;
+using M10.lib;
 
 namespace M10AlertLRTI
 {
@@ -81,6 +82,18 @@ namespace M10AlertLRTI
 
     private void btnStart_Click(object sender, EventArgs e)
     {
+      //測試
+      //oDal.CommandText = " select * from RunTimeRainData ";
+      //DataTable TempDataTable = oDal.DataTable();
+
+
+      //DataExport de = new DataExport();
+      //de.RowsPerSheet = 300;
+      //de.ExportBigDataToExcel(@"c:\test.xls", TempDataTable);
+      //return;        
+
+
+
       DateTime dt = DateTime.Now;
 
       sLritAlertTimeString = Convert.ToString(dt.Year - 1911)
@@ -623,11 +636,13 @@ namespace M10AlertLRTI
 
     private void timer1_Tick(object sender, EventArgs e)
     {
+      timer1.Enabled = false;
+
       btnStart_Click(sender, e);
 
-      //System.Threading.Thread.Sleep(2000);
+      System.Threading.Thread.Sleep(2000);
 
-      //this.Close();
+      this.Close();
     }
   }
 
