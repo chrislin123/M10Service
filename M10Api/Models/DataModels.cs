@@ -131,13 +131,21 @@ namespace M10Api.Models
     //}
 
 
-    //public object ExecuteScale(string sql, object param)
-    //{
-    //  using (var cn = new MySql.Data.MySqlClient.MySqlConnection(this.Database.Connection.ConnectionString))
-    //  {
-    //    return cn.ExecuteScalar(sql, param);
-    //  }
-    //}
+    public object ExecuteScale(string sql, object param)
+    {
+      using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+      { 
+        return cn.ExecuteScalar(sql, param);
+      }
+    }
+
+    public object ExecuteScale(string sql)
+    {
+      using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+      {
+        return cn.ExecuteScalar(sql);
+      }
+    }
 
     //public List<dynamic> Query(string sql, int currentPage, int recordsPerPage)
     //{

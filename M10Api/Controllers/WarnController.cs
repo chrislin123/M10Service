@@ -26,15 +26,8 @@ namespace M10Api.Controllers
 
     public ActionResult warnlist()
     {
-      var AlertUpdateTm = db.Query(@" select * from LRTIAlertMail where type = 'altm' ");
-
-
-
-      ViewBag.nowdate = "";
-      if (AlertUpdateTm.Count > 0)
-      {
-        ViewBag.nowdate = AlertUpdateTm[0].value;
-      }
+      var AlertUpdateTm = db.ExecuteScale(@" select value from LRTIAlertMail where type = 'altm' ");
+      ViewBag.forecastdate = AlertUpdateTm == null ? "" : AlertUpdateTm.ToString();
 
       string ssql = @" select * from LRTIAlert where status = '{0}' order by country,town ";
       //新增
@@ -123,7 +116,12 @@ namespace M10Api.Controllers
       ViewBag.StartDate = StartDate;
       ViewBag.EndDate = EndDate;
 
-      string sSaveFilePath = @"d:\temp\" + "AlertLRTI_" + Guid.NewGuid().ToString() + ".xlsx";
+      
+      //產生檔案路徑
+      string sTempPath = Path.Combine(Server.MapPath("~/temp/"), DateTime.Now.ToString("yyyyMMdd"));
+      //建立資料夾
+      Directory.CreateDirectory(sTempPath);
+      string sSaveFilePath = Path.Combine(sTempPath , "ExportAlertLRTI_" + Guid.NewGuid().ToString() + ".xlsx");
 
       DataTable dt = new DataTable();
       dt.Columns.Add("RecTime");
@@ -161,14 +159,12 @@ namespace M10Api.Controllers
 
       if (System.IO.File.Exists(sSaveFilePath))
       {
-        //我要下載的檔案位置
-        //string filepath = Server.MapPath("~/test.xls");
-        //取得檔案名稱
-        //string filename = System.IO.Path.GetFileName(sSaveFilePath);
-        string filename = "AlertLRTI_" + StartDate + "_" + EndDate + ".xlsx";
+        string filename = string.Format("AlertLRTI_{0}_{1}.xlsx", StartDate, EndDate);
         filename = filename.Replace("-", "");
         //讀成串流
         Stream iStream = new FileStream(sSaveFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+               
         //回傳出檔案
         return File(iStream, "application/vnd.ms-excel", filename);
       }

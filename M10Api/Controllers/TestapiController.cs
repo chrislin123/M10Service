@@ -14,47 +14,6 @@ namespace M10Api.Controllers
   [RoutePrefix("rti")]
   public class TestapiController : BaseApiController
   {
-    //public Dictionary<string, string> Get()
-    //{
-    //  var result = new Dictionary<string, string>()
-    //        {
-    //            {"001", "Banana3333"},
-    //            {"002", "Apple222"},
-    //            {"003", "Orange"}
-    //        };
-    //  return result;
-    //}
-
-    //[HttpGet]
-    //public Dictionary<string, string> HandMadeJson()
-    //{
-
-    //  var result = new Dictionary<string, string>()
-    //        {
-    //            {"001", "Banana1111"},
-    //            {"002", "Apple2222"},
-    //            {"003", "Orange"}
-    //        };
-    //  return result;
-    //}
-
-    //[HttpGet]
-    //public dynamic HandMadeJsonok()
-    //{
-
-
-    //  var list = db.Query(@" 
-
-    //      select a.STID,a.LAT,a.LON,b.COUNTY from RunTimeRainData a
-    //      left join StationData b on a.STID = b.STID
-    //    "
-    //    );
-
-    //  return list;
-
-    //}
-
-
     [HttpGet]
     [Route("getStationData")]
     public List<dynamic> getStationData()
@@ -63,7 +22,6 @@ namespace M10Api.Controllers
         left join runtimeraindata b on a.stid = b.stid 
         "
         );
-      //where a.COUNTY = '臺中市'
       return list;
     }
 
