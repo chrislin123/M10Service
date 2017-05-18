@@ -184,7 +184,7 @@ namespace M10AlertLRTI
         //  //return cn.Query(sql).ToList();
         //}
       }
-      catch (Exception ex)
+      catch (Exception )
       {
 
         //throw ex;
@@ -224,7 +224,7 @@ namespace M10AlertLRTI
         LrtiAlertDel.Clear();
         LrtiAlertDel = oDal.DataTable();
       }
-      catch (Exception ex)
+      catch (Exception )
       {
 
       }
@@ -553,7 +553,7 @@ namespace M10AlertLRTI
         oDal.CommandText = ssql;
         oDal.ExecuteSql();
       }
-      catch (Exception ex)
+      catch (Exception )
       {
 
 
@@ -590,7 +590,7 @@ namespace M10AlertLRTI
 
 
       }
-      catch (Exception ex)
+      catch (Exception )
       {
 
       }

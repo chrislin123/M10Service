@@ -92,7 +92,7 @@ namespace M10.lib
           ResultsData.Clear();
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         bSuccess = false;
       }
@@ -142,7 +142,7 @@ namespace M10.lib
           ResultsData.Clear();
         }
       }
-      catch (Exception ex)
+      catch (Exception )
       {
         bSuccess = false;
       }
