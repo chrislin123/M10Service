@@ -486,6 +486,10 @@ namespace M10AlertLRTI
           oDal.CommandText = ssql;
           object oValue = oDal.Value();
 
+
+          decimal dELRTI = 0;
+          decimal.TryParse(dr["ELRTI"].ToString(), out dELRTI);
+          dELRTI = Math.Round(dELRTI, 2);
           if (oValue == null)
           {
             //取得雨量站相關資料
@@ -514,7 +518,7 @@ namespace M10AlertLRTI
               + " ,'" + dr["HOUR3"].ToString() + "' "
               + " ,'" + dr["RT"].ToString() + "' "
               + " ,'" + dr["LRTI"].ToString() + "' "
-              + " ,'" + dr["ELRTI"].ToString() + "' "
+              + " ,'" + dELRTI.ToString() + "' "
               + " ,'" + dr["HOUR2"].ToString() + "' "
               + " ,'" + dr["RAIN"].ToString() + "' "
               + " ) "
@@ -533,7 +537,7 @@ namespace M10AlertLRTI
                 + " , HOUR2 = '" + dr["HOUR2"].ToString() + "'  "
                 + " , RT = '" + dr["RT"].ToString() + "'  "
                 + " , LRTI = '" + dr["LRTI"].ToString() + "'  "
-                + " , ELRTI = '" + dr["ELRTI"].ToString() + "'  "
+                + " , ELRTI = '" + dELRTI.ToString() + "'  "
                 + " where STID = '" + sSTID + "' "
                 ;
             oDal.CommandText = ssql;
@@ -599,6 +603,8 @@ namespace M10AlertLRTI
 
     private void M10AlertLRTI_Load(object sender, EventArgs e)
     {
+      //timer1.Enabled = false;
+
       //建立資料夾
       if (!Directory.Exists(folderName)) Directory.CreateDirectory(folderName);
 
@@ -708,9 +714,4 @@ namespace M10AlertLRTI
     public string HOUR1 { get; set; }
 
   }
-
-
-
-
-
 }
