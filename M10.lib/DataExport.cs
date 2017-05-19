@@ -100,7 +100,13 @@ namespace M10.lib
       return bSuccess;
     }
 
-    public Boolean ExportBigDataToExcel(string sfileName, DataTable SoureDataTable)
+    /// <summary>
+    /// 大量資料匯出至Excel，依照設定資料行進行自動分頁(sheet)
+    /// </summary>
+    /// <param name="SaveFilePath">存檔路徑</param>
+    /// <param name="SoureDataTable">來源資料</param>
+    /// <returns></returns>
+    public Boolean ExportBigDataToExcel(string SaveFilePath, DataTable SoureDataTable)
     {       
       Boolean bSuccess = true;
 
@@ -129,7 +135,7 @@ namespace M10.lib
           if (c == rowsPerSheet)
           {
             c = 0;
-            ExportToOxml(firstTime, sfileName);
+            ExportToOxml(firstTime, SaveFilePath);
             ResultsData.Clear();
             firstTime = false;
           }
@@ -138,7 +144,7 @@ namespace M10.lib
         //最後一次寫入
         if (ResultsData.Rows.Count > 0)
         {
-          ExportToOxml(firstTime, sfileName);
+          ExportToOxml(firstTime, SaveFilePath);
           ResultsData.Clear();
         }
       }

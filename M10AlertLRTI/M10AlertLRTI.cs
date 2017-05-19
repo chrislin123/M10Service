@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Net.Mail;
-using System.Linq;
 using CL.Data;
 using System.IO;
 using DocumentFormat.OpenXml;
@@ -18,6 +18,8 @@ using Dapper;
 using Dapper.Contrib.Extensions;
 using System.Configuration;
 using M10.lib;
+//using Microsoft.CSharp;
+
 
 namespace M10AlertLRTI
 {
@@ -25,14 +27,16 @@ namespace M10AlertLRTI
   {
     string ssql = string.Empty;
     string sConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.vghtc].ConnectionString;
-    ODAL oDal = new ODAL(Properties.Settings.Default.vghtc);
+    ODAL oDal = new ODAL(Properties.Settings.Default.vghtc);    
+    DALDapper dbDapper;
+    
     //ODAL oDal = new ODAL(Properties.Settings.Default.DBConnectionString);
 
     string folderName = @"D:\m10\LRTIAlert\";
 
-    string sMainAddress = string.Empty;
-    string sMainPass = string.Empty;
-    string sMailSendList = string.Empty;
+    //string sMainAddress = string.Empty;
+    //string sMainPass = string.Empty;
+    //string sMailSendList = string.Empty;
 
     string sLritAlertTimeString = "";
 
@@ -44,6 +48,8 @@ namespace M10AlertLRTI
     public M10AlertLRTI()
     {
       InitializeComponent();
+
+      dbDapper = new DALDapper(sConnectionString);
     }
 
 
@@ -82,6 +88,17 @@ namespace M10AlertLRTI
 
     private void btnStart_Click(object sender, EventArgs e)
     {
+
+
+      //List<Attachment> oAttachments = new List<Attachment>();
+      //oAttachments.Add(new Attachment(sAttachFileName));
+
+
+      //send_gmail("", "全台村里崩塌警戒提醒" + sLritAlertTimeString, sMailSendList, oAttachments);//呼叫send_gmail函式測試
+
+      //return;
+
+      //LRTIAlertSendMail("");
       //測試
       //oDal.CommandText = " select * from RunTimeRainData ";
       //DataTable TempDataTable = oDal.DataTable();
@@ -90,7 +107,7 @@ namespace M10AlertLRTI
       //DataExport de = new DataExport();
       //de.RowsPerSheet = 300;
       //de.ExportBigDataToExcel(@"c:\test.xls", TempDataTable);
-      //return;        
+      //return;
 
 
 
@@ -129,13 +146,47 @@ namespace M10AlertLRTI
 
       if (dt1.Rows.Count == 0) return;
 
-      //寄送mail
-      List<Attachment> oAttachments = new List<Attachment>();
-      oAttachments.Add(new Attachment(sAttachFileName));
-      send_gmail("", "全台村里崩塌警戒提醒" + sLritAlertTimeString, sMailSendList, oAttachments);//呼叫send_gmail函式測試
 
+      //Alert LRTI寄送發布mail
+      LRTIAlertSendMail(sAttachFileName);
+
+      
       //開啟excel
       //OpenExcel(sAttachFileName);
+
+    }
+
+    private void LRTIAlertSendMail(string sAttachFileName)
+    {
+      string sSubject = "全台村里崩塌警戒提醒" + sLritAlertTimeString;
+      List<string> AddressList = new List<string>();
+
+      List<Attachment> AttachmentList = new List<Attachment>();
+      //AttachmentList.Add(new Attachment(sAttachFileName));
+
+      string SenderMail = string.Empty;
+      string SenderPass = string.Empty;
+      var TempData = dbDapper.ExecuteScale("select value from LRTIAlertMail where type = 'main' ");
+      if (TempData != null) SenderMail = TempData.ToString();
+      TempData = dbDapper.ExecuteScale("select value from LRTIAlertMail where type = 'pass' ");
+      if (TempData != null) SenderPass = TempData.ToString();
+
+      
+      var TempDataList = dbDapper.Query("select * from LRTIAlertMail where type = 'list'");
+      foreach (var item in TempDataList)
+      {
+        AddressList.Add(item.value as string);
+      }
+
+      //寄送Gmail
+      Gmail.SendMailByGmail(SenderMail, SenderPass, "", sSubject, AddressList, AttachmentList);
+      
+      //寄送mail
+      //List<Attachment> oAttachments = new List<Attachment>();
+      //oAttachments.Add(new Attachment(sAttachFileName));
+      
+
+      //send_gmail("", "全台村里崩塌警戒提醒" + sLritAlertTimeString, sMailSendList, oAttachments);//呼叫send_gmail函式測試
 
     }
 
@@ -563,42 +614,42 @@ namespace M10AlertLRTI
 
     public void send_gmail(string msg, string mysubject, string address, List<Attachment> oAttachements)
     {
-      MailMessage message = new MailMessage(sMainAddress, address);//MailMessage(寄信者, 收信者)
-      SmtpClient MySmtp = new SmtpClient("smtp.gmail.com", 587);//設定gmail的smtp
-      try
-      {
-        message.IsBodyHtml = true;
-        message.BodyEncoding = System.Text.Encoding.UTF8;//E-mail編碼
-        message.SubjectEncoding = System.Text.Encoding.UTF8;//E-mail編碼
-        message.Priority = MailPriority.Normal;//設定優先權
-        message.Subject = mysubject;//E-mail主旨
-        message.Body = msg;//E-mail內容
+      //MailMessage message = new MailMessage(sMainAddress, address);//MailMessage(寄信者, 收信者)
+      //SmtpClient MySmtp = new SmtpClient("smtp.gmail.com", 587);//設定gmail的smtp
+      //try
+      //{
+      //  message.IsBodyHtml = true;
+      //  message.BodyEncoding = System.Text.Encoding.UTF8;//E-mail編碼
+      //  message.SubjectEncoding = System.Text.Encoding.UTF8;//E-mail編碼
+      //  message.Priority = MailPriority.Normal;//設定優先權
+      //  message.Subject = mysubject;//E-mail主旨
+      //  message.Body = msg;//E-mail內容
 
-        //Attachment attachment = new Attachment(@"C:\hsrv.txt");//<-這是附件部分~先用附件的物件把路徑指定進去~
-        //message.Attachments.Add(attachment);//<-郵件訊息中加入附件
-        foreach (Attachment item in oAttachements)
-        {
-          message.Attachments.Add(item);
-        }
+      //  //Attachment attachment = new Attachment(@"C:\hsrv.txt");//<-這是附件部分~先用附件的物件把路徑指定進去~
+      //  //message.Attachments.Add(attachment);//<-郵件訊息中加入附件
+      //  foreach (Attachment item in oAttachements)
+      //  {
+      //    message.Attachments.Add(item);
+      //  }
 
-        MySmtp.Credentials = new System.Net.NetworkCredential(sMainAddress, sMainPass);//gmail的帳號密碼System.Net.NetworkCredential(帳號,密碼)
-        MySmtp.EnableSsl = true;//開啟ssl
-        MySmtp.Send(message);
+      //  MySmtp.Credentials = new System.Net.NetworkCredential(sMainAddress, sMainPass);//gmail的帳號密碼System.Net.NetworkCredential(帳號,密碼)
+      //  MySmtp.EnableSsl = true;//開啟ssl
+      //  MySmtp.Send(message);
 
-        //如果出現權限不足，可登入google帳號後，選擇下方網址，啟用低安全設定
-        //https://www.google.com/settings/security/lesssecureapps
+      //  //如果出現權限不足，可登入google帳號後，選擇下方網址，啟用低安全設定
+      //  //https://www.google.com/settings/security/lesssecureapps
 
 
-      }
-      catch (Exception )
-      {
+      //}
+      //catch (Exception ex )
+      //{
 
-      }
-      finally
-      {
-        MySmtp = null;
-        message.Dispose();
-      }
+      //}
+      //finally
+      //{
+      //  MySmtp = null;
+      //  message.Dispose();
+      //}
     }
 
     private void M10AlertLRTI_Load(object sender, EventArgs e)
@@ -608,36 +659,36 @@ namespace M10AlertLRTI
       //建立資料夾
       if (!Directory.Exists(folderName)) Directory.CreateDirectory(folderName);
 
-      //取得寄件者帳號密碼
-      DataTable dtmail = new DataTable();
-      ssql = " select * from LRTIAlertMail "
-               + " where 1=1 "
-               + " and type in  ('main','pass') ";
-      oDal.CommandText = ssql;
-      dtmail.Clear();
-      dtmail = oDal.DataTable();
-      foreach (DataRow dr in dtmail.Rows)
-      {
-        if (dr["type"].ToString() == "main") sMainAddress = dr["value"].ToString();
-        if (dr["type"].ToString() == "pass") sMainPass = dr["value"].ToString();
-      }
+      ////取得寄件者帳號密碼
+      //DataTable dtmail = new DataTable();
+      //ssql = " select * from LRTIAlertMail "
+      //         + " where 1=1 "
+      //         + " and type in  ('main','pass') ";
+      //oDal.CommandText = ssql;
+      //dtmail.Clear();
+      //dtmail = oDal.DataTable();
+      //foreach (DataRow dr in dtmail.Rows)
+      //{
+      //  if (dr["type"].ToString() == "main") sMainAddress = dr["value"].ToString();
+      //  if (dr["type"].ToString() == "pass") sMainPass = dr["value"].ToString();
+      //}
 
 
-      //取得收件者            
-      ssql = " select * from LRTIAlertMail "
-               + " where 1=1 "
-               + " and type = 'list' ";
-      oDal.CommandText = ssql;
-      dtmail.Clear();
-      dtmail = oDal.DataTable();
+      ////取得收件者            
+      //ssql = " select * from LRTIAlertMail "
+      //         + " where 1=1 "
+      //         + " and type = 'list' ";
+      //oDal.CommandText = ssql;
+      //dtmail.Clear();
+      //dtmail = oDal.DataTable();
 
-      List<string> lMail = new List<string>();
-      foreach (DataRow dr in dtmail.Rows)
-      {
-        lMail.Add(dr["value"].ToString());
-        //sb.Append();
-      }
-      sMailSendList = string.Join(",", lMail);
+      //List<string> lMail = new List<string>();
+      //foreach (DataRow dr in dtmail.Rows)
+      //{
+      //  lMail.Add(dr["value"].ToString());
+      //  //sb.Append();
+      //}
+      //sMailSendList = string.Join(",", lMail);
     }
 
     private void timer1_Tick(object sender, EventArgs e)
