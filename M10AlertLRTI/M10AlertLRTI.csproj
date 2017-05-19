@@ -98,13 +98,22 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseForm.cs" />
+    <Compile Include="BaseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
     <Compile Include="M10AlertLRTI.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="M10AlertLRTI.Designer.cs">
       <DependentUpon>M10AlertLRTI.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\Models.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="M10AlertLRTI.resx">

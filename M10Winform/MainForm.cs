@@ -271,8 +271,6 @@ namespace M10Winform
 
         //取得檔案名稱清單
         List<string> lstFileName = new List<string>();
-        string sssssssss;
-
         foreach (string sFullName in detailDirectoryListing)
         {
 
@@ -1055,8 +1053,7 @@ namespace M10Winform
 
 
         //取得檔案名稱清單
-        List<string> lstFileName = new List<string>();
-        string sssssssss;
+        List<string> lstFileName = new List<string>();        
 
         foreach (string sFullName in detailDirectoryListing)
         {

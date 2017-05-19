@@ -18,18 +18,18 @@ using Dapper;
 using Dapper.Contrib.Extensions;
 using System.Configuration;
 using M10.lib;
-//using Microsoft.CSharp;
-
+using M10AlertLRTI.Models;
 
 namespace M10AlertLRTI
 {
   public partial class M10AlertLRTI : Form
   {
-    string ssql = string.Empty;
-    string sConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.vghtc].ConnectionString;
-    ODAL oDal = new ODAL(Properties.Settings.Default.vghtc);    
-    DALDapper dbDapper;
-    
+    public string ssql = string.Empty;
+    public string sConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.vghtc].ConnectionString;
+    public ODAL oDal = new ODAL(Properties.Settings.Default.vghtc);
+    public DALDapper dbDapper;
+
+
     //ODAL oDal = new ODAL(Properties.Settings.Default.DBConnectionString);
 
     string folderName = @"D:\m10\LRTIAlert\";
@@ -89,6 +89,7 @@ namespace M10AlertLRTI
     private void btnStart_Click(object sender, EventArgs e)
     {
 
+      
 
       //List<Attachment> oAttachments = new List<Attachment>();
       //oAttachments.Add(new Attachment(sAttachFileName));
@@ -134,18 +135,20 @@ namespace M10AlertLRTI
       //1050615 判斷有資料才進行警戒提醒
       if (LrtiAlertAll.Rows.Count == 0 && LrtiAlertNew.Rows.Count == 0 && LrtiAlertDel.Rows.Count == 0) return;
 
-      //文件產生
-      //LRTIAlertReport();
+      //文件產生      
       string sAttachFileName = LRTIAlertReport();
 
 
       //1050802 判斷是否啟動發報功能
-      ssql = " select value from LRTIAlertMail where type = 'isal' and value = 'Y' ";
-      oDal.CommandText = ssql;
-      DataTable dt1 = oDal.DataTable();
+      //ssql = " select value from LRTIAlertMail where type = 'isal' and value = 'Y' ";
+      //oDal.CommandText = ssql;
+      //DataTable dt1 = oDal.DataTable();
 
-      if (dt1.Rows.Count == 0) return;
+      //if (dt1.Rows.Count == 0) return;
 
+      //1060519 判斷是否啟動發報功能，修改使用dapper
+      var chkMailFlag = dbDapper.ExecuteScale("select value from LRTIAlertMail where type = 'isal' and value = 'Y'");
+      if (string.IsNullOrEmpty(chkMailFlag as string)) return;
 
       //Alert LRTI寄送發布mail
       LRTIAlertSendMail(sAttachFileName);
@@ -178,7 +181,7 @@ namespace M10AlertLRTI
         AddressList.Add(item.value as string);
       }
 
-      //寄送Gmail
+      //1060519 寄送Gmail
       Gmail.SendMailByGmail(SenderMail, SenderPass, "", sSubject, AddressList, AttachmentList);
       
       //寄送mail
@@ -703,66 +706,4 @@ namespace M10AlertLRTI
     }
   }
 
-  public class LRTIAlert
-  {
-    public int no { get; set; }
-
-    public string STID { get; set; }
-
-    public string country { get; set; }
-
-    public string town { get; set; }
-
-    public string village { get; set; }
-
-    public string status { get; set; }
-
-    public string HOUR3 { get; set; }
-
-    public string RT { get; set; }
-
-    public string LRTI { get; set; }
-
-    public string ELRTI { get; set; }
-
-    public string HOUR2 { get; set; }
-
-    public string HOUR1 { get; set; }
-
-  }
-
-  [Table("LRTIAlertHis")]
-  public class LRTIAlertHis
-  {
-    //設定key
-    [Key]
-    //自動相加key的設定
-    //[ExplicitKey]
-    public int no { get; set; }
-
-    public string STID { get; set; }
-
-    public string country { get; set; }
-
-    public string town { get; set; }
-
-    public string village { get; set; }
-
-    public string status { get; set; }
-
-    public string RecTime { get; set; }
-
-    public string HOUR3 { get; set; }
-
-    public string RT { get; set; }
-
-    public string LRTI { get; set; }
-
-    public string ELRTI { get; set; }
-
-    public string HOUR2 { get; set; }
-
-    public string HOUR1 { get; set; }
-
-  }
 }
