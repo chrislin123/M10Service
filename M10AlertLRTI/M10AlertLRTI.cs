@@ -22,12 +22,12 @@ using M10AlertLRTI.Models;
 
 namespace M10AlertLRTI
 {
-  public partial class M10AlertLRTI : Form
+  public partial class M10AlertLRTI : BaseForm
   {
-    public string ssql = string.Empty;
-    public string sConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.vghtc].ConnectionString;
-    public ODAL oDal = new ODAL(Properties.Settings.Default.vghtc);
-    public DALDapper dbDapper;
+    //public string ssql = string.Empty;
+    //public string sConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.vghtc].ConnectionString;
+    //public ODAL oDal = new ODAL(Properties.Settings.Default.vghtc);
+    //public DALDapper dbDapper;
 
 
     //ODAL oDal = new ODAL(Properties.Settings.Default.DBConnectionString);
@@ -49,7 +49,8 @@ namespace M10AlertLRTI
     {
       InitializeComponent();
 
-      dbDapper = new DALDapper(sConnectionString);
+      base.InitForm(); 
+      //dbDapper = new DALDapper(sConnectionString);
     }
 
 
@@ -89,7 +90,11 @@ namespace M10AlertLRTI
     private void btnStart_Click(object sender, EventArgs e)
     {
 
-      
+      //var test = dbDapper.Query("select * from LRTIAlertMail");
+
+      //string aaaaa;
+
+      //return;
 
       //List<Attachment> oAttachments = new List<Attachment>();
       //oAttachments.Add(new Attachment(sAttachFileName));
@@ -199,7 +204,7 @@ namespace M10AlertLRTI
 
       try
       {
-        using (var cn = new System.Data.SqlClient.SqlConnection(sConnectionString))
+        using (var cn = new System.Data.SqlClient.SqlConnection(ConnectionString))
         {
           List<LRTIAlert> lData = cn.Query<LRTIAlert>(" select * from LRTIAlert ").ToList<LRTIAlert>();
           List<LRTIAlertHis> HisData = new List<LRTIAlertHis>();
@@ -454,6 +459,7 @@ namespace M10AlertLRTI
     {
       try
       {
+        //dbDapper.Execute("", new { status = 'D' });
         //刪除已解除註記資料
         ssql = " delete LRTIAlert "
              + " where status = 'D'  "
@@ -661,6 +667,10 @@ namespace M10AlertLRTI
 
       //建立資料夾
       if (!Directory.Exists(folderName)) Directory.CreateDirectory(folderName);
+
+
+      
+
 
       ////取得寄件者帳號密碼
       //DataTable dtmail = new DataTable();

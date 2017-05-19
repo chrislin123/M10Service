@@ -43,20 +43,20 @@ namespace M10AlertLRTI
   public class BaseForm : Form
   {
     public string ssql = string.Empty;
-    private string sConnectionString;
-    private ODAL _Dal;
-    private DALDapper dbDapper;
+    private string _ConnectionString;
+    public ODAL oDal;
+    private DALDapper _dbDapper;
 
-    public DALDapper DbDapper
+    public DALDapper dbDapper
     {
       get
       {
-        if (dbDapper == null)
+        if (_dbDapper == null)
         {
-          dbDapper = new DALDapper(ConnectionString);
+          _dbDapper = new DALDapper(ConnectionString);
         }
 
-        return dbDapper;
+        return _dbDapper;
       }
     }
 
@@ -64,25 +64,41 @@ namespace M10AlertLRTI
     {
       get
       {
-        if (sConnectionString == "")
+        if (_ConnectionString == "")
         {
-          sConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.vghtc].ConnectionString;
+          _ConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.vghtc].ConnectionString;
         }
         
-        return sConnectionString;
+        return _ConnectionString;
       }
     }
 
-    public ODAL oDal
+    //1060519 開放後，介面切換會當機(問題出在cl.data.odal.cs的解構子~ODAL(){}中，尚未無解)
+    //public ODAL oDal
+    //{
+    //  get
+    //  {
+    //    if (_Dal == null)
+    //    {
+    //      _Dal = new ODAL(Properties.Settings.Default.vghtc);
+    //    }
+    //    return _Dal;
+    //  }
+    //}
+
+
+    public BaseForm()
     {
-      get
-      {
-        if (_Dal == null)
-        {
-          _Dal = new ODAL(Properties.Settings.Default.vghtc);
-        }
-        return _Dal;
-      }
+
     }
+
+    
+    public void InitForm()
+    {
+      _ConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.vghtc].ConnectionString;
+      _dbDapper = new DALDapper(_ConnectionString);
+      oDal = new ODAL(Properties.Settings.Default.vghtc);
+    }
+
   }
 }

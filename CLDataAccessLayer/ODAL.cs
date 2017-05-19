@@ -249,7 +249,7 @@ namespace CL.Data
         /// </summary>
         ~ODAL()
         {
-            this.cmd.Dispose();
+            if (this.cmd != null) this.cmd.Dispose();            
             this.Dispose();
         }
         #endregion

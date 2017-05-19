@@ -25,6 +25,7 @@ namespace M10AlertLRTI
     {
       InitializeComponent();
 
+      base.InitForm();
       //ConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.vghtc].ConnectionString;
       //oDal = new ODAL(Properties.Settings.Default.vghtc);
       //DbDapper = new DALDapper(ConnectionString);
