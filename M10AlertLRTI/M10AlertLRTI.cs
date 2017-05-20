@@ -170,7 +170,7 @@ namespace M10AlertLRTI
       List<string> AddressList = new List<string>();
 
       List<Attachment> AttachmentList = new List<Attachment>();
-      //AttachmentList.Add(new Attachment(sAttachFileName));
+      AttachmentList.Add(new Attachment(sAttachFileName));
 
       string SenderMail = string.Empty;
       string SenderPass = string.Empty;
@@ -186,16 +186,17 @@ namespace M10AlertLRTI
         AddressList.Add(item.value as string);
       }
 
+      List<string> HtmlContentList = new List<string>();
+      HtmlContentList.Add("降雨已達崩塌警戒即時資料：");
+      HtmlContentList.Add("<br>");
+      HtmlContentList.Add("http://140.116.38.211/M10api/warn/warnlist");
+      HtmlContentList.Add("<br>");
+      HtmlContentList.Add("降雨已達崩塌警戒即時地圖資料：");
+      HtmlContentList.Add("<br>");
+      HtmlContentList.Add("http://140.116.38.211/M10api/map/map");
+
       //1060519 寄送Gmail
-      Gmail.SendMailByGmail(SenderMail, SenderPass, "", sSubject, AddressList, AttachmentList);
-      
-      //寄送mail
-      //List<Attachment> oAttachments = new List<Attachment>();
-      //oAttachments.Add(new Attachment(sAttachFileName));
-      
-
-      //send_gmail("", "全台村里崩塌警戒提醒" + sLritAlertTimeString, sMailSendList, oAttachments);//呼叫send_gmail函式測試
-
+      Gmail.SendMailByGmail(SenderMail, SenderPass, HtmlContentList, sSubject, AddressList, AttachmentList);
     }
 
     private void LRTIAlertRecToHis(DateTime dt)

@@ -71,7 +71,7 @@ namespace M10_XmlArrange
         //檔案移至整理路徑
         lblProc.Text = string.Format("{0}：移動至{1}", fi.Name, sSaveFolder + fi.Name);
         lblProc.Refresh();
-
+        Application.DoEvents();
         fi.CopyTo(sSaveFolder + fi.Name, true);
         fi.Delete();    
 

@@ -22,11 +22,13 @@ namespace M10.lib
     /// <param name="AddressList">收件者清單</param>
     /// <param name="Attachements">附件清單</param>
     /// <returns></returns>
-    public static Boolean SendMailByGmail(string SenderAddress,string SenderPass,string MailContent, string MailSubject, List<string> AddressList, List<Attachment> Attachements)
+    public static Boolean SendMailByGmail(string SenderAddress,string SenderPass, List<string> HtmlContentList, string MailSubject, List<string> AddressList, List<Attachment> Attachements)
     {
       Boolean bSendResult = true;
 
       string sAddressJoin = string.Join(",", AddressList);
+
+      string MailContent = string.Join("", HtmlContentList);
 
       MailMessage message = new MailMessage(SenderAddress, sAddressJoin);//MailMessage(寄信者, 收信者)
       SmtpClient MySmtp = new SmtpClient("smtp.gmail.com", 587);//設定gmail的smtp

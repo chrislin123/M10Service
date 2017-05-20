@@ -70,9 +70,13 @@ namespace M10Api.Controllers
     
     public ActionResult warnhislist(string StartDate,string EndDate)
     {
-      if (StartDate == null || EndDate == null)
+      if (StartDate == null && EndDate == null)
       {
-        return View();
+        //預設今日
+        StartDate = DateTime.Now.ToString("yyyy-MM-dd");
+        EndDate = DateTime.Now.ToString("yyyy-MM-dd");
+
+        //return View();
       }
 
       ViewBag.StartDate = StartDate;
@@ -250,21 +254,23 @@ namespace M10Api.Controllers
 
       string sStartDate = dtStart.ToString("yyyy-MM-ddTHH:mm:ss");
       string sEndDate = dtEnd.ToString("yyyy-MM-ddTHH:mm:ss");
-      string ssql = @" select * from LRTIAlertHis where status = '{0}' 
-                      and RecTime between '{1}' and '{2}'
-                      order by country,town ";
-      //新增
-      var dataI = db.Query(string.Format(ssql, "I", sStartDate, sEndDate));
-      //持續
-      var dataC = db.Query(string.Format(ssql, "C", sStartDate, sEndDate));
-      //解除
-      var dataD = db.Query(string.Format(ssql, "D", sStartDate, sEndDate));
+      string ssql = @" select * from LRTIAlertHis where 1=1
+                      and RecTime between '{0}' and '{1}'
+                      order by RecTime,country,town  ";
+      //1060520 歷史資料使用時間排序，不使用狀態排序
+      ////新增
+      //var dataI = db.Query(string.Format(ssql, "I", sStartDate, sEndDate));
+      ////持續
+      //var dataC = db.Query(string.Format(ssql, "C", sStartDate, sEndDate));
+      ////解除
+      //var dataD = db.Query(string.Format(ssql, "D", sStartDate, sEndDate));
 
+      //ResultList.AddRange(dataI);
+      //ResultList.AddRange(dataC);
+      //ResultList.AddRange(dataD);
 
-      //List<dynamic> data = new List<dynamic>();
-      ResultList.AddRange(dataI);
-      ResultList.AddRange(dataC);
-      ResultList.AddRange(dataD);
+      var data = db.Query(string.Format(ssql, sStartDate, sEndDate));
+      ResultList.AddRange(data);
 
       foreach (var item in ResultList)
       {

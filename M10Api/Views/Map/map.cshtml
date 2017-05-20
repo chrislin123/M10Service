@@ -87,7 +87,8 @@
     $.ajax({
       type: 'GET',
       //url: '/rti/getstationdata',
-      url: '/mapapi/getalertlrti',
+      url: '@Url.Action("getalertlrti", "mapapi")',
+      //url: '/m10api/mapapi/getalertlrti',
       //data: { "STID": "test123456", "country": "台中" },
       dataType: 'JSON',
       async: false,   // 先把這隻js執行完後，再跑下面的程式，如果不寫此參數，jQuery預設AJAX為異步執行
