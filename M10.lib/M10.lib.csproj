@@ -58,6 +58,7 @@
     <Compile Include="DALDapper.cs" />
     <Compile Include="DataExport.cs" />
     <Compile Include="Gmail.cs" />
+    <Compile Include="model\model.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

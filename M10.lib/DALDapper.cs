@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
-using Dapper.Contrib;
+using Dapper.Contrib.Extensions;
 using System.Transactions;
 
 namespace M10.lib
@@ -75,6 +75,40 @@ namespace M10.lib
       }
       return i;
     }
+
+    public bool Update<T>(T entityToUpdate) where T : class
+    {
+      try
+      {
+        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+        {
+          return cn.Update<T>(entityToUpdate);
+        }
+      }
+      catch (Exception)
+      {
+        return false;
+      }
+    }
+
+    public T QuerySingleOrDefault<T>(string sql) where T : class
+    {
+      try
+      {
+        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+        {
+          return cn.QuerySingleOrDefault<T>(sql);
+        }
+      }
+      catch (Exception)
+      {
+        return null;
+      }
+      
+    }
+
+
+
 
     //public int InsertMasterAndDetail(SqlObject firstSO, ArrayList secondSOs, string masterIdInDetailColumnName)
     //{
