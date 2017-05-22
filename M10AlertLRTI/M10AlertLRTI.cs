@@ -78,6 +78,25 @@ namespace M10AlertLRTI
 
     private void btnStart_Click(object sender, EventArgs e)
     {
+
+      //logger.Debug("");
+      logger.Error("error test1");
+
+      logger.Info("info test");
+
+
+      try
+      {
+        string sss = "3d";
+        int.Parse(sss);
+      }
+      catch (Exception ex)
+      {
+        logger.Error(ex, "");
+      }
+
+      return;
+
       //紀錄資料更新時間(2017-05-16T10:31:14)
       LRTIAlertUpdateTime();
 

@@ -37,6 +37,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using NLog;
 
 namespace M10AlertLRTI
 {
@@ -46,7 +47,7 @@ namespace M10AlertLRTI
     private string _ConnectionString;
     public ODAL oDal;
     private DALDapper _dbDapper;
-
+    public Logger logger;
     public DALDapper dbDapper
     {
       get
@@ -98,6 +99,7 @@ namespace M10AlertLRTI
       _ConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.DBDefault].ConnectionString;
       _dbDapper = new DALDapper(_ConnectionString);
       oDal = new ODAL(Properties.Settings.Default.DBDefault);
+      logger = NLog.LogManager.GetCurrentClassLogger();
     }
 
   }
