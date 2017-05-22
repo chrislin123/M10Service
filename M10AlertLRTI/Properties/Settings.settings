@@ -5,8 +5,8 @@
     <Setting Name="DBConnectionString" Type="System.String" Scope="Application">
       <Value Profile="(Default)">DBConnectionString</Value>
     </Setting>
-    <Setting Name="test" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">test</Value>
+    <Setting Name="DBDefault" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">DBDefault</Value>
     </Setting>
     <Setting Name="vghtc" Type="System.String" Scope="Application">
       <Value Profile="(Default)">vghtc</Value>

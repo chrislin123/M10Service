@@ -34,10 +34,10 @@ namespace M10AlertLRTI.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("test")]
-        public string test {
+        [global::System.Configuration.DefaultSettingValueAttribute("DBDefault")]
+        public string DBDefault {
             get {
-                return ((string)(this["test"]));
+                return ((string)(this["DBDefault"]));
             }
         }
         

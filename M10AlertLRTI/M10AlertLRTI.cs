@@ -11,33 +11,24 @@ using CL.Data;
 using System.IO;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
-//using DocumentFormat.OpenXml.Wordprocessing; //word
 using DocumentFormat.OpenXml.Spreadsheet; //excel
 using ClosedXML.Excel;
 using Dapper;
 using Dapper.Contrib.Extensions;
 using System.Configuration;
 using M10.lib;
+using M10.lib.model;
 using M10AlertLRTI.Models;
+using System.Transactions;
+
 
 namespace M10AlertLRTI
 {
   public partial class M10AlertLRTI : BaseForm
   {
-    //public string ssql = string.Empty;
-    //public string sConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.vghtc].ConnectionString;
-    //public ODAL oDal = new ODAL(Properties.Settings.Default.vghtc);
-    //public DALDapper dbDapper;
-
-
-    //ODAL oDal = new ODAL(Properties.Settings.Default.DBConnectionString);
-
+    DateTime dtNow = DateTime.Now;
+      
     string folderName = @"D:\m10\LRTIAlert\";
-
-    //string sMainAddress = string.Empty;
-    //string sMainPass = string.Empty;
-    //string sMailSendList = string.Empty;
-
     string sLritAlertTimeString = "";
 
     static private DataTable LrtiAlertAll = new DataTable();
@@ -49,8 +40,8 @@ namespace M10AlertLRTI
     {
       InitializeComponent();
 
-      base.InitForm(); 
-      //dbDapper = new DALDapper(sConnectionString);
+      //載入BaseForm資料
+      base.InitForm();
     }
 
 
@@ -83,56 +74,18 @@ namespace M10AlertLRTI
       p.StartInfo.Arguments = FileName;
 
       p.Start();
-
-
     }
 
     private void btnStart_Click(object sender, EventArgs e)
     {
-
-      //var test = dbDapper.Query("select * from LRTIAlertMail");
-
-      //string aaaaa;
-
-      //return;
-
-      //List<Attachment> oAttachments = new List<Attachment>();
-      //oAttachments.Add(new Attachment(sAttachFileName));
-
-
-      //send_gmail("", "全台村里崩塌警戒提醒" + sLritAlertTimeString, sMailSendList, oAttachments);//呼叫send_gmail函式測試
-
-      //return;
-
-      //LRTIAlertSendMail("");
-      //測試
-      //oDal.CommandText = " select * from RunTimeRainData ";
-      //DataTable TempDataTable = oDal.DataTable();
-
-
-      //DataExport de = new DataExport();
-      //de.RowsPerSheet = 300;
-      //de.ExportBigDataToExcel(@"c:\test.xls", TempDataTable);
-      //return;
-
-
-
-      DateTime dt = DateTime.Now;
-
-      sLritAlertTimeString = Convert.ToString(dt.Year - 1911)
-          + Convert.ToString(dt.Month).PadLeft(2, '0')
-          + Convert.ToString(dt.Day).PadLeft(2, '0')
-          + Convert.ToString(dt.Hour).PadLeft(2, '0')
-          + Convert.ToString(dt.Minute).PadLeft(2, '0');
-
       //紀錄資料更新時間(2017-05-16T10:31:14)
-      LRTIAlertUpdateTime(dt);
+      LRTIAlertUpdateTime();
 
       //Alert LRTI資料處理
       LRTIAlertProc();
 
       //AlertLRTI寫入歷史資料
-      LRTIAlertRecToHis(dt);
+      LRTIAlertRecToHis();
 
       //取得警戒通知資料
       getLRTIAlertData();
@@ -142,15 +95,7 @@ namespace M10AlertLRTI
 
       //文件產生      
       string sAttachFileName = LRTIAlertReport();
-
-
-      //1050802 判斷是否啟動發報功能
-      //ssql = " select value from LRTIAlertMail where type = 'isal' and value = 'Y' ";
-      //oDal.CommandText = ssql;
-      //DataTable dt1 = oDal.DataTable();
-
-      //if (dt1.Rows.Count == 0) return;
-
+      
       //1060519 判斷是否啟動發報功能，修改使用dapper
       var chkMailFlag = dbDapper.ExecuteScale("select value from LRTIAlertMail where type = 'isal' and value = 'Y'");
       if (string.IsNullOrEmpty(chkMailFlag as string)) return;
@@ -199,9 +144,9 @@ namespace M10AlertLRTI
       Gmail.SendMailByGmail(SenderMail, SenderPass, HtmlContentList, sSubject, AddressList, AttachmentList);
     }
 
-    private void LRTIAlertRecToHis(DateTime dt)
+    private void LRTIAlertRecToHis()
     {
-      string sDt = dt.ToString("yyyy-MM-ddTHH:mm:ss");
+      string sDt = dtNow.ToString("yyyy-MM-ddTHH:mm:ss");
 
       try
       {
@@ -252,12 +197,18 @@ namespace M10AlertLRTI
 
     }
 
-    private void LRTIAlertUpdateTime(DateTime dt)
+    private void LRTIAlertUpdateTime()
     {
-      string sDt = dt.ToString("yyyy-MM-ddTHH:mm:ss");
-      ssql = string.Format(" update LRTIAlertMail set value = '{0}' where type = 'altm' ", sDt);
-      oDal.CommandText = ssql;
-      oDal.ExecuteSql();
+      string sDt = dtNow.ToString("yyyy-MM-ddTHH:mm:ss");
+
+      LRTIAlertMail item = dbDapper.QuerySingleOrDefault<LRTIAlertMail>(
+        " select * from LRTIAlertMail where type = 'altm' ");
+      if (item != null)
+      {
+        item.value = sDt;
+        dbDapper.Update(item);
+      }
+
     }
 
     private void getLRTIAlertData()
@@ -621,88 +572,15 @@ namespace M10AlertLRTI
       }
     }
 
-
-    public void send_gmail(string msg, string mysubject, string address, List<Attachment> oAttachements)
-    {
-      //MailMessage message = new MailMessage(sMainAddress, address);//MailMessage(寄信者, 收信者)
-      //SmtpClient MySmtp = new SmtpClient("smtp.gmail.com", 587);//設定gmail的smtp
-      //try
-      //{
-      //  message.IsBodyHtml = true;
-      //  message.BodyEncoding = System.Text.Encoding.UTF8;//E-mail編碼
-      //  message.SubjectEncoding = System.Text.Encoding.UTF8;//E-mail編碼
-      //  message.Priority = MailPriority.Normal;//設定優先權
-      //  message.Subject = mysubject;//E-mail主旨
-      //  message.Body = msg;//E-mail內容
-
-      //  //Attachment attachment = new Attachment(@"C:\hsrv.txt");//<-這是附件部分~先用附件的物件把路徑指定進去~
-      //  //message.Attachments.Add(attachment);//<-郵件訊息中加入附件
-      //  foreach (Attachment item in oAttachements)
-      //  {
-      //    message.Attachments.Add(item);
-      //  }
-
-      //  MySmtp.Credentials = new System.Net.NetworkCredential(sMainAddress, sMainPass);//gmail的帳號密碼System.Net.NetworkCredential(帳號,密碼)
-      //  MySmtp.EnableSsl = true;//開啟ssl
-      //  MySmtp.Send(message);
-
-      //  //如果出現權限不足，可登入google帳號後，選擇下方網址，啟用低安全設定
-      //  //https://www.google.com/settings/security/lesssecureapps
-
-
-      //}
-      //catch (Exception ex )
-      //{
-
-      //}
-      //finally
-      //{
-      //  MySmtp = null;
-      //  message.Dispose();
-      //}
-    }
+    
 
     private void M10AlertLRTI_Load(object sender, EventArgs e)
     {
-      //timer1.Enabled = false;
-
       //建立資料夾
       if (!Directory.Exists(folderName)) Directory.CreateDirectory(folderName);
 
-
-      
-
-
-      ////取得寄件者帳號密碼
-      //DataTable dtmail = new DataTable();
-      //ssql = " select * from LRTIAlertMail "
-      //         + " where 1=1 "
-      //         + " and type in  ('main','pass') ";
-      //oDal.CommandText = ssql;
-      //dtmail.Clear();
-      //dtmail = oDal.DataTable();
-      //foreach (DataRow dr in dtmail.Rows)
-      //{
-      //  if (dr["type"].ToString() == "main") sMainAddress = dr["value"].ToString();
-      //  if (dr["type"].ToString() == "pass") sMainPass = dr["value"].ToString();
-      //}
-
-
-      ////取得收件者            
-      //ssql = " select * from LRTIAlertMail "
-      //         + " where 1=1 "
-      //         + " and type = 'list' ";
-      //oDal.CommandText = ssql;
-      //dtmail.Clear();
-      //dtmail = oDal.DataTable();
-
-      //List<string> lMail = new List<string>();
-      //foreach (DataRow dr in dtmail.Rows)
-      //{
-      //  lMail.Add(dr["value"].ToString());
-      //  //sb.Append();
-      //}
-      //sMailSendList = string.Join(",", lMail);
+      //取得資料時間
+      sLritAlertTimeString = dtNow.ToString("yyyyMMddhhmm");
     }
 
     private void timer1_Tick(object sender, EventArgs e)

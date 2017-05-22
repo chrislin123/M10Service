@@ -63,10 +63,10 @@ namespace M10AlertLRTI
     public string ConnectionString
     {
       get
-      {
+      { 
         if (_ConnectionString == "")
         {
-          _ConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.vghtc].ConnectionString;
+          _ConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.DBDefault].ConnectionString;
         }
         
         return _ConnectionString;
@@ -95,9 +95,9 @@ namespace M10AlertLRTI
     
     public void InitForm()
     {
-      _ConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.vghtc].ConnectionString;
+      _ConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.DBDefault].ConnectionString;
       _dbDapper = new DALDapper(_ConnectionString);
-      oDal = new ODAL(Properties.Settings.Default.vghtc);
+      oDal = new ODAL(Properties.Settings.Default.DBDefault);
     }
 
   }
