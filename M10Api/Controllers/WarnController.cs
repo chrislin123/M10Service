@@ -51,11 +51,11 @@ namespace M10Api.Controllers
         if (item.status == "D") item.status = "刪除";
 
         
-        //處理ELRTI無條件捨去
+        //處理ELRTI取至小數第二位
         decimal dELRTI = 0;
-        if (decimal.TryParse(Convert.ToString( item.ELRTI), out dELRTI))
-        { 
-          item.ELRTI = Math.Floor(dELRTI).ToString();
+        if (decimal.TryParse(Convert.ToString(item.ELRTI), out dELRTI))
+        {
+          item.ELRTI = Math.Round(dELRTI, 2).ToString();
         } 
         
       }
@@ -280,11 +280,11 @@ namespace M10Api.Controllers
         if (item.status == "D") item.status = "刪除";
 
 
-        //處理ELRTI無條件捨去
+        //處理ELRTI取至小數第二位
         decimal dELRTI = 0;
         if (decimal.TryParse(Convert.ToString(item.ELRTI), out dELRTI))
         {
-          item.ELRTI = Math.Floor(dELRTI).ToString();
+          item.ELRTI = Math.Round(dELRTI, 2).ToString();
         }
 
       }
