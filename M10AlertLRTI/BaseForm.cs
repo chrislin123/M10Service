@@ -1,42 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+﻿
 using System.Windows.Forms;
 using CL.Data;
 using System.Configuration;
 using M10.lib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Windows.Forms;
-using System.Net.Mail;
-using CL.Data;
-using System.IO;
-using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Packaging;
-//using DocumentFormat.OpenXml.Wordprocessing; //word
-using DocumentFormat.OpenXml.Spreadsheet; //excel
-using ClosedXML.Excel;
-using Dapper;
-using Dapper.Contrib.Extensions;
-using System.Configuration;
-using M10.lib;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using NLog;
 
 namespace M10AlertLRTI

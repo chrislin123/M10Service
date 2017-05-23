@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using System.Xml;
-using System.Data.SqlClient;
-using System.Transactions;
 using CL.Data;
-using System.Data.Common;
 using System.Globalization;
+using NLog;
+using FluentFTP;
+using System.Net;
 
 namespace M10Winform
 {
@@ -36,19 +36,11 @@ namespace M10Winform
     string sUser = "m10sys";
     string sPassword = "m10sys";
 
-    string sFTPArrangePath = "M10_System/M10/XML";
-    string sFTPXmlPath = "14_FCU_raindata/M10";
-    //string sUser = "test";
-    //string sPassword = "test";
-
-    //string sConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=True;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False;Initial Catalog=m10;"; 
-
-    //string sConnectionString = @"Data Source=(localdb)\MSSQLLocalDB;Integrated Security=False;Persist Security Info=True;User ID=sa;Password=sa;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False;Initial Catalog=m10;Integrated Security=SSPI";
-
-    //string sConnectionString = "Data Source=.;Integrated Security=False;User ID=sa;Password=sa;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False;Initial Catalog=m10";
-
+    
+   
     string sConnectionString = Properties.Settings.Default.DBConnectionString;
     ODAL oDal = new ODAL(Properties.Settings.Default.DBConnectionString);
+    public Logger logger = NLog.LogManager.GetCurrentClassLogger();
 
     public MainForm()
     {
@@ -72,7 +64,8 @@ namespace M10Winform
 
         //相關建立資料夾
         if (!Directory.Exists(folderBack)) Directory.CreateDirectory(folderBack);
-        if (!Directory.Exists(folderName)) Directory.CreateDirectory(folderName);
+        if (!Directory.Exists(folderName))
+          Directory.CreateDirectory(folderName);
         if (!Directory.Exists(folderError)) Directory.CreateDirectory(folderError);
       }
       catch (Exception excep)
@@ -108,6 +101,8 @@ namespace M10Winform
       catch (Exception exc)
       {
         SetEventLog("轉檔錯誤:" + exc.ToString());
+
+        logger.Error(exc, "M10Winform轉檔錯誤:");
 
       }
 
@@ -152,8 +147,12 @@ namespace M10Winform
         // FTP 下載資料到本機
         if (chkdownload.Checked == true)
         {
-          FtpDownload();
-        }        
+          //1060523 FTP改寫使用 FluentFTP
+          //FtpDownload();
+          FtpDownloadNew();
+        }
+
+        return;
 
         // 取得資料夾內所有檔案
         foreach (string fname in System.IO.Directory.GetFiles(folderName))
@@ -215,65 +214,22 @@ namespace M10Winform
 
     private void FtpDownload()
     {
-      //string sIP = "192.168.13.155";
-      //string sUser = "iot";
-      //string sPassword = "iot";
-
+      string sFTPArrangePath = "M10_System/M10/XML";
+      string sFTPXmlPath = "14_FCU_raindata/M10";
 
       ftp ftpClient;
       try
       {
-        ShowMessageToFront("Ftp連線");
-        /* Create Object Instance */
-        //ftpClient = new ftp(@"ftp://" + sIP + "/", sUser, sPassword);
+        ShowMessageToFront("Ftp連線");      
         ftpClient = new ftp(@"ftp://" + sIP , sUser, sPassword);
 
-        /* Upload a File */
-        //ftpClient.upload("test/test.txt", @"C:\test.txt");
-
-
-        /* Download a File */
-        //ftpClient.download("test/test.txt", @"d:\test111.txt");
-
-        /* Delete a File */
-        //ftpClient.delete("etc/test.txt");
-
-        /* Rename a File */
-        //ftpClient.rename("etc/test.txt", "test2.txt");
-
-        /* Create a New Directory */
-        //ftpClient.createDirectory("etc/test");
-
-        /* Get the Date/Time a File was Created */
-        //string fileDateTime = ftpClient.getFileCreatedDateTime("etc/test.txt");
-
-
-        /* Get the Size of a File */
-        //string fileSize = ftpClient.getFileSize("etc/test.txt");
-
-
-
-
         ShowMessageToFront("Ftp取得清單");
-        /* Get Contents of a Directory (Names Only) */
-        //string[] simpleDirectoryListing = ftpClient.directoryListSimple("14_FCU_raindata/M10");
-        //for (int i = 0; i < simpleDirectoryListing.Count(); i++) { Console.WriteLine(simpleDirectoryListing[i]); }
-
-        /* Get Contents of a Directory with Detailed File/Directory Info */
-        //string[] detailDirectoryListing = ftpClient.directoryListDetailed("14_FCU_raindata/M10/");
-        //1060406 修改hotcode
         string[] detailDirectoryListing = ftpClient.directoryListDetailed(sFTPXmlPath);
-        //for (int i = 0; i < detailDirectoryListing.Count(); i++) { Console.WriteLine(detailDirectoryListing[i]); }
-
-
-
-
 
         //取得檔案名稱清單
         List<string> lstFileName = new List<string>();
         foreach (string sFullName in detailDirectoryListing)
         {
-
           if (sFullName != "")
           {
             //排除資料夾
@@ -286,22 +242,6 @@ namespace M10Winform
             lstFileName.Add(sFileName);
           }
         }
-
-        //FTP檔案整理
-        //foreach (string sFileName in lstFileName)
-        //{
-        //  //==1060406 自動化歸檔
-        //  //建立歸屬資料夾
-        //  List<string> slist = sFileName.Split('_').ToList<string>();
-        //  string sSaveFolder = string.Format(@"{0}/{1}/{2}/{3}", sFTPArrangePath, slist[0], slist[1], slist[2]);
-        //  ftpClient.createDirectory(sSaveFolder);
-        //  string sDestPath = string.Format(@"{0}/{1}", sSaveFolder, sFileName);
-
-        //  string fileDateTime = ftpClient.getFileCreatedDateTime(sDestPath);
-
-        //  //移動檔案
-        //  ftpClient.rename(string.Format(@"{0}/{1}", sFTPXmlPath, sFileName), string.Format(@"../../{0}/{1}", sSaveFolder, sFileName));
-        //}
 
         //FTP檔案整理
         foreach (string sFileName in lstFileName)
@@ -374,6 +314,103 @@ namespace M10Winform
       //throw new NotImplementedException();
     }
 
+    private void FtpDownloadNew()
+    {
+      //FluentFTP 起始路徑都是跟目錄開始，目錄結尾都是/
+      string sFTPArrangePath = "/M10_System/M10/XML/";
+      string sFTPXmlPath = "/14_FCU_raindata/M10/";
+
+
+      FtpClient client = new FtpClient();
+      //ftp ftpClient;
+      try
+      { 
+        client.Host = sIP;
+
+        // if you don't specify login credentials, we use the "anonymous" user account
+        client.Credentials = new NetworkCredential(sUser, sPassword);
+
+        ShowMessageToFront("Ftp連線");
+        // begin connecting to the server
+        client.Connect();
+
+
+        //ftpClient = new ftp(@"ftp://" + sIP, sUser, sPassword);
+
+        ShowMessageToFront("Ftp取得清單");
+
+        //取得檔案名稱清單
+        List<string> lstFileName = new List<string>();
+        foreach (FtpListItem  item in client.GetListing(sFTPXmlPath))
+        {
+          if (item.Type == FtpFileSystemObjectType.File)
+          {
+            lstFileName.Add(item.Name);
+          }
+        }        
+
+        //FTP檔案整理
+        foreach (string sFileName in lstFileName)
+        {
+          //判斷是否已轉檔
+          ssql = @" select * from FileTransLog  
+                            where 1=1 and FileTransName = '" + sFileName + @"'
+                        ";
+          oDal.CommandText = ssql;
+          //沒有下載紀錄則下載
+          if (oDal.DataTable().Rows.Count == 0)
+          {
+            /* Download a File */
+            //ftpClient.download();
+            client.DownloadFile(folderName + sFileName, string.Format(@"{0}{1}", sFTPXmlPath, sFileName));
+            ShowMessageToFront("Ftp下載檔案到" + folderName + sFileName);
+          }
+          else //已下載，且時間超過1天，則移動FTP檔案到bak資料夾
+          { 
+            //1060408 修改為1天
+            DateTime dtRunTimeRainData = DateTime.Now.AddDays(-1);
+
+            IFormatProvider yyyymmddFormat = new CultureInfo(String.Empty, false);
+            string f = "yyyy_MM_dd_HH_mm";
+            DateTime dtRTime = DateTime.ParseExact(sFileName.Split('.')[0], f, yyyymmddFormat);
+
+            if (DateTime.Compare(dtRTime, dtRunTimeRainData) <= 0)
+            {
+              //==1060406 自動化歸檔-建立歸屬資料夾
+              List<string> slist = sFileName.Split('_').ToList<string>();
+
+              //1060408 QNAP FTP服務只能一層一層建立
+              string sSaveFolder = string.Format(@"{0}{1}/{2}/{3}/", sFTPArrangePath, slist[0], slist[1], slist[2]);
+              //ftpClient.createDirectory(sSaveFolder);
+              //sSaveFolder = string.Format(@"{0}/{1}", sSaveFolder, slist[1]);
+              //ftpClient.createDirectory(sSaveFolder);
+              //sSaveFolder = string.Format(@"{0}/{1}", sSaveFolder, slist[2]);
+              //ftpClient.createDirectory(sSaveFolder);
+
+              //建立資料夾
+              client.CreateDirectory(sSaveFolder);
+
+
+              ShowMessageToFront(string.Format("Ftp[{0}]檔案移動到{0}", sFileName, sSaveFolder + sFileName));
+              //移動檔案至歸屬資料夾
+              client.Rename(string.Format(@"{0}{1}", sFTPXmlPath, sFileName), string.Format(@"{0}{1}", sSaveFolder, sFileName));
+            }
+
+          }
+        }
+
+      }
+      catch (Exception ex)
+      {
+        ShowMessageToFront(ex.ToString());        
+      }finally
+      {
+        client.Disconnect();        
+      }
+
+      //等待五秒
+      System.Threading.Thread.Sleep(5000);
+    }
 
     private void TransToDB(string sFilePath)
     {
@@ -1009,6 +1046,98 @@ namespace M10Winform
 
     private void button1_Click(object sender, EventArgs e)
     {
+      //測試帳號密碼
+      sIP = "192.168.1.100";
+      sUser = "m10sys";
+      sPassword = "m10sys";
+
+      FtpClient client = new FtpClient();
+      client.Host = sIP;
+
+      // if you don't specify login credentials, we use the "anonymous" user account
+      client.Credentials = new NetworkCredential(sUser, sPassword);
+
+      // begin connecting to the server
+      client.Connect();
+
+
+      client.CreateDirectory("/456/789/測試/");
+
+      ShowMessageToFront("aaaa");
+      //foreach (FtpListItem item in client.GetListing("/123", FtpListOption.))
+      //{
+      //  ShowMessageToFront(item.FullName);
+      //}
+
+      // get a list of files and directories in the "/htdocs" folder
+      //foreach (FtpListItem item in client.GetListing("/123")) {
+
+      //  // if this is a file
+      //  if (item.Type == FtpFileSystemObjectType.File)
+      //  {
+
+      //    // get the file size
+      //    long size = client.GetFileSize(item.FullName);
+
+      //  }
+
+      //  // get modified date/time of the file or folder
+      //  DateTime time = client.GetModifiedTime(item.FullName);
+
+      //  // calculate a hash for the file on the server side (default algorithm)
+      //  //FtpHash hash = client.GetHash(item.FullName);
+
+      //}
+
+
+
+      //// rename a file
+      //client.Rename("/123/index.txt", "/123/新目錄/index.txt");
+
+      //// delete a file
+      //client.DeleteFile("/123/新目錄/index.txt");
+
+      //// delete a folder recursively
+      //client.DeleteDirectory("/htdocs/extras/", FtpListOption.Size);
+
+      //// check if a file exists
+      if (client.FileExists("/123/新文字文件.txt")) { ShowMessageToFront("have data."); }
+
+      //// check if a folder exists
+      //if (client.DirectoryExists("/htdocs/extras/")) { }
+
+      // disconnect! good bye!
+      client.Disconnect();
+
+      ShowMessageToFront("完畢");
+
+      //using (Ftp ftp = new Ftp())
+      //{
+      //  ftp.Connect(sIP);  // or ConnectSSL for SSL
+      //  ftp.Login(sUser, sPassword);
+
+      //  ftp.ChangeFolder("123");
+
+      //  //ftp.Rename("789.txt", "/123/11789.txt");
+      //  //ftp.Upload("report.txt", @"c:\新文字文件.txt");
+
+
+      //  List<FtpItem> ItemList = ftp.GetList();
+
+      //  foreach (FtpItem item in ItemList)
+      //  {
+      //    logger.Error(item.ModifyDate);
+      //    logger.Error(item.Name);
+      //    logger.Error(item.Permissions);
+      //    logger.Error(item.Size);
+      //    logger.Error(item.SymlinkPath);
+      //  }
+
+      //  ftp.Close();
+      //}
+
+      return;
+
       ftp ftpClient;
       try
       {
