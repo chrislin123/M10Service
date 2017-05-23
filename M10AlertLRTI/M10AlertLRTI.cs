@@ -78,54 +78,45 @@ namespace M10AlertLRTI
 
     private void btnStart_Click(object sender, EventArgs e)
     {
-
-      //logger.Debug("");
-      logger.Error("error test1");
-
-      logger.Info("info test");
-
-
       try
       {
-        string sss = "3d";
-        int.Parse(sss);
+
+        //string ss = "";
+        //int aa = int.Parse(ss);
+
+        //紀錄資料更新時間(2017-05-16T10:31:14)
+        LRTIAlertUpdateTime();
+
+        //Alert LRTI資料處理
+        LRTIAlertProc();
+
+        //AlertLRTI寫入歷史資料
+        LRTIAlertRecToHis();
+
+        //取得警戒通知資料
+        getLRTIAlertData();
+
+        //1050615 判斷有資料才進行警戒提醒
+        if (LrtiAlertAll.Rows.Count == 0 && LrtiAlertNew.Rows.Count == 0 && LrtiAlertDel.Rows.Count == 0) return;
+
+        //文件產生      
+        string sAttachFileName = LRTIAlertReport();
+
+        //1060519 判斷是否啟動發報功能，修改使用dapper
+        var chkMailFlag = dbDapper.ExecuteScale("select value from LRTIAlertMail where type = 'isal' and value = 'Y'");
+        if (string.IsNullOrEmpty(chkMailFlag as string)) return;
+
+        //Alert LRTI寄送發布mail
+        LRTIAlertSendMail(sAttachFileName);
+
+
+        //開啟excel
+        //OpenExcel(sAttachFileName);
       }
       catch (Exception ex)
       {
-        logger.Error(ex, "");
+        logger.Error(ex, "M10AlertLRTI-btnStart_Click");
       }
-
-      return;
-
-      //紀錄資料更新時間(2017-05-16T10:31:14)
-      LRTIAlertUpdateTime();
-
-      //Alert LRTI資料處理
-      LRTIAlertProc();
-
-      //AlertLRTI寫入歷史資料
-      LRTIAlertRecToHis();
-
-      //取得警戒通知資料
-      getLRTIAlertData();
-
-      //1050615 判斷有資料才進行警戒提醒
-      if (LrtiAlertAll.Rows.Count == 0 && LrtiAlertNew.Rows.Count == 0 && LrtiAlertDel.Rows.Count == 0) return;
-
-      //文件產生      
-      string sAttachFileName = LRTIAlertReport();
-      
-      //1060519 判斷是否啟動發報功能，修改使用dapper
-      var chkMailFlag = dbDapper.ExecuteScale("select value from LRTIAlertMail where type = 'isal' and value = 'Y'");
-      if (string.IsNullOrEmpty(chkMailFlag as string)) return;
-
-      //Alert LRTI寄送發布mail
-      LRTIAlertSendMail(sAttachFileName);
-
-      
-      //開啟excel
-      //OpenExcel(sAttachFileName);
-
     }
 
     private void LRTIAlertSendMail(string sAttachFileName)
@@ -137,12 +128,11 @@ namespace M10AlertLRTI
       AttachmentList.Add(new Attachment(sAttachFileName));
 
       string SenderMail = string.Empty;
-      string SenderPass = string.Empty;
+      string SenderPass = string.Empty;      
       var TempData = dbDapper.ExecuteScale("select value from LRTIAlertMail where type = 'main' ");
       if (TempData != null) SenderMail = TempData.ToString();
       TempData = dbDapper.ExecuteScale("select value from LRTIAlertMail where type = 'pass' ");
       if (TempData != null) SenderPass = TempData.ToString();
-
       
       var TempDataList = dbDapper.Query("select * from LRTIAlertMail where type = 'list'");
       foreach (var item in TempDataList)
@@ -195,18 +185,6 @@ namespace M10AlertLRTI
 
           cn.Insert(HisData);
         }
-
-        //LRTIAlertHis his = new LRTIAlertHis();
-        ////his.no = 1;
-        //his.country = "test";     
-
-        //using (var cn = new System.Data.SqlClient.SqlConnection(sConnectionString))
-        //{
-        //  cn.Insert(his);
-
-        //  //cn.Insert<LRTIAlertHis>(his);
-        //  //return cn.Query(sql).ToList();
-        //}
       }
       catch (Exception )
       {
@@ -218,6 +196,7 @@ namespace M10AlertLRTI
 
     private void LRTIAlertUpdateTime()
     {
+
       string sDt = dtNow.ToString("yyyy-MM-ddTHH:mm:ss");
 
       LRTIAlertMail item = dbDapper.QuerySingleOrDefault<LRTIAlertMail>(
@@ -235,19 +214,19 @@ namespace M10AlertLRTI
 
       try
       {
-        ssql = " select country,town,village,HOUR3,RT,LRTI,ELRTI from LRTIAlert "
+        ssql = " select country,town,village,HOUR1,HOUR2,HOUR3,RT,LRTI,ELRTI from LRTIAlert "
              + " where status in ('C','I') "
              + " order by country,town ";
         oDal.CommandText = ssql;
         LrtiAlertAll.Clear();
         LrtiAlertAll = oDal.DataTable();
-        ssql = " select country,town,village,HOUR3,RT,LRTI,ELRTI from LRTIAlert "
+        ssql = " select country,town,village,HOUR1,HOUR2,HOUR3,RT,LRTI,ELRTI from LRTIAlert "
                  + " where status = 'I' "
                  + " order by country,town ";
         oDal.CommandText = ssql;
         LrtiAlertNew.Clear();
         LrtiAlertNew = oDal.DataTable();
-        ssql = " select country,town,village,HOUR3,RT,LRTI,ELRTI from LRTIAlert "
+        ssql = " select country,town,village,HOUR1,HOUR2,HOUR3,RT,LRTI,ELRTI from LRTIAlert "
                  + " where status = 'D' "
                  + " order by country,town ";
         oDal.CommandText = ssql;
@@ -328,6 +307,8 @@ namespace M10AlertLRTI
       lHead.Add("縣市");
       lHead.Add("鄉鎮區");
       lHead.Add("警戒區範圍");
+      lHead.Add("1hr");
+      lHead.Add("2hr");
       lHead.Add("3hr");
       lHead.Add("Rt");
       lHead.Add("LRTI");
