@@ -58,6 +58,14 @@ namespace M10.lib
       }
     }
 
+    public int Execute(string sql)
+    {
+      using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+      {
+        return cn.Execute(sql);
+      }
+    }
+
     public int Execute(List<SqlObject> SqlList)
     {
       int i = 0;
@@ -96,7 +104,7 @@ namespace M10.lib
       try
       {
         using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-        {
+        { 
           return cn.QuerySingleOrDefault<T>(sql);
         }
       }
@@ -104,7 +112,37 @@ namespace M10.lib
       {
         return null;
       }
-      
+    }
+
+    public T QuerySingleOrDefault<T>(string sql,object param) where T : class
+    {
+      try
+      {
+        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+        {
+          return cn.QuerySingleOrDefault<T>(sql, param);
+        }
+      }
+      catch (Exception)
+      {
+        return null;
+      }
+    }
+
+    public long Insert<T>(T entityToInsert) where T : class
+    {
+      try
+      {
+        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+        { 
+          
+          return cn.Insert<T>(entityToInsert);
+        }
+      }
+      catch (Exception ex)
+      {
+        return 0;
+      }
     }
 
 

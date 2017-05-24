@@ -18,6 +18,7 @@ namespace M10.lib.model
     [Key]
     public int FileTransNo { get; set; }
 
+    
     public string FileTransName { get; set; }
 
     public DateTime? FileTransTime { get; set; }
@@ -106,6 +107,8 @@ namespace M10.lib.model
   [Table("RainStation")]
   public class RainStation
   {
+    //設定key
+    [Key]
     public int no { get; set; }
 
     public string STID { get; set; }
@@ -181,6 +184,8 @@ namespace M10.lib.model
   [Table("Rti3Detail")]
   public class Rti3Detail
   {
+    //設定key
+    [Key]
     public int no { get; set; }
 
     public string station { get; set; }
@@ -208,6 +213,8 @@ namespace M10.lib.model
   [Table("RtiData")]
   public class RtiData
   {
+    //設定key
+    [Key]
     public int no { get; set; }
 
     public string ver { get; set; }
@@ -231,6 +238,8 @@ namespace M10.lib.model
   [Table("RtiDataTrans")]
   public class RtiDataTrans
   {
+    //設定key
+    [Key]
     public int no { get; set; }
 
     public string ver { get; set; }
@@ -260,6 +269,8 @@ namespace M10.lib.model
   [Table("RtiDetail")]
   public class RtiDetail
   {
+    //設定key
+    [Key]
     public int no { get; set; }
 
     public string station { get; set; }
@@ -286,6 +297,8 @@ namespace M10.lib.model
   [Table("RunTimeRainData")]
   public class RunTimeRainData
   {
+    //設定key
+    [Key]
     public int no { get; set; }
 
     public string STID { get; set; }
@@ -386,6 +399,8 @@ namespace M10.lib.model
   [Table("StationVillageLRTI")]
   public class StationVillageLRTI
   {
+    //設定key
+    [Key]
     public int no { get; set; }
 
     public string STID { get; set; }
@@ -400,6 +415,8 @@ namespace M10.lib.model
   [Table("Updatelog")]
   public class Updatelog
   {
+    //設定key
+    [Key]
     public int no { get; set; }
 
     public DateTime updatetime { get; set; }
