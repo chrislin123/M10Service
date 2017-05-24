@@ -574,6 +574,27 @@ namespace M10Winform
 
     private void button1_Click(object sender, EventArgs e)
     {
+
+
+
+      try
+      {
+
+        string ssss = "fsdadlk";
+
+        int.Parse(ssss);
+      }
+      catch (Exception ex) 
+      {
+        logger.Error(ex, "test error");
+        
+      }
+
+      return;
+
+
+
+
       string sSTID = "01U8801";
       ssql = " select * from StationData where STID = @STID ";
       var DataList = dbDapper.Query(ssql, new { STID = sSTID });

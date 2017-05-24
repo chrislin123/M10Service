@@ -565,9 +565,9 @@ namespace M10AlertLRTI
         oDal.CommandText = ssql;
         oDal.ExecuteSql();
       }
-      catch (Exception )
+      catch (Exception ex)
       {
-
+        logger.Error(ex, "");
 
       }
     }
