@@ -20,7 +20,7 @@ using M10.lib;
 using M10.lib.model;
 using M10AlertLRTI.Models;
 using System.Transactions;
-
+using System.Xml;
 
 namespace M10AlertLRTI
 {
@@ -78,6 +78,53 @@ namespace M10AlertLRTI
 
     private void btnStart_Click(object sender, EventArgs e)
     {
+
+      XmlDocument kml = new XmlDocument();
+      kml.Load(@"c:\doc.kml");
+      //filepath是你自己的檔案路徑
+      XmlNamespaceManager xnm = new XmlNamespaceManager(kml.NameTable);
+      xnm.AddNamespace("x", "http://www.opengis.net/kml/2.2");
+      string xPath = "/x:kml/x:Document/x:Folder/x:Placemark/x:name";
+
+      XmlNodeList nodeList2 = kml.SelectNodes(xPath, xnm);
+      foreach (XmlNode thePlacemark in nodeList2)
+      {
+        //xPath = "/x:MultiGeometry/x:Polygon/x:outerBoundaryIs/x:LinearRing/x:coordinates";
+        XmlNode coordinates = thePlacemark.SelectSingleNode(xPath, xnm);
+
+
+        string sss2s="";
+      }
+
+      XmlDocument doc = new XmlDocument();
+
+      doc.Load(@"c:\doc.kml");
+      XmlNode root = doc.DocumentElement;
+      
+      XmlNodeList nodeList = root.SelectNodes("//kml");
+      foreach (XmlNode book in nodeList)
+      {
+        // Discount prices by 10%.
+        double price;
+        price = Math.Round(Convert.ToSingle(
+             book.LastChild.InnerText) * 0.9, 2);
+        book.LastChild.InnerText = price.ToString();
+      }
+
+
+
+      List<string> ssss = new List<string>();
+      foreach (XmlNode row in doc.SelectNodes("//Folder"))
+      {
+        ssss.Add(row.SelectSingleNode("//Placemark").InnerText);
+        string rowName = row.SelectSingleNode("//Placemark").InnerText;
+      }
+
+
+
+
+      return;
+
       try
       {
 
