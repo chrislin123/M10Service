@@ -44,10 +44,45 @@ namespace M10Api.Controllers
       return list;
     }
 
+    [HttpGet]
+    [Route("getCoordinate")]
+    public List<dynamic> getCoordinate()
+    {
+      var list = db.Query(@" 
+          select * from LRTIAlert a
+inner join StationVillageLRTI b on a.STID =b.STID
+inner join Coordinate c on b.no = c.relano
+where a.status != 'D' 
+order by c.pointseq    
+        "
+        );
+
+      //格式化資料
+      foreach (var item in list)
+      {
+        //處理狀態改中文顯示
+        if (item.status == "I") item.status = "新增";
+        if (item.status == "C") item.status = "持續";
+        if (item.status == "D") item.status = "刪除";
+
+
+        //處理ELRTI無條件捨去
+        decimal dELRTI = 0;
+        if (decimal.TryParse(Convert.ToString(item.ELRTI), out dELRTI))
+        {
+          item.ELRTI = Math.Floor(dELRTI).ToString();
+        }
+
+      }
+
+
+      return list;
+    }
+
 
 
     //Here is an example of a KML file containing a Network Link that loads this Python script:
-//#!/usr/bin/python
+    //#!/usr/bin/python
 
     //    import random
 
@@ -68,27 +103,27 @@ namespace M10Api.Controllers
     //print kml
 
 
-//    <?xml version = "1.0" encoding="UTF-8"?>
-//<kml xmlns = "http://www.opengis.net/kml/2.2" >
-//  < Folder >
-//    < name > Network Links</name>
-//    <visibility>0</visibility>
-//    <open>0</open>
-//    <description>Network link example 1</description>
-//    <NetworkLink>
-//      <name>Random Placemark</name>
-//      <visibility>0</visibility>
-//      <open>0</open>
-//      <description>A simple server-side script that generates a new random
-//        placemark on each call</description>
-//      <refreshVisibility>0</refreshVisibility>
-//      <flyToView>0</flyToView>
-//      <Link>
-//        <href>http://yourserver.com/cgi-bin/randomPlacemark.py</href>
-//      </Link>
-//    </NetworkLink>
-//  </Folder>
-//</kml>
+    //    <?xml version = "1.0" encoding="UTF-8"?>
+    //<kml xmlns = "http://www.opengis.net/kml/2.2" >
+    //  < Folder >
+    //    < name > Network Links</name>
+    //    <visibility>0</visibility>
+    //    <open>0</open>
+    //    <description>Network link example 1</description>
+    //    <NetworkLink>
+    //      <name>Random Placemark</name>
+    //      <visibility>0</visibility>
+    //      <open>0</open>
+    //      <description>A simple server-side script that generates a new random
+    //        placemark on each call</description>
+    //      <refreshVisibility>0</refreshVisibility>
+    //      <flyToView>0</flyToView>
+    //      <Link>
+    //        <href>http://yourserver.com/cgi-bin/randomPlacemark.py</href>
+    //      </Link>
+    //    </NetworkLink>
+    //  </Folder>
+    //</kml>
 
 
   }

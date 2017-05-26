@@ -28,7 +28,7 @@ namespace M10AlertLRTI
   public partial class M10AlertLRTI : BaseForm
   {
     DateTime dtNow = DateTime.Now;
-      
+
     string folderName = @"D:\m10\LRTIAlert\";
     string sLritAlertTimeString = "";
 
@@ -80,8 +80,10 @@ namespace M10AlertLRTI
     private void btnStart_Click(object sender, EventArgs e)
     {
 
+      //TransKML();
 
-      
+      //return;
+
       try
       {
 
@@ -125,52 +127,64 @@ namespace M10AlertLRTI
 
     private void TransKML()
     {
-      string sFilePath = @"c:\doc.kml";
-
-      XDocument kml1 = XDocument.Load(sFilePath);
-
-      var ns = XNamespace.Get("http://www.opengis.net/kml/2.2");
-      var placemarks = kml1.Element(ns + "kml").Element(ns + "Document").Element(ns + "Folder").Elements(ns + "Placemark");
-
-      foreach (var item in placemarks)
+      try
       {
-        //取得名稱
-        string Name = item.Element(ns + "name").Value;
-        
-        ssql = " select * from StationVillageLRTI where village = '{0}' ";
-        StationVillageLRTI RelData = dbDapper.QuerySingleOrDefault<StationVillageLRTI>(string.Format(ssql, Name));
 
-        if (RelData != null)
+
+        string sFilePath = @"c:\doc.kml";
+
+        XDocument kml1 = XDocument.Load(sFilePath);
+
+        var ns = XNamespace.Get("http://www.opengis.net/kml/2.2");
+        var placemarks = kml1.Element(ns + "kml").Element(ns + "Document").Element(ns + "Folder").Elements(ns + "Placemark");
+
+        foreach (var item in placemarks)
         {
+          //取得名稱
+          string Name = item.Element(ns + "name").Value;
 
-          var LinearRing = item.Element(ns + "MultiGeometry").Element(ns + "Polygon").Element(ns + "outerBoundaryIs").Element(ns + "LinearRing");
-          string sAllCoord = LinearRing.Element(ns + "coordinates").Value;
-          
-          //依照格式拆解
-          string[] CoorDataList = sAllCoord.Replace(" ", "").Replace(",0", "|").Split('|');
-          
-          int idx = 1;
-          foreach (string LoopItem in CoorDataList)
+          ssql = " select * from StationVillageLRTI where village = '{0}' ";
+          StationVillageLRTI RelData = dbDapper.QuerySingleOrDefault<StationVillageLRTI>(string.Format(ssql, Name));
+
+          if (RelData != null)
           {
-            //資料空白去除
-            if (LoopItem == "") continue;
 
-            string[] aItem = LoopItem.Split(',');
+            var LinearRing = item.Element(ns + "MultiGeometry").Element(ns + "Polygon").Element(ns + "outerBoundaryIs").Element(ns + "LinearRing");
+            string sAllCoord = LinearRing.Element(ns + "coordinates").Value;
 
-            Coordinate insData = new Coordinate();
-            insData.type = "stvillage";
-            insData.relano = RelData.no;
-            insData.lat = aItem[1];
-            insData.lng = aItem[0];
-            insData.pointseq = idx;
+            //依照格式拆解
+            string[] CoorDataList = sAllCoord.Replace(" ", "").Replace(",0", "|").Split('|');
 
-            dbDapper.Insert(insData);
+            int idx = 1;
+            foreach (string LoopItem in CoorDataList)
+            {
+              //資料空白去除
+              if (LoopItem == "") continue;
 
-            idx++;
+              string[] aItem = LoopItem.Split(',');
+
+              Coordinate insData = new Coordinate();
+              insData.type = "stvillage";
+              insData.relano = RelData.no;
+              insData.lat = aItem[1];
+              insData.lng = aItem[0];
+              insData.pointseq = idx;
+
+              dbDapper.Insert(insData);
+
+              idx++;
+            }
           }
         }
       }
+      catch (Exception ex)
+      {
+        logger.Error(ex, "");
 
+      }
+
+
+      MessageBox.Show("Test");
     }
 
 
@@ -185,12 +199,12 @@ namespace M10AlertLRTI
       AttachmentList.Add(new Attachment(sAttachFileName));
 
       string SenderMail = string.Empty;
-      string SenderPass = string.Empty;      
+      string SenderPass = string.Empty;
       var TempData = dbDapper.ExecuteScale("select value from LRTIAlertMail where type = 'main' ");
       if (TempData != null) SenderMail = TempData.ToString();
       TempData = dbDapper.ExecuteScale("select value from LRTIAlertMail where type = 'pass' ");
       if (TempData != null) SenderPass = TempData.ToString();
-      
+
       var TempDataList = dbDapper.Query("select * from LRTIAlertMail where type = 'list'");
       foreach (var item in TempDataList)
       {
@@ -213,7 +227,7 @@ namespace M10AlertLRTI
     private void LRTIAlertRecToHis()
     {
       string sDt = dtNow.ToString("yyyy-MM-ddTHH:mm:ss");
-      
+
       try
       {
         using (var cn = new System.Data.SqlClient.SqlConnection(ConnectionString))
@@ -243,7 +257,7 @@ namespace M10AlertLRTI
           cn.Insert(HisData);
         }
       }
-      catch (Exception )
+      catch (Exception)
       {
 
         //throw ex;
@@ -290,7 +304,7 @@ namespace M10AlertLRTI
         LrtiAlertDel.Clear();
         LrtiAlertDel = oDal.DataTable();
       }
-      catch (Exception )
+      catch (Exception)
       {
 
       }
@@ -629,7 +643,7 @@ namespace M10AlertLRTI
       }
     }
 
-    
+
 
     private void M10AlertLRTI_Load(object sender, EventArgs e)
     {

@@ -10,11 +10,11 @@
         width: 100%;
       }
       /*html, body {
-          height: 100%;
-          display: flex;
-          margin: 0;
-          padding: 0;
-        }*/
+            height: 100%;
+            display: flex;
+            margin: 0;
+            padding: 0;
+          }*/
 
       #map {
         /*width: 100%; height: 100%;*/
@@ -23,9 +23,9 @@
       }
 
       /*.col-centered {
-          float: none;
-          margin: 0 auto;
-        }*/
+            float: none;
+            margin: 0 auto;
+          }*/
   </style>
 }
 
@@ -33,197 +33,288 @@
   <div class="col-md-12">
     <h1 class="page-header">
       降雨已達崩塌警戒即時地圖資料 <small>預報時間：@ViewBag.forecastdate</small>
-    </h1>
-  </div>
-</div>
-<div id="map" style="width:100%;" @*style="height:600px;"*@></div>
-<div class="container-fluid">
-  <div class="row">
-    <div class="col col-centered">
-      
-    </div>
-  </div>
-</div>
+      </h1>
+      </div>
+      </div>
+      <div id="map" style="width:100%;" @*style="height:600px;"*@></div>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col col-centered">
 
-<script type="text/javascript">
+          </div>
+        </div>
+      </div>
 
-  var map;
-  //var myLatLng = {lat: 25.04, lng: 125.512};
-  var markers = [];
+      <script type="text/javascript">
 
-  function initMap() {
-    //地圖初始化
-    map = new google.maps.Map(document.getElementById('map'), {
-      center: { lat: 23.7825, lng: 121.019 },
-      zoom: 7
-      , zoomControl: true
-    });
+        var map;
+        var infowindow;
+        //var myLatLng = {lat: 25.04, lng: 125.512};
+        var markers = [];
 
-
-    var ctaLayer = new google.maps.KmlLayer({
-      url: 'https://dl.dropboxusercontent.com/content_link/MFtgKCSFJGzxT55OEfGe3gnwZhA0Bl7nLstiW9OdmFvVNu6apmk9PDMr1KtaB94O/file?dl=1',
-      map: map
-    });
-
-    //var ctaLayer = new google.maps.KmlLayer({
-    //  //url: 'http://googlemaps.github.io/js-v2-samples/ggeoxml/cta.kml',
-    //  url: 'http://dsrc.nttu.edu.tw/embedded/kml_download/%E7%81%BD%E5%AE%B3%E6%BD%9B%E5%8B%A2%E5%9C%9F%E7%9F%B3%E6%B5%81%E9%81%BF%E9%9B%A3%E8%B7%AF%E7%B7%9A.kml',
-
-    //  map: map
-    //});
+        function initMap() {
+          //地圖初始化
+          map = new google.maps.Map(document.getElementById('map'), {
+            center: { lat: 23.7825, lng: 121.019 },
+            zoom: 7
+            , zoomControl: true
+          });
 
 
-    //標註地點
-    //var marker = new google.maps.Marker({
-    //  position: myLatLng,
-    //  map: map,
-    //  title:'這是總統府'
-    //  //,icon: 'http://files.softicons.com/download/game-icons/super-mario-icons-by-sandro-pereira/ico/Mushroom%20-%201UP.ico',
-    //});
+          infowindow = new google.maps.InfoWindow();
 
-    //marker.setMap(map);
-    
-    //地圖集合
-    var marker_config = [];
-    //範圍集合
-    var triangleCoords = [];
+          //var ctaLayer = new google.maps.KmlLayer({
+          //  url: 'http://140.116.38.211/m10/doc.kml',
+          //  map: map
+          //});
 
-    //取得地圖資料
-    $.ajax({
-      type: 'GET',
-      //url: '/rti/getstationdata',
-      url: '@Url.Action("getalertlrti", "mapapi")',
-      //url: '/m10api/mapapi/getalertlrti',
-      //data: { "STID": "test123456", "country": "台中" },
-      dataType: 'JSON',
-      async: false,   // 先把這隻js執行完後，再跑下面的程式，如果不寫此參數，jQuery預設AJAX為異步執行
-      success: function (response) {
+          //var ctaLayer = new google.maps.KmlLayer({
+          //  url: 'http://googlemaps.github.io/js-v2-samples/ggeoxml/cta.kml',
+          //  //url: 'http://dsrc.nttu.edu.tw/embedded/kml_download/%E7%81%BD%E5%AE%B3%E6%BD%9B%E5%8B%A2%E5%9C%9F%E7%9F%B3%E6%B5%81%E9%81%BF%E9%9B%A3%E8%B7%AF%E7%B7%9A.kml',
 
-        response.forEach(function (data, i) {
-
-          var itemPs = {};
-          itemPs["lat"] = Number(data.lat);
-          itemPs["lng"] = Number(data.lon);
-
-          triangleCoords.push(itemPs);
-
-          var item = {};
-          item["position"] = itemPs;
-          item["map"] = map;
-          item["STID"] = data.STID;
-          item["country"] = data.country;
-          item["town"] = data.town;
-          item["village"] = data.village;
-          item["status"] = data.status;
-          item["HOUR1"] = data.HOUR1;
-          item["HOUR2"] = data.HOUR2;
-          item["HOUR3"] = data.HOUR3;
-          item["LRTI"] = data.LRTI;
-          item["ELRTI"] = data.ELRTI;
+          //  map: map
+          //});
 
 
-          marker_config.push(item);
+          //標註地點
+          //var marker = new google.maps.Marker({
+          //  position: myLatLng,
+          //  map: map,
+          //  title:'這是總統府'
+          //  //,icon: 'http://files.softicons.com/download/game-icons/super-mario-icons-by-sandro-pereira/ico/Mushroom%20-%201UP.ico',
+          //});
 
-          //$('<li>', { text: data.STID }).appendTo($('#products'));
-          //alert(data.STID);
-        });
+          //marker.setMap(map);
 
+          //地圖集合
+          var marker_config = [];
+          //範圍集合
+          var triangleCoords = [];
 
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        alert('error');
-      },
-    });
+          //取得地圖資料
+          $.ajax({
+            type: 'GET',
+            //url: '/rti/getstationdata',
+            url: '@Url.Action("getalertlrti", "mapapi")',
+            //url: '/m10api/mapapi/getalertlrti',
+            //data: { "STID": "test123456", "country": "台中" },
+            dataType: 'JSON',
+            async: false,   // 先把這隻js執行完後，再跑下面的程式，如果不寫此參數，jQuery預設AJAX為異步執行
+            success: function (response) {
 
+              response.forEach(function (data, i) {
 
+                var itemPs = {};
+                itemPs["lat"] = Number(data.lat);
+                itemPs["lng"] = Number(data.lon);
 
+                triangleCoords.push(itemPs);
 
-    //建立地圖 marker 的集合
-    //var marker_config = [{
-    //  position: {lat: 25.04, lng: 121.512},
-    //  map: map,
-    //  title:'總統府'
-    //},{
-    //  position: {lat: 25.035, lng: 121.519},
-    //  map: map,
-    //  title:'中正紀念堂'
-    //}];
-
-    //只開啟一個infowindow，所以宣告在外層
-    var infowindow = new google.maps.InfoWindow();
-    //var infowindow = new google.maps.InfoWindow({
-    //  content: contentString
-    //});
-
-    //標出 marker，如果使用 .setMap(null) 就可以清除該 marker
-    marker_config.forEach(function (e, i) {
-      //點選出現資訊視窗
-      //var contentString = '<h2>網頁內容</h2><br/>' + e.title; //要顯示的 HTML 內容
-      var contentString = ''; //要顯示的 HTML 內容
-      contentString += '<div style="weight: 400px;" >';
-      contentString += '<h5><span style="font-weight: bold; color: #31708f;">(' + e.STID + ')雨量警戒資料&nbsp;發布狀態：[<span style="font-weight: bold; color: #dd4b39;">' + e.status + '</span>]</span></h5>';
-      contentString += '<table class="table" style="weight: 400px;">';
-      contentString += '<tbody>';
-      contentString += '<tr class="active">';
-      contentString += '<td>站點：' + e.STID + '</td>';
-      contentString += '</tr>';
-      contentString += '<tr >';
-      contentString += '<td>警戒區範圍：' + e.country + e.town + e.village + '</td>';
-      contentString += '</tr>';
-      contentString += '<tr class="active">';
-      contentString += '<td>1hr：' + e.HOUR1 + '&nbsp;&nbsp;&nbsp;2hr：' + e.HOUR2 + '&nbsp;&nbsp;&nbsp;3hr： ' + e.HOUR3 + ' </td>';
-      contentString += '</tr>';
-      contentString += '<tr >';
-      contentString += '<td>LRTI：' + e.LRTI + '&nbsp;&nbsp;&nbsp;警戒LRTI：' + e.ELRTI + '</td>';
-      contentString += '</tr>';
-      contentString += '<tr class="active">';
-      contentString += '<td>崩塌發布狀態：' + e.status + '</td>';
-      contentString += '</tr>';
-      contentString += '</tbody></table></div>';
+                var item = {};
+                item["position"] = itemPs;
+                item["map"] = map;
+                item["STID"] = data.STID;
+                item["country"] = data.country;
+                item["town"] = data.town;
+                item["village"] = data.village;
+                item["status"] = data.status;
+                item["HOUR1"] = data.HOUR1;
+                item["HOUR2"] = data.HOUR2;
+                item["HOUR3"] = data.HOUR3;
+                item["LRTI"] = data.LRTI;
+                item["ELRTI"] = data.ELRTI;
 
 
-      markers[i] = new google.maps.Marker(e);
-      markers[i].addListener('click', function () {
-        infowindow.setContent(contentString);
-        infowindow.open(map, markers[i]); //設定點選 marker 打開資訊視窗事件
-      });
-      markers[i].setMap(map);
-    });
+                marker_config.push(item);
+
+                //$('<li>', { text: data.STID }).appendTo($('#products'));
+                //alert(data.STID);
+              });
+
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              alert('error');
+            },
+          });
 
 
 
 
-    // Define the LatLng coordinates for the polygon's path.
-    //var triangleCoords = [
-    //  { lat: 25.774, lng: -80.190 },
-    //  { lat: 18.466, lng: -66.118 },
-    //  { lat: 32.321, lng: -64.757 },
-    //  { lat: 25.774, lng: -80.190 }
-    //];
+          //建立地圖 marker 的集合
+          //var marker_config = [{
+          //  position: {lat: 25.04, lng: 121.512},
+          //  map: map,
+          //  title:'總統府'
+          //},{
+          //  position: {lat: 25.035, lng: 121.519},
+          //  map: map,
+          //  title:'中正紀念堂'
+          //}];
 
-    // Construct the polygon.
-    //var bermudaTriangle = new google.maps.Polygon({
-    //  paths: triangleCoords,
-    //  strokeColor: '#FF0000',
-    //  strokeOpacity: 0.8,
-    //  strokeWeight: 2,
-    //  fillColor: '#FF0000',
-    //  fillOpacity: 0.35
-    //});
-    //bermudaTriangle.setMap(map);
+          //只開啟一個infowindow，所以宣告在外層
+
+          //var infowindow = new google.maps.InfoWindow({
+          //  content: contentString
+          //});
+
+          //標出 marker，如果使用 .setMap(null) 就可以清除該 marker
+          marker_config.forEach(function (e, i) {
+            //點選出現資訊視窗
+            //var contentString = '<h2>網頁內容</h2><br/>' + e.title; //要顯示的 HTML 內容
+            var contentString = ''; //要顯示的 HTML 內容
+            contentString += '<div style="weight: 400px;" >';
+            contentString += '<h5><span style="font-weight: bold; color: #31708f;">(' + e.STID + ')雨量警戒資料&nbsp;發布狀態：[<span style="font-weight: bold; color: #dd4b39;">' + e.status + '</span>]</span></h5>';
+            contentString += '<table class="table" style="weight: 400px;">';
+            contentString += '<tbody>';
+            contentString += '<tr class="active">';
+            contentString += '<td>站點：' + e.STID + '</td>';
+            contentString += '</tr>';
+            contentString += '<tr >';
+            contentString += '<td>警戒區範圍：' + e.country + e.town + e.village + '</td>';
+            contentString += '</tr>';
+            contentString += '<tr class="active">';
+            contentString += '<td>1hr：' + e.HOUR1 + '&nbsp;&nbsp;&nbsp;2hr：' + e.HOUR2 + '&nbsp;&nbsp;&nbsp;3hr： ' + e.HOUR3 + ' </td>';
+            contentString += '</tr>';
+            contentString += '<tr >';
+            contentString += '<td>LRTI：' + e.LRTI + '&nbsp;&nbsp;&nbsp;警戒LRTI：' + e.ELRTI + '</td>';
+            contentString += '</tr>';
+            contentString += '<tr class="active">';
+            contentString += '<td>崩塌發布狀態：' + e.status + '</td>';
+            contentString += '</tr>';
+            contentString += '</tbody></table></div>';
+
+
+            markers[i] = new google.maps.Marker(e);
+            markers[i].addListener('click', function () {
+              infowindow.setContent(contentString);
+              infowindow.open(map, markers[i]); //設定點選 marker 打開資訊視窗事件
+            });
+            markers[i].setMap(map);
+          });
 
 
 
 
-    //marker.addListener('click', function() {
-    //  infowindow.open(map, marker); //設定點選 marker 打開資訊視窗事件
-    //});
+          //Define the LatLng coordinates for the polygon's path.
+          var triangleCoords1 = [];
+          //{ lat: 24.4291455532287, lng: 121.2594919309149 },
+          //{ lat: 24.42895866865352, lng: 121.2592087204227 },
+          //{ lat: 24.42844285010745, lng: 121.2585941012994 },
+          //{ lat: 24.42780929897381, lng: 121.2581795117943 }
 
 
-  }
-</script>
+
+          $.ajax({
+            type: 'GET',
+            //url: '/rti/getstationdata',
+            url: '@Url.Action("getCoordinate", "mapapi")',
+            //url: '/m10api/mapapi/getalertlrti',
+            //data: { "STID": "test123456", "country": "台中" },
+            dataType: 'JSON',
+            async: false,   // 先把這隻js執行完後，再跑下面的程式，如果不寫此參數，jQuery預設AJAX為異步執行
+            success: function (response) {
+
+              response.forEach(function (data, i) {
+
+                var itemPs = {};
+                itemPs["lat"] = Number(data.lat);
+                itemPs["lng"] = Number(data.lng);
+
+                triangleCoords1.push(itemPs);
+
+                //var item = {};
+                //item["position"] = itemPs;
+                //item["map"] = map;
+                //item["STID"] = data.STID;
+                //item["country"] = data.country;
+                //item["town"] = data.town;
+                //item["village"] = data.village;
+                //item["status"] = data.status;
+                //item["HOUR1"] = data.HOUR1;
+                //item["HOUR2"] = data.HOUR2;
+                //item["HOUR3"] = data.HOUR3;
+                //item["LRTI"] = data.LRTI;
+                //item["ELRTI"] = data.ELRTI;
 
 
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAvbrBg_2x0ke4k3Zy6KQtd6wccUr-P9c&callback=initMap">
-</script>
+                //marker_config.push(item);
+
+                //$('<li>', { text: data.STID }).appendTo($('#products'));
+                //alert(data.STID);
+              });
+
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+              alert('error');
+            },
+          });
+
+          //Construct the polygon.
+          var bermudaTriangle = new google.maps.Polygon({
+            paths: triangleCoords1,
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: '#FF0000',
+            fillOpacity: 0.35
+          });
+
+
+
+          bermudaTriangle.setMap(map);
+
+          bermudaTriangle.addListener('click', showArrays);
+
+
+          //marker.addListener('click', function() {
+          //  infowindow.open(map, marker); //設定點選 marker 打開資訊視窗事件
+          //});
+
+
+        }
+
+
+
+        function showArrays(event) {
+          // Since this polygon has only one path, we can call getPath() to return the
+          // MVCArray of LatLngs.
+          var vertices = this.getPath();
+
+          var contentString = ''; //要顯示的 HTML 內容
+          contentString += '<div style="weight: 400px;" >';
+          contentString += '<h5><span style="font-weight: bold; color: #31708f;">()雨量警戒資料&nbsp;發布狀態：[<span style="font-weight: bold; color: #dd4b39;"></span>]</span></h5>';
+          contentString += '<table class="table" style="weight: 400px;">';
+          contentString += '<tbody>';
+          //contentString += '<tr class="active">';
+          //contentString += '<td>站點：' + e.STID + '</td>';
+          //contentString += '</tr>';
+          //contentString += '<tr >';
+          //contentString += '<td>警戒區範圍：' + e.country + e.town + e.village + '</td>';
+          //contentString += '</tr>';
+          //contentString += '<tr class="active">';
+          //contentString += '<td>1hr：' + e.HOUR1 + '&nbsp;&nbsp;&nbsp;2hr：' + e.HOUR2 + '&nbsp;&nbsp;&nbsp;3hr： ' + e.HOUR3 + ' </td>';
+          //contentString += '</tr>';
+          //contentString += '<tr >';
+          //contentString += '<td>LRTI：' + e.LRTI + '&nbsp;&nbsp;&nbsp;警戒LRTI：' + e.ELRTI + '</td>';
+          //contentString += '</tr>';
+          //contentString += '<tr class="active">';
+          //contentString += '<td>崩塌發布狀態：' + e.status + '</td>';
+          //contentString += '</tr>';
+          contentString += '</tbody></table></div>';
+
+
+
+          // Replace the info window's content and position.
+          infowindow.setContent(contentString);
+          infowindow.setPosition(event.latLng);
+
+          infowindow.open(map);
+        }
+      </script>
+
+
+      <script async defer
+              src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAvbrBg_2x0ke4k3Zy6KQtd6wccUr-P9c&callback=initMap">
+      </script>
