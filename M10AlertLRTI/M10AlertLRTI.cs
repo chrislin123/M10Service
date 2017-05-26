@@ -21,6 +21,7 @@ using M10.lib.model;
 using M10AlertLRTI.Models;
 using System.Transactions;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace M10AlertLRTI
 {
@@ -79,52 +80,8 @@ namespace M10AlertLRTI
     private void btnStart_Click(object sender, EventArgs e)
     {
 
-      XmlDocument kml = new XmlDocument();
-      kml.Load(@"c:\doc.kml");
-      //filepath是你自己的檔案路徑
-      XmlNamespaceManager xnm = new XmlNamespaceManager(kml.NameTable);
-      xnm.AddNamespace("x", "http://www.opengis.net/kml/2.2");
-      string xPath = "/x:kml/x:Document/x:Folder/x:Placemark/x:name";
 
-      XmlNodeList nodeList2 = kml.SelectNodes(xPath, xnm);
-      foreach (XmlNode thePlacemark in nodeList2)
-      {
-        //xPath = "/x:MultiGeometry/x:Polygon/x:outerBoundaryIs/x:LinearRing/x:coordinates";
-        XmlNode coordinates = thePlacemark.SelectSingleNode(xPath, xnm);
-
-
-        string sss2s="";
-      }
-
-      XmlDocument doc = new XmlDocument();
-
-      doc.Load(@"c:\doc.kml");
-      XmlNode root = doc.DocumentElement;
       
-      XmlNodeList nodeList = root.SelectNodes("//kml");
-      foreach (XmlNode book in nodeList)
-      {
-        // Discount prices by 10%.
-        double price;
-        price = Math.Round(Convert.ToSingle(
-             book.LastChild.InnerText) * 0.9, 2);
-        book.LastChild.InnerText = price.ToString();
-      }
-
-
-
-      List<string> ssss = new List<string>();
-      foreach (XmlNode row in doc.SelectNodes("//Folder"))
-      {
-        ssss.Add(row.SelectSingleNode("//Placemark").InnerText);
-        string rowName = row.SelectSingleNode("//Placemark").InnerText;
-      }
-
-
-
-
-      return;
-
       try
       {
 
@@ -165,6 +122,59 @@ namespace M10AlertLRTI
         logger.Error(ex, "M10AlertLRTI-btnStart_Click");
       }
     }
+
+    private void TransKML()
+    {
+      string sFilePath = @"c:\doc.kml";
+
+      XDocument kml1 = XDocument.Load(sFilePath);
+
+      var ns = XNamespace.Get("http://www.opengis.net/kml/2.2");
+      var placemarks = kml1.Element(ns + "kml").Element(ns + "Document").Element(ns + "Folder").Elements(ns + "Placemark");
+
+      foreach (var item in placemarks)
+      {
+        //取得名稱
+        string Name = item.Element(ns + "name").Value;
+        
+        ssql = " select * from StationVillageLRTI where village = '{0}' ";
+        StationVillageLRTI RelData = dbDapper.QuerySingleOrDefault<StationVillageLRTI>(string.Format(ssql, Name));
+
+        if (RelData != null)
+        {
+
+          var LinearRing = item.Element(ns + "MultiGeometry").Element(ns + "Polygon").Element(ns + "outerBoundaryIs").Element(ns + "LinearRing");
+          string sAllCoord = LinearRing.Element(ns + "coordinates").Value;
+          
+          //依照格式拆解
+          string[] CoorDataList = sAllCoord.Replace(" ", "").Replace(",0", "|").Split('|');
+          
+          int idx = 1;
+          foreach (string LoopItem in CoorDataList)
+          {
+            //資料空白去除
+            if (LoopItem == "") continue;
+
+            string[] aItem = LoopItem.Split(',');
+
+            Coordinate insData = new Coordinate();
+            insData.type = "stvillage";
+            insData.relano = RelData.no;
+            insData.lat = aItem[1];
+            insData.lng = aItem[0];
+            insData.pointseq = idx;
+
+            dbDapper.Insert(insData);
+
+            idx++;
+          }
+        }
+      }
+
+    }
+
+
+
 
     private void LRTIAlertSendMail(string sAttachFileName)
     {

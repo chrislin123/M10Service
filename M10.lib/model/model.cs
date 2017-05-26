@@ -423,4 +423,23 @@ namespace M10.lib.model
 
   }
 
+  [Table("Coordinate")]
+  public class Coordinate
+  {
+    //設定key
+    [Key]
+    public int no { get; set; }
+
+    public string type { get; set; }
+
+    public int? relano { get; set; }
+
+    public int? pointseq { get; set; }
+
+    public string lat { get; set; }
+
+    public string lng { get; set; }
+
+  }
+
 }

@@ -43,5 +43,53 @@ namespace M10Api.Controllers
 
       return list;
     }
+
+
+
+    //Here is an example of a KML file containing a Network Link that loads this Python script:
+//#!/usr/bin/python
+
+    //    import random
+
+    //latitude = random.randrange(-90, 90)
+    //longitude = random.randrange(-180, 180)
+    //kml = (
+    //   '<?xml version="1.0" encoding="UTF-8"?>\n'
+    //   '<kml xmlns="http://www.opengis.net/kml/2.2">\n'
+    //   '<Placemark>\n'
+    //   '<name>Random Placemark</name>\n'
+    //   '<Point>\n'
+    //   '<coordinates>%d,%d</coordinates>\n'
+    //   '</Point>\n'
+    //   '</Placemark>\n'
+    //   '</kml>'
+    //   ) %(longitude, latitude)
+    //print 'Content-Type: application/vnd.google-earth.kml+xml\n'
+    //print kml
+
+
+//    <?xml version = "1.0" encoding="UTF-8"?>
+//<kml xmlns = "http://www.opengis.net/kml/2.2" >
+//  < Folder >
+//    < name > Network Links</name>
+//    <visibility>0</visibility>
+//    <open>0</open>
+//    <description>Network link example 1</description>
+//    <NetworkLink>
+//      <name>Random Placemark</name>
+//      <visibility>0</visibility>
+//      <open>0</open>
+//      <description>A simple server-side script that generates a new random
+//        placemark on each call</description>
+//      <refreshVisibility>0</refreshVisibility>
+//      <flyToView>0</flyToView>
+//      <Link>
+//        <href>http://yourserver.com/cgi-bin/randomPlacemark.py</href>
+//      </Link>
+//    </NetworkLink>
+//  </Folder>
+//</kml>
+
+
   }
 }
