@@ -61,6 +61,8 @@
       // chktimer
       // 
       this.chktimer.AutoSize = true;
+      this.chktimer.Checked = true;
+      this.chktimer.CheckState = System.Windows.Forms.CheckState.Checked;
       this.chktimer.Location = new System.Drawing.Point(526, 45);
       this.chktimer.Name = "chktimer";
       this.chktimer.Size = new System.Drawing.Size(72, 16);

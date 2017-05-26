@@ -203,7 +203,7 @@ namespace M10AlertLRTI
     private void LRTIAlertRecToHis()
     {
       string sDt = dtNow.ToString("yyyy-MM-ddTHH:mm:ss");
-
+      
       try
       {
         using (var cn = new System.Data.SqlClient.SqlConnection(ConnectionString))
@@ -612,9 +612,9 @@ namespace M10AlertLRTI
         oDal.CommandText = ssql;
         oDal.ExecuteSql();
       }
-      catch (Exception )
+      catch (Exception ex)
       {
-
+        logger.Error(ex, "");
 
       }
     }
@@ -627,7 +627,7 @@ namespace M10AlertLRTI
       if (!Directory.Exists(folderName)) Directory.CreateDirectory(folderName);
 
       //取得資料時間
-      sLritAlertTimeString = dtNow.ToString("yyyyMMddhhmm");
+      sLritAlertTimeString = dtNow.ToString("yyyyMMddHHmm");
     }
 
     private void timer1_Tick(object sender, EventArgs e)

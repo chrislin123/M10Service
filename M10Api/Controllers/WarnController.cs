@@ -56,8 +56,14 @@ namespace M10Api.Controllers
         if (decimal.TryParse(Convert.ToString(item.ELRTI), out dELRTI))
         {
           item.ELRTI = Math.Round(dELRTI, 2).ToString();
-        } 
-        
+        }
+
+        decimal dRT = 0;
+        if (decimal.TryParse(Convert.ToString(item.RT), out dRT))
+        {
+          item.RT = Math.Round(dRT, 2).ToString();
+        }
+
       }
 
 
@@ -286,6 +292,14 @@ namespace M10Api.Controllers
         {
           item.ELRTI = Math.Round(dELRTI, 2).ToString();
         }
+
+        decimal dRT = 0;
+        if (decimal.TryParse(Convert.ToString(item.RT), out dRT))
+        {
+          item.RT = Math.Round(dRT, 2).ToString();
+        }
+
+
 
       }
 

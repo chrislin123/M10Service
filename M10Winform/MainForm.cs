@@ -1046,6 +1046,10 @@ namespace M10Winform
 
     private void button1_Click(object sender, EventArgs e)
     {
+
+
+
+
       //測試帳號密碼
       sIP = "192.168.1.100";
       sUser = "m10sys";
