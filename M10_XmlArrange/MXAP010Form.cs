@@ -41,52 +41,82 @@ namespace M10_XmlArrange
 
     private void btnStart_Click(object sender, EventArgs e)
     {
-      List<string> ListFile = Directory.GetFiles(sFilePathXml).ToList<string>();
 
-      lblStatus.Text = "歸檔";
-      lblStatus.Refresh();
-
-      int iIndex = 0;
-      //取得所有檔案
-      foreach (string sFile in ListFile)
+      try
       {
-        iIndex++;
+        //取得資料夾所有檔案名稱
+        List<string> AllFileList = Directory.GetFiles(sFilePathArrange, "*", SearchOption.AllDirectories).ToList<string>();
+        List<string> AllFileNameList = new List<string>();
+        foreach (string item in AllFileList) AllFileNameList.Add(new FileInfo(item).Name);
 
-        lblProcCount.Text = string.Format("{0}/{1}", iIndex.ToString(), ListFile.Count.ToString());
-        lblProcCount.Refresh();
 
-        string sSaveFolder = "";
-        FileInfo fi = new FileInfo(sFile);
+        List<string> ListFile = Directory.GetFiles(sFilePathXml).ToList<string>();
 
-        //解析檔案年月日
-        List<string> slist = fi.Name.Split('_').ToList<string>();
+        lblStatus.Text = "歸檔";
+        lblStatus.Refresh();
 
-        if (slist.Count < 4) continue;
+        int iIndex = 0;
+        //取得所有檔案
+        foreach (string sFile in ListFile)
+        {
+          iIndex++;
 
-        //分類
-        sSaveFolder = string.Format(@"{0}\{1}\{2}\{3}\", sFilePathArrange, slist[0], slist[1], slist[2]);
-        if (!Directory.Exists(sSaveFolder)) Directory.CreateDirectory(sSaveFolder);
+          lblProcCount.Text = string.Format("{0}/{1}", iIndex.ToString(), ListFile.Count.ToString());
+          lblProcCount.Refresh();
 
-        //歸檔
-        //檔案移至整理路徑
-        lblProc.Text = string.Format("{0}：移動至{1}", fi.Name, sSaveFolder + fi.Name);
-        lblProc.Refresh();
-        Application.DoEvents();
-        fi.CopyTo(sSaveFolder + fi.Name, true);
-        fi.Delete();    
+          string sSaveFolder = "";
+          FileInfo fi = new FileInfo(sFile);
 
+          //資料已經歸檔，則跳過
+          if (AllFileNameList.Contains(fi.Name)) continue;
+
+
+          //解析檔案年月日
+          List<string> slist = fi.Name.Split('_').ToList<string>();
+
+          if (slist.Count < 4) continue;
+
+          //分類
+          sSaveFolder = string.Format(@"{0}\{1}\{2}\{3}\", sFilePathArrange, slist[0], slist[1], slist[2]);
+          if (!Directory.Exists(sSaveFolder)) Directory.CreateDirectory(sSaveFolder);
+
+          //歸檔
+          //檔案移至整理路徑
+          lblProc.Text = string.Format("{0}：移動至{1}", fi.Name, sSaveFolder + fi.Name);
+          lblProc.Refresh();
+          Application.DoEvents();
+          fi.CopyTo(sSaveFolder + fi.Name, true);
+          //1060529 來源資料夾不刪除
+          //fi.Delete();    
+        }
+
+        //壓縮非同步
+        lblStatus.Text = "非同步壓縮";
+        lblStatus.Refresh();
+
+        if (backgroundWorker1.IsBusy == false)
+        {
+          backgroundWorker1.RunWorkerAsync("test");
+        }
+
+
+        DateTime dt_3 = DateTime.Now.AddDays(-3);
+        //移除超過三天檔案
+        foreach (string sFile in Directory.GetFiles(sZipDesDirectory))
+        {
+          FileInfo fi = new FileInfo(sFile);
+
+          if (DateTime.Compare(fi.CreationTime, dt_3) > 0)
+          {
+            fi.Delete();
+          }
+        }
       }
-
-      //壓縮非同步
-      lblStatus.Text = "非同步壓縮";
-      lblStatus.Refresh();
-
-      if (backgroundWorker1.IsBusy == false)
+      catch (Exception ex)
       {
-        backgroundWorker1.RunWorkerAsync("test");
-      }
-      
 
+        
+      }     
     }
 
     private void ProcZip()
