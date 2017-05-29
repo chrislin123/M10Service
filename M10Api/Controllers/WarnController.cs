@@ -25,7 +25,7 @@ namespace M10Api.Controllers
     }
 
     public ActionResult warnlist()
-    {
+    { 
       var AlertUpdateTm = db.ExecuteScale(@" select value from LRTIAlertMail where type = 'altm' ");
       ViewBag.forecastdate = AlertUpdateTm == null ? "" : AlertUpdateTm.ToString();
 

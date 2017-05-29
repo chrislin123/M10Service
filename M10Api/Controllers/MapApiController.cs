@@ -49,11 +49,43 @@ namespace M10Api.Controllers
     public List<dynamic> getCoordinate()
     {
       var list = db.Query(@" 
-          select * from LRTIAlert a
-inner join StationVillageLRTI b on a.STID =b.STID
-inner join Coordinate c on b.no = c.relano
-where a.status != 'D' 
-order by c.pointseq    
+        select c.relano ,c.lat,c.lng from LRTIAlert a
+        inner join StationVillageLRTI b on a.STID =b.STID and a.country =b.Country and a.village =b.village 
+        inner join Coordinate c on b.no = c.relano and c.type = 'stvillage'
+        where a.status != 'D' 
+        order by b.stid,b.country,b.town,b.village,c.pointseq   
+        "
+        );
+
+      //格式化資料
+      foreach (var item in list)
+      {
+        //處理狀態改中文顯示
+        //if (item.status == "I") item.status = "新增";
+        //if (item.status == "C") item.status = "持續";
+        //if (item.status == "D") item.status = "刪除";
+
+
+        //處理ELRTI無條件捨去
+        //decimal dELRTI = 0;
+        //if (decimal.TryParse(Convert.ToString(item.ELRTI), out dELRTI))
+        //{
+        //  item.ELRTI = Math.Floor(dELRTI).ToString();
+        //}
+
+      }
+
+      return list;
+    }
+
+    [HttpGet]
+    [Route("getMapDatas")]
+    public List<dynamic> getMapDatas()
+    {
+      var list = db.Query(@" 
+          select *,b.no as relano from LRTIAlert a
+          inner join StationVillageLRTI b on a.STID =b.STID and a.country =b.Country and a.village =b.village           
+          where a.status != 'D'           
         "
         );
 
@@ -70,11 +102,16 @@ order by c.pointseq
         decimal dELRTI = 0;
         if (decimal.TryParse(Convert.ToString(item.ELRTI), out dELRTI))
         {
-          item.ELRTI = Math.Floor(dELRTI).ToString();
+          item.ELRTI = Math.Round(dELRTI, 2).ToString();
+        }
+
+        decimal dRT = 0;
+        if (decimal.TryParse(Convert.ToString(item.RT), out dRT))
+        {
+          item.RT = Math.Round(dRT, 2).ToString();
         }
 
       }
-
 
       return list;
     }

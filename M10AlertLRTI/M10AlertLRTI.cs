@@ -80,9 +80,9 @@ namespace M10AlertLRTI
     private void btnStart_Click(object sender, EventArgs e)
     {
 
-      //TransKML();
+      TransKML();
 
-      //return;
+      return;
 
       try
       {

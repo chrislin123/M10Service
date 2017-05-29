@@ -5,10 +5,15 @@ using System.Web;
 using Dapper;
 using System.Transactions;
 
+
 namespace M10Api.Models
 {
   public class DataModels
   {
+    
+    
+
+
   }
 
 
@@ -29,13 +34,14 @@ namespace M10Api.Models
     //  };
     //}
 
-
-    string _ConnStr = System.Web.Configuration.WebConfigurationManager.ConnectionStrings["myconn"].ConnectionString;
+    string AppSetConnStrName = System.Web.Configuration.WebConfigurationManager.AppSettings["DBDefault"];
+    string _ConnStr;
 
     public string ConnStr
     {
       get
       {
+        _ConnStr = System.Web.Configuration.WebConfigurationManager.ConnectionStrings[AppSetConnStrName].ConnectionString;
         return _ConnStr;
       }
     }
