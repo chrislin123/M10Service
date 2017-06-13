@@ -250,6 +250,17 @@
       //document.getElementById("demo").innerHTML = err.message;
     }
   }
+
+
+  function myrefresh() {
+    initMap();
+    //window.location.reload();
+    //$("#btnQuery").click();
+  }
+
+  $(function () {
+    setInterval(myrefresh, 20 * 60 * 1000); //指定20分刷新一次
+  });
 </script>
 
 
