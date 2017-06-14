@@ -55,6 +55,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
     <Compile Include="DALDapper.cs" />
     <Compile Include="DataExport.cs" />
     <Compile Include="Gmail.cs" />

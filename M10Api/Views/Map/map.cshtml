@@ -227,13 +227,25 @@
           }
         });
 
+        //var bermudaTriangle = new google.maps.Polygon({
+        //  paths: triangleCoords1,
+        //  strokeColor: '#FF0000',
+        //  strokeOpacity: 0.8,
+        //  strokeWeight: 2,
+        //  fillColor: '#FF0000',
+        //  fillOpacity: 0.35,
+        //  name: e.STID
+        //});
+
         var bermudaTriangle = new google.maps.Polygon({
           paths: triangleCoords1,
-          strokeColor: '#FF0000',
-          strokeOpacity: 0.8,
+          strokeColor: '#FFFF00',
+          //strokeOpacity: 0.8,
+          strokeOpacity: 1,
           strokeWeight: 2,
-          fillColor: '#FF0000',
-          fillOpacity: 0.35,
+          fillColor: '#FFFF00',
+          //fillOpacity: 0.35,
+          fillOpacity: 1,
           name: e.STID
         });
 
@@ -249,6 +261,8 @@
     catch (err) {
       //document.getElementById("demo").innerHTML = err.message;
     }
+
+
   }
 
 
