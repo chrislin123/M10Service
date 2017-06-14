@@ -80,9 +80,9 @@ namespace M10AlertLRTI
     private void btnStart_Click(object sender, EventArgs e)
     {
 
-      TransKML();
+      //TransKML();
 
-      return;
+      //return;
 
       try
       {
@@ -250,6 +250,8 @@ namespace M10AlertLRTI
             oHis.town = item.town;
             oHis.village = item.village;
             oHis.RecTime = sDt;
+            oHis.nowwarm = item.nowwarm;
+            oHis.statustime = item.statustime;
 
             HisData.Add(oHis);
           }
@@ -480,37 +482,42 @@ namespace M10AlertLRTI
 
     public void LRTIAlertProc()
     {
+      //1060614
+      //I(預警)=實際雨量已達崩塌警戒門檻
+      //新增
+      //C(警戒)=實際降雨已達崩塌警戒門檻，且連續3小時
+      //判斷歷史已存在兩筆
+      //O(警戒調降)=實際降雨低於崩塌警戒門檻，且連續3小時
+      //判斷歷史資料三小時內沒警戒
+      //D(解除警戒)=實際降雨低於崩塌警戒門檻，且連續6小時
+      //判斷歷史資料六小時內沒警戒
+      
+      string sDt = dtNow.ToString("yyyy-MM-ddTHH:mm:ss");
+      string sDtd25 = dtNow.AddHours(-2.5).ToString("yyyy-MM-ddTHH:mm:ss");
+      string sDtd55 = dtNow.AddHours(-5.5).ToString("yyyy-MM-ddTHH:mm:ss");
       try
-      {
-        //dbDapper.Execute("", new { status = 'D' });
+      { 
         //刪除已解除註記資料
-        ssql = " delete LRTIAlert "
-             + " where status = 'D'  "
-             ;
-        oDal.CommandText = ssql;
-        oDal.ExecuteSql();
+        dbDapper.Execute(" delete LRTIAlert where status = 'D' ");
 
         //取消狀態註記
-        ssql = " update LRTIAlert "
-             + " set status = ''  "
-             ;
-        oDal.CommandText = ssql;
-        oDal.ExecuteSql();
-
+        dbDapper.Execute(" update LRTIAlert set statuscheck = 'N' ");
 
         DataTable dt = new DataTable();
 
-        //更新目前警戒中的即時雨量資料
-        //取得目前超過警戒值的雨量站
+        //判斷狀態的前置處理                
         ssql = " select * from LRTIAlert ";
         oDal.CommandText = ssql;
         dt.Clear();
         dt = oDal.DataTable();
         foreach (DataRow dr in dt.Rows)
         {
+          string sSTID = dr["STID"].ToString();
+
+          //更新目前警戒中的即時雨量資料
           DataTable dt_temp = new DataTable();
           ssql = " select * from RunTimeRainData "
-           + " where STID = '" + dr["STID"].ToString() + "' ";
+           + " where STID = '" + sSTID + "' ";
           oDal.CommandText = ssql;
           dt_temp = oDal.DataTable();
           foreach (DataRow dr_temp in dt_temp.Rows)
@@ -539,13 +546,118 @@ namespace M10AlertLRTI
                 + " , RT = '" + sRT + "'  "
                 + " , LRTI = '" + sLRTI + "'  "
                 //+ " , ELRTI = '" + sELRTI + "'  "
-                + " where STID = '" + dr["STID"].ToString() + "' "
+                + " where STID = '" + sSTID + "' "
                 ;
             oDal.CommandText = ssql;
             oDal.ExecuteSql();
           }
+
+          //更新目前警戒中的警戒狀態
+          ssql = " select * from RunTimeRainData a "
+             + " left join StationErrLRTI b on a.STID = b.STID "
+             + " where CAST(a.LRTI AS decimal(8, 2))  > CAST(b.ELRTI AS decimal(8, 2)) "
+             + " and a.STID = {0} "
+             ;
+          long lcount = dbDapper.QueryTotalCount(string.Format(ssql, sSTID));
+
+          ssql = " update LRTIAlert set nowwarm = '{0}' where STID = '{1}' ";
+          if (lcount == 0) //低於警戒
+          {
+            dbDapper.Execute(string.Format(ssql, "N", sSTID));
+          }
+          else //高於警戒
+          {
+            dbDapper.Execute(string.Format(ssql, "Y", sSTID));
+          }
+
+
         }
 
+        //處理狀態(I)
+        ssql = " select * from LRTIAlert where status = 'I' ";
+        List<dynamic> StatusIList = dbDapper.Query(ssql);
+        foreach (var item in StatusIList)
+        {
+          string sSTID = item.STID;
+          string snowwarm = item.nowwarm;
+
+          if (snowwarm == "Y") //現在高於警戒
+          {
+            //判斷歷史資料三小時(用2.5小時切)是否超過兩筆
+            ssql = @" select distinct stid from LRTIAlertHis 
+                      where nowwarm = 'Y' and stid = '{0}' and RecTime > '{0}' ";
+            long lTemp = dbDapper.QueryTotalCount(string.Format(ssql, sSTID, sDtd25));
+            if (lTemp >= 2) //變更狀態(I預警=>C警戒)
+            {
+              ssql = @" update LRTIAlert set statuscheck = 'Y' 
+                      , status = '{0}' , statustime = {1} where STID = '{2}' ";
+              dbDapper.Execute(string.Format(ssql, "C", sDt, sSTID));
+            }
+
+          }
+          else if(snowwarm == "N") //現在低於警戒
+          {
+            //判斷歷史資料三小時(用2.5小時切)皆沒警戒資料
+            ssql = @" select distinct stid from LRTIAlertHis 
+                      where nowwarm = 'Y' and stid = '{0}' and RecTime > '{0}' ";
+            long lTemp = dbDapper.QueryTotalCount(string.Format(ssql, sSTID, sDtd25));
+            if (lTemp == 0) //變更狀態(I預警=>D解除警戒)
+            {
+              ssql = @" update LRTIAlert set statuscheck = 'Y' 
+                      , status = '{0}' , statustime = {1} where STID = '{2}' ";
+              dbDapper.Execute(string.Format(ssql, "D", sDt, sSTID));
+            }
+          }
+        }
+
+        //處理狀態(C)
+        ssql = " select * from LRTIAlert where status = 'C' ";
+        List<dynamic> StatusCList = dbDapper.Query(ssql);
+        foreach (var item in StatusCList)
+        {
+          string sSTID = item.STID;
+          string snowwarm = item.nowwarm;
+
+          if (snowwarm == "N") //現在低於警戒
+          {
+            //判斷歷史資料三小時(用2.5小時切)皆沒警戒資料
+            ssql = @" select distinct stid from LRTIAlertHis 
+                      where nowwarm = 'Y' and stid = '{0}' and RecTime > '{0}' ";
+            long lTemp = dbDapper.QueryTotalCount(string.Format(ssql, sSTID, sDtd25));
+            if (lTemp == 0) //變更狀態(C警戒=>O警戒調降)
+            {
+              ssql = @" update LRTIAlert set statuscheck = 'Y' 
+                      , status = '{0}' , statustime = {1} where STID = '{2}' ";
+              dbDapper.Execute(string.Format(ssql, "O", sDt, sSTID));
+            }
+          }
+        }
+
+
+        //處理狀態(O)
+        ssql = " select * from LRTIAlert where status = 'O' ";
+        List<dynamic> StatusOList = dbDapper.Query(ssql);
+        foreach (var item in StatusOList)
+        {
+          string sSTID = item.STID;
+          string snowwarm = item.nowwarm;
+
+          if (snowwarm == "N") //現在低於警戒
+          {
+            //判斷歷史資料三小時(用2.5小時切)皆沒警戒資料
+            ssql = @" select distinct stid from LRTIAlertHis 
+                      where nowwarm = 'Y' and stid = '{0}' and RecTime > '{0}' ";
+            long lTemp = dbDapper.QueryTotalCount(string.Format(ssql, sSTID, sDtd55));
+            if (lTemp == 0) //變更狀態(C警戒=>O警戒調降)
+            {
+              ssql = @" update LRTIAlert set statuscheck = 'Y' 
+                      , status = '{0}' , statustime = {1} where STID = '{2}' ";
+              dbDapper.Execute(string.Format(ssql, "D", sDt, sSTID));
+            }
+          }
+        }
+
+        //處理狀態(新案)
         //取得目前超過警戒值的雨量站
         ssql = " select * from RunTimeRainData a "
              + " left join StationErrLRTI b on a.STID = b.STID "
@@ -563,23 +675,15 @@ namespace M10AlertLRTI
           string sSTID = dr["STID"].ToString();
 
           //判斷狀態
-          ssql = " select STID from  LRTIAlert "
-                  + " where STID = '" + sSTID + "' "
-                  ;
+          ssql = " select STID from  LRTIAlert where STID = '" + sSTID + "' ";
           oDal.CommandText = ssql;
           object oValue = oDal.Value();
-
 
           decimal dELRTI = 0;
           decimal.TryParse(dr["ELRTI"].ToString(), out dELRTI);
           dELRTI = Math.Round(dELRTI, 2);
           if (oValue == null)
-          {
-            //取得雨量站相關資料
-            //ssql = " select * from StationData a "
-            //     + " left join StationVillageLRTI b on a.STID = b.STID "
-            //     + " where a.STID = '" + sSTID + "' "
-            //     ;
+          {            
             //1050715 修改抓警戒資料的鄉鎮資料
             ssql = " select * from StationVillageLRTI "
                  + " where STID = '" + sSTID + "' "
@@ -604,42 +708,22 @@ namespace M10AlertLRTI
               + " ,'" + dELRTI.ToString() + "' "
               + " ,'" + dr["HOUR2"].ToString() + "' "
               + " ,'" + dr["RAIN"].ToString() + "' "
+              + " ,'Y' "
+              + " ,'" + sDt + "' "
+              + " ,'Y' "
               + " ) "
               ;
               oDal.CommandText = ssql;
               oDal.ExecuteSql();
             }
-          }
-          else
-          {
-            //寫入警戒雨量站資料，註記持續(C)
-            ssql = " update LRTIAlert "
-                + " set status = 'C'  "
-                + " , HOUR3 = '" + dr["HOUR3"].ToString() + "'  "
-                + " , HOUR1 = '" + dr["RAIN"].ToString() + "'  "
-                + " , HOUR2 = '" + dr["HOUR2"].ToString() + "'  "
-                + " , RT = '" + dr["RT"].ToString() + "'  "
-                + " , LRTI = '" + dr["LRTI"].ToString() + "'  "
-                + " , ELRTI = '" + dELRTI.ToString() + "'  "
-                + " where STID = '" + sSTID + "' "
-                ;
-            oDal.CommandText = ssql;
-            oDal.ExecuteSql();
-          }
+          }         
         }
 
-        //寫入警戒雨量站資料，註記新增(D)
-        ssql = " update LRTIAlert "
-             + " set status = 'D' "
-             + " where status = '' "
-             ;
-        oDal.CommandText = ssql;
-        oDal.ExecuteSql();
+        
       }
       catch (Exception ex)
       {
         logger.Error(ex, "");
-
       }
     }
 
@@ -667,219 +751,6 @@ namespace M10AlertLRTI
 
     private void button1_Click(object sender, EventArgs e)
     {
-      DataTable dtresult = new DataTable();
-      dtresult.Columns.Add("country");
-      dtresult.Columns.Add("week");
-      dtresult.Columns.Add("car");
-      dtresult.Columns.Add("time");
-
-      string sFilepath = @"c:\test.csv";
-
-      //DataTable dt = CSVtoDataTable(sFilepath);
-
-
-
-      List<string> ll = new List<string>();
-
-      using (StreamReader SR = new StreamReader(sFilepath))
-      {
-        string Line;
-        while ((Line = SR.ReadLine()) != null)
-        {
-          if (Line == "") continue;
-          if (Line == "\"             車次") continue;
-          if (Line == ",,,,,,,,,,,,") continue;
-          if (Line == "北上(Northbound),,,,,,,,,,,,") continue;
-          if (Line == "台   灣   高   鐵   列   車   時   刻   表,,,,,,,,,,,,") continue;
-          if (Line == ",=,=,=,=,=,=,=,=,=,=,,") continue;
-          if (Line == "註 : 本時刻表所列各次列車，於起站與中間站均為開車時刻，於終點站為到達時刻。,,,,,,,,,,,,") continue;
-          string[] ReadLine_Array = Line.Split(',');
-          if (ReadLine_Array[0] == "" && ReadLine_Array[1] == "" && ReadLine_Array[2] == "")
-          {
-            continue;
-          }
-          if (ReadLine_Array[0] == "站名\"")
-          {
-            continue;
-          }
-          if (Line == ",=,,,,,,,,,,,") continue;
-          if (Line == ",,=,,,,,,,,,,") continue;
-
-
-
-          ll.Add(Line);
-          //MessageBox.Show(Line);
-
-          //string[] ReadLine_Array = Line.Split(',');
-          //這邊可以自行發揮
-        }
-      }
-
-
-      DataTable dt = new DataTable();
-
-      for (int i = 0; i < ll.Count; i++)
-      {
-        string[] ReadLine_Array = ll[i].Split(',');
-
-        if (i == 0)
-        {
-          foreach (string item in ReadLine_Array)
-          {
-            dt.Columns.Add();
-          }
-        }
-
-
-        DataRow newRow = dt.NewRow();
-        for (int j = 0; j < dt.Columns.Count; j++)
-        {
-          newRow[j] = ReadLine_Array[j];
-        }
-        dt.Rows.Add(newRow);
-      }
-      dt.Columns.RemoveAt(12);
-      dt.Columns.RemoveAt(11);
-
-
-
-      List<string> runday = new List<string>();
-      List<string> car = new List<string>();
-
-      foreach (DataRow LoopRow in dt.Rows)
-      {
-        if (LoopRow[0].ToString() == "行駛日")
-        {
-          runday.Clear();
-          for (int i = 0; i < dt.Columns.Count; i++)
-          {
-            runday.Add(LoopRow[i].ToString());
-          }
-        }
-        if (LoopRow[0].ToString() == "")
-        {
-          car.Clear();
-          for (int i = 0; i < dt.Columns.Count; i++)
-          {
-            car.Add(LoopRow[i].ToString());
-          }
-        }
-
-        if (LoopRow[0].ToString() != "行駛日" && LoopRow[0].ToString() != "")
-        {
-          string sCountry = LoopRow[0].ToString();
-          for (int i = 1; i < dt.Columns.Count; i++)
-          {
-            string scar = car[i];
-            string srunday = runday[i];
-            if (LoopRow[i].ToString() == "" || LoopRow[i].ToString() == "↓") continue;
-            string stime = LoopRow[i].ToString();
-
-            //解析星期
-            List<string> lweek = analyweek(srunday);
-
-            foreach (string Loopweek in lweek)
-            {
-              DataRow NewRow = dtresult.NewRow();
-              NewRow["country"] = sCountry;
-              NewRow["week"] = Loopweek;
-              NewRow["car"] = scar;
-              NewRow["time"] = stime;
-              dtresult.Rows.Add(NewRow);
-            }
-          }
-        }
-
-
-
-      }
-
-
-
-      foreach (DataRow insRow in dtresult.Rows)
-      {
-        ssql = @"INSERT INTO [dbo].[highrail]
-           ([country]
-           ,[week]
-           ,[car]
-           ,[time])
-            VALUES
-           ('{0}'
-           ,'{1}'
-           ,'{2}'
-           ,'{3}')";
-        oDal.CommandText = string.Format(ssql, insRow[0].ToString()
-          , insRow[1].ToString(), insRow[2].ToString(), insRow[3].ToString());
-        oDal.ExecuteSql();
-      }
-
-
-
-      MessageBox.Show("Test");
-
-    }
-
-    private List<string> analyweek(string sweek)
-    {
-      List<string> lResult = new List<string>();
-
-      if (sweek == "")
-      {
-        lResult.Add("1");
-        lResult.Add("2");
-        lResult.Add("3");
-        lResult.Add("4");
-        lResult.Add("5");
-        lResult.Add("6");
-        lResult.Add("7");
-      }
-      else
-      {
-        string[] aweek1 = sweek.Split('、');
-        foreach (string item in aweek1)
-        {
-          if (item == "一") lResult.Add("1");
-          if (item == "二") lResult.Add("2");
-          if (item == "三") lResult.Add("3");
-          if (item == "四") lResult.Add("4");
-          if (item == "五") lResult.Add("5");
-          if (item == "六") lResult.Add("6");
-          if (item == "日") lResult.Add("7");
-
-          if (item.Contains("~"))
-          {
-            string[] aweek2 = item.Split('~');
-
-            int iStart = parseweek(aweek2[0]);
-            int iEnd = parseweek(aweek2[1]);
-
-            for (int i = iStart; i <= iEnd; i++)
-            {
-              lResult.Add(i.ToString());
-            }
-          }
-        }
-      }
-
-
-
-
-      return lResult;
-    }
-
-    private int parseweek(string sw)
-    {
-      int ir = 0;
-
-      if (sw == "一") ir = 1;
-      if (sw == "二") ir = 2;
-      if (sw == "三") ir = 3;
-      if (sw == "四") ir = 4;
-      if (sw == "五") ir = 5;
-      if (sw == "六") ir = 6;
-      if (sw == "日") ir = 7;
-
-      return ir;
     }
 
 

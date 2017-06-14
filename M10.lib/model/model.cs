@@ -58,6 +58,11 @@ namespace M10.lib.model
 
     public string HOUR1 { get; set; }
 
+    public string nowwarm { get; set; }
+
+    public string statustime { get; set; }
+
+
   }
 
   [Table("LRTIAlertMail")]
@@ -101,6 +106,12 @@ namespace M10.lib.model
     public string HOUR2 { get; set; }
 
     public string HOUR1 { get; set; }
+
+    public string nowwarm { get; set; }
+
+    public string statustime { get; set; }
+
+    public string statuscheck { get; set; }
 
   }
 

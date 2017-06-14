@@ -106,6 +106,12 @@
     <Compile Include="BaseForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="L11HighRail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="L11HighRail.Designer.cs">
+      <DependentUpon>L11HighRail.cs</DependentUpon>
+    </Compile>
     <Compile Include="M10AlertLRTI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -116,6 +122,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
+    <EmbeddedResource Include="L11HighRail.resx">
+      <DependentUpon>L11HighRail.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="M10AlertLRTI.resx">
       <DependentUpon>M10AlertLRTI.cs</DependentUpon>
     </EmbeddedResource>
@@ -135,6 +144,7 @@
     <None Include="M10AlertLRTI_TemporaryKey.pfx" />
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
