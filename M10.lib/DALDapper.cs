@@ -42,11 +42,29 @@ namespace M10.lib
       }
     }
 
-    public long QueryTotalCount(string sql)
+    public List<T> Query<T>(string sql) where T : class
+    {
+      try
+      {
+        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+        {
+          return cn.Query<T>(sql).ToList<T>();
+        }
+      }
+      catch (Exception)
+      {
+        return null;
+      }
+    }
+
+
+
+    public int QueryTotalCount(string sql)
     {
       using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-      {
-        return cn.Query(sql).First().totalCount;
+      {      
+
+        return cn.Query(sql).Count();
       }
     }
 
@@ -113,6 +131,10 @@ namespace M10.lib
         return null;
       }
     }
+   
+
+
+    
 
     public T QuerySingleOrDefault<T>(string sql,object param) where T : class
     {
