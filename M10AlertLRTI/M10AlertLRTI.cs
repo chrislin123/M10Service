@@ -655,11 +655,21 @@ namespace M10AlertLRTI
         {
           string sStstus = "";
 
+          if (AlertItem.nowwarm == "Y") //現在高於警戒
+          {
+            //判斷歷史資料三小時(用2.5小時切)是否超過兩筆
+            int iTemp = dbDapper.QueryTotalCount(string.Format(sqlCheck, AlertItem.STID, sDtd25));
+            if (iTemp >= 2) //變更狀態(O警戒調降=>C警戒)
+            {
+              sStstus = "C";
+            }
+          }
+
           if (AlertItem.nowwarm == "N") //現在低於警戒
           {
             //判斷歷史資料三小時(用2.5小時切)皆沒警戒資料
             int iTemp = dbDapper.QueryTotalCount(string.Format(sqlCheck, AlertItem.STID, sDtd25));
-            if (iTemp == 0) //變更狀態(O警戒調降=>解除警戒)
+            if (iTemp == 0) //變更狀態(O警戒調降=>D解除警戒)
             {
               sStstus = "D";
             }
@@ -678,7 +688,7 @@ namespace M10AlertLRTI
 
         //處理狀態(新案)
         //取得目前超過警戒值的雨量站
-        ssql = @" select a.* from RunTimeRainData a 
+        ssql = @" select * from RunTimeRainData a 
                   left join StationErrLRTI b on a.STID = b.STID 
                   where CAST(a.LRTI AS decimal(8, 2))  > CAST(b.ELRTI AS decimal(8, 2)) ";
         List<dynamic> RuntimeList = dbDapper.Query(ssql);
@@ -710,7 +720,7 @@ namespace M10AlertLRTI
             AlertItem.RT = RumtimeItem.RT;
             AlertItem.LRTI = RumtimeItem.LRTI;
             AlertItem.ELRTI = dELRTI.ToString();
-            AlertItem.HOUR2 = RumtimeItem.HOUR2;
+            AlertItem.HOUR2 = RumtimeItem.Hour2;
             AlertItem.HOUR1 = RumtimeItem.RAIN;
             AlertItem.nowwarm = "Y";
             AlertItem.statustime = sDt;
