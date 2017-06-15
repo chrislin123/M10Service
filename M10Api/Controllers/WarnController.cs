@@ -46,11 +46,14 @@ namespace M10Api.Controllers
       foreach (var item in data)
       {
         //處理狀態改中文顯示
-        if (item.status == "I") item.status = "新增";
-        if (item.status == "C") item.status = "持續";
-        if (item.status == "D") item.status = "刪除";
+        //if (item.status == "I") item.status = "新增";
+        //if (item.status == "C") item.status = "持續";
+        //if (item.status == "D") item.status = "刪除";
+        if (item.status == "I") item.status = Constants.AlertStatus.I;
+        if (item.status == "C") item.status = Constants.AlertStatus.C;
+        if (item.status == "O") item.status = Constants.AlertStatus.O;
+        if (item.status == "D") item.status = Constants.AlertStatus.D;
 
-        
         //處理ELRTI取至小數第二位
         decimal dELRTI = 0;
         if (decimal.TryParse(Convert.ToString(item.ELRTI), out dELRTI))
@@ -214,9 +217,13 @@ namespace M10Api.Controllers
 
       foreach (var item in data)
       {
-        if (item.status == "I") item.status = "新增";
-        if (item.status == "C") item.status = "持續";
-        if (item.status == "D") item.status = "刪除";
+        //if (item.status == "I") item.status = "新增";
+        //if (item.status == "C") item.status = "持續";
+        //if (item.status == "D") item.status = "刪除";
+        if (item.status == "I") item.status = Constants.AlertStatus.I;
+        if (item.status == "C") item.status = Constants.AlertStatus.C;
+        if (item.status == "O") item.status = Constants.AlertStatus.O;
+        if (item.status == "D") item.status = Constants.AlertStatus.D;
       }
 
 
@@ -281,9 +288,13 @@ namespace M10Api.Controllers
       foreach (var item in ResultList)
       {
         //處理狀態改中文顯示
-        if (item.status == "I") item.status = "新增";
-        if (item.status == "C") item.status = "持續";
-        if (item.status == "D") item.status = "刪除";
+        //if (item.status == "I") item.status = "新增";
+        //if (item.status == "C") item.status = "持續";
+        //if (item.status == "D") item.status = "刪除";
+        if (item.status == "I") item.status = Constants.AlertStatus.I;
+        if (item.status == "C") item.status = Constants.AlertStatus.C;
+        if (item.status == "O") item.status = Constants.AlertStatus.O;
+        if (item.status == "D") item.status = Constants.AlertStatus.D;
 
 
         //處理ELRTI取至小數第二位

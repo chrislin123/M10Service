@@ -59,9 +59,17 @@
       , zoomControl: true
     });
 
-    //資訊室窗初始化
+    //資訊視窗初始化
     infowindow = new google.maps.InfoWindow();
-    @*//地圖集合
+
+    //建立紅色Polygon
+    BuildPolyByType('R');
+
+    //建立黃色Polygon
+    BuildPolyByType('Y');
+
+    @* //建立Point點位
+    //地圖集合
     var marker_config = [];
     //範圍集合
     var triangleCoords = [];
@@ -136,6 +144,30 @@
     });*@
 
 
+
+  }
+
+  function BuildPolyByType(type) {
+    //Params by type
+    var urlGetMapData = '';
+    var urlGetMapCoord = '';
+    var strokeColor = '';
+    var fillColor = '';
+
+
+    if (type == 'R') {
+      var urlGetMapData = '@Url.Action("getMapDatas", "mapapi",new {type= "R" })';
+      var urlGetMapCoord = '@Url.Action("getCoordinate", "mapapi", new { type = "R" })';
+      var strokeColor = '#FF0000';
+      var fillColor = '#FF0000';
+    }
+    if (type == 'Y') {
+      var urlGetMapData = '@Url.Action("getMapDatas", "mapapi",new {type= "Y" })';
+      var urlGetMapCoord = '@Url.Action("getCoordinate", "mapapi", new { type = "Y" })';
+      var strokeColor = '#FFB300';
+      var fillColor = '#FFB300';
+    }
+
     //地圖資料
     var polyDataList = [];
     //點位資料
@@ -144,7 +176,7 @@
     //取得地圖資料
     $.ajax({
       type: 'GET',
-      url: '@Url.Action("getMapDatas", "mapapi")',
+      url: urlGetMapData,
       dataType: 'JSON',
       async: false,   // 先把這隻js執行完後，再跑下面的程式，如果不寫此參數，jQuery預設AJAX為異步執行
       success: function (response) {
@@ -174,7 +206,7 @@
     //取得點位資料
     $.ajax({
       type: 'GET',
-      url: '@Url.Action("getCoordinate", "mapapi")',
+      url: urlGetMapCoord,
       dataType: 'JSON',
       async: false,   // 先把這隻js執行完後，再跑下面的程式，如果不寫此參數，jQuery預設AJAX為異步執行
       success: function (response) {
@@ -193,7 +225,7 @@
       },
     });
 
-    try {      
+    try {
       polyDataList.forEach(function (e, i) {
         //點選出現資訊視窗
         var contentString = ''; //要顯示的 HTML 內容
@@ -239,11 +271,11 @@
 
         var bermudaTriangle = new google.maps.Polygon({
           paths: triangleCoords1,
-          strokeColor: '#FFFF00',
+          strokeColor: strokeColor,
           //strokeOpacity: 0.8,
           strokeOpacity: 1,
           strokeWeight: 2,
-          fillColor: '#FFFF00',
+          fillColor: fillColor,
           //fillOpacity: 0.35,
           fillOpacity: 1,
           name: e.STID
@@ -255,7 +287,7 @@
           infowindow.open(map); //設定點選 marker 打開資訊視窗事件
         });
         bermudaTriangle.setMap(map);
-    
+
       });
     }
     catch (err) {
@@ -264,6 +296,9 @@
 
 
   }
+
+
+
 
 
   function myrefresh() {

@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using M10Api.Class;
+using System.Web;
+using M10.lib;
 
 namespace M10Api.Controllers
 {
@@ -48,14 +50,63 @@ namespace M10Api.Controllers
     [Route("getCoordinate")]
     public List<dynamic> getCoordinate()
     {
-      var list = db.Query(@" 
+      if (string.IsNullOrWhiteSpace(ActionContext.Request.RequestUri.Query) == true) return new List<dynamic>();
+
+      var Params = lib.M10apiLib.ParseQueryString(ActionContext.Request.RequestUri.Query);
+
+      string sType = Params["type"];
+
+      string ssql = @" 
         select c.relano ,c.lat,c.lng from LRTIAlert a
         inner join StationVillageLRTI b on a.STID =b.STID and a.country =b.Country and a.village =b.village 
         inner join Coordinate c on b.no = c.relano and c.type = 'stvillage'
-        where a.status != 'D' 
+        where {0}
         order by b.stid,b.country,b.town,b.village,c.pointseq   
-        "
-        );
+        ";
+      if (sType == "R")
+      {
+        ssql = string.Format(ssql, " and a.status = 'C' ");
+      }
+
+      if (sType == "Y")
+      {
+        ssql = string.Format(ssql, " and a.status in ('I','O') ");
+      }
+
+      var list = db.Query(ssql);
+
+      
+      return list;
+    }
+
+    [HttpGet]
+    [Route("getMapDatas")]
+    public List<dynamic> getMapDatas()
+    {
+      
+      if (string.IsNullOrWhiteSpace(ActionContext.Request.RequestUri.Query) == true) return new List<dynamic>();
+
+      var Params = lib.M10apiLib.ParseQueryString(ActionContext.Request.RequestUri.Query);
+
+      string sType = Params["type"];
+
+      string ssql = @" 
+          select *,b.no as relano from LRTIAlert a
+          inner join StationVillageLRTI b on a.STID =b.STID and a.country =b.Country and a.village =b.village           
+          where 1 = 1 
+          ";
+      if (sType == "R")
+      {
+        ssql += " and a.status = 'C' ";
+      }
+
+      if (sType == "Y")
+      {
+        ssql += " and a.status in ('I','O') ";
+      }
+
+      var list = db.Query(ssql);
+
 
       //格式化資料
       foreach (var item in list)
@@ -64,40 +115,12 @@ namespace M10Api.Controllers
         //if (item.status == "I") item.status = "新增";
         //if (item.status == "C") item.status = "持續";
         //if (item.status == "D") item.status = "刪除";
+        if (item.status == "I") item.status = Constants.AlertStatus.I;
+        if (item.status == "C") item.status = Constants.AlertStatus.C;
+        if (item.status == "O") item.status = Constants.AlertStatus.O;
+        if (item.status == "D") item.status = Constants.AlertStatus.D;
 
-
-        //處理ELRTI無條件捨去
-        //decimal dELRTI = 0;
-        //if (decimal.TryParse(Convert.ToString(item.ELRTI), out dELRTI))
-        //{
-        //  item.ELRTI = Math.Floor(dELRTI).ToString();
-        //}
-
-      }
-
-      return list;
-    }
-
-    [HttpGet]
-    [Route("getMapDatas")]
-    public List<dynamic> getMapDatas()
-    {
-      var list = db.Query(@" 
-          select *,b.no as relano from LRTIAlert a
-          inner join StationVillageLRTI b on a.STID =b.STID and a.country =b.Country and a.village =b.village           
-          where a.status != 'D'           
-        "
-        );
-
-      //格式化資料
-      foreach (var item in list)
-      {
-        //處理狀態改中文顯示
-        if (item.status == "I") item.status = "新增";
-        if (item.status == "C") item.status = "持續";
-        if (item.status == "D") item.status = "刪除";
-
-
+        
         //處理ELRTI無條件捨去
         decimal dELRTI = 0;
         if (decimal.TryParse(Convert.ToString(item.ELRTI), out dELRTI))

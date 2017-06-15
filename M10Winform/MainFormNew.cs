@@ -369,7 +369,7 @@ namespace M10Winform
           RuntimeData.Day1 = dr["Day1"].ToString();
           RuntimeData.Day2 = dr["Day2"].ToString();
           RuntimeData.Day3 = dr["Day3"].ToString();
-          RuntimeData.Hour2 = RainDataValid(dr["Hour2"].ToString());
+          RuntimeData.HOUR2 = RainDataValid(dr["Hour2"].ToString());
           RuntimeData.WGS84_lon = dr["WGS84_lon"].ToString().Trim();
           RuntimeData.LRTI = dr["LRTI"].ToString().Trim();
           RuntimeData.WLRTI = dr["WLRTI"].ToString().Trim();

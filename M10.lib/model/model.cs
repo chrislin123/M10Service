@@ -370,7 +370,7 @@ namespace M10.lib.model
 
     public string Day3 { get; set; }
 
-    public string Hour2 { get; set; }
+    public string HOUR2 { get; set; }
 
     public string WGS84_lon { get; set; }
 
