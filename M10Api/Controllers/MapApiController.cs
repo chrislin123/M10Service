@@ -60,7 +60,7 @@ namespace M10Api.Controllers
         select c.relano ,c.lat,c.lng from LRTIAlert a
         inner join StationVillageLRTI b on a.STID =b.STID and a.country =b.Country and a.village =b.village 
         inner join Coordinate c on b.no = c.relano and c.type = 'stvillage'
-        where {0}
+        where 1=1 {0}
         order by b.stid,b.country,b.town,b.village,c.pointseq   
         ";
       if (sType == "R")
