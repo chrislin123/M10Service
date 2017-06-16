@@ -11,7 +11,7 @@ namespace M10AlertLRTI
   {
     public string ssql = string.Empty;
     private string _ConnectionString;
-    public ODAL oDal;
+    //public ODAL oDal;
     private DALDapper _dbDapper;
     public Logger logger;
     public DALDapper dbDapper
@@ -64,7 +64,7 @@ namespace M10AlertLRTI
     {
       _ConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.DBDefault].ConnectionString;
       _dbDapper = new DALDapper(_ConnectionString);
-      oDal = new ODAL(Properties.Settings.Default.DBDefault);
+      //oDal = new ODAL(Properties.Settings.Default.DBDefault);
       logger = NLog.LogManager.GetCurrentClassLogger();
     }
 

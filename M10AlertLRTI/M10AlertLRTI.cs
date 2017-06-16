@@ -30,17 +30,12 @@ namespace M10AlertLRTI
     DateTime dtNow = DateTime.Now;
 
     string folderName = @"D:\m10\LRTIAlert\";
-    string sLritAlertTimeString = "";
+    string sLritAlertTimeString = "";    
 
-    static private DataTable LrtiAlertAll = new DataTable();
-    static private DataTable LrtiAlertNew = new DataTable();
-    static private DataTable LrtiAlertDel = new DataTable();
-
-    static private DataTable LrtiAlertI = new DataTable();
-    static private DataTable LrtiAlertC = new DataTable();
-    static private DataTable LrtiAlertO = new DataTable();
-    static private DataTable LrtiAlertD = new DataTable();
-
+    static private List<dynamic> AlertIList = new List<dynamic>();
+    static private List<dynamic> AlertCList = new List<dynamic>();
+    static private List<dynamic> AlertOList = new List<dynamic>();
+    static private List<dynamic> AlertDList = new List<dynamic>();
 
 
     public M10AlertLRTI()
@@ -85,6 +80,9 @@ namespace M10AlertLRTI
 
     private void btnStart_Click(object sender, EventArgs e)
     {
+
+     
+
       try
       {
         //紀錄資料更新時間(2017-05-16T10:31:14)
@@ -98,12 +96,12 @@ namespace M10AlertLRTI
 
         //取得警戒通知資料
         getLRTIAlertData();
-
+        
         //1050615 判斷有資料才進行警戒提醒
-        if (LrtiAlertI.Rows.Count == 0 
-          && LrtiAlertC.Rows.Count == 0 
-          && LrtiAlertO.Rows.Count == 0
-          && LrtiAlertD.Rows.Count == 0) return;
+        if (AlertIList.Count == 0 
+          && AlertCList.Count == 0 
+          && AlertOList.Count == 0
+          && AlertDList.Count == 0) return;
 
         //文件產生      
         string sAttachFileName = LRTIAlertReport();
@@ -224,52 +222,87 @@ namespace M10AlertLRTI
         ssql = " select country,town,village,HOUR1,HOUR2,HOUR3,RT,LRTI,ELRTI,status,statustime from LRTIAlert "
              + " where status in ('{0}') "
              + " order by country,town ";
-        oDal.CommandText = string.Format(ssql,"I");
-        LrtiAlertI.Clear();
-        LrtiAlertI = oDal.DataTable();
-
-        
-        oDal.CommandText = string.Format(ssql, "C");
-        LrtiAlertC.Clear();
-        LrtiAlertC = oDal.DataTable();
-
-        oDal.CommandText = string.Format(ssql, "O");
-        LrtiAlertO.Clear();
-        LrtiAlertO = oDal.DataTable();
-
-        oDal.CommandText = string.Format(ssql, "D");
-        LrtiAlertD.Clear();
-        LrtiAlertD = oDal.DataTable();
 
 
-        foreach (DataRow dr in LrtiAlertI.Rows)
+        AlertIList = dbDapper.Query(string.Format(ssql, "I"));
+        AlertCList = dbDapper.Query(string.Format(ssql, "C"));
+        AlertOList = dbDapper.Query(string.Format(ssql, "O"));
+        AlertDList = dbDapper.Query(string.Format(ssql, "D"));
+        foreach (var item in AlertIList)
         {
-          if (dr["status"].ToString() == "I") dr["status"] = Constants.AlertStatus.I;
-          if (dr["status"].ToString() == "C") dr["status"] = Constants.AlertStatus.C;
-          if (dr["status"].ToString() == "O") dr["status"] = Constants.AlertStatus.O;
-          if (dr["status"].ToString() == "D") dr["status"] = Constants.AlertStatus.D;
+          if (item.status == "I") item.status = Constants.AlertStatus.I;
+          if (item.status == "C") item.status = Constants.AlertStatus.C;
+          if (item.status == "O") item.status = Constants.AlertStatus.O;
+          if (item.status == "D") item.status = Constants.AlertStatus.D;
         }
-        foreach (DataRow dr in LrtiAlertC.Rows)
+        foreach (var item in AlertCList)
         {
-          if (dr["status"].ToString() == "I") dr["status"] = Constants.AlertStatus.I;
-          if (dr["status"].ToString() == "C") dr["status"] = Constants.AlertStatus.C;
-          if (dr["status"].ToString() == "O") dr["status"] = Constants.AlertStatus.O;
-          if (dr["status"].ToString() == "D") dr["status"] = Constants.AlertStatus.D;
+          if (item.status == "I") item.status = Constants.AlertStatus.I;
+          if (item.status == "C") item.status = Constants.AlertStatus.C;
+          if (item.status == "O") item.status = Constants.AlertStatus.O;
+          if (item.status == "D") item.status = Constants.AlertStatus.D;
         }
-        foreach (DataRow dr in LrtiAlertO.Rows)
+        foreach (var item in AlertOList)
         {
-          if (dr["status"].ToString() == "I") dr["status"] = Constants.AlertStatus.I;
-          if (dr["status"].ToString() == "C") dr["status"] = Constants.AlertStatus.C;
-          if (dr["status"].ToString() == "O") dr["status"] = Constants.AlertStatus.O;
-          if (dr["status"].ToString() == "D") dr["status"] = Constants.AlertStatus.D;
+          if (item.status == "I") item.status = Constants.AlertStatus.I;
+          if (item.status == "C") item.status = Constants.AlertStatus.C;
+          if (item.status == "O") item.status = Constants.AlertStatus.O;
+          if (item.status == "D") item.status = Constants.AlertStatus.D;
         }
-        foreach (DataRow dr in LrtiAlertD.Rows)
+        foreach (var item in AlertDList)
         {
-          if (dr["status"].ToString() == "I") dr["status"] = Constants.AlertStatus.I;
-          if (dr["status"].ToString() == "C") dr["status"] = Constants.AlertStatus.C;
-          if (dr["status"].ToString() == "O") dr["status"] = Constants.AlertStatus.O;
-          if (dr["status"].ToString() == "D") dr["status"] = Constants.AlertStatus.D;
+          if (item.status == "I") item.status = Constants.AlertStatus.I;
+          if (item.status == "C") item.status = Constants.AlertStatus.C;
+          if (item.status == "O") item.status = Constants.AlertStatus.O;
+          if (item.status == "D") item.status = Constants.AlertStatus.D;
         }
+
+
+        //oDal.CommandText = string.Format(ssql,"I");
+        //LrtiAlertI.Clear();
+        //LrtiAlertI = oDal.DataTable();       
+
+        //oDal.CommandText = string.Format(ssql, "C");
+        //LrtiAlertC.Clear();
+        //LrtiAlertC = oDal.DataTable();
+
+        //oDal.CommandText = string.Format(ssql, "O");
+        //LrtiAlertO.Clear();
+        //LrtiAlertO = oDal.DataTable();
+
+        //oDal.CommandText = string.Format(ssql, "D");
+        //LrtiAlertD.Clear();
+        //LrtiAlertD = oDal.DataTable();
+
+
+        //foreach (DataRow dr in LrtiAlertI.Rows)
+        //{
+        //  if (dr["status"].ToString() == "I") dr["status"] = Constants.AlertStatus.I;
+        //  if (dr["status"].ToString() == "C") dr["status"] = Constants.AlertStatus.C;
+        //  if (dr["status"].ToString() == "O") dr["status"] = Constants.AlertStatus.O;
+        //  if (dr["status"].ToString() == "D") dr["status"] = Constants.AlertStatus.D;
+        //}
+        //foreach (DataRow dr in LrtiAlertC.Rows)
+        //{
+        //  if (dr["status"].ToString() == "I") dr["status"] = Constants.AlertStatus.I;
+        //  if (dr["status"].ToString() == "C") dr["status"] = Constants.AlertStatus.C;
+        //  if (dr["status"].ToString() == "O") dr["status"] = Constants.AlertStatus.O;
+        //  if (dr["status"].ToString() == "D") dr["status"] = Constants.AlertStatus.D;
+        //}
+        //foreach (DataRow dr in LrtiAlertO.Rows)
+        //{
+        //  if (dr["status"].ToString() == "I") dr["status"] = Constants.AlertStatus.I;
+        //  if (dr["status"].ToString() == "C") dr["status"] = Constants.AlertStatus.C;
+        //  if (dr["status"].ToString() == "O") dr["status"] = Constants.AlertStatus.O;
+        //  if (dr["status"].ToString() == "D") dr["status"] = Constants.AlertStatus.D;
+        //}
+        //foreach (DataRow dr in LrtiAlertD.Rows)
+        //{
+        //  if (dr["status"].ToString() == "I") dr["status"] = Constants.AlertStatus.I;
+        //  if (dr["status"].ToString() == "C") dr["status"] = Constants.AlertStatus.C;
+        //  if (dr["status"].ToString() == "O") dr["status"] = Constants.AlertStatus.O;
+        //  if (dr["status"].ToString() == "D") dr["status"] = Constants.AlertStatus.D;
+        //}
 
       }
       catch (Exception)
@@ -382,18 +415,12 @@ namespace M10AlertLRTI
       lHead.Add("警戒LRTI");
       lHead.Add("警戒發布狀態");
       lHead.Add("警戒發布時間");
-
       
-
-
       workSheet.Cell(iRowIndex, 1).Value = sLrtiTime;
       workSheet.Range(iRowIndex, 1, iRowIndex, 1).Style.Font.Bold = true;
-
       
-
-
       //預警明細
-      if (LrtiAlertI.Rows.Count > 0)
+      if (AlertIList.Count > 0)
       {
         iRowIndex++;
         workSheet.Cell(iRowIndex, 1).Value = "崩塌警戒區域 預警 明細";
@@ -408,18 +435,18 @@ namespace M10AlertLRTI
           iColIndex++;
         }
 
-        foreach (DataRow dr in LrtiAlertI.Rows)
+        foreach (var Item in AlertIList)
         {
           iRowIndex++;
-          for (int i = 1; i <= lHead.Count; i++)
+          for (int i = 0; i < lHead.Count; i++)
           {
-            workSheet.Cell(iRowIndex, i).Value = dr[i - 1].ToString();
+            workSheet.Cell(iRowIndex, i + 1).Value = getCellValue(lHead[i], Item);
           }
         }
       }
 
       //警戒明細
-      if (LrtiAlertC.Rows.Count > 0)
+      if (AlertCList.Count > 0)
       {
         iRowIndex++;
         workSheet.Cell(iRowIndex, 1).Value = "崩塌警戒區域 警戒 明細";
@@ -434,18 +461,18 @@ namespace M10AlertLRTI
           iColIndex++;
         }
 
-        foreach (DataRow dr in LrtiAlertC.Rows)
+        foreach (var Item in AlertCList)
         {
           iRowIndex++;
-          for (int i = 1; i <= lHead.Count; i++)
+          for (int i = 0; i < lHead.Count; i++)
           {
-            workSheet.Cell(iRowIndex, i).Value = dr[i - 1].ToString();
+            workSheet.Cell(iRowIndex, i + 1).Value = getCellValue(lHead[i], Item);
           }
         }
       }
 
       //警戒調降明細
-      if (LrtiAlertO.Rows.Count > 0)
+      if (AlertOList.Count > 0)
       {
         iRowIndex++;
         workSheet.Cell(iRowIndex, 1).Value = "崩塌警戒區域 警戒調降 明細";
@@ -460,18 +487,18 @@ namespace M10AlertLRTI
           iColIndex++;
         }
 
-        foreach (DataRow dr in LrtiAlertO.Rows)
+        foreach (var Item in AlertOList)
         {
           iRowIndex++;
-          for (int i = 1; i <= lHead.Count; i++)
+          for (int i = 0; i < lHead.Count; i++)
           {
-            workSheet.Cell(iRowIndex, i).Value = dr[i - 1].ToString();
+            workSheet.Cell(iRowIndex, i + 1).Value = getCellValue(lHead[i], Item);
           }
         }
       }
 
       //解除警戒明細
-      if (LrtiAlertD.Rows.Count > 0)
+      if (AlertDList.Count > 0)
       {
         iRowIndex++;
         workSheet.Cell(iRowIndex, 1).Value = "崩塌警戒區域 解除警戒 明細";
@@ -486,17 +513,17 @@ namespace M10AlertLRTI
           iColIndex++;
         }
 
-        foreach (DataRow dr in LrtiAlertD.Rows)
+        foreach (var Item in AlertDList)
         {
           iRowIndex++;
-          for (int i = 1; i <= lHead.Count; i++)
+          for (int i = 0; i < lHead.Count; i++)
           {
-            workSheet.Cell(iRowIndex, i).Value = dr[i - 1].ToString();
+            workSheet.Cell(iRowIndex, i + 1).Value = getCellValue(lHead[i], Item);
           }
         }
       }
 
-
+      //寬度調整至資料大小
       workSheet.Columns().AdjustToContents();
 
       //存檔
@@ -505,6 +532,31 @@ namespace M10AlertLRTI
       return fileName;
     }
 
+    private string getCellValue(string sHead,dynamic Item)
+    {
+      string sResult = "";
+
+      try
+      {
+        if (sHead == "縣市") sResult = Item.country;
+        if (sHead == "鄉鎮區") sResult = Item.town;
+        if (sHead == "警戒區範圍") sResult = Item.village;
+        if (sHead == "1hr") sResult = Item.HOUR1;
+        if (sHead == "2hr") sResult = Item.HOUR2;
+        if (sHead == "3hr") sResult = Item.HOUR3;
+        if (sHead == "Rt") sResult = Item.RT;
+        if (sHead == "LRTI") sResult = Item.LRTI;
+        if (sHead == "警戒LRTI") sResult = Item.ELRTI;
+        if (sHead == "警戒發布狀態") sResult = Item.status;
+        if (sHead == "警戒發布時間") sResult = Item.statustime;
+      }
+      catch (Exception)
+      {
+        sResult = "";
+      }
+
+      return sResult;
+    }
 
     public void LRTIAlertProc()
     {
