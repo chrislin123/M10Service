@@ -414,8 +414,8 @@ namespace M10AlertLRTI
       lHead.Add("LRTI");
       lHead.Add("警戒LRTI");
       lHead.Add("警戒發布狀態");
-      lHead.Add("警戒發布時間");
-      
+      lHead.Add("警戒發布時間");      
+
       workSheet.Cell(iRowIndex, 1).Value = sLrtiTime;
       workSheet.Range(iRowIndex, 1, iRowIndex, 1).Style.Font.Bold = true;
       
@@ -440,7 +440,7 @@ namespace M10AlertLRTI
           iRowIndex++;
           for (int i = 0; i < lHead.Count; i++)
           {
-            workSheet.Cell(iRowIndex, i + 1).Value = getCellValue(lHead[i], Item);
+            workSheet.Cell(iRowIndex, i + 1).SetValue<string>(getCellValue(lHead[i], Item));
           }
         }
       }
@@ -465,8 +465,8 @@ namespace M10AlertLRTI
         {
           iRowIndex++;
           for (int i = 0; i < lHead.Count; i++)
-          {
-            workSheet.Cell(iRowIndex, i + 1).Value = getCellValue(lHead[i], Item);
+          { 
+            workSheet.Cell(iRowIndex, i + 1).SetValue<string>(getCellValue(lHead[i], Item));
           }
         }
       }
@@ -492,7 +492,7 @@ namespace M10AlertLRTI
           iRowIndex++;
           for (int i = 0; i < lHead.Count; i++)
           {
-            workSheet.Cell(iRowIndex, i + 1).Value = getCellValue(lHead[i], Item);
+            workSheet.Cell(iRowIndex, i + 1).SetValue<string>(getCellValue(lHead[i], Item));
           }
         }
       }
@@ -518,7 +518,7 @@ namespace M10AlertLRTI
           iRowIndex++;
           for (int i = 0; i < lHead.Count; i++)
           {
-            workSheet.Cell(iRowIndex, i + 1).Value = getCellValue(lHead[i], Item);
+            workSheet.Cell(iRowIndex, i + 1).SetValue<string>(getCellValue(lHead[i], Item));
           }
         }
       }
