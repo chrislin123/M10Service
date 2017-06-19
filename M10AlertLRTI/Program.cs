@@ -14,7 +14,8 @@ namespace M10AlertLRTI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new M10AlertLRTI());
-        }
+            //Application.Run(new M10AlertLRTI());
+            Application.Run(new M10kml());  
+    }
     }
 }
