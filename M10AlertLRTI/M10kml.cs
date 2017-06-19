@@ -100,9 +100,97 @@ namespace M10AlertLRTI
       }
 
 
-      MessageBox.Show("Test");
+      MessageBox.Show("OK");
     }
 
+    private void button2_Click(object sender, EventArgs e)
+    {
+      try
+      {
 
+
+        string sFilePath = @"c:\village.kml";
+
+        XDocument kml1 = XDocument.Load(sFilePath);
+
+        var ns = XNamespace.Get("http://www.opengis.net/kml/2.2");
+        var placemarks = kml1.Element(ns + "kml").Element(ns + "Document").Element(ns + "Folder").Elements(ns + "Placemark");
+        
+        int iTownshipID = 1;
+        foreach (var item in placemarks)
+        {
+          //取得名稱
+          string Name = item.Element(ns + "name").Value;
+
+
+          var LinearRing = item.Element(ns + "MultiGeometry").Element(ns + "Polygon").Element(ns + "outerBoundaryIs").Element(ns + "LinearRing");
+          string sAllCoord = LinearRing.Element(ns + "coordinates").Value;
+
+          //依照格式拆解
+          string[] CoorDataList = sAllCoord.Replace(" ", "").Replace("\n", "").Replace("\t", "").Replace(",0", "|").Split('|');
+          int idx = 1;
+          foreach (string LoopItem in CoorDataList)
+          {
+            //資料空白去除
+            if (LoopItem == "") continue;
+
+            string[] aItem = LoopItem.Split(',');
+
+            Coordinate insData = new Coordinate();
+            insData.type = "township";
+            insData.relano = iTownshipID;
+            insData.lat = aItem[1];
+            insData.lng = aItem[0];
+            insData.pointseq = idx;
+
+            dbDapper.Insert(insData);
+
+            idx++;
+          }
+
+          iTownshipID++;
+          //ssql = " select * from StationVillageLRTI where village = '{0}' ";
+          //StationVillageLRTI RelData = dbDapper.QuerySingleOrDefault<StationVillageLRTI>(string.Format(ssql, Name));
+
+          //if (RelData != null)
+          //{
+
+          //  var LinearRing = item.Element(ns + "MultiGeometry").Element(ns + "Polygon").Element(ns + "outerBoundaryIs").Element(ns + "LinearRing");
+          //  string sAllCoord = LinearRing.Element(ns + "coordinates").Value;
+
+          //  //依照格式拆解
+          //  string[] CoorDataList = sAllCoord.Replace(" ", "").Replace(",0", "|").Split('|');
+
+          //  int idx = 1;
+          //  foreach (string LoopItem in CoorDataList)
+          //  {
+          //    //資料空白去除
+          //    if (LoopItem == "") continue;
+
+          //    string[] aItem = LoopItem.Split(',');
+
+          //    Coordinate insData = new Coordinate();
+          //    insData.type = "stvillage";
+          //    insData.relano = RelData.no;
+          //    insData.lat = aItem[1];
+          //    insData.lng = aItem[0];
+          //    insData.pointseq = idx;
+
+          //    dbDapper.Insert(insData);
+
+          //    idx++;
+          //  }
+          //}
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error(ex, "");
+
+      }
+
+
+      MessageBox.Show("OK");
+    }
   }
 }
