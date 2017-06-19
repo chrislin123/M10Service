@@ -576,7 +576,7 @@ namespace M10AlertLRTI
 
       string sDt = dtNow.ToString("yyyy-MM-ddTHH:mm:ss");
       string sDtd35 = dtNow.AddHours(-3.5).ToString("yyyy-MM-ddTHH:mm:ss");
-      //string sDtd55 = dtNow.AddHours(-5.5).ToString("yyyy-MM-ddTHH:mm:ss");
+      string sDtd65 = dtNow.AddHours(-6.5).ToString("yyyy-MM-ddTHH:mm:ss");
       try
       { 
         //刪除已解除註記資料
@@ -647,7 +647,7 @@ namespace M10AlertLRTI
 
           if (AlertItem.nowwarm == "Y") //現在高於警戒
           {
-            //判斷歷史資料三小時(用2.5小時切)是否超過兩筆
+            //判斷歷史資料三小時(用3.5小時切)是否超過兩筆
             int iTemp = dbDapper.QueryTotalCount(string.Format(sqlCheck, AlertItem.STID, sDtd35));
             if (iTemp >= 3) //變更狀態(I預警=>C警戒)
             {
@@ -657,7 +657,7 @@ namespace M10AlertLRTI
 
           if (AlertItem.nowwarm == "N") //現在低於警戒
           {
-            //判斷歷史資料三小時(用2.5小時切)皆沒警戒資料
+            //判斷歷史資料三小時(用3.5小時切)皆沒警戒資料
             int iTemp = dbDapper.QueryTotalCount(string.Format(sqlCheck, AlertItem.STID, sDtd35));
             if (iTemp == 0) //變更狀態(I預警=>D解除警戒)
             {
@@ -685,7 +685,7 @@ namespace M10AlertLRTI
 
           if (AlertItem.nowwarm == "N") //現在低於警戒
           {
-            //判斷歷史資料三小時(用2.5小時切)皆沒警戒資料
+            //判斷歷史資料三小時(用3.5小時切)皆沒警戒資料
             int iTemp = dbDapper.QueryTotalCount(string.Format(sqlCheck, AlertItem.STID, sDtd35));
             if (iTemp == 0) //變更狀態(C預警=>O警戒調降)
             {
@@ -713,7 +713,7 @@ namespace M10AlertLRTI
 
           if (AlertItem.nowwarm == "Y") //現在高於警戒
           {
-            //判斷歷史資料三小時(用2.5小時切)是否超過兩筆
+            //判斷歷史資料三小時(用3.5小時切)是否超過兩筆
             int iTemp = dbDapper.QueryTotalCount(string.Format(sqlCheck, AlertItem.STID, sDtd35));
             if (iTemp >= 3) //變更狀態(O警戒調降=>C警戒)
             {
@@ -723,8 +723,8 @@ namespace M10AlertLRTI
 
           if (AlertItem.nowwarm == "N") //現在低於警戒
           {
-            //判斷歷史資料三小時(用2.5小時切)皆沒警戒資料
-            int iTemp = dbDapper.QueryTotalCount(string.Format(sqlCheck, AlertItem.STID, sDtd35));
+            //判斷歷史資料三小時(用7.5小時切)皆沒警戒資料
+            int iTemp = dbDapper.QueryTotalCount(string.Format(sqlCheck, AlertItem.STID, sDtd65));
             if (iTemp == 0) //變更狀態(O警戒調降=>D解除警戒)
             {
               sStstus = "D";
