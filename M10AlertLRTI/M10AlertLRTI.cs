@@ -723,7 +723,7 @@ namespace M10AlertLRTI
 
           if (AlertItem.nowwarm == "N") //現在低於警戒
           {
-            //判斷歷史資料三小時(用7.5小時切)皆沒警戒資料
+            //判斷歷史資料三小時(用6.5小時切)皆沒警戒資料
             int iTemp = dbDapper.QueryTotalCount(string.Format(sqlCheck, AlertItem.STID, sDtd65));
             if (iTemp == 0) //變更狀態(O警戒調降=>D解除警戒)
             {

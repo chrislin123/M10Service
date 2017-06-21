@@ -75,7 +75,43 @@ namespace M10Api.Controllers
 
       var list = db.Query(ssql);
 
-      
+
+      return list;
+    }
+
+    [HttpGet]
+    [Route("getCoordinateCountry")]
+    public List<dynamic> getCoordinateCountry()
+    {
+      string ssql = @" 
+        select relano,lat,lng from Coordinate where type = 'country' order by relano, pointseq
+        ";
+
+      var list = db.Query(ssql);
+
+
+      //1060621 linq lamda 效能不佳，取消
+      //List<polygon> myList = new List<polygon>();
+
+      //var s = list.Select(p => p.relano).Distinct();
+      //var relano = s.ToList<dynamic>();
+
+      //foreach (var item in relano)
+      //{
+      //  polygon oPolygon = new polygon();
+      //  oPolygon.relano =  item;
+        
+      //  var pp = list.Where(a => a.relano == item).Select(a =>new point{lat = a.lat,lng = a.lng });
+
+      //  oPolygon.points = pp.ToList<point>();
+      //  myList.Add(oPolygon);
+      //}
+
+      //return myList.ToList<dynamic>();
+
+
+
+
       return list;
     }
 
@@ -83,7 +119,7 @@ namespace M10Api.Controllers
     [Route("getMapDatas")]
     public List<dynamic> getMapDatas()
     {
-      
+
       if (string.IsNullOrWhiteSpace(ActionContext.Request.RequestUri.Query) == true) return new List<dynamic>();
 
       var Params = lib.M10apiLib.ParseQueryString(ActionContext.Request.RequestUri.Query);
@@ -120,7 +156,7 @@ namespace M10Api.Controllers
         if (item.status == "O") item.status = Constants.AlertStatus.O;
         if (item.status == "D") item.status = Constants.AlertStatus.D;
 
-        
+
         //處理ELRTI無條件捨去
         decimal dELRTI = 0;
         if (decimal.TryParse(Convert.ToString(item.ELRTI), out dELRTI))
@@ -141,50 +177,21 @@ namespace M10Api.Controllers
 
 
 
-    //Here is an example of a KML file containing a Network Link that loads this Python script:
-    //#!/usr/bin/python
-
-    //    import random
-
-    //latitude = random.randrange(-90, 90)
-    //longitude = random.randrange(-180, 180)
-    //kml = (
-    //   '<?xml version="1.0" encoding="UTF-8"?>\n'
-    //   '<kml xmlns="http://www.opengis.net/kml/2.2">\n'
-    //   '<Placemark>\n'
-    //   '<name>Random Placemark</name>\n'
-    //   '<Point>\n'
-    //   '<coordinates>%d,%d</coordinates>\n'
-    //   '</Point>\n'
-    //   '</Placemark>\n'
-    //   '</kml>'
-    //   ) %(longitude, latitude)
-    //print 'Content-Type: application/vnd.google-earth.kml+xml\n'
-    //print kml
 
 
-    //    <?xml version = "1.0" encoding="UTF-8"?>
-    //<kml xmlns = "http://www.opengis.net/kml/2.2" >
-    //  < Folder >
-    //    < name > Network Links</name>
-    //    <visibility>0</visibility>
-    //    <open>0</open>
-    //    <description>Network link example 1</description>
-    //    <NetworkLink>
-    //      <name>Random Placemark</name>
-    //      <visibility>0</visibility>
-    //      <open>0</open>
-    //      <description>A simple server-side script that generates a new random
-    //        placemark on each call</description>
-    //      <refreshVisibility>0</refreshVisibility>
-    //      <flyToView>0</flyToView>
-    //      <Link>
-    //        <href>http://yourserver.com/cgi-bin/randomPlacemark.py</href>
-    //      </Link>
-    //    </NetworkLink>
-    //  </Folder>
-    //</kml>
+  }
 
+
+  public class polygon {
+    public int relano { get; set; }
+
+    public List<point> points { get; set; }
+  }
+
+  public class point {
+    public string lat { get; set; }
+    
+    public string lng { get; set; }
 
   }
 }

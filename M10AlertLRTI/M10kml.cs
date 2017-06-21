@@ -192,5 +192,68 @@ namespace M10AlertLRTI
 
       MessageBox.Show("OK");
     }
+
+    private void btnCountry_Click(object sender, EventArgs e)
+    {
+      try
+      {
+
+
+        string sFilePath = @"c:\country.kml";
+
+        XDocument kml1 = XDocument.Load(sFilePath);
+
+        var ns = XNamespace.Get("http://www.opengis.net/kml/2.2");
+        var placemarks = kml1.Element(ns + "kml").Element(ns + "Document").Element(ns + "Folder").Elements(ns + "Placemark");
+
+        int iTownshipID = 1;
+        foreach (var item in placemarks)
+        {
+          //取得名稱
+          string Name = item.Element(ns + "name").Value;
+
+          if (Name != "高雄市") continue;
+
+          //一個縣市有多個polygon
+
+          var allPolygon = item.Element(ns + "MultiGeometry").Elements(ns + "Polygon");
+          foreach (var Polygon in allPolygon)
+          {
+            var LinearRing = Polygon.Element(ns + "outerBoundaryIs").Element(ns + "LinearRing");
+            string sAllCoord = LinearRing.Element(ns + "coordinates").Value;
+
+            //依照格式拆解
+            string[] CoorDataList = sAllCoord.Replace(" ", "").Replace("\n", "").Replace("\t", "").Replace(",0", "|").Split('|');
+            int idx = 1;
+            foreach (string LoopItem in CoorDataList)
+            {
+              //資料空白去除
+              if (LoopItem == "") continue;
+
+              string[] aItem = LoopItem.Split(',');
+
+              Coordinate insData = new Coordinate();
+              insData.type = "countrytest";
+              insData.relano = iTownshipID;
+              insData.lat = aItem[1];
+              insData.lng = aItem[0];
+              insData.pointseq = idx;
+
+              dbDapper.Insert(insData);
+
+              idx++;
+            }
+
+            iTownshipID++;
+          }          
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error(ex, "");
+      }
+
+      MessageBox.Show("OK");
+    }
   }
 }
