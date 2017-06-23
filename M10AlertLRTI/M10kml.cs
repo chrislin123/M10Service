@@ -212,7 +212,7 @@ namespace M10AlertLRTI
           //取得名稱
           string Name = item.Element(ns + "name").Value;
 
-          if (Name != "高雄市") continue;
+          //if (Name != "高雄市") continue;
 
           //一個縣市有多個polygon
 
@@ -233,7 +233,7 @@ namespace M10AlertLRTI
               string[] aItem = LoopItem.Split(',');
 
               Coordinate insData = new Coordinate();
-              insData.type = "countrytest";
+              insData.type = "country";
               insData.relano = iTownshipID;
               insData.lat = aItem[1];
               insData.lng = aItem[0];
