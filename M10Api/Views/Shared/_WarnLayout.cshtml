@@ -35,8 +35,17 @@
           <li>@Html.ActionLink("即時", "warnlist", "warn", new { area = "" }, null)</li>
           <li>@Html.ActionLink("地圖", "map", "map", new { area = "" }, null)</li>
           <li>@Html.ActionLink("歷史", "warnhislist", "warn", new { area = "" }, null)</li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">雨量資料<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li>@Html.ActionLink("雨量查詢", "QueryRain", "Rain", new { area = "" }, null)</li>
+              <li>@Html.ActionLink("匯出", "ExportRain", "Rain", new { area = "" }, null)</li>
+              <li>@Html.ActionLink("土石流警戒基準值(RTI)", "QueryRTI", "Rain", new { area = "" }, null)</li>
+              <li>@Html.ActionLink("崩塌警戒基準值(RTI3)", "QueryRTI3", "Rain", new { area = "" }, null)</li>
+            </ul>
+          </li>
         </ul>
-      </div>
+      </div>  
     </div>
   </div>
   <div class="container body-content">

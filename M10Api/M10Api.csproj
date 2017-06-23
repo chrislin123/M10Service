@@ -224,6 +224,7 @@
     <Compile Include="Controllers\MapApiController.cs" />
     <Compile Include="Controllers\MapController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
+    <Compile Include="Controllers\RainController.cs" />
     <Compile Include="Controllers\TestapiController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
@@ -417,6 +418,10 @@
     <Content Include="Views\Warn\WarnList.cshtml" />
     <Content Include="Views\Warn\warndatatables.cshtml" />
     <Content Include="Views\Warn\warnhislist.cshtml" />
+    <Content Include="Views\Rain\QueryRain.cshtml" />
+    <Content Include="Views\Rain\QueryRTI.cshtml" />
+    <Content Include="Views\Rain\QueryRTI3.cshtml" />
+    <Content Include="Views\Rain\ExportRain.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
