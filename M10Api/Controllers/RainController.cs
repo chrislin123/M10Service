@@ -67,6 +67,9 @@ namespace M10Api.Controllers
 
       }
 
+      //取得更新最新時間
+      ssql = " select MAX(RTime) as RTime from RunTimeRainData ";
+      ViewBag.forecastdate = dbDapper.ExecuteScale(ssql).ToString();
 
       ViewBag.count = data.Count;
       ViewData["LRTIAlert"] = data;

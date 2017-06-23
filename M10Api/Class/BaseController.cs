@@ -5,11 +5,45 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
+using M10.lib;
+using System.Configuration;
 
 namespace M10Api.Class
 {
   public class BaseController : Controller
   {
+    private DALDapper _dbDapper;
+    private string _ConnectionString;
+
+    public DALDapper dbDapper
+    {
+      get
+      {
+        if (_dbDapper == null)
+        {
+          _dbDapper = new DALDapper(ConnectionString);
+        }
+
+        return _dbDapper;
+      }
+    }
+
+    public string ConnectionString
+    {
+      get
+      {
+        if (_ConnectionString == "")
+        {
+          _ConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.DBDefault].ConnectionString;
+        }
+
+        return _ConnectionString;
+      }
+    }
+
     protected DBContext db = new DBContext();
+
+
+
   }
 }
