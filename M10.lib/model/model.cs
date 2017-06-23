@@ -453,4 +453,23 @@ namespace M10.lib.model
 
   }
 
+  [Table("HighRail")]
+  public class HighRail
+  {
+    //設定key
+    [Key]
+    public int no { get; set; }
+
+    public string type { get; set; }
+
+    public string country { get; set; }
+
+    public string week { get; set; }
+
+    public string car { get; set; }
+
+    public string time { get; set; }
+
+  }
+
 }

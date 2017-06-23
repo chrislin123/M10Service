@@ -219,6 +219,7 @@
     <Compile Include="Class\BaseController.cs" />
     <Compile Include="Class\BaseApiController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\HighRailController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MapApiController.cs" />
     <Compile Include="Controllers\MapController.cs" />
