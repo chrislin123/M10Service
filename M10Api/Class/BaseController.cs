@@ -12,8 +12,10 @@ namespace M10Api.Class
 {
   public class BaseController : Controller
   {
+    public string ssql = string.Empty;
     private DALDapper _dbDapper;
     private string _ConnectionString;
+
 
     public DALDapper dbDapper
     {
@@ -32,7 +34,7 @@ namespace M10Api.Class
     {
       get
       {
-        if (_ConnectionString == "")
+        if (string.IsNullOrEmpty(_ConnectionString))
         {
           _ConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.DBDefault].ConnectionString;
         }
