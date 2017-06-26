@@ -9,23 +9,11 @@
         height: 100%;
         width: 100%;
       }
-      /*html, body {
-              height: 100%;
-              display: flex;
-              margin: 0;
-              padding: 0;
-            }*/
 
       #map {
-        /*width: 100%; height: 100%;*/
         height: 700px;
         background: black;
       }
-
-      /*.col-centered {
-              float: none;
-              margin: 0 auto;
-            }*/
   </style>
 }
 
@@ -70,84 +58,6 @@
 
     //建立黃色Polygon
     BuildPolyByType('Y');
-
-    @* //建立Point點位
-    //地圖集合
-    var marker_config = [];
-    //範圍集合
-    var triangleCoords = [];
-
-    //取得地圖資料
-    $.ajax({
-      type: 'GET',
-      url: '@Url.Action("getalertlrti", "mapapi")',
-      dataType: 'JSON',
-      async: false,   // 先把這隻js執行完後，再跑下面的程式，如果不寫此參數，jQuery預設AJAX為異步執行
-      success: function (response) {
-        response.forEach(function (data, i) {
-          var itemPs = {};
-          itemPs["lat"] = Number(data.lat);
-          itemPs["lng"] = Number(data.lon);
-          triangleCoords.push(itemPs);
-
-          var item = {};
-          item["position"] = itemPs;
-          item["map"] = map;
-          item["STID"] = data.STID;
-          item["country"] = data.country;
-          item["town"] = data.town;
-          item["village"] = data.village;
-          item["status"] = data.status;
-          item["HOUR1"] = data.HOUR1;
-          item["HOUR2"] = data.HOUR2;
-          item["HOUR3"] = data.HOUR3;
-          item["LRTI"] = data.LRTI;
-          item["ELRTI"] = data.ELRTI;
-          marker_config.push(item);
-        });
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        alert('error');
-      },
-    });
-
-    //標出 marker，如果使用 .setMap(null) 就可以清除該 marker
-    marker_config.forEach(function (e, i) {
-      //點選出現資訊視窗
-      //var contentString = '<h2>網頁內容</h2><br/>' + e.title; //要顯示的 HTML 內容
-      var contentString = ''; //要顯示的 HTML 內容
-      contentString += '<div style="weight: 400px;" >';
-      contentString += '<h5><span style="font-weight: bold; color: #31708f;">(' + e.STID + ')雨量警戒資料&nbsp;發布狀態：[<span style="font-weight: bold; color: #dd4b39;">' + e.status + '</span>]</span></h5>';
-      contentString += '<table class="table" style="weight: 400px;">';
-      contentString += '<tbody>';
-      contentString += '<tr class="active">';
-      contentString += '<td>站點：' + e.STID + '</td>';
-      contentString += '</tr>';
-      contentString += '<tr >';
-      contentString += '<td>警戒區範圍：' + e.country + e.town + e.village + '</td>';
-      contentString += '</tr>';
-      contentString += '<tr class="active">';
-      contentString += '<td>1hr：' + e.HOUR1 + '&nbsp;&nbsp;&nbsp;2hr：' + e.HOUR2 + '&nbsp;&nbsp;&nbsp;3hr： ' + e.HOUR3 + ' </td>';
-      contentString += '</tr>';
-      contentString += '<tr >';
-      contentString += '<td>LRTI：' + e.LRTI + '&nbsp;&nbsp;&nbsp;警戒LRTI：' + e.ELRTI + '</td>';
-      contentString += '</tr>';
-      contentString += '<tr class="active">';
-      contentString += '<td>崩塌發布狀態：' + e.status + '</td>';
-      contentString += '</tr>';
-      contentString += '</tbody></table></div>';
-
-
-      markers[i] = new google.maps.Marker(e);
-      markers[i].addListener('click', function () {
-        infowindow.setContent(contentString);
-        infowindow.open(map, markers[i]); //設定點選 marker 打開資訊視窗事件
-      });
-      markers[i].setMap(map);
-    });*@
-
-
-
   }
 
   function BuildPolyByType(type) {
@@ -262,16 +172,6 @@
           }
         });
 
-        //var bermudaTriangle = new google.maps.Polygon({
-        //  paths: triangleCoords1,
-        //  strokeColor: '#FF0000',
-        //  strokeOpacity: 0.8,
-        //  strokeWeight: 2,
-        //  fillColor: '#FF0000',
-        //  fillOpacity: 0.35,
-        //  name: e.STID
-        //});
-
         var bermudaTriangle = new google.maps.Polygon({
           paths: triangleCoords1,
           strokeColor: strokeColor,
@@ -292,17 +192,13 @@
       });
     }
     catch (err) {
-      //document.getElementById("demo").innerHTML = err.message;
+      
     }
-
-
   }
 
   function BuildPolyCountry() {
     //點位資料
     var polyList = [];
-
-    //var testjson;
 
     try {
       //取得點位資料
@@ -318,9 +214,7 @@
           alert('error');
         },
       });
-
-    
-      //1060621 linq lamda 效能不佳，取消
+      
       polyList.forEach(function (e, i) {
         
         var points = e.points;
@@ -344,110 +238,9 @@
         bermudaTriangle.setMap(map);
       });
 
-
-
-      //var relanoColls = [];
-      //var temp = '';
-      //polyList.forEach(function (e, i) {
-      //  if (e.relano != temp) {
-      //    temp = e.relano;
-      //    relanoColls.push(e.relano);
-      //  }
-      //});
-
-      //relanoColls.forEach(function (e, i) {
-       
-      //  //點位集合
-      //  var triangleCoords = [];
-      //  polyList.forEach(function (ee, ii) {
-      //    if (e == ee.relano) {
-      //      var point = new google.maps.LatLng(parseFloat(ee.lat), parseFloat(ee.lng));
-      //      triangleCoords.push(point);
-      //    }
-      //  });       
-
-      //  var bermudaTriangle = new google.maps.Polygon({
-      //    paths: triangleCoords,
-      //    strokeColor: '#000000',
-      //    strokeOpacity: 0.8,
-      //    strokeWeight: 2,
-      //    fillColor: '#000000',
-      //    fillOpacity: 0,
-      //    name: e.STID
-      //  });
-      
-      //  bermudaTriangle.setMap(map);
-
-      //});
-
-
-
-      //點位集合
-      //var triangleCoords = [];
-      
-      //polyList.forEach(function (e, i) {
-
-
-      //  if (e.relano != temp) {
-      //    temp = e.relano;
-
-      //    var bermudaTriangle = new google.maps.Polygon({
-      //      paths: triangleCoords,
-      //      strokeColor: '#000000',
-      //      strokeOpacity: 0.8,
-      //      strokeWeight: 2,
-      //      fillColor: '#000000',
-      //      fillOpacity: 0,
-      //      name: e.relano
-      //    });
-
-      //    bermudaTriangle.setMap(map);
-
-      //    //清空
-      //    triangleCoords = [];
-      //  }
-
-      //  var point = new google.maps.LatLng(parseFloat(e.lat), parseFloat(e.lng));
-      //  triangleCoords.push(point);
-
-        
-      //});
-
-      //polyDataList.forEach(function (e, i) {
-
-      //  //點位集合
-      //  var triangleCoords = [];
-      //  polyList.forEach(function (ee, ii) {
-      //    if (e.relano == ee.relano) {
-      //      var point = new google.maps.LatLng(parseFloat(ee.lat), parseFloat(ee.lng));
-      //      triangleCoords1.push(point);
-      //    }
-      //  });
-
-      //  var bermudaTriangle = new google.maps.Polygon({
-      //    paths: triangleCoords,
-      //    strokeColor: '#FF0000',
-      //    strokeOpacity: 0.8,
-      //    strokeWeight: 2,
-      //    fillColor: '#FF0000',
-      //    fillOpacity: 0.45,
-      //    name: e.STID
-      //  });
-
-      //  //bermudaTriangle.addListener('click', function (event) {
-      //  //  infowindow.setContent(contentString);
-      //  //  infowindow.setPosition(event.latLng);
-      //  //  infowindow.open(map); //設定點選 marker 打開資訊視窗事件
-      //  //});
-      //  bermudaTriangle.setMap(map);
-
-      //});
-
-
-
     }
     catch (err) {
-      //document.getElementById("demo").innerHTML = err.message;
+      
     }
 
 
@@ -457,9 +250,7 @@
 
 
   function myrefresh() {
-    initMap();
-    //window.location.reload();
-    //$("#btnQuery").click();
+    initMap();    
   }
 
   $(function () {
