@@ -88,7 +88,18 @@ namespace M10Api.Controllers
         ";
 
       var list = db.Query(ssql);
+      var gList = list.ToLookup(p => p.relano, p => new point { lat = p.lat, lng = p.lng });
 
+
+      List<polygon> resultList = new List<polygon>();
+      foreach (var item in gList)
+      {
+        var poly = new polygon();
+        poly.relano = item.Key;
+        poly.points = item.AsQueryable().Select(p => p).ToList<point>();
+
+        resultList.Add(poly);
+      }
 
       //1060621 linq lamda 效能不佳，取消
       //List<polygon> myList = new List<polygon>();
@@ -99,20 +110,18 @@ namespace M10Api.Controllers
       //foreach (var item in relano)
       //{
       //  polygon oPolygon = new polygon();
-      //  oPolygon.relano =  item;
-        
-      //  var pp = list.Where(a => a.relano == item).Select(a =>new point{lat = a.lat,lng = a.lng });
+      //  oPolygon.relano = item;
+
+      //  var pp = list.Where(a => a.relano == item).Select(a => new point { lat = a.lat, lng = a.lng });
 
       //  oPolygon.points = pp.ToList<point>();
       //  myList.Add(oPolygon);
       //}
 
-      //return myList.ToList<dynamic>();
+      //return myList11.ToList<dynamic>();
 
 
-
-
-      return list;
+      return resultList.ToList<dynamic>();
     }
 
     [HttpGet]

@@ -299,103 +299,37 @@
   }
 
   function BuildPolyCountry() {
-    @*//Params by type
-    var urlGetMapData = '';
-    var urlGetMapCoord = '';
-    var strokeColor = '';
-    var fillColor = '';
-
-
-
-    if (type == 'R') {
-      var urlGetMapData = '@Url.Action("getMapDatas", "mapapi",new {type= "R" })';
-      var urlGetMapCoord = '@Url.Action("getCoordinate", "mapapi", new { type = "R" })';
-      var strokeColor = '#FF0000';
-      var fillColor = '#FF0000';
-    }
-    if (type == 'Y') {
-      var urlGetMapData = '@Url.Action("getMapDatas", "mapapi",new {type= "Y" })';
-      var urlGetMapCoord = '@Url.Action("getCoordinate", "mapapi", new { type = "Y" })';
-      var strokeColor = '#FFB300';
-      var fillColor = '#FFB300';
-    }*@
-
-    //地圖資料
-    //var polyDataList = [];
     //點位資料
     var polyList = [];
 
     //var testjson;
 
-    //取得點位資料
-    $.ajax({
-      type: 'GET',
-      url: '@Url.Action("getCoordinateCountry", "mapapi")',
-      dataType: 'JSON',
-      async: false,   // 先把這隻js執行完後，再跑下面的程式，如果不寫此參數，jQuery預設AJAX為異步執行
-      success: function (response) {
-        polyList = response;
-        //response.forEach(function (data, i) {
-        //  //建立地圖資料
-        //  var item = {};
-        //  item["relano"] = data.relano;
-        //  item["lat"] = data.lat;
-        //  item["lng"] = data.lng;
-
-        //  polyList.push(item);
-        //});
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        alert('error');
-      },
-    });
-
     try {
-      //1060621 linq lamda 效能不佳，取消
-      //polyList.forEach(function (e, i) {
-        
-      //  var points = e.points;
-      //  //點位集合
-      //  var triangleCoords = [];
-      //  points.forEach(function (ee, ii) {
-      //    var point = new google.maps.LatLng(parseFloat(ee.lat), parseFloat(ee.lng));
-      //    triangleCoords.push(point);
-      //  });
-
-      //  var bermudaTriangle = new google.maps.Polygon({
-      //    paths: triangleCoords,
-      //    strokeColor: '#000000',
-      //    strokeOpacity: 0.8,
-      //    strokeWeight: 2,
-      //    fillColor: '#000000',
-      //    fillOpacity: 0,
-      //    name: e.relano
-      //  });
-
-      //  bermudaTriangle.setMap(map);
-      //});
-
-
-
-      var relanoColls = [];
-      var temp = '';
-      polyList.forEach(function (e, i) {
-        if (e.relano != temp) {
-          temp = e.relano;
-          relanoColls.push(e.relano);
-        }
+      //取得點位資料
+      $.ajax({
+        type: 'GET',
+        url: '@Url.Action("getCoordinateCountry", "mapapi")',
+        dataType: 'JSON',
+        async: false,   // 先把這隻js執行完後，再跑下面的程式，如果不寫此參數，jQuery預設AJAX為異步執行
+        success: function (response) {
+          polyList = response;
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          alert('error');
+        },
       });
 
-      relanoColls.forEach(function (e, i) {
-       
+    
+      //1060621 linq lamda 效能不佳，取消
+      polyList.forEach(function (e, i) {
+        
+        var points = e.points;
         //點位集合
         var triangleCoords = [];
-        polyList.forEach(function (ee, ii) {
-          if (e == ee.relano) {
-            var point = new google.maps.LatLng(parseFloat(ee.lat), parseFloat(ee.lng));
-            triangleCoords.push(point);
-          }
-        });       
+        points.forEach(function (ee, ii) {
+          var point = new google.maps.LatLng(parseFloat(ee.lat), parseFloat(ee.lng));
+          triangleCoords.push(point);
+        });
 
         var bermudaTriangle = new google.maps.Polygon({
           paths: triangleCoords,
@@ -404,12 +338,47 @@
           strokeWeight: 2,
           fillColor: '#000000',
           fillOpacity: 0,
-          name: e.STID
+          name: e.relano
         });
-      
-        bermudaTriangle.setMap(map);
 
+        bermudaTriangle.setMap(map);
       });
+
+
+
+      //var relanoColls = [];
+      //var temp = '';
+      //polyList.forEach(function (e, i) {
+      //  if (e.relano != temp) {
+      //    temp = e.relano;
+      //    relanoColls.push(e.relano);
+      //  }
+      //});
+
+      //relanoColls.forEach(function (e, i) {
+       
+      //  //點位集合
+      //  var triangleCoords = [];
+      //  polyList.forEach(function (ee, ii) {
+      //    if (e == ee.relano) {
+      //      var point = new google.maps.LatLng(parseFloat(ee.lat), parseFloat(ee.lng));
+      //      triangleCoords.push(point);
+      //    }
+      //  });       
+
+      //  var bermudaTriangle = new google.maps.Polygon({
+      //    paths: triangleCoords,
+      //    strokeColor: '#000000',
+      //    strokeOpacity: 0.8,
+      //    strokeWeight: 2,
+      //    fillColor: '#000000',
+      //    fillOpacity: 0,
+      //    name: e.STID
+      //  });
+      
+      //  bermudaTriangle.setMap(map);
+
+      //});
 
 
 

@@ -31,6 +31,7 @@
       this.btnDoc = new System.Windows.Forms.Button();
       this.btnVillage = new System.Windows.Forms.Button();
       this.btnCountry = new System.Windows.Forms.Button();
+      this.button1 = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
       // btnDoc
@@ -63,11 +64,22 @@
       this.btnCountry.UseVisualStyleBackColor = true;
       this.btnCountry.Click += new System.EventHandler(this.btnCountry_Click);
       // 
+      // button1
+      // 
+      this.button1.Location = new System.Drawing.Point(12, 99);
+      this.button1.Name = "button1";
+      this.button1.Size = new System.Drawing.Size(75, 23);
+      this.button1.TabIndex = 3;
+      this.button1.Text = "TEST";
+      this.button1.UseVisualStyleBackColor = true;
+      this.button1.Click += new System.EventHandler(this.button1_Click_1);
+      // 
       // M10kml
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(284, 262);
+      this.Controls.Add(this.button1);
       this.Controls.Add(this.btnCountry);
       this.Controls.Add(this.btnVillage);
       this.Controls.Add(this.btnDoc);
@@ -82,5 +94,6 @@
     private System.Windows.Forms.Button btnDoc;
     private System.Windows.Forms.Button btnVillage;
     private System.Windows.Forms.Button btnCountry;
+    private System.Windows.Forms.Button button1;
   }
 }
