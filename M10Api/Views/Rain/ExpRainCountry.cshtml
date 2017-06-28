@@ -1,7 +1,7 @@
 ﻿
 @{
-  ViewBag.Title = "資料匯出";
-  Layout = "~/Views/Shared/_WarnLayout.cshtml";
+    ViewBag.Title = "ExpRainCountry";
+    Layout = "~/Views/Shared/_WarnLayout.cshtml";
 }
 
 @section scripts {
@@ -17,26 +17,25 @@
 <div class="row">
   <div class="col-md-12">
     <h1 class="page-header">
-      資料匯出
+      縣市雨量站逐時雨量匯出
     </h1>
   </div>
 </div>
 
 
 <div class="panel panel-info">
-  <div class="panel-heading">查詢</div>
+  @*<div class="panel-heading">查詢</div>*@
   <div class="panel-body">
     <div class="col-md-12">
       <div class="form-inline">
+        <select id="Country" name="county" class="form-control"></select>
         <label for="keyWord">起始時間：</label>
         <input type="text" id="StartDate" name="StartDate" value="" />
         <label for="keyWord">結束時間：</label>
-        <input type="text" id="EndDate" name="EndDate" value="" />
-        <span class="label label-success">降雨延時(F)</span>
-        <label class="radio-inline"><input type="radio" id="hr0" onclick="Query('0');" name="optradio">0 HR</label>
-        <label class="radio-inline"><input type="radio" id="hr1" onclick="Query('1');" name="optradio">1 HR</label>
-        <label class="radio-inline"><input type="radio" id="hr2" onclick="Query('2');" name="optradio">2 HR</label>
-        <label class="radio-inline"><input type="radio" id="hr3" onclick="Query('3');" name="optradio">3 HR</label>
+        <input type="text" id="EndDate" name="EndDate" value="" />   
+        <label for="keyWord">密碼：</label>
+        <input type="text" id="txtpass" name="txtpass" value="" /> 
+        <button class="btn btn-default" id="btnSearch" onclick="Export();">資料匯出</button>     
       </div>
     </div>
   </div>
@@ -114,7 +113,15 @@
       //language: 'zh-tw',
     });
 
-    
+    $.getJSON('@Url.Action("GetCountyDDL")', { cityId: "test" }, function (data) {
+      $('#Country').empty();
+      $.each(data, function (i, item) {
+        $('#Country').append($('<option></option>').val(item.Value).text(item.Text));
+      });
+
+      //設定原本選擇的項目
+      @*$('#Product').val("@ViewBag.SelectCountry");*@
+    });
 
     @*var type = '@ViewBag.type';
     if (type == "0") $("#hr0").prop('checked', true);
@@ -123,8 +130,19 @@
     if (type == "3") $("#hr3").prop('checked', true);*@
   });
 
-  function Query(type) {
-    location.href = '@Url.Action("QueryRTI")' + '?type=' + type;
+  function Export() {
+
+    //check password
+    var sPass = $("#txtpass").val();
+
+
+
+
+    var sStartDate = $("#StartDate").val();
+    var sEndDate = $("#EndDate").val();
+    var sCountry = $("#Country").val();
+    
+    location.href = '@Url.Action("DownRainCountry")' + '?sd=' + sStartDate + '&ed=' + sEndDate + '&country=' + sCountry;
   }
 </script>
 

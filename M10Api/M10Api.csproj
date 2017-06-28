@@ -422,6 +422,9 @@
     <Content Include="Views\Rain\QueryRTI.cshtml" />
     <Content Include="Views\Rain\QueryRTI3.cshtml" />
     <Content Include="Views\Rain\ExportRain.cshtml" />
+    <Content Include="Views\Rain\ExpRainCountry.cshtml" />
+    <Content Include="Views\Rain\ExpRainStation.cshtml" />
+    <Content Include="Views\Rain\ExpStationCoord.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

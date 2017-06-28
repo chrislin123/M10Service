@@ -1,8 +1,97 @@
 ﻿
 @{
-    ViewBag.Title = "QueryRTI";
-    Layout = "~/Views/Shared/_WarnLayout.cshtml";
+  ViewBag.Title = "土石流警戒基準值";
+  Layout = "~/Views/Shared/_WarnLayout.cshtml";
 }
 
-<h2>QueryRTI</h2>
+
+<div class="row">
+  <div class="col-md-12">
+    <h1 class="page-header">
+      土石流警戒基準值(RTI) @*<small>資料時間：@ViewBag.forecastdate</small>*@
+    </h1>
+  </div>
+</div>
+
+<div class="panel panel-info">
+  <div class="panel-heading">查詢</div>
+  <div class="panel-body">
+    <div class="form-inline">
+      <span class="label label-success">降雨延時(F)</span>
+      <label class="radio-inline"><input type="radio" id="hr0" onclick="Query('0');" name="optradio">0 HR</label>
+      <label class="radio-inline"><input type="radio" id="hr1" onclick="Query('1');" name="optradio">1 HR</label>
+      <label class="radio-inline"><input type="radio" id="hr2" onclick="Query('2');" name="optradio">2 HR</label>
+      <label class="radio-inline"><input type="radio" id="hr3" onclick="Query('3');" name="optradio">3 HR</label>
+    </div>
+  </div>
+</div>
+
+<div class="panel panel-success">
+  <div class="panel-heading">查詢結果 - 共 @ViewBag.count 筆</div>
+  <div class="panel-body">
+
+
+    <div class="col-md-12">
+      <div class="row">
+
+        <table class="table table-striped table-condensed">
+          <thead>
+            <tr>
+              <th style="min-width: 80px;">站號</th>
+              <th style="min-width: 80px;">筆數</th>
+              <th style="min-width: 80px;">開始時間</th>
+              <th style="min-width: 80px;">最終時間</th>
+              <th style="min-width: 40px;">RTI10</th>
+              <th style="min-width: 40px;">RTI30</th>
+              <th style="min-width: 40px;">RTI50</th>
+              <th style="min-width: 40px;">RTI70</th>
+              <th style="min-width: 40px;">RTI90</th>
+            </tr>
+          </thead>
+          <tbody>
+            @foreach (var item in ViewData["RtiDetail"] as List<dynamic>)
+            {
+              <tr>
+                <td>@item.station</td>
+                <td>@item.totalcount</td>
+                <td>@item.startdate</td>
+                <td>@item.enddate</td>
+                <td>@item.rti10</td>
+                <td>@item.rti30</td>
+                <td>@item.rti50</td>
+                <td>@item.rti70</td>
+                <td>@item.rti90</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+        <div class="text-center">
+          <uib-pagination data-total-items="totalItems" ng-model="currentPage"
+                          data-max-size="NumberOfPageButtons" class=" pagination-sm"
+                          data-boundary-links="true" data-rotate="false"
+                          ng-change="pageChanged()" data-items-per-page="recordsPerPage"></uib-pagination>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+
+  $(document).ready(function () {
+    var type = '@ViewBag.type';
+    if (type == "0") $("#hr0").prop('checked', true);
+    if (type == "1") $("#hr1").prop('checked', true);
+    if (type == "2") $("#hr2").prop('checked', true);
+    if (type == "3") $("#hr3").prop('checked', true);
+  });
+
+  function Query(type) {
+    location.href = '@Url.Action("QueryRTI")' + '?type=' + type;
+  }
+</script>
 

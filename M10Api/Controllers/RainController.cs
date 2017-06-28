@@ -9,8 +9,9 @@ using Dapper.Contrib.Extensions;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.IO;
-using M10.lib;
+using M10.lib.model;
 using System.Data;
+using System.Dynamic;
 //using System.Web.Http;
 
 namespace M10Api.Controllers
@@ -25,23 +26,9 @@ namespace M10Api.Controllers
 
     public ActionResult QueryRain(string cityId)
     {
+      //string cityid1 = Request.QueryString["cityId"];
+      ViewBag.SelectCountry = "全部";
 
-
-      string cityid = Request.QueryString["cityId"];
-      //if (string.IsNullOrWhiteSpace(ActionContext.Request.RequestUri.Query) == true) return new List<dynamic>();
-
-      //var Params = lib.M10apiLib.ParseQueryString(ActionContext.Request.RequestUri.Query);
-
-      //string sType = Params["type"];
-
-
-      if (Request.Form["SelectItems"] != null)
-      {
-        string sss = Request.Form["SelectItems"].ToString();
-      }
-      
-
-      //string ssql = @" select * from LRTIAlert where status = '{0}' order by country,town ";
       ssql = @"   select CONVERT(float, MIN10) as MIN10
                         ,CONVERT(float, RAIN) as RAIN
                         ,CONVERT(float, HOUR3) as HOUR3
@@ -55,13 +42,22 @@ namespace M10Api.Controllers
                         ,* from RunTimeRainData a
                         left join StationErrLRTI b on a.STID = b.STID 
                     ";
-      List<dynamic> data = new List<dynamic>();
 
-      data = dbDapper.Query(ssql);
+      if (string.IsNullOrEmpty(cityId) == false)
+      {
+        ViewBag.SelectCountry = cityId;
 
+        if (cityId != "全部")
+        {
+          ssql += "where COUNTY = @cityId ";
+        }
+      }
 
+      List<dynamic> data = dbDapper.Query(ssql, new { cityId = cityId });
       foreach (var LoopItem in data)
       {
+        LoopItem.LStatus = "";
+
         if (LoopItem.STATUS == "-99")
         {
           LoopItem.MIN10 = "0";
@@ -75,6 +71,8 @@ namespace M10Api.Controllers
           LoopItem.LRTI = "0";
 
           LoopItem.STATUS = "異常";
+          //設定顏色
+          LoopItem.LStatus = "LightGray";
         }
 
         double dLRTI = 0;
@@ -82,8 +80,8 @@ namespace M10Api.Controllers
         double.TryParse(Convert.ToString(LoopItem.LRTI), out dLRTI);
         double.TryParse(Convert.ToString(LoopItem.ELRTI), out dELRTI);
 
-        LoopItem.LStatus = "";
-        if (dLRTI > dELRTI)
+        
+        if (dLRTI > dELRTI && LoopItem.ELRTI != null)
         {
           LoopItem.LStatus = "Red";
         }
@@ -93,28 +91,11 @@ namespace M10Api.Controllers
       ssql = " select MAX(RTime) as RTime from RunTimeRainData ";
       ViewBag.forecastdate = dbDapper.ExecuteScale(ssql).ToString();
 
+      //資料筆數
       ViewBag.count = data.Count;
       ViewData["RunTimeRainData"] = data;
 
-
-
-
-      var vSelectItems = dbDapper.Query(" select distinct COUNTY from StationData order by COUNTY ");
-
-
-      List<SelectListItem> sli = new List<SelectListItem>();
-
-      foreach (var item in vSelectItems)
-      {
-        sli.Add(new SelectListItem() { Text = item.COUNTY, Value = item.COUNTY });
-      }
-      
-
-      //SelectList sl = new SelectList(vSelectItems, "COUNTY", "COUNTY");
-      
-      ViewBag.SelectItems = sli;
-
-
+     
 
       return View();
     }
@@ -143,21 +124,106 @@ namespace M10Api.Controllers
     }
 
 
+    public ActionResult postAlertSet()
+    {
+      dynamic result = new ExpandoObject();
+
+      ssql = " select * from LRTIAlertMail where type = 'isal' ";
+      LRTIAlertMail inst = dbDapper.QuerySingleOrDefault<LRTIAlertMail>(ssql);
+
+      if (inst.value == "Y")
+      {
+        inst.value = "N";
+      }
+      else
+      {
+        inst.value = "Y";
+      }
+
+      //更新成功才回傳
+      if (dbDapper.Update(inst))
+      {
+        result.result = "OK";
+        result.AlertSet = inst.value;
+      }
+      
+      return Content(JsonConvert.SerializeObject(result), "application/json");
+      //return Json(JsonConvert.SerializeObject(result), "application/json", JsonRequestBehavior.AllowGet);
+
+      //return this.Json(result, JsonRequestBehavior.AllowGet);
+      //return JsonConvert.SerializeObject(result);
+    }
+
+    public JsonResult getAlertSet()
+    {
+      dynamic result = new ExpandoObject();
+
+
+      ssql = " select * from LRTIAlertMail where type = 'isal' ";
+      LRTIAlertMail inst = dbDapper.QuerySingleOrDefault<LRTIAlertMail>(ssql);
+      
+      result.AlertSet = inst.value;
+      
+      return this.Json(result, JsonRequestBehavior.AllowGet);
+    }
+
+
     public ActionResult ExportRain()
     {
       return View();
     }
 
-    public ActionResult QueryRTI()
+    public ActionResult QueryRTI(string type)
+    { 
+      ViewBag.type = "0";
+      if (string.IsNullOrEmpty(type) == false) ViewBag.type = type;
+
+      ssql = " select * from RtiDetail where delaytime = @type  order by station ";
+
+      List<dynamic> data = dbDapper.Query(ssql, new { type = ViewBag.type });
+
+      //資料筆數
+      ViewBag.count = data.Count;
+      ViewData["RtiDetail"] = data;
+
+      //
+      return View();
+    }
+
+    public ActionResult QueryRTI3(string type)
+    {
+      ViewBag.type = "0";
+      if (string.IsNullOrEmpty(type) == false) ViewBag.type = type;
+
+      ssql = " select * from Rti3Detail where delaytime = @type order by station ";
+      List<dynamic> data = dbDapper.Query(ssql, new { type = ViewBag.type });
+
+      //資料筆數
+      ViewBag.count = data.Count;
+      ViewData["Rti3Detail"] = data;
+
+      return View();
+    }
+
+    public ActionResult ExpRainCountry()
     {
       return View();
     }
 
-    public ActionResult QueryRTI3()
+    public ActionResult DownRainCountry()
     {
       return View();
     }
 
+    public ActionResult ExpRainStation()
+    {
+      return View();
+    }
+
+    public ActionResult ExpStationCoord()
+    {
+      return View();
+    }
 
   }
 }
