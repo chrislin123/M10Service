@@ -17,7 +17,7 @@
 <div class="row">
   <div class="col-md-12">
     <h1 class="page-header">
-      縣市雨量站逐時雨量匯出
+      @*縣市雨量站逐時雨量匯出*@
     </h1>
   </div>
 </div>
@@ -64,20 +64,7 @@
             </tr>
           </thead>
           <tbody>
-            @*@foreach (var item in ViewData["RtiDetail"] as List<dynamic>)
-              {
-                <tr>
-                  <td>@item.station</td>
-                  <td>@item.totalcount</td>
-                  <td>@item.startdate</td>
-                  <td>@item.enddate</td>
-                  <td>@item.rti10</td>
-                  <td>@item.rti30</td>
-                  <td>@item.rti50</td>
-                  <td>@item.rti70</td>
-                  <td>@item.rti90</td>
-                </tr>
-              }*@
+          
           </tbody>
         </table>
         <div class="text-center">
@@ -119,30 +106,44 @@
         $('#Country').append($('<option></option>').val(item.Value).text(item.Text));
       });
 
-      //設定原本選擇的項目
-      @*$('#Product').val("@ViewBag.SelectCountry");*@
+      //設定預設項目
+      $('#Product').val("全部");
     });
-
-    @*var type = '@ViewBag.type';
-    if (type == "0") $("#hr0").prop('checked', true);
-    if (type == "1") $("#hr1").prop('checked', true);
-    if (type == "2") $("#hr2").prop('checked', true);
-    if (type == "3") $("#hr3").prop('checked', true);*@
   });
 
   function Export() {
+    if ($("#StartDate").val() == "" || $("#EndDate").val() == "") {
+      alert("請選擇起訖日期。");
+      return;
+    }
+    if ($("#Country").val() == "") {
+      alert("請選擇縣市。");
+      return;
+    }
 
-    //check password
-    var sPass = $("#txtpass").val();
+    $.ajax({
+      type: 'GET',
+      url: '@Url.Action("checkPass")',
+      data: { pass: $("#txtpass").val() },
+      dataType: 'JSON',
+      success: function (response) {
+        if (response.pass == "N") 
+        {
+          alert("密碼不符。");
+          return;
+        }
 
+        var sStartDate = $("#StartDate").val();
+        var sEndDate = $("#EndDate").val();
+        var sCountry = $("#Country").val();
 
-
-
-    var sStartDate = $("#StartDate").val();
-    var sEndDate = $("#EndDate").val();
-    var sCountry = $("#Country").val();
+        location.href = '@Url.Action("DownRainCountry")' + '?sd=' + sStartDate + '&ed=' + sEndDate + '&country=' + sCountry;
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        alert(errorThrown);
+      },
+    });
     
-    location.href = '@Url.Action("DownRainCountry")' + '?sd=' + sStartDate + '&ed=' + sEndDate + '&country=' + sCountry;
   }
 </script>
 

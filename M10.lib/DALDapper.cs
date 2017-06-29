@@ -57,14 +57,36 @@ namespace M10.lib
       }
     }
 
+    public List<T> Query<T>(string sql, object param) where T : class
+    {
+      try
+      {
+        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+        {
+          return cn.Query<T>(sql, param).ToList<T>();
+        }
+      }
+      catch (Exception)
+      {
+        return null;
+      }
+    }
+
 
 
     public int QueryTotalCount(string sql)
     {
       using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-      {      
-
+      { 
         return cn.Query(sql).Count();
+      }
+    }
+
+    public int QueryTotalCount(string sql, object param)
+    {
+      using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+      {
+        return cn.Query(sql, param).Count();
       }
     }
 
