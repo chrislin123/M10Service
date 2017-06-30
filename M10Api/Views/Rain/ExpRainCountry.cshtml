@@ -17,14 +17,14 @@
 <div class="row">
   <div class="col-md-12">
     <h1 class="page-header">
-      @*縣市雨量站逐時雨量匯出*@
+      縣市雨量站逐時雨量匯出
     </h1>
   </div>
 </div>
 
 
 <div class="panel panel-info">
-  @*<div class="panel-heading">查詢</div>*@
+  <div class="panel-heading">匯出</div>
   <div class="panel-body">
     <div class="col-md-12">
       <div class="form-inline">
@@ -40,53 +40,53 @@
     </div>
   </div>
 </div>
+@*
+    <div class="panel panel-success">
+      <div class="panel-heading">查詢結果 - 共 @ViewBag.count 筆</div>
+    <div class="panel-body">
 
-<div class="panel panel-success">
-  <div class="panel-heading">查詢結果 - 共 @*@ViewBag.count*@ 筆</div>
-  <div class="panel-body">
 
+      <div class="col-md-12">
+        <div class="row">
 
-    <div class="col-md-12">
-      <div class="row">
+          <table class="table table-striped table-condensed">
+            <thead>
+              <tr>
+                <th style="min-width: 80px;">站號</th>
+                <th style="min-width: 80px;">筆數</th>
+                <th style="min-width: 80px;">開始時間</th>
+                <th style="min-width: 80px;">最終時間</th>
+                <th style="min-width: 40px;">RTI10</th>
+                <th style="min-width: 40px;">RTI30</th>
+                <th style="min-width: 40px;">RTI50</th>
+                <th style="min-width: 40px;">RTI70</th>
+                <th style="min-width: 40px;">RTI90</th>
+              </tr>
+            </thead>
+            <tbody>
 
-        <table class="table table-striped table-condensed">
-          <thead>
-            <tr>
-              <th style="min-width: 80px;">站號</th>
-              <th style="min-width: 80px;">筆數</th>
-              <th style="min-width: 80px;">開始時間</th>
-              <th style="min-width: 80px;">最終時間</th>
-              <th style="min-width: 40px;">RTI10</th>
-              <th style="min-width: 40px;">RTI30</th>
-              <th style="min-width: 40px;">RTI50</th>
-              <th style="min-width: 40px;">RTI70</th>
-              <th style="min-width: 40px;">RTI90</th>
-            </tr>
-          </thead>
-          <tbody>
-          
-          </tbody>
-        </table>
-        <div class="text-center">
-          <uib-pagination data-total-items="totalItems" ng-model="currentPage"
-                          data-max-size="NumberOfPageButtons" class=" pagination-sm"
-                          data-boundary-links="true" data-rotate="false"
-                          ng-change="pageChanged()" data-items-per-page="recordsPerPage"></uib-pagination>
+            </tbody>
+          </table>
+          <div class="text-center">
+            <uib-pagination data-total-items="totalItems" ng-model="currentPage"
+                            data-max-size="NumberOfPageButtons" class=" pagination-sm"
+                            data-boundary-links="true" data-rotate="false"
+                            ng-change="pageChanged()" data-items-per-page="recordsPerPage"></uib-pagination>
 
+          </div>
         </div>
-      </div>
 
+      </div>
     </div>
   </div>
-</div>
-
+*@
 <script>
   $(document).ready(function () {
     $("#StartDate").datetimepicker({
       format: 'YYYY-MM-DD HH',
       sideBySide: true,
       //預設今天
-      //defaultDate: new Date(),
+      defaultDate: new Date(),
       //showMeridian:true,
       //maxViewMode: 0,
       //startView:1,
@@ -96,7 +96,7 @@
       format: 'YYYY-MM-DD HH',
       sideBySide: true,
       //預設今天
-      //defaultDate: new Date(),
+      defaultDate: new Date(),
       //language: 'zh-tw',
     });
 
