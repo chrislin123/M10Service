@@ -17,7 +17,7 @@ namespace M10Api.Controllers
     [Route("getAlertLrti")]
     public List<dynamic> getStationData()
     {
-      var list = db.Query(@" 
+      var list = dbDapper.Query(@" 
           select a.*,b.lat,b.lon from LRTIAlert a 
           left join runtimeraindata b on a.stid = b.stid 
           where a.status != 'D'        
@@ -73,7 +73,7 @@ namespace M10Api.Controllers
         ssql = string.Format(ssql, " and a.status in ('I','O') ");
       }
 
-      var list = db.Query(ssql);
+      var list = dbDapper.Query(ssql);
 
 
       return list;
@@ -87,7 +87,7 @@ namespace M10Api.Controllers
         select relano,lat,lng from Coordinate where type = 'country' order by relano, pointseq
         ";
 
-      var list = db.Query(ssql);
+      var list = dbDapper.Query(ssql);
       var gList = list.ToLookup(p => p.relano, p => new point { lat = p.lat, lng = p.lng });
 
 
@@ -150,7 +150,7 @@ namespace M10Api.Controllers
         ssql += " and a.status in ('I','O') ";
       }
 
-      var list = db.Query(ssql);
+      var list = dbDapper.Query(ssql);
 
 
       //格式化資料

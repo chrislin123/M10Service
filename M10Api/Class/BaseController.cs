@@ -6,7 +6,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using M10.lib;
-using System.Configuration;
+using System.Web.Configuration;
 
 namespace M10Api.Class
 {
@@ -35,17 +35,13 @@ namespace M10Api.Class
       get
       {
         if (string.IsNullOrEmpty(_ConnectionString))
-        {
-          _ConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.DBDefault].ConnectionString;
+        { 
+          _ConnectionString = WebConfigurationManager.ConnectionStrings[WebConfigurationManager.AppSettings["DBDefault"]].ConnectionString;
         }
 
         return _ConnectionString;
       }
     }
-
-    protected DBContext db = new DBContext();
-
-
 
   }
 }
