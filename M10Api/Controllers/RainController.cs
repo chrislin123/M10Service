@@ -182,7 +182,7 @@ namespace M10Api.Controllers
       //return JsonConvert.SerializeObject(result);
     }
 
-    public JsonResult getAlertSet()
+    public ActionResult getAlertSet()
     {
       dynamic result = new ExpandoObject();
 
@@ -191,8 +191,8 @@ namespace M10Api.Controllers
       LRTIAlertMail inst = dbDapper.QuerySingleOrDefault<LRTIAlertMail>(ssql);
       
       result.AlertSet = inst.value;
-      
-      return this.Json(result, JsonRequestBehavior.AllowGet);
+
+      return Content(JsonConvert.SerializeObject(result), "application/json");
     }
 
     public ActionResult checkPass(string pass)
