@@ -15,11 +15,11 @@ namespace M10.lib
 {
   public class DataExport
   {
-    private int rowsPerSheet = 100000;
+    private int rowsPerSheet = 20000;
 
     //List<string> HeadNameList = new List<string>();
     //List<List<string>> RowDataList = new List<List<string>>();
-    
+
 
     private DataTable _SrcData = new DataTable();
     private DataTable ResultsData = new DataTable();
@@ -54,7 +54,7 @@ namespace M10.lib
 
           //DataColumn NewColumn = new DataColumn(sLoop);
           //ResultsData.Columns.Add(NewColumn);
-          
+
         }
 
 
@@ -107,7 +107,20 @@ namespace M10.lib
     /// <param name="SoureDataTable">來源資料</param>
     /// <returns></returns>
     public Boolean ExportBigDataToExcel(string SaveFilePath, DataTable SoureDataTable)
-    {       
+    {
+
+      return ExportBigDataToExcel(SaveFilePath, SoureDataTable, rowsPerSheet);
+    }
+
+    /// <summary>
+    /// 大量資料匯出至Excel，依照設定資料行進行自動分頁(sheet)
+    /// </summary>
+    /// <param name="SaveFilePath">存檔路徑</param>
+    /// <param name="SoureDataTable">來源資料</param>
+    /// <param name="setRowsPerSheet">指定一個sheet的筆數</param>
+    /// <returns></returns>
+    public Boolean ExportBigDataToExcel(string SaveFilePath, DataTable SoureDataTable, int setRowsPerSheet)
+    {
       Boolean bSuccess = true;
 
       _SrcData.Clear();
@@ -132,7 +145,7 @@ namespace M10.lib
 
           c++;
           //批次筆數
-          if (c == rowsPerSheet)
+          if (c == setRowsPerSheet)
           {
             c = 0;
             ExportToOxml(firstTime, SaveFilePath);
@@ -148,7 +161,35 @@ namespace M10.lib
           ResultsData.Clear();
         }
       }
-      catch (Exception )
+      catch (Exception ex)
+      {
+
+        bSuccess = false;
+      }
+
+      return bSuccess;
+    }
+
+    public Boolean ExportBigDataToCsv(string SaveFilePath, DataTable SoureDataTable)
+    {
+      Boolean bSuccess = true;
+
+      try
+      {        
+        using (System.IO.StreamWriter sw = new System.IO.StreamWriter(SaveFilePath, true, Encoding.UTF8, 1024))
+        {
+          IEnumerable<string> columnNames = SoureDataTable.Columns.Cast<DataColumn>().
+                                          Select(column => column.ColumnName);
+          sw.WriteLine(string.Join(",", columnNames));
+
+          foreach (DataRow row in SoureDataTable.Rows)
+          {
+            IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
+            sw.WriteLine(string.Join(",", fields));
+          }
+        }
+      }
+      catch (Exception ex)
       {
         bSuccess = false;
       }
@@ -171,136 +212,132 @@ namespace M10.lib
         //This is the first time of creating the excel file and the first sheet.
         // Create a spreadsheet document by supplying the filepath.
         // By default, AutoSave = true, Editable = true, and Type = xlsx.
-        SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.
-            Create(fileName, SpreadsheetDocumentType.Workbook);
-
-        // Add a WorkbookPart to the document.
-        WorkbookPart workbookpart = spreadsheetDocument.AddWorkbookPart();
-        workbookpart.Workbook = new Workbook();
-
-        // Add a WorksheetPart to the WorkbookPart.
-        var worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
-        var sheetData = new SheetData();
-        worksheetPart.Worksheet = new Worksheet(sheetData);
-
-
-        var bold1 = new Bold();
-        CellFormat cf = new CellFormat();
-
-
-        // Add Sheets to the Workbook.
-        Sheets sheets;
-        sheets = spreadsheetDocument.WorkbookPart.Workbook.
-            AppendChild<Sheets>(new Sheets());
-
-        // Append a new worksheet and associate it with the workbook.
-        var sheet = new Sheet()
+        using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Create(fileName, SpreadsheetDocumentType.Workbook))
         {
-          Id = spreadsheetDocument.WorkbookPart.
-                GetIdOfPart(worksheetPart),
-          SheetId = sheetId,
-          Name = "Sheet" + sheetId
-        };
-        sheets.Append(sheet);
+          // Add a WorkbookPart to the document.
+          WorkbookPart workbookpart = spreadsheetDocument.AddWorkbookPart();
+          workbookpart.Workbook = new Workbook();
 
-        //Add Header Row.
-        var headerRow = new Row();
-        foreach (DataColumn column in ResultsData.Columns)
-        {
-          var cell = new Cell { DataType = CellValues.String, CellValue = new CellValue(column.ColumnName) };
-          headerRow.AppendChild(cell);
-        }
-        sheetData.AppendChild(headerRow);
+          // Add a WorksheetPart to the WorkbookPart.
+          var worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
+          var sheetData = new SheetData();
+          worksheetPart.Worksheet = new Worksheet(sheetData);
 
-        foreach (DataRow row in ResultsData.Rows)
-        {
-          var newRow = new Row();
-          foreach (DataColumn col in ResultsData.Columns)
+
+          var bold1 = new Bold();
+          CellFormat cf = new CellFormat();
+
+          // Add Sheets to the Workbook.
+          Sheets sheets;
+          sheets = spreadsheetDocument.WorkbookPart.Workbook.
+              AppendChild<Sheets>(new Sheets());
+
+          // Append a new worksheet and associate it with the workbook.
+          var sheet = new Sheet()
           {
-            var cell = new Cell
-            {
-              DataType = CellValues.String,
-              CellValue = new CellValue(row[col].ToString())
-            };
-            newRow.AppendChild(cell);
+            Id = spreadsheetDocument.WorkbookPart.
+                  GetIdOfPart(worksheetPart),
+            SheetId = sheetId,
+            Name = "Sheet" + sheetId
+          };
+          sheets.Append(sheet);
+
+          //Add Header Row.
+          var headerRow = new Row();
+          foreach (DataColumn column in ResultsData.Columns)
+          {
+            var cell = new Cell { DataType = CellValues.String, CellValue = new CellValue(column.ColumnName) };
+            headerRow.AppendChild(cell);
           }
+          sheetData.AppendChild(headerRow);
 
-          sheetData.AppendChild(newRow);
+          foreach (DataRow row in ResultsData.Rows)
+          {
+            var newRow = new Row();
+            foreach (DataColumn col in ResultsData.Columns)
+            {
+              var cell = new Cell
+              {
+                DataType = CellValues.String,
+                CellValue = new CellValue(row[col].ToString())
+              };
+              newRow.AppendChild(cell);
+            }
+
+            sheetData.AppendChild(newRow);
+          }
+          workbookpart.Workbook.Save();
+
+          //spreadsheetDocument.Close();
         }
-        workbookpart.Workbook.Save();
-
-        spreadsheetDocument.Close();
       }
       else
       {
         // Open the Excel file that we created before, and start to add sheets to it.
-        var spreadsheetDocument = SpreadsheetDocument.Open(fileName, true);
-
-        var workbookpart = spreadsheetDocument.WorkbookPart;
-        if (workbookpart.Workbook == null)
-          workbookpart.Workbook = new Workbook();
-
-        var worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
-        var sheetData = new SheetData();
-        worksheetPart.Worksheet = new Worksheet(sheetData);
-        var sheets = spreadsheetDocument.WorkbookPart.Workbook.Sheets;
-
-        if (sheets.Elements<Sheet>().Any())
+        using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(fileName, true))
         {
-          //Set the new sheet id
-          sheetId = sheets.Elements<Sheet>().Max(s => s.SheetId.Value) + 1;
-        }
-        else
-        {
-          sheetId = 1;
-        }
+          var workbookpart = spreadsheetDocument.WorkbookPart;
+          if (workbookpart.Workbook == null)
+            workbookpart.Workbook = new Workbook();
 
-        // Append a new worksheet and associate it with the workbook.
-        var sheet = new Sheet()
-        {
-          Id = spreadsheetDocument.WorkbookPart.
-                GetIdOfPart(worksheetPart),
-          SheetId = sheetId,
-          Name = "Sheet" + sheetId
-        };
-        sheets.Append(sheet);
+          var worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
+          var sheetData = new SheetData();
+          worksheetPart.Worksheet = new Worksheet(sheetData);
+          var sheets = spreadsheetDocument.WorkbookPart.Workbook.Sheets;
 
-        //Add the header row here.
-        var headerRow = new Row();
-
-        foreach (DataColumn column in ResultsData.Columns)
-        {
-          var cell = new Cell { DataType = CellValues.String, CellValue = new CellValue(column.ColumnName) };
-          headerRow.AppendChild(cell);
-        }
-        sheetData.AppendChild(headerRow);
-
-        foreach (DataRow row in ResultsData.Rows)
-        {
-          var newRow = new Row();
-
-          foreach (DataColumn col in ResultsData.Columns)
+          if (sheets.Elements<Sheet>().Any())
           {
-            var cell = new Cell
-            {
-              DataType = CellValues.String,
-              CellValue = new CellValue(row[col].ToString())
-            };
-            newRow.AppendChild(cell);
+            //Set the new sheet id
+            sheetId = sheets.Elements<Sheet>().Max(s => s.SheetId.Value) + 1;
+          }
+          else
+          {
+            sheetId = 1;
           }
 
-          sheetData.AppendChild(newRow);
+          // Append a new worksheet and associate it with the workbook.
+          var sheet = new Sheet()
+          {
+            Id = spreadsheetDocument.WorkbookPart.
+                  GetIdOfPart(worksheetPart),
+            SheetId = sheetId,
+            Name = "Sheet" + sheetId
+          };
+          sheets.Append(sheet);
+
+          //Add the header row here.
+          var headerRow = new Row();
+
+          foreach (DataColumn column in ResultsData.Columns)
+          {
+            var cell = new Cell { DataType = CellValues.String, CellValue = new CellValue(column.ColumnName) };
+            headerRow.AppendChild(cell);
+          }
+          sheetData.AppendChild(headerRow);
+
+          foreach (DataRow row in ResultsData.Rows)
+          {
+            var newRow = new Row();
+
+            foreach (DataColumn col in ResultsData.Columns)
+            {
+              var cell = new Cell
+              {
+                DataType = CellValues.String,
+                CellValue = new CellValue(row[col].ToString())
+              };
+              newRow.AppendChild(cell);
+            }
+
+            sheetData.AppendChild(newRow);
+          }
+
+          workbookpart.Workbook.Save();
+
+          // Close the document.
+          //spreadsheetDocument.Close();
         }
-
-        workbookpart.Workbook.Save();
-
-        // Close the document.
-        spreadsheetDocument.Close();
       }
     }
-
-    
-
-
   }
 }

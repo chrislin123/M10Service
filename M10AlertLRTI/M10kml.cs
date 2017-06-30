@@ -259,128 +259,33 @@ namespace M10AlertLRTI
 
     private void button1_Click_1(object sender, EventArgs e)
     {
-      string t1, t2, t3;
 
+      string sStartDate = "2016-04-08T00:00:01";
+      string sEndDate = "2017-04-09T00:00:01";
+      //string country = "桃園市";
+      string country = "全部";
 
-      Stopwatch sw = new Stopwatch();
+      string ssql = @" select * from RainStation where 1=1
+                      and RTime between @sd and @ed
+                      and datepart(mi,RTime) = 0 and datepart(ss,RTime) = 0
+                        ";
+      if (country != "全部") ssql += " and COUNTY = @COUNTY ";
+      ssql += " order by RTime ";
 
-
-      sw.Start();
-      string ssql = @" 
-        select relano,lat,lng from Coordinate where type = 'country' order by relano, pointseq
-        ";
+      List<RainStation> DataList = new List<RainStation>();
+      DataList = dbDapper.Query<RainStation>(ssql, new { COUNTY = country, sd = sStartDate, ed = sEndDate });
       
-      var list = dbDapper.Query(ssql);
-      sw.Stop();
+      string sSaveFilePath = @"c:\test1.csv";
+
+      DataTable dt = Utils.ConvertToDataTable<RainStation>(DataList);
 
 
-      t1 = sw.ElapsedMilliseconds.ToString();
+      DataExport de = new DataExport();
+      
 
+      de.ExportBigDataToCsv(sSaveFilePath, dt);
 
-
-      sw.Restart();
-      //var gList = list.ToLookup(p => p.relano);
-      //var gList = list.ToLookup(p => p.relano, p => new point { lat = p.lat, lng = p.lng });
-      var s = list.Select(p => p.relano).Distinct();
-      var relano = s.ToList<dynamic>();
-      sw.Stop();
-
-      t2 = sw.ElapsedMilliseconds.ToString();
-
-      List<dynamic> resultList = new List<dynamic>();
-
-
-      List<polygon> myList = new List<polygon>();
-
-      sw.Restart();
-
-      foreach (var item in relano)
-      {
-        polygon oPolygon = new polygon();
-        oPolygon.relano = item;
-
-        var pp = list.Where(a => a.relano == item).Select(a => new point { lat = a.lat, lng = a.lng });
-
-        oPolygon.points = pp.ToList<point>();
-        myList.Add(oPolygon);
-      }
-
-
-
-      //foreach (var item in gList)
-      //{
-      //  //var poly = new polygon();
-      //  ////dynamic dynItem = 
-      //  //poly.relano = item.Key;
-      //  //poly.points = item.AsQueryable().Select(p => p).ToList<point>();
-
-      //  //resultList.Add(poly);
-
-
-
-      //  //var pps = item.AsQueryable().Select(p => p);
-      //  //item.ToList().Select(a = new point { lat = a.lat, lng = a.lng });
-      //  //var pps = item.Select(a = new point { lat = a.lat, lng = a.lng });
-
-
-      //  //============================================
-      //  List<point> PointList = new List<point>();
-      //  foreach (var LoopItem in item)
-      //  {
-      //    point PointTemp = new point();
-      //    PointTemp.lat = LoopItem.lat;
-      //    PointTemp.lng = LoopItem.lng;
-      //    PointList.Add(PointTemp);
-      //  }
-
-      //  polygon oPolygon = new polygon();
-      //  oPolygon.relano = item.Key;
-      //  oPolygon.points = PointList;
-
-      //  myList11.Add(oPolygon);
-
-
-      //  //===========================================
-      //  //var pp = list.Where(a => a.relano == item).Select(a => new point { lat = a.lat, lng = a.lng });
-
-      //  //oPolygon.points = pp.ToList<point>();
-      //  //myList11.Add(oPolygon);
-      //}
-
-      //var aaa = myList11.ToList<dynamic>(); ;
-
-      //System.Threading.Thread.Sleep(1000);
-      sw.Stop();
-
-      t3 = sw.ElapsedMilliseconds.ToString();
-
-
-
-
-      MessageBox.Show(t1 + "\r\n" + t2 + "\r\n" + t3 + "\r\n");
-
-      //1060621 linq lamda 效能不佳，取消
-      //List<polygon> myList = new List<polygon>();
-
-      //var s = list.Select(p => p.relano).Distinct();
-      //var relano = s.ToList<dynamic>();
-
-      //foreach (var item in relano)
-      //{
-      //  polygon oPolygon = new polygon();
-      //  oPolygon.relano = item;
-
-      //  var pp = list.Where(a => a.relano == item).Select(a => new point { lat = a.lat, lng = a.lng });
-
-      //  oPolygon.points = pp.ToList<point>();
-      //  myList.Add(oPolygon);
-      //}
-
-      //return myList11.ToList<dynamic>();
-
-
-      //return resultList;
-
+      MessageBox.Show("Test");
     }
   }
 

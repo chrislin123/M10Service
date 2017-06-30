@@ -13,9 +13,6 @@ using M10.lib.model;
 using System.Data;
 using System.Dynamic;
 using M10.lib;
-using System.Reflection;
-using System.ComponentModel;
-//using System.Web.Http;
 
 namespace M10Api.Controllers
 {
@@ -236,6 +233,9 @@ namespace M10Api.Controllers
       DateTime dtStart;
       DateTime dtEnd;
 
+      sd = sd.Replace(' ', '-');
+      ed = ed.Replace(' ', '-');
+
       if (string.IsNullOrEmpty(sd) || string.IsNullOrEmpty(ed))
       {
         dtStart = DateTime.Now;
@@ -243,8 +243,8 @@ namespace M10Api.Controllers
       }
       else
       {
-        string[] aSdt = sd.Replace(' ', '-').Split('-');
-        string[] aEdt = ed.Replace(' ', '-').Split('-');
+        string[] aSdt = sd.Split('-');
+        string[] aEdt = ed.Split('-');
 
         dtStart = new DateTime(Convert.ToInt32(aSdt[0]), Convert.ToInt32(aSdt[1]), Convert.ToInt32(aSdt[2]), Convert.ToInt32(aSdt[3]), 0, 1);
         dtEnd = new DateTime(Convert.ToInt32(aEdt[0]), Convert.ToInt32(aEdt[1]), Convert.ToInt32(aEdt[2]), Convert.ToInt32(aEdt[3]), 59, 59);
@@ -253,8 +253,8 @@ namespace M10Api.Controllers
       string sStartDate = dtStart.ToString("yyyy-MM-ddTHH:mm:ss");
       string sEndDate = dtEnd.ToString("yyyy-MM-ddTHH:mm:ss");
 
-      sStartDate = "2016-04-08T00:00:01";
-      sEndDate = "2017-04-09T00:00:01";
+      //sStartDate = "2016-04-08T00:00:01";
+      //sEndDate = "2017-04-09T00:00:01";
       //country = "桃園市";
 
       string ssql = @" select * from RainStation where 1=1
@@ -270,131 +270,66 @@ namespace M10Api.Controllers
       //產生檔案路徑
       string sTempPath = Path.Combine(Server.MapPath("~/temp/"), DateTime.Now.ToString("yyyyMMdd"));
       //建立資料夾
-      Directory.CreateDirectory(sTempPath);
-      string sSaveFilePath = Path.Combine(sTempPath, "RainDataByCountry_" + Guid.NewGuid().ToString() + ".xlsx");
+      Directory.CreateDirectory(sTempPath);      
+      string sSaveFilePath = Path.Combine(sTempPath, "RainDataByCountry_" + Guid.NewGuid().ToString() + ".csv");
+
+      DataTable dt = Utils.ConvertToDataTable<RainStation>(DataList);
+
+      
+      DataExport de = new DataExport();
+      Boolean bSuccess = de.ExportBigDataToCsv(sSaveFilePath, dt);
+
+      if (bSuccess)
+      {
+        string filename = string.Format("RainDataByCountry_{0}_{1}.csv", sd, ed).Replace("-", "");
+
+        //ASP.NET 回應大型檔案的注意事項
+        //http://blog.miniasp.com/post/2008/03/11/Caution-about-ASPNET-Response-a-Large-File.aspx
 
 
-      List<string> PropertyNameList = GetPropertyName<RainStation>().ToList<string>();
+        //***** 下載檔案過大，使用特殊方法 *****
+        HttpContext context = System.Web.HttpContext.Current;
+        context.Response.TransmitFile(sSaveFilePath);
+        context.Response.ContentType = "text/csv";
+        context.Response.AddHeader("Content-Disposition", string.Format("attachment;filename={0}", filename));
+        Response.End();
+      }
+
+      
+      return null;
+
 
       
 
 
 
-      DataTable dt = new DataTable();
 
+      //return new FilePathResult(sSaveFilePath, "application/unkown");
+      //return File(sSaveFilePath, "application/unkown", filename);
 
-      dt = ConvertToDataTable<RainStation>(DataList);
+      //if (System.IO.File.Exists(sSaveFilePath))
+      //{
+      //  string filename = string.Format("RainDataByCountry_{0}_{1}.csv", sd, ed);
+      //  filename = filename.Replace("-", "");
+      //  //讀成串流
+      //  Stream iStream = new FileStream(sSaveFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
+      //  //回傳出檔案
+      //  //return File(iStream, "application/vnd.ms-excel", filename);
 
-      foreach (string item in PropertyNameList)
-      {
-        dt.Columns.Add(item);
-      }
-
-      //dt.Columns.Add("STID");
-      //dt.Columns.Add("STNAME");
-      //dt.Columns.Add("LAT");
-      //dt.Columns.Add("LON");
-      //dt.Columns.Add("WGS84_lon");
-      //dt.Columns.Add("WGS84_lat");
-      //dt.Columns.Add("ELEV");
-      //dt.Columns.Add("RTime");
-      //dt.Columns.Add("MIN10");
-      //dt.Columns.Add("RAIN");
-      //dt.Columns.Add("Hour2");
-      //dt.Columns.Add("HOUR3");
-      //dt.Columns.Add("HOUR6");
-      //dt.Columns.Add("HOUR12");
-      //dt.Columns.Add("HOUR24");
-      //dt.Columns.Add("NOW");
-      //dt.Columns.Add("Day1");
-      //dt.Columns.Add("Day2");
-      //dt.Columns.Add("Day3");
-      //dt.Columns.Add("COUNTY");
-      //dt.Columns.Add("TOWN");
-      //dt.Columns.Add("ATTRIBUTE");
-      //dt.Columns.Add("STATUS");
-      //dt.Columns.Add("DebrisRefStation");
-      //dt.Columns.Add("RT");
-      //dt.Columns.Add("LRTI");
-      //dt.Columns.Add("WLRTI");
-
-      foreach (RainStation item in DataList)
-      {
-        DataRow NewRow = dt.NewRow();
         
-        NewRow["STID"] = item.STID;
-        NewRow["STNAME"] = item.STNAME;
-        NewRow["LAT"] = item.LAT;
-        NewRow["LON"] = item.LON;
-        NewRow["WGS84_lon"] = item.WGS84_lon;
-        NewRow["WGS84_lat"] = item.WGS84_lat;
-        NewRow["ELEV"] = item.ELEV;
-        NewRow["RTime"] = item.RTime;
-        NewRow["MIN10"] = item.MIN10;
-        NewRow["RAIN"] = item.RAIN;
-        NewRow["Hour2"] = item.Hour2;
-        NewRow["HOUR3"] = item.HOUR3;
-        NewRow["HOUR6"] = item.HOUR6;
-        NewRow["HOUR12"] = item.HOUR12;
-        NewRow["HOUR24"] = item.HOUR24;
-        NewRow["NOW"] = item.NOW;
-        NewRow["Day1"] = item.Day1;
-        NewRow["Day2"] = item.Day2;
-        NewRow["Day3"] = item.Day3;
-        NewRow["COUNTY"] = item.COUNTY;
-        NewRow["TOWN"] = item.TOWN;
-        NewRow["ATTRIBUTE"] = item.ATTRIBUTE;
-        NewRow["STATUS"] = item.STATUS;
-        NewRow["DebrisRefStation"] = item.DebrisRefStation;
-        NewRow["RT"] = item.RT;
-        NewRow["LRTI"] = item.LRTI;
-        NewRow["WLRTI"] = item.WLRTI;     
+      //  //return File(iStream, "application/unkown", filename);
 
-        dt.Rows.Add(NewRow);
-      }
+      //}
 
-      DataExport de = new DataExport();
-      de.ExportBigDataToExcel(sSaveFilePath, dt);
-
-      if (System.IO.File.Exists(sSaveFilePath))
-      {
-        string filename = string.Format("RainDataByCountry_{0}_{1}.xlsx", sd, ed);
-        filename = filename.Replace("-", "");
-        //讀成串流
-        Stream iStream = new FileStream(sSaveFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-
-        //回傳出檔案
-        return File(iStream, "application/vnd.ms-excel", filename);
-      }
 
       return View();
     }
 
-    public DataTable ConvertToDataTable<T>(IList<T> data)
-    {
-      PropertyDescriptorCollection properties =
-         TypeDescriptor.GetProperties(typeof(T));
-      DataTable table = new DataTable();
-      foreach (PropertyDescriptor prop in properties)
-        table.Columns.Add(prop.Name, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType);
-      foreach (T item in data)
-      {
-        DataRow row = table.NewRow();
-        foreach (PropertyDescriptor prop in properties)
-          row[prop.Name] = prop.GetValue(item) ?? DBNull.Value;
-        table.Rows.Add(row);
-      }
-      return table;
-    }
+   
 
 
-    public static IEnumerable<string> GetPropertyName<T>()
-    {
-      var prof = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
-      return prof.Select(p => p.Name);
-    }
+    
 
     public ActionResult ExpRainStation()
     {
