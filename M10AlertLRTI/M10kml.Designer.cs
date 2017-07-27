@@ -32,6 +32,7 @@
       this.btnVillage = new System.Windows.Forms.Button();
       this.btnCountry = new System.Windows.Forms.Button();
       this.button1 = new System.Windows.Forms.Button();
+      this.RarButton = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
       // btnDoc
@@ -74,11 +75,22 @@
       this.button1.UseVisualStyleBackColor = true;
       this.button1.Click += new System.EventHandler(this.button1_Click_1);
       // 
+      // RarButton
+      // 
+      this.RarButton.Location = new System.Drawing.Point(12, 128);
+      this.RarButton.Name = "RarButton";
+      this.RarButton.Size = new System.Drawing.Size(75, 23);
+      this.RarButton.TabIndex = 4;
+      this.RarButton.Text = "RAR";
+      this.RarButton.UseVisualStyleBackColor = true;
+      this.RarButton.Click += new System.EventHandler(this.RarButton_Click);
+      // 
       // M10kml
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(284, 262);
+      this.Controls.Add(this.RarButton);
       this.Controls.Add(this.button1);
       this.Controls.Add(this.btnCountry);
       this.Controls.Add(this.btnVillage);
@@ -95,5 +107,6 @@
     private System.Windows.Forms.Button btnVillage;
     private System.Windows.Forms.Button btnCountry;
     private System.Windows.Forms.Button button1;
+    private System.Windows.Forms.Button RarButton;
   }
 }
