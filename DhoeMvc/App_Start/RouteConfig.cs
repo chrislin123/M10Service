@@ -13,6 +13,9 @@ namespace DhoeMvc
     {
       routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+      //MVC5 RoutePrefix設定
+      routes.MapMvcAttributeRoutes();
+
       routes.MapRoute(
           name: "Default",
           url: "{controller}/{action}/{id}",

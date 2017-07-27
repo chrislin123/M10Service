@@ -1,0 +1,162 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@ViewBag.Title</title>
+  @Styles.Render("~/Content/css")
+  @Scripts.Render("~/bundles/modernizr")
+
+  
+
+  
+  @*各分頁自行定義的Style*@
+  @RenderSection("Styles", required: false)
+
+  @*各分頁自行定義的Scripts*@
+  @RenderSection("Scripts", required: false)
+</head>
+<body>
+  @*<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          @Html.ActionLink("應用程式名稱", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li>@Html.ActionLink("首頁", "Index", "Home")</li>
+            <li>@Html.ActionLink("關於", "About", "Home")</li>
+            <li>@Html.ActionLink("連絡方式", "Contact", "Home")</li>
+          </ul>
+          @Html.Partial("_LoginPartial")
+        </div>
+      </div>
+    </div>*@
+  <div class="container">
+    <br />
+    <br />
+    <br />
+    <table border="0">
+      <tr>
+        <td>
+          <input type="image" src="~/images/logo.jpg" height="60px" />
+          @*<asp:Image ID="Image1" runat="server" Height="60px" ImageUrl="~/images/logo.jpg" />*@
+        </td>
+        <td>
+          <div class="container-fluid">
+            <ul class="nav navbar-nav">
+              <li>
+                <a href="/News/News">
+                  News&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+                  最新消息
+                </a>
+                @*<a data-toggle="tab" href="#" id="News">
+                    主
+                  </a>*@
+              </li>
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" id="Professor" >
+                  Professor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+                  教授<span class="caret"></span>
+                </a>
+
+                <ul class="dropdown-menu">
+                  <li><a href="/Professor/Experience">學經歷 Education and Professional Experience</a></li>
+                  <li><a href="/Professor/Interests">專長領域 Research Interests</a></li>
+
+                  <li><a>著作 Publications</a></li>
+                  <li><a href="/Professor/Books">&nbsp;&nbsp;&nbsp;&nbsp;專書 Books</a></li>
+                  <li><a href="/Professor/JournalPaper">&nbsp;&nbsp;&nbsp;&nbsp;期刊論文 Journal Paper</a></li>
+                  <li><a href="/Professor/ConferencePaper">&nbsp;&nbsp;&nbsp;&nbsp;研討會論文 Conference Paper</a></li>
+                  <li><a href="/Professor/Publications">&nbsp;&nbsp;&nbsp;&nbsp;專書論文 Other Publications</a></li>
+                  <li><a href="/Professor/Research">研究計畫 Research Project</a></li>
+                  <li><a href="#">榮譽與獎項 Honors and Awards</a></li>
+                </ul>
+              </li>
+
+
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  Members&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+                  成員<span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li><a href="/Members/Students">詹錢登教授研究室 <br />Students</a></li>
+                  <li><a href="/Members/CenterMember">水土保持生態工程研究中心 <br />Ecological Soil and Water Conservation Research Center</a></li>
+
+                </ul>
+              </li>
+              <li>
+                <a href="/Photo/Photo" >
+                  Photo Albums&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
+                  活動花絮
+                </a>
+              </li>
+              <li>
+                <a href="/Connect/Connect">Connect<br />相關連結</a>
+                @*@Html.ActionLink("Connect<br />相關連結", "Connect", "Connect", new { area = "" }, null)*@
+                @*<a data-toggle="tab" href="#" id="Connect">
+                    Connect<br />
+                    相關連結
+                  </a>*@
+              </li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+  </div>
+  <br />
+  <div class="Separate"></div>
+
+  <div class="container body-content">
+    @RenderBody()
+    <hr />
+    <footer></footer>
+  </div>
+  <div class="copyrights">
+    <div class="container clearfix">
+
+      <div class="col_one_third address" style="width: 50%">
+        &copy; 2016 <a href="#">成功大學 水利及海洋工程學系 詹錢登教授研究室</a>
+        <br />
+        版權所有
+
+      </div>
+      <div class="col_one_third col_last copyright" style="width: 40%">
+        <p>
+          70101台南市東區大學路1號<br>
+          <span class="hide-phone">No.1, University Road, Tainan 70101, Taiwan </span>
+        </p>
+      </div>
+
+
+    </div>
+  </div>
+
+
+  @Scripts.Render("~/bundles/jquery")
+  @Scripts.Render("~/bundles/bootstrap")
+
+  <script type="text/javascript">
+    $(function () {
+      //$("#Research").click(function () { location.href = "Research.aspx"; });
+      $("#Professor").click(function () { location.href = "/Professor/Professor"; });
+      //$("#Photo").click(function () { location.href = "Photo.aspx"; });
+      //$("#Connect").click(function () { location.href = "Connect.aspx"; });
+      //$("#News").click(function () { location.href = "News.aspx"; });
+    });
+  </script>
+
+  @RenderSection("scripts", required: false)
+
+
+</body>
+</html>
