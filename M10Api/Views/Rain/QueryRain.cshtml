@@ -6,11 +6,16 @@
 
 
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-md-9">
     <h1 class="page-header">
       雨量查詢 <small>資料時間：@ViewBag.forecastdate</small>
     </h1>
   </div>
+  <div class="col-md-3">
+    <h1 class="page-header">
+      <Button ID="btnSetAlert" onclick="SetAlert();" class=""></Button>
+    </h1>
+</div>
 </div>
 
 <div class="panel panel-info">
@@ -32,7 +37,7 @@
         <div class="form-inline">
           <select id="Product" name="county" class="form-control"></select>
           <button class="btn btn-default" id="btnSearch" onclick="Query();">查詢</button>
-          <Button ID="btnSetAlert" onclick="SetAlert();" class=""></Button>
+          
         </div>
       </div>
     </div>

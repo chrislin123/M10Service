@@ -41,7 +41,7 @@ namespace M10Api.Controllers
       }
 
 
-      var list = db.Query(ssql);
+      var list = dbDapper.Query(ssql);
 
       return list;
     }

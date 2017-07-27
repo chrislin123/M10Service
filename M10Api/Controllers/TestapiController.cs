@@ -18,7 +18,7 @@ namespace M10Api.Controllers
     [Route("getStationData")]
     public List<dynamic> getStationData()
     {
-      var list = db.Query(@" select a.*,b.lat,b.lon from LRTIAlert a 
+      var list = dbDapper.Query(@" select a.*,b.lat,b.lon from LRTIAlert a 
         left join runtimeraindata b on a.stid = b.stid 
         "
         );
@@ -44,7 +44,7 @@ namespace M10Api.Controllers
       //var list = db.Query(" select * from stationdata "
       //  );
 
-      var list = db.Query(@" select * from stationdata "
+      var list = dbDapper.Query(@" select * from stationdata "
         );
 
 
@@ -120,7 +120,7 @@ namespace M10Api.Controllers
       //var list = db.Query(" select * from stationdata where STID = @STID  and COUNTY = @COUNTY "
       //  , new { STID = STID, COUNTY = COUNTY });
 
-      var list = db.Query(" select * from stationdata  ");
+      var list = dbDapper.Query(" select * from stationdata  ");
 
       //var list = db.Query(" select * from stationdata where STID = @STID  "
       //  , new { STID = STID });

@@ -26,16 +26,16 @@ namespace M10Api.Controllers
 
     public ActionResult warnlist()
     { 
-      var AlertUpdateTm = db.ExecuteScale(@" select value from LRTIAlertMail where type = 'altm' ");
+      var AlertUpdateTm = dbDapper.ExecuteScale(@" select value from LRTIAlertMail where type = 'altm' ");
       ViewBag.forecastdate = AlertUpdateTm == null ? "" : AlertUpdateTm.ToString();
 
       string ssql = @" select * from LRTIAlert where status = '{0}' order by country,town ";
       //新增
-      var dataI = db.Query(string.Format(ssql, "I"));
+      var dataI = dbDapper.Query(string.Format(ssql, "I"));
       //持續
-      var dataC = db.Query(string.Format(ssql, "C"));
+      var dataC = dbDapper.Query(string.Format(ssql, "C"));
       //解除
-      var dataD = db.Query(string.Format(ssql, "D"));
+      var dataD = dbDapper.Query(string.Format(ssql, "D"));
 
 
       List<dynamic> data = new List<dynamic>();
@@ -191,7 +191,7 @@ namespace M10Api.Controllers
 
       //var data = db.Query(@" select * from RunTimeRainData ");
 
-      var AlertUpdateTm = db.Query(@" select * from LRTIAlertMail where type = 'altm' ");
+      var AlertUpdateTm = dbDapper.Query(@" select * from LRTIAlertMail where type = 'altm' ");
       
 
 
@@ -203,11 +203,11 @@ namespace M10Api.Controllers
       
       
       //新增
-      var dataI = db.Query(@" select * from LRTIAlert where status = 'I' order by country,town ");
+      var dataI = dbDapper.Query(@" select * from LRTIAlert where status = 'I' order by country,town ");
       //持續
-      var dataC = db.Query(@" select * from LRTIAlert where status = 'C' order by country,town ");
+      var dataC = dbDapper.Query(@" select * from LRTIAlert where status = 'C' order by country,town ");
       //解除
-      var dataD = db.Query(@" select * from LRTIAlert where status = 'D' order by country,town ");
+      var dataD = dbDapper.Query(@" select * from LRTIAlert where status = 'D' order by country,town ");
 
 
       List<dynamic> data = new List<dynamic>();
@@ -282,7 +282,7 @@ namespace M10Api.Controllers
       //ResultList.AddRange(dataC);
       //ResultList.AddRange(dataD);
 
-      var data = db.Query(string.Format(ssql, sStartDate, sEndDate));
+      var data = dbDapper.Query(string.Format(ssql, sStartDate, sEndDate));
       ResultList.AddRange(data);
 
       foreach (var item in ResultList)
