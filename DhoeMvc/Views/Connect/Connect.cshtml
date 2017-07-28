@@ -1,8 +1,20 @@
 ﻿
 @{
-    ViewBag.Title = "Connect";
-    Layout = "~/Views/Shared/_DhoeLayout.cshtml";
+  ViewBag.Title = "Connect";
+  Layout = "~/Views/Shared/_DhoeLayout.cshtml";
 }
 
-<h2>Connect</h2>
-
+<div class="container">
+  <h2><span style="font-weight: bold; color:#31708f;">相關連結</span></h2>
+  <table class="table">
+    <tbody>
+      @foreach (var item in ViewData["DataList"] as List<dynamic>)
+      {
+        <tr class='@(item.type == "1" ? "active" : "")'>
+          <td></td>
+          <td><a target="_blank" href="@item.link">@item.title</a></td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

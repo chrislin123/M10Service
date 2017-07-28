@@ -1,9 +1,22 @@
 ﻿
 @{
-    ViewBag.Title = "News";
-    Layout = "~/Views/Shared/_DhoeLayout.cshtml";
+  ViewBag.Title = "News";
+  Layout = "~/Views/Shared/_DhoeLayout.cshtml";
 }
 
-<h2>News</h2>
-時間：@ViewBag.forecastdate
+
+<div class="container">
+  <h2><span style="font-weight: bold;color:#31708f;">最新消息</span></h2>
+  <table class="table">
+    <tbody>
+      @foreach (var item in ViewData["NewsmList"] as List<dynamic>)
+      {
+        <tr class='@(item.type == "1" ? "active" : "")'>
+          <td>@item.date</td>
+          <td><a target="_blank" href="@item.link">@item.title</a></td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
 
