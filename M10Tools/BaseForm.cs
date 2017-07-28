@@ -62,7 +62,7 @@ namespace M10Tools
     
     public void InitForm()
     {
-      _ConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.DBDefault].ConnectionString;
+      _ConnectionString = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]].ConnectionString;
       _dbDapper = new DALDapper(_ConnectionString);
       //oDal = new ODAL(Properties.Settings.Default.DBDefault);
       //logger = NLog.LogManager.GetCurrentClassLogger();
