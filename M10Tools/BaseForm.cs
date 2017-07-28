@@ -1,22 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
-using System.Linq;
+﻿
 using System.Windows.Forms;
+
 using System.Configuration;
 using M10.lib;
-using Dapper;
-using Dapper.Contrib.Extensions;
 
 
-
-
-
-
-namespace M10AlertLrtiRuntime
+namespace M10Tools
 {
   public class BaseForm : Form
   {
@@ -41,10 +30,10 @@ namespace M10AlertLrtiRuntime
     public string ConnectionString
     {
       get
-      {
+      { 
         if (string.IsNullOrEmpty(_ConnectionString))
         {
-          _ConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.vghtc].ConnectionString;
+          _ConnectionString = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]].ConnectionString;          
         }
         
         return _ConnectionString;
@@ -73,9 +62,10 @@ namespace M10AlertLrtiRuntime
     
     public void InitForm()
     {
-      _ConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.vghtc].ConnectionString;
+      _ConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.DBDefault].ConnectionString;
       _dbDapper = new DALDapper(_ConnectionString);
-      //oDal = new ODAL(Properties.Settings.Default.vghtc);
+      //oDal = new ODAL(Properties.Settings.Default.DBDefault);
+      //logger = NLog.LogManager.GetCurrentClassLogger();
     }
 
   }

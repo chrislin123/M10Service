@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M10AlertLrtiRuntime", "M10A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DhoeMvc", "DhoeMvc\DhoeMvc.csproj", "{3D720C27-8BB0-4716-8685-9B1A73503F6D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M10Tools", "M10Tools\M10Tools.csproj", "{BB1E6D8F-CCAD-4783-B77E-7E761F6F372F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{3D720C27-8BB0-4716-8685-9B1A73503F6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D720C27-8BB0-4716-8685-9B1A73503F6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D720C27-8BB0-4716-8685-9B1A73503F6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB1E6D8F-CCAD-4783-B77E-7E761F6F372F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB1E6D8F-CCAD-4783-B77E-7E761F6F372F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB1E6D8F-CCAD-4783-B77E-7E761F6F372F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB1E6D8F-CCAD-4783-B77E-7E761F6F372F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

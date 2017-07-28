@@ -31,7 +31,7 @@ namespace M10AlertLRTI
     {
       get
       { 
-        if (_ConnectionString == "")
+        if (string.IsNullOrEmpty(_ConnectionString))
         {
           _ConnectionString = ConfigurationManager.ConnectionStrings[Properties.Settings.Default.DBDefault].ConnectionString;
         }
