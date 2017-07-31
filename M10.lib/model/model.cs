@@ -472,4 +472,49 @@ namespace M10.lib.model
 
   }
 
+  [Table("MapVillage")]
+  public class MapVillage
+  {
+    //設定key
+    [Key]
+    public int No { get; set; }
+
+    public string Type { get; set; }
+
+    public string VillageID { get; set; }
+
+    public int Pointseq { get; set; }
+
+    public string Lat { get; set; }
+
+    public string Lng { get; set; }
+
+    public string STID { get; set; }
+
+  }
+
+  [Table("AreaCode")]
+  public class AreaCode
+  {
+    //設定key
+    [Key]
+    public int No { get; set; }
+
+    public string CountryID { get; set; }
+
+    public string CountryName { get; set; }
+
+    public string TownID { get; set; }
+
+    public string TownName { get; set; }
+
+    public string VillageID { get; set; }
+
+    public string VillageName { get; set; }
+
+  }
+
+
+
+
 }

@@ -3,6 +3,7 @@ using System.Windows.Forms;
 
 using System.Configuration;
 using M10.lib;
+using NLog;
 
 
 namespace M10Tools
@@ -13,6 +14,7 @@ namespace M10Tools
     private string _ConnectionString;
     //public ODAL oDal;
     private DALDapper _dbDapper;
+    public Logger logger;
 
     public DALDapper dbDapper
     {
@@ -65,7 +67,7 @@ namespace M10Tools
       _ConnectionString = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]].ConnectionString;
       _dbDapper = new DALDapper(_ConnectionString);
       //oDal = new ODAL(Properties.Settings.Default.DBDefault);
-      //logger = NLog.LogManager.GetCurrentClassLogger();
+      logger = NLog.LogManager.GetCurrentClassLogger();
     }
 
   }

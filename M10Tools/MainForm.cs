@@ -60,5 +60,11 @@ namespace M10Tools
       }
 
     }
+
+    private void btnKML_Click(object sender, EventArgs e)
+    {
+      M10kml M10kmlFrom = new M10kml();
+      M10kmlFrom.ShowDialog();
+    }
   }
 }

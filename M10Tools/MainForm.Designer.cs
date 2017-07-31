@@ -29,6 +29,7 @@
     private void InitializeComponent()
     {
       this.btnImpErrLRTI = new System.Windows.Forms.Button();
+      this.btnKML = new System.Windows.Forms.Button();
       this.SuspendLayout();
       // 
       // btnImpErrLRTI
@@ -41,11 +42,22 @@
       this.btnImpErrLRTI.UseVisualStyleBackColor = true;
       this.btnImpErrLRTI.Click += new System.EventHandler(this.btnImpErrLRTI_Click);
       // 
+      // btnKML
+      // 
+      this.btnKML.Location = new System.Drawing.Point(12, 41);
+      this.btnKML.Name = "btnKML";
+      this.btnKML.Size = new System.Drawing.Size(126, 23);
+      this.btnKML.TabIndex = 1;
+      this.btnKML.Text = "KML轉檔";
+      this.btnKML.UseVisualStyleBackColor = true;
+      this.btnKML.Click += new System.EventHandler(this.btnKML_Click);
+      // 
       // MainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(284, 262);
+      this.Controls.Add(this.btnKML);
       this.Controls.Add(this.btnImpErrLRTI);
       this.Name = "MainForm";
       this.Text = "MainForm";
@@ -56,6 +68,7 @@
     #endregion
 
     private System.Windows.Forms.Button btnImpErrLRTI;
+    private System.Windows.Forms.Button btnKML;
   }
 }
 
