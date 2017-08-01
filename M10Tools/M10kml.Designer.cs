@@ -31,7 +31,7 @@
       this.btnVillage = new System.Windows.Forms.Button();
       this.btnTownShip = new System.Windows.Forms.Button();
       this.btnCountry = new System.Windows.Forms.Button();
-      this.button1 = new System.Windows.Forms.Button();
+      this.btnProcAreacode = new System.Windows.Forms.Button();
       this.RarButton = new System.Windows.Forms.Button();
       this.label1 = new System.Windows.Forms.Label();
       this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -69,15 +69,15 @@
       this.btnCountry.UseVisualStyleBackColor = true;
       this.btnCountry.Click += new System.EventHandler(this.btnCountry_Click);
       // 
-      // button1
+      // btnProcAreacode
       // 
-      this.button1.Location = new System.Drawing.Point(12, 99);
-      this.button1.Name = "button1";
-      this.button1.Size = new System.Drawing.Size(75, 23);
-      this.button1.TabIndex = 3;
-      this.button1.Text = "TEST";
-      this.button1.UseVisualStyleBackColor = true;
-      this.button1.Click += new System.EventHandler(this.button1_Click_1);
+      this.btnProcAreacode.Location = new System.Drawing.Point(12, 99);
+      this.btnProcAreacode.Name = "btnProcAreacode";
+      this.btnProcAreacode.Size = new System.Drawing.Size(108, 23);
+      this.btnProcAreacode.TabIndex = 3;
+      this.btnProcAreacode.Text = "格式化AreaCode";
+      this.btnProcAreacode.UseVisualStyleBackColor = true;
+      this.btnProcAreacode.Click += new System.EventHandler(this.btnProcAreacode_Click);
       // 
       // RarButton
       // 
@@ -122,7 +122,7 @@
       this.Controls.Add(this.statusStrip1);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.RarButton);
-      this.Controls.Add(this.button1);
+      this.Controls.Add(this.btnProcAreacode);
       this.Controls.Add(this.btnCountry);
       this.Controls.Add(this.btnTownShip);
       this.Controls.Add(this.btnVillage);
@@ -140,7 +140,7 @@
     private System.Windows.Forms.Button btnVillage;
     private System.Windows.Forms.Button btnTownShip;
     private System.Windows.Forms.Button btnCountry;
-    private System.Windows.Forms.Button button1;
+    private System.Windows.Forms.Button btnProcAreacode;
     private System.Windows.Forms.Button RarButton;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.StatusStrip statusStrip1;

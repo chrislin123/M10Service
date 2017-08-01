@@ -1,6 +1,4 @@
-﻿
-using System.Windows.Forms;
-
+﻿using System.Windows.Forms;
 using System.Configuration;
 using M10.lib;
 using NLog;
@@ -9,11 +7,10 @@ using NLog;
 namespace M10Tools
 {
   public class BaseForm : Form
-  {
-    public string ssql = string.Empty;
+  { 
     private string _ConnectionString;
-    //public ODAL oDal;
     private DALDapper _dbDapper;
+    public string ssql = string.Empty;
     public Logger logger;
 
     public DALDapper dbDapper
@@ -42,20 +39,6 @@ namespace M10Tools
       }
     }
 
-    //1060519 開放後，介面切換會當機(問題出在cl.data.odal.cs的解構子~ODAL(){}中，尚未無解)
-    //public ODAL oDal
-    //{
-    //  get
-    //  {
-    //    if (_Dal == null)
-    //    {
-    //      _Dal = new ODAL(Properties.Settings.Default.vghtc);
-    //    }
-    //    return _Dal;
-    //  }
-    //}
-
-
     public BaseForm()
     {
 
@@ -66,7 +49,6 @@ namespace M10Tools
     {
       _ConnectionString = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]].ConnectionString;
       _dbDapper = new DALDapper(_ConnectionString);
-      //oDal = new ODAL(Properties.Settings.Default.DBDefault);
       logger = NLog.LogManager.GetCurrentClassLogger();
     }
 

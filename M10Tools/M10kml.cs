@@ -149,8 +149,6 @@ namespace M10Tools
     {
       try
       {
-
-
         string sFilePath = @"c:\township.kml";
 
         XDocument kml1 = XDocument.Load(sFilePath);
@@ -298,13 +296,22 @@ namespace M10Tools
       MessageBox.Show("OK");
     }
 
-    private void button1_Click_1(object sender, EventArgs e)
+    private void RarButton_Click(object sender, EventArgs e)
+    {
+      Recursion rr = new Recursion();
+
+      rr.InputSet = rr.MakeCharArray("pass@wo");
+
+      rr.CalcPermutation(0);
+
+      List<string> tt = rr.AllList;
+    }
+
+    private void btnProcAreacode_Click(object sender, EventArgs e)
     {
       ssql = "select * from areacode";
 
       List<AreaCode> AreaCodeList = dbDapper.Query<AreaCode>(ssql);
-
-
 
       foreach (AreaCode item in AreaCodeList)
       {
@@ -316,23 +323,6 @@ namespace M10Tools
       }
       MessageBox.Show("Test");
     }
-
-    private void RarButton_Click(object sender, EventArgs e)
-    {
-      Recursion rr = new Recursion();
-
-      rr.InputSet = rr.MakeCharArray("pass@wo");
-
-      rr.CalcPermutation(0);
-
-
-      List<string> tt = rr.AllList;
-
-
-
-    }
-
-    
   }
 
   /// <summary>
