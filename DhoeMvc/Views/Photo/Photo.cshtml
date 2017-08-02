@@ -1,8 +1,95 @@
 ﻿
 @{
-    ViewBag.Title = "Photo";
-    Layout = "~/Views/Shared/_DhoeLayout.cshtml";
+  ViewBag.Title = "Photo";
+  Layout = "~/Views/Shared/_DhoeLayout.cshtml";
 }
 
-<h2>Photo</h2>
+<link rel="stylesheet" href="~/Content/fix.css" />
+<style>
+    A.album_info_title_hy:link {
+      color: #936f4a;
+      text-decoration: none;
+    }
+
+    A.album_info_title_hy:visited {
+      color: #936f4a;
+      text-decoration: none;
+    }
+
+    .breadcrumb > li + li:before {
+      color: #CCCCCC;
+      content: "/ ";
+      padding: 0 5px;
+    }
+</style>
+
+
+
+
+
+<div class="container">
+
+  <h2><span style="font-weight: bold;color:#31708f;">Albums</span></h2>
+
+
+  <div class="row">
+    <div class="col-md-4">
+      <div class="album_item inline-block">
+        <div class="fix_png">
+
+
+
+          <img srcset="~/images/Professor.jpg" alt="Alternate Tex" style="width:100%" />
+
+
+        </div>
+        <div class="album_info">
+          <p class="album_info_title">
+
+            test
+
+
+          </p>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4"><img srcset="~/images/Professor.jpg" alt="Alternate Tex" style="width:100%" /></div>
+    <div class="col-md-4"><img srcset="~/images/Professor.jpg" alt="Alternate Tex" style="width:100%" /></div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4"><img srcset="~/images/Professor.jpg" alt="Alternate Tex" style="width:100%" /></div>
+    <div class="col-md-4"><img srcset="~/images/Professor.jpg" alt="Alternate Tex" style="width:100%" /></div>
+    <div class="col-md-4"><img srcset="~/images/Professor.jpg" alt="Alternate Tex" style="width:100%" /></div>
+  </div>
+
+
+  <asp:DataList ID="DataList1" runat="server" OnItemDataBound="DataList1_ItemDataBound" RepeatColumns="3" RepeatDirection="Horizontal" Width="100%">
+    <ItemTemplate>
+
+
+      <div class="album_item inline-block">
+        <div class="fix_png">
+
+
+
+          <asp:PlaceHolder ID="phphoto" runat="server" />
+
+
+        </div>
+        <div class="album_info">
+          <p class="album_info_title">
+
+            <asp:PlaceHolder ID="phtitle" runat="server" />
+
+
+          </p>
+
+        </div>
+      </div>
+    </ItemTemplate>
+
+  </asp:DataList>
+</div>
 

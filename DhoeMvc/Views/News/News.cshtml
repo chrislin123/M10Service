@@ -9,9 +9,13 @@
   <h2><span style="font-weight: bold;color:#31708f;">最新消息</span></h2>
   <table class="table">
     <tbody>
-      @foreach (var item in ViewData["NewsmList"] as List<dynamic>)
+      @{
+        int i = 1;
+      }
+      @foreach (var item in ViewData["NewsmList"] as List<M10.lib.modeldhoe.Newsm>)
       {
-        <tr class='@(item.type == "1" ? "active" : "")'>
+        { i++; }
+        <tr class='@(i  % 2 == 0 ? "active" : "")'>
           <td>@item.date</td>
           <td><a target="_blank" href="@item.link">@item.title</a></td>
         </tr>

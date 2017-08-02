@@ -15,23 +15,11 @@ namespace DhoeMvc.Controllers
     public ActionResult News()
     {
 
-      List<dynamic> NewsmList = dbDapper.Query(@"select * from newsm
-                        order by date desc");
-
-      //List<Newsm> NewsmList = dbDapper.Query<Newsm>(@"select * from newsm
+      //List<dynamic> NewsmList = dbDapper.Query(@"select * from newsm
       //                  order by date desc");
 
-      int iRowIndex = 0;
-      foreach (var item in NewsmList)
-      {
-        iRowIndex++;
-
-        item.type = "";
-        if (iRowIndex % 2 == 1)
-        {
-          item.type = "1";
-        }
-      }
+      List<Newsm> NewsmList = dbDapper.Query<Newsm>(@"select * from newsm
+                        order by date desc");
 
 
       ViewData["NewsmList"] = NewsmList;

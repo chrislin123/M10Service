@@ -4,5 +4,23 @@
     Layout = "~/Views/Shared/_DhoeLayout.cshtml";
 }
 
-<h2>Research</h2>
+<div class="container">
+  <h2><span style="font-weight: bold;color:#31708f;">科技部/產學研究計畫</span></h2>
+  <table class="table">
+    <tbody>
+      @{
+        int i = 1;
+      }
+      @foreach (var item in ViewData["DataList"] as List<M10.lib.modeldhoe.Research>)
+      {
+        { i++; }
+        <tr class='@(i  % 2 == 0 ? "active" : "")'>
+          <td></td>
+          <td>@item.content</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+  <br />
+  </div>
 

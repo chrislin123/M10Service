@@ -124,7 +124,7 @@ namespace M10.lib.modeldhoe
     [Key]
     public int inseq { get; set; }
 
-    public string DATE { get; set; }
+    public string date { get; set; }
 
     public string content { get; set; }
 
@@ -158,7 +158,7 @@ namespace M10.lib.modeldhoe
     [Key]
     public int inseq { get; set; }
 
-    public string DATE { get; set; }
+    public string date { get; set; }
 
     public string content { get; set; }
 
@@ -184,6 +184,23 @@ namespace M10.lib.modeldhoe
     public string dttm { get; set; }
 
     public string datatype { get; set; }
+
+  }
+
+  [Table("Research")]
+  public class Research
+  {
+    //設定key
+    [Key]
+    public int no { get; set; }
+
+    public string date { get; set; }
+
+    public string content { get; set; }
+
+    public string emp { get; set; }
+
+    public string dttm { get; set; }
 
   }
 

@@ -1,8 +1,146 @@
 ﻿
 @{
-    ViewBag.Title = "Students";
-    Layout = "~/Views/Shared/_DhoeLayout.cshtml";
+  ViewBag.Title = "Students";
+  Layout = "~/Views/Shared/_DhoeLayout.cshtml";
 }
 
-<h2>Students</h2>
+<script type="text/javascript">
+  $(document).ready(function () {
+    $('[data-toggle="tooltip"]').tooltip({
+      html: true,
+      //title: $('#' + $(this).data('tip')).html(),
+      title: $('#my-tip').html(),
+      //title: "Hooray!",
+      //trigger: "click"
+      trigger: "hover"
 
+    });
+
+    $('[rel="popover"]').popover();
+    //$('.btn').tooltip({ title: "<h1><strong>HTML</strong> inside <code>the</code> <em>tooltip</em></h1>", html: true, placement: "right" });
+  });
+
+
+  //$(window).load(function () {
+  //    //var img = '<iframe frameborder="0" scrolling="no" height="220" width="420" src="http://dxlite.g7vjr.org/?dx=LU5DX&limit=10"></iframe>';
+  //    //$("#blob").popover({ title: 'Last 10 spots for the selected station', content: img, html: true });
+  //    $('[rel="popover"]').popover();
+  //})
+
+</script>
+<style>
+    /* Popover */
+    .popover {
+      max-width: 100%;
+      width: auto;
+      /*border: 2px dotted red;*/
+    }
+
+
+    /* Popover Header */
+    .popover-title {
+      /*background-color: #73AD21;*/
+      /*color: #FFFFFF;*/
+      font-size: 28px;
+      text-align: center;
+    }
+
+    /* Popover Body */
+    .popover-content {
+      /*background-color: coral;
+                  color: #FFFFFF;
+                  padding: 25px;*/
+    }
+
+    /* Popover Arrow */
+    .arrow {
+      /*border-right-color: red !important;*/
+    }
+</style>
+
+<div class="container">
+
+  <h2><span style="font-weight: bold; color: #31708f;" data-toggle="tooltip">在學生</span></h2>
+  <table class="table">
+    <tbody>
+      @{
+        int i = 1;
+      }
+      @foreach (var item in ViewData["DataMList"] as List<string>)
+      {
+        { i++; }
+        <tr class='@(i  % 2 == 0 ? "active" : "")'>
+          <td>@item</td>
+          <td>
+            @foreach (var Students in ViewData["DataDList"] as List<M10.lib.modeldhoe.Students>)
+            {
+              if (Students.kind == item)
+              {
+                <a href='#' data-trigger='hover' rel='popover' data-html='true' title='@(Students.name)' data-content="<iframe frameborder='0' scrolling='no' height='500' width='500' src='/Members/StudentDetail?name=@(Students.name)'></iframe>">
+                  @(Students.name)
+                </a>
+              }
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <h2><span style="font-weight: bold; color: #31708f;">博士</span></h2>
+  <table class="table">
+    <tbody>
+      @{
+        int ip = 1;
+      }
+      @foreach (var item in ViewData["PhdMList"] as List<string>)
+      {
+        { ip++; }
+        <tr class='@(ip  % 2 == 0 ? "active" : "")'>
+          <td style='width: 100px;'>@item</td>
+          <td>
+            @foreach (var Students in ViewData["PhdDList"] as List<M10.lib.modeldhoe.Students>)
+            {
+              if (Students.kind == item)
+              {
+                <a href='#' data-trigger='hover' rel='popover' data-html='true' title='@(Students.name)' data-content="<iframe frameborder='0' scrolling='no' height='500' width='500' src='/Members/StudentDetail?name=@(Students.name)'></iframe>">
+                  @(Students.name)
+                </a>
+              }
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <h2><span style="font-weight: bold; color: #31708f;">碩士</span></h2>
+  <table class="table">
+    <tbody>
+      @{
+        int im = 1;
+      }
+      @foreach (var item in ViewData["MasMList"] as List<string>)
+      {
+        { im++; }
+        <tr class='@(im  % 2 == 0 ? "active" : "")'>
+          <td style='width: 100px;'>@item</td>
+          <td>
+            @foreach (var Students in ViewData["MasDList"] as List<M10.lib.modeldhoe.Students>)
+            {
+              if (Students.kind == item)
+              {
+                <a href='#' data-trigger='hover' rel='popover' data-html='true' title='@(Students.name)' data-content="<iframe frameborder='0' scrolling='no' height='500' width='500' src='/Members/StudentDetail?name=@(Students.name)'></iframe>">
+                  @(Students.name)
+                </a>
+              }
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+
+
+</div>

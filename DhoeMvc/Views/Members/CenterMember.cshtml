@@ -1,8 +1,45 @@
 ﻿
 @{
-    ViewBag.Title = "CenterMember";
-    Layout = "~/Views/Shared/_DhoeLayout.cshtml";
+  ViewBag.Title = "CenterMember";
+  Layout = "~/Views/Shared/_DhoeLayout.cshtml";
 }
 
-<h2>CenterMember</h2>
+<div class="container">
 
+  <h2><span style="font-weight: bold;color:#31708f;">研究中心成員</span></h2>
+  <table class="table">
+    <tbody>
+      @{
+        int i = 1;
+      }
+      @foreach (var item in ViewData["MemberList"] as List<M10.lib.modeldhoe.CenterMember>)
+      {
+        { i++; }
+        <tr class='@(i  % 2 == 0 ? "active" : "")'>
+          <td>@item.name</td>
+          <td>@item.content</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+
+  <h2><span style="font-weight: bold;color:#31708f;">計畫執行項目</span></h2>
+  <table class="table">
+    <tbody>
+      @{
+        int ip = 1;
+      }
+      @foreach (var item in ViewData["ProjectList"] as List<M10.lib.modeldhoe.CenterProject>)
+      {
+        { ip++; }
+        <tr class='@(ip  % 2 == 0 ? "active" : "")'>
+          @*<td></td>*@
+          <td>@item.content</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+
+</div>

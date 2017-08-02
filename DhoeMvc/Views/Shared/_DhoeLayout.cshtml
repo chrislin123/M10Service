@@ -7,10 +7,11 @@
   <title>@ViewBag.Title</title>
   @Styles.Render("~/Content/css")
   @Scripts.Render("~/bundles/modernizr")
+  @Scripts.Render("~/bundles/jquery")
+  @Scripts.Render("~/bundles/bootstrap")
 
-  
-
-  
+  @*<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">*@
+   
   @*各分頁自行定義的Style*@
   @RenderSection("Styles", required: false)
 
@@ -142,8 +143,7 @@
   </div>
 
 
-  @Scripts.Render("~/bundles/jquery")
-  @Scripts.Render("~/bundles/bootstrap")
+  
 
   <script type="text/javascript">
     $(function () {
