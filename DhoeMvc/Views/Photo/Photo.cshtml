@@ -4,6 +4,7 @@
   Layout = "~/Views/Shared/_DhoeLayout.cshtml";
 }
 
+
 <link rel="stylesheet" href="~/Content/fix.css" />
 <style>
     A.album_info_title_hy:link {
@@ -21,75 +22,130 @@
       content: "/ ";
       padding: 0 5px;
     }
+    /*.fix_png {
+            color: #936f4a;
+            background: url(../images/p_bg02.png) no-repeat;
+          }*/
 </style>
-
-
-
-
 
 <div class="container">
 
   <h2><span style="font-weight: bold;color:#31708f;">Albums</span></h2>
+
+  @*RepeatColumns="3"*@
+
+  @{ int RepeatColumns = 3;
+    int i = 0;  }
+
+  @foreach (var item in ViewData["DataList"] as List<M10.lib.modeldhoe.AlbumM>)
+  {
+    { i++; }
+
+    { }
+    if (i % RepeatColumns == 1)
+    {
+      @*@Html.Raw*@
+    
+      <div class="row">
+        }
+        @*<tr class='@(i  % 2 == 0 ? "active" : "")'>
+            <td>@item.date</td>
+            <td>@item.content</td>
+          </tr>*@
+
+        if (i % RepeatColumns == 1)
+        {
+      </div>
+    }
+
+
+  }
+
+
+
+
 
 
   <div class="row">
     <div class="col-md-4">
       <div class="album_item inline-block">
         <div class="fix_png">
-
-
-
-          <img srcset="~/images/Professor.jpg" alt="Alternate Tex" style="width:100%" />
-
-
+          <a href='PhotoDF.aspx?name={0}'>
+            <img srcset="~/images/Professor.jpg" class="img-thumbnail" style="width:100%" />
+          </a>
         </div>
         <div class="album_info">
           <p class="album_info_title">
-
-            test
-
+            <a href='#' class='album_info_title_hy'>test</a>
 
           </p>
-
         </div>
       </div>
     </div>
-    <div class="col-md-4"><img srcset="~/images/Professor.jpg" alt="Alternate Tex" style="width:100%" /></div>
-    <div class="col-md-4"><img srcset="~/images/Professor.jpg" alt="Alternate Tex" style="width:100%" /></div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-4"><img srcset="~/images/Professor.jpg" alt="Alternate Tex" style="width:100%" /></div>
-    <div class="col-md-4"><img srcset="~/images/Professor.jpg" alt="Alternate Tex" style="width:100%" /></div>
-    <div class="col-md-4"><img srcset="~/images/Professor.jpg" alt="Alternate Tex" style="width:100%" /></div>
-  </div>
-
-
-  <asp:DataList ID="DataList1" runat="server" OnItemDataBound="DataList1_ItemDataBound" RepeatColumns="3" RepeatDirection="Horizontal" Width="100%">
-    <ItemTemplate>
-
-
+    <div class="col-md-4">
       <div class="album_item inline-block">
         <div class="fix_png">
-
-
-
-          <asp:PlaceHolder ID="phphoto" runat="server" />
-
-
+          <a href='PhotoDF.aspx?name={0}'>
+            <img srcset="~/images/Professor.jpg" class="img-thumbnail" style="width:100%" />
+          </a>
         </div>
         <div class="album_info">
           <p class="album_info_title">
-
-            <asp:PlaceHolder ID="phtitle" runat="server" />
-
+            <a href='#' class='album_info_title_hy'>test</a>
 
           </p>
-
         </div>
       </div>
-    </ItemTemplate>
+    </div>
+    <div class="col-md-4">
+      <div class="album_item inline-block">
+        <div class="fix_png">
+          <a href='PhotoDF.aspx?name={0}'>
+            <img srcset="~/images/Professor.jpg" class="img-thumbnail" style="width:100%" />
+          </a>
+        </div>
+        <div class="album_info">
+          <p class="album_info_title">
+            <a href='#' class='album_info_title_hy'>test</a>
 
-  </asp:DataList>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  @*<div class="row">
+      <div class="col-md-4"><img srcset="~/images/Professor.jpg" alt="Alternate Tex" style="width:100%" /></div>
+      <div class="col-md-4"><img srcset="~/images/Professor.jpg" alt="Alternate Tex" style="width:100%" /></div>
+      <div class="col-md-4"><img srcset="~/images/Professor.jpg" alt="Alternate Tex" style="width:100%" /></div>
+    </div>*@
+
+
+  @*<asp:DataList ID="DataList1" runat="server" OnItemDataBound="DataList1_ItemDataBound" RepeatColumns="3" RepeatDirection="Horizontal" Width="100%">
+      <ItemTemplate>
+
+
+        <div class="album_item inline-block">
+          <div class="fix_png">
+
+
+
+            <asp:PlaceHolder ID="phphoto" runat="server" />
+
+
+          </div>
+          <div class="album_info">
+            <p class="album_info_title">
+
+              <asp:PlaceHolder ID="phtitle" runat="server" />
+
+
+            </p>
+
+          </div>
+        </div>
+      </ItemTemplate>
+
+    </asp:DataList>*@
 </div>
 
