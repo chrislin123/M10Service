@@ -62,6 +62,7 @@ namespace M10.lib.model
 
     public string statustime { get; set; }
 
+    public string villageid { get; set; }
 
   }
 
@@ -112,6 +113,8 @@ namespace M10.lib.model
     public string statustime { get; set; }
 
     public string statuscheck { get; set; }
+
+    public string villageid { get; set; }
 
   }
 
@@ -513,6 +516,26 @@ namespace M10.lib.model
     public string VillageName { get; set; }
 
   }
+
+  [Table("LrtiBasic")]
+  public class LrtiBasic
+  {
+    //設定key
+    [Key]
+    public int no { get; set; }
+
+    public string type { get; set; }
+
+    public string stid { get; set; }
+
+    public string elrti { get; set; }
+
+    public string villageid { get; set; }
+
+  }
+
+
+
 
 
 

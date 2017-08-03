@@ -15,6 +15,7 @@ using M10.lib.model;
 using System.Xml;
 using System.Xml.Linq;
 using System.Diagnostics;
+using HtmlAgilityPack;
 
 namespace M10Tools
 {
@@ -28,6 +29,15 @@ namespace M10Tools
       base.InitForm();
     }
 
+    public static Stream GenerateStreamFromString(string s)
+    {
+      MemoryStream stream = new MemoryStream();
+      StreamWriter writer = new StreamWriter(stream,Encoding.Default);
+      writer.Write(s);
+      writer.Flush();
+      stream.Position = 0;
+      return stream;
+    }
 
     private void btnVillage_Click(object sender, EventArgs e)
     {
@@ -49,22 +59,79 @@ namespace M10Tools
           string sSTID = "";
           string sVillsageID = "";
 
-          //延伸資料，拆解取得相關資料VillageID
-          string extenddata = item.Element(ns + "ExtendedData").Value;
-          var ExtendDataList = item.Element(ns + "ExtendedData").Element(ns + "SchemaData").Elements(ns + "SimpleData");
-          foreach (var LoopData in ExtendDataList)
+          //kml包含description
+          if (item.Element(ns + "description") != null)
           {
-            if (LoopData.Attribute("name").Value == "雨量站編號")
+            string description = item.Element(ns + "description").Value;
+            Dictionary<string, string> dicData = new Dictionary<string, string>();
+            using (Stream s = GenerateStreamFromString(description))
             {
-              sSTID = LoopData.Value;
+              HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+              doc.Load(s);
+
+              HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//table[1]/tr/td/table/tr/td");
+              
+              string sKey = "";
+              string sValue = "";
+
+              int i = 0;
+              foreach (HtmlNode node in nodes)
+              {
+
+                if (i % 2 == 0)
+                {
+                  sKey = node.InnerText;
+                }
+
+                if (i % 2 == 1)
+                {
+                  sValue = node.InnerText;
+
+                  dicData.Add(sKey, sValue);
+                  sKey = "";
+                  sValue = "";
+                }
+
+                i++;
+              }
             }
 
-            if (LoopData.Attribute("name").Value == "VILLAGE_ID")
+            if (dicData.ContainsKey("VILLAGE_ID"))
             {
-              sVillsageID = LoopData.Value;
+              sVillsageID = dicData["VILLAGE_ID"];
             }
-
           }
+
+          //kml包含ExtendedData
+          if (item.Element(ns + "ExtendedData") != null)
+          {
+            string extenddata = item.Element(ns + "ExtendedData").Value;
+
+            //延伸資料，拆解取得相關資料VillageID
+            var ExtendDataList = item.Element(ns + "ExtendedData").Element(ns + "SchemaData").Elements(ns + "SimpleData");
+            foreach (var LoopData in ExtendDataList)
+            {
+              if (LoopData.Attribute("name").Value == "雨量站編號")
+              {
+                sSTID = LoopData.Value;
+              }
+
+              if (LoopData.Attribute("name").Value == "VILLAGE_ID")
+              {
+                sVillsageID = LoopData.Value;
+              }
+
+            }
+          }
+
+
+
+          if (sVillsageID == "")
+          {
+            MessageBox.Show(Name + "VillsageID空白 ");
+            return;
+          }
+          
           
 
           var LinearRing = item.Element(ns + "MultiGeometry").Element(ns + "Polygon").Element(ns + "outerBoundaryIs").Element(ns + "LinearRing");
@@ -99,39 +166,7 @@ namespace M10Tools
           }
 
           
-
-          //ssql = " select * from StationVillageLRTI where village = '{0}' ";
-          //StationVillageLRTI RelData = dbDapper.QuerySingleOrDefault<StationVillageLRTI>(string.Format(ssql, Name));
-
-          //if (RelData != null)
-          //{
-
-          //  var LinearRing = item.Element(ns + "MultiGeometry").Element(ns + "Polygon").Element(ns + "outerBoundaryIs").Element(ns + "LinearRing");
-          //  string sAllCoord = LinearRing.Element(ns + "coordinates").Value;
-
-          //  //依照格式拆解
-          //  string[] CoorDataList = sAllCoord.Replace(" ", "").Replace(",0", "|").Split('|');
-
-          //  int idx = 1;
-          //  foreach (string LoopItem in CoorDataList)
-          //  {
-          //    //資料空白去除
-          //    if (LoopItem == "") continue;
-
-          //    string[] aItem = LoopItem.Split(',');
-
-          //    Coordinate insData = new Coordinate();
-          //    insData.type = "stvillage";
-          //    insData.relano = RelData.no;
-          //    insData.lat = aItem[1];
-          //    insData.lng = aItem[0];
-          //    insData.pointseq = idx;
-
-          //    dbDapper.Insert(insData);
-
-          //    idx++;
-          //  }
-          //}
+          
         }
       }
       catch (Exception ex)
@@ -189,38 +224,7 @@ namespace M10Tools
           }
 
           iTownshipID++;
-          //ssql = " select * from StationVillageLRTI where village = '{0}' ";
-          //StationVillageLRTI RelData = dbDapper.QuerySingleOrDefault<StationVillageLRTI>(string.Format(ssql, Name));
-
-          //if (RelData != null)
-          //{
-
-          //  var LinearRing = item.Element(ns + "MultiGeometry").Element(ns + "Polygon").Element(ns + "outerBoundaryIs").Element(ns + "LinearRing");
-          //  string sAllCoord = LinearRing.Element(ns + "coordinates").Value;
-
-          //  //依照格式拆解
-          //  string[] CoorDataList = sAllCoord.Replace(" ", "").Replace(",0", "|").Split('|');
-
-          //  int idx = 1;
-          //  foreach (string LoopItem in CoorDataList)
-          //  {
-          //    //資料空白去除
-          //    if (LoopItem == "") continue;
-
-          //    string[] aItem = LoopItem.Split(',');
-
-          //    Coordinate insData = new Coordinate();
-          //    insData.type = "stvillage";
-          //    insData.relano = RelData.no;
-          //    insData.lat = aItem[1];
-          //    insData.lng = aItem[0];
-          //    insData.pointseq = idx;
-
-          //    dbDapper.Insert(insData);
-
-          //    idx++;
-          //  }
-          //}
+         
         }
       }
       catch (Exception ex)

@@ -121,12 +121,6 @@
     <Compile Include="M10AlertLRTI.Designer.cs">
       <DependentUpon>M10AlertLRTI.cs</DependentUpon>
     </Compile>
-    <Compile Include="M10kml.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="M10kml.Designer.cs">
-      <DependentUpon>M10kml.cs</DependentUpon>
-    </Compile>
     <Compile Include="Models\Models.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -136,9 +130,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="M10AlertLRTI.resx">
       <DependentUpon>M10AlertLRTI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="M10kml.resx">
-      <DependentUpon>M10kml.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
