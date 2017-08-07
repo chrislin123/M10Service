@@ -46,9 +46,6 @@ namespace M10Api.Controllers
       foreach (var item in data)
       {
         //處理狀態改中文顯示
-        //if (item.status == "I") item.status = "新增";
-        //if (item.status == "C") item.status = "持續";
-        //if (item.status == "D") item.status = "刪除";
         if (item.status == "I") item.status = Constants.AlertStatus.I;
         if (item.status == "C") item.status = Constants.AlertStatus.C;
         if (item.status == "O") item.status = Constants.AlertStatus.O;
@@ -217,9 +214,6 @@ namespace M10Api.Controllers
 
       foreach (var item in data)
       {
-        //if (item.status == "I") item.status = "新增";
-        //if (item.status == "C") item.status = "持續";
-        //if (item.status == "D") item.status = "刪除";
         if (item.status == "I") item.status = Constants.AlertStatus.I;
         if (item.status == "C") item.status = Constants.AlertStatus.C;
         if (item.status == "O") item.status = Constants.AlertStatus.O;
@@ -229,16 +223,7 @@ namespace M10Api.Controllers
 
       ViewBag.count = data.Count;
       ViewData["LRTIAlert"] = data;
-
-      //var rdata;
-      //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-      //{
-      //  rdata = cn.Query<Models.RunTimeRainData>(sql);
-      //  return cn.Query(sql).ToList();
-      //}
-
-
-      //rdata = data.ToList<Models.RunTimeRainData>();
+      
 
       return View();
     }
@@ -270,17 +255,6 @@ namespace M10Api.Controllers
       string ssql = @" select * from LRTIAlertHis where 1=1
                       and RecTime between '{0}' and '{1}'
                       order by RecTime,country,town  ";
-      //1060520 歷史資料使用時間排序，不使用狀態排序
-      ////新增
-      //var dataI = db.Query(string.Format(ssql, "I", sStartDate, sEndDate));
-      ////持續
-      //var dataC = db.Query(string.Format(ssql, "C", sStartDate, sEndDate));
-      ////解除
-      //var dataD = db.Query(string.Format(ssql, "D", sStartDate, sEndDate));
-
-      //ResultList.AddRange(dataI);
-      //ResultList.AddRange(dataC);
-      //ResultList.AddRange(dataD);
 
       var data = dbDapper.Query(string.Format(ssql, sStartDate, sEndDate));
       ResultList.AddRange(data);
@@ -288,9 +262,6 @@ namespace M10Api.Controllers
       foreach (var item in ResultList)
       {
         //處理狀態改中文顯示
-        //if (item.status == "I") item.status = "新增";
-        //if (item.status == "C") item.status = "持續";
-        //if (item.status == "D") item.status = "刪除";
         if (item.status == "I") item.status = Constants.AlertStatus.I;
         if (item.status == "C") item.status = Constants.AlertStatus.C;
         if (item.status == "O") item.status = Constants.AlertStatus.O;

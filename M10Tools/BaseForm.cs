@@ -3,7 +3,6 @@ using System.Configuration;
 using M10.lib;
 using NLog;
 
-
 namespace M10Tools
 {
   public class BaseForm : Form
@@ -43,11 +42,9 @@ namespace M10Tools
     {
 
     }
-
     
     public void InitForm()
-    {
-      _ConnectionString = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]].ConnectionString;
+    { 
       _dbDapper = new DALDapper(_ConnectionString);
       logger = NLog.LogManager.GetCurrentClassLogger();
     }

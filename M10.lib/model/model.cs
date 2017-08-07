@@ -534,10 +534,21 @@ namespace M10.lib.model
 
   }
 
+  [Table("StockInfo")]
+  public class StockInfo
+  {
+    //設定key
+    [Key]
+    public int no { get; set; }
 
+    public string stockcode { get; set; }
 
+    public string stockname { get; set; }
 
+    public string type { get; set; }
 
+    public string updatetime { get; set; }
 
+  }
 
 }

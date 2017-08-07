@@ -616,11 +616,10 @@ namespace M10AlertLRTI
           }
 
           //更新目前警戒中的警戒狀態
-          ssql = " select * from RunTimeRainData a "
-             + " left join StationErrLRTI b on a.STID = b.STID "
-             + " where CAST(a.LRTI AS decimal(8, 2))  > CAST(b.ELRTI AS decimal(8, 2)) "
-             + " and a.STID = '{0}' "
-             ;
+          ssql = @" select * from RunTimeRainData a 
+                    left join (select distinct stid,elrti from lrtibasic) b on a.STID = b.STID 
+                    where CAST(a.LRTI AS decimal(8, 2))  > CAST(b.ELRTI AS decimal(8, 2)) 
+                    and a.STID = '{0}' ";
           int iCount = dbDapper.QueryTotalCount(string.Format(ssql, sSTID));
           if (iCount == 0) //低於警戒
           {
@@ -745,7 +744,7 @@ namespace M10AlertLRTI
         //處理狀態(新案)
         //取得目前超過警戒值的雨量站
         ssql = @" select * from RunTimeRainData a 
-                  left join StationErrLRTI b on a.STID = b.STID 
+                  left join (select distinct stid,elrti from lrtibasic) b on a.STID = b.STID 
                   where CAST(a.LRTI AS decimal(8, 2))  > CAST(b.ELRTI AS decimal(8, 2)) ";
         List<dynamic> RuntimeList = dbDapper.Query(ssql);
         
@@ -759,18 +758,24 @@ namespace M10AlertLRTI
           if (iCount > 0) continue;
 
           decimal dELRTI = 0;
-          decimal.TryParse(RumtimeItem.ELRTI, out dELRTI);
+          decimal.TryParse(RumtimeItem.elrti, out dELRTI);
           dELRTI = Math.Round(dELRTI, 2);
 
-          ssql = " select * from StationVillageLRTI where STID = '{0}' ";
-          List<StationVillageLRTI> VillageList = dbDapper.Query<StationVillageLRTI>(string.Format(ssql, RumtimeItem.STID));
-          foreach (StationVillageLRTI VillageItem in VillageList)
+          ssql = " select * from lrtibasic where STID = '{0}' ";
+          List<LrtiBasic> LrtiBasicList = dbDapper.Query<LrtiBasic>(string.Format(ssql, RumtimeItem.STID));
+          foreach (LrtiBasic LrtiBasicItem in LrtiBasicList)
           {
+            ssql = " select * from areacode where villageid = '{0}' ";
+            AreaCode AreaCodeItem = 
+              dbDapper.QuerySingleOrDefault<AreaCode>(string.Format(ssql, LrtiBasicItem.villageid));
+
+            if (AreaCodeItem == null) AreaCodeItem = new AreaCode();
+
             LRTIAlert AlertItem = new LRTIAlert();
             AlertItem.STID = RumtimeItem.STID;
-            AlertItem.country = VillageItem.Country;
-            AlertItem.town = VillageItem.Town;
-            AlertItem.village = VillageItem.Village;
+            AlertItem.country = AreaCodeItem.CountryName;
+            AlertItem.town = AreaCodeItem.TownName;
+            AlertItem.village = AreaCodeItem.VillageName;
             AlertItem.status = "I";
             AlertItem.HOUR3 = RumtimeItem.HOUR3;
             AlertItem.RT = RumtimeItem.RT;
@@ -781,231 +786,11 @@ namespace M10AlertLRTI
             AlertItem.nowwarm = "Y";
             AlertItem.statustime = sDt;
             AlertItem.statuscheck = "Y";
+            AlertItem.villageid = LrtiBasicItem.villageid;
 
             dbDapper.Insert(AlertItem);
           }
         }
-
-
-       
-
-
-
-        //DataTable dt = new DataTable();
-        ////判斷狀態的前置處理             
-        //ssql = " select * from LRTIAlert ";
-        //oDal.CommandText = ssql;
-        //dt.Clear();
-        //dt = oDal.DataTable();
-        //foreach (DataRow dr in dt.Rows)
-        //{
-        //  string sSTID = dr["STID"].ToString();
-
-        //  //更新目前警戒中的即時雨量資料
-        //  DataTable dt_temp = new DataTable();
-        //  ssql = " select * from RunTimeRainData "
-        //   + " where STID = '" + sSTID + "' ";
-        //  oDal.CommandText = ssql;
-        //  dt_temp = oDal.DataTable();
-        //  foreach (DataRow dr_temp in dt_temp.Rows)
-        //  {
-        //    string sHOUR3 = dr_temp["HOUR3"].ToString();
-        //    string sHOUR1 = dr_temp["RAIN"].ToString();
-        //    string sHOUR2 = dr_temp["HOUR2"].ToString();
-        //    string sRT = dr_temp["RT"].ToString();
-        //    string sLRTI = dr_temp["LRTI"].ToString();
-        //    //string sELRTI = dr_temp["ELRTI"].ToString();
-
-        //    if (dr_temp["STATUS"].ToString() == "-99")
-        //    {
-        //      sHOUR3 = "異常";
-        //      sHOUR1 = "異常";
-        //      sHOUR2 = "異常";
-        //      sRT = "異常";
-        //      sLRTI = "異常";
-        //      //sELRTI = "異常";
-        //    }
-
-        //    ssql = " update LRTIAlert "
-        //        + " set HOUR3 = '" + sHOUR3 + "'  "
-        //        + " , HOUR1 = '" + sHOUR1 + "'  "
-        //        + " , HOUR2 = '" + sHOUR2 + "'  "
-        //        + " , RT = '" + sRT + "'  "
-        //        + " , LRTI = '" + sLRTI + "'  "
-        //        //+ " , ELRTI = '" + sELRTI + "'  "
-        //        + " where STID = '" + sSTID + "' "
-        //        ;
-        //    oDal.CommandText = ssql;
-        //    oDal.ExecuteSql();
-        //  }
-
-        //  //更新目前警戒中的警戒狀態
-        //  ssql = " select * from RunTimeRainData a "
-        //     + " left join StationErrLRTI b on a.STID = b.STID "
-        //     + " where CAST(a.LRTI AS decimal(8, 2))  > CAST(b.ELRTI AS decimal(8, 2)) "
-        //     + " and a.STID = '{0}' "
-        //     ;
-        //  int iCount = dbDapper.QueryTotalCount(string.Format(ssql, sSTID));
-
-        //  ssql = " update LRTIAlert set nowwarm = '{0}' where STID = '{1}' ";
-        //  if (iCount == 0) //低於警戒
-        //  {
-        //    dbDapper.Execute(string.Format(ssql, "N", sSTID));
-        //  }
-        //  else //高於警戒
-        //  {
-        //    dbDapper.Execute(string.Format(ssql, "Y", sSTID));
-        //  }
-
-
-        //}
-
-        ////處理狀態(I)
-        //ssql = " select * from LRTIAlert where status = 'I' and statuscheck = 'N' ";
-        //List<dynamic> StatusIList = dbDapper.Query(ssql);
-        //foreach (var item in StatusIList)
-        //{
-        //  string sSTID = item.STID;
-        //  string snowwarm = item.nowwarm;
-
-        //  if (snowwarm == "Y") //現在高於警戒
-        //  {
-        //    //判斷歷史資料三小時(用2.5小時切)是否超過兩筆
-        //    ssql = @" select distinct RecTime from LRTIAlertHis 
-        //              where nowwarm = 'Y' and stid = '{0}' and RecTime > '{1}' ";
-        //    int iTemp = dbDapper.QueryTotalCount(string.Format(ssql, sSTID, sDtd25));
-        //    if (iTemp >= 2) //變更狀態(I預警=>C警戒)
-        //    {
-        //      ssql = @" update LRTIAlert set statuscheck = 'Y' 
-        //              , status = '{0}' , statustime = '{1}' where STID = '{2}' ";
-        //      dbDapper.Execute(string.Format(ssql, "C", sDt, sSTID));
-        //    }
-
-        //  }
-        //  else if(snowwarm == "N") //現在低於警戒
-        //  {
-        //    //判斷歷史資料三小時(用2.5小時切)皆沒警戒資料
-        //    ssql = @" select distinct RecTime from LRTIAlertHis 
-        //              where nowwarm = 'Y' and stid = '{0}' and RecTime > '{1}' ";
-        //    int iTemp = dbDapper.QueryTotalCount(string.Format(ssql, sSTID, sDtd25));
-        //    if (iTemp == 0) //變更狀態(I預警=>D解除警戒)
-        //    {
-        //      ssql = @" update LRTIAlert set statuscheck = 'Y' 
-        //              , status = '{0}' , statustime = '{1}' where STID = '{2}' ";
-        //      dbDapper.Execute(string.Format(ssql, "D", sDt, sSTID));
-        //    }
-        //  }
-        //}
-
-        ////處理狀態(C)
-        //ssql = " select * from LRTIAlert where status = 'C' and statuscheck = 'N'  ";
-        //List<dynamic> StatusCList = dbDapper.Query(ssql);
-        //foreach (var item in StatusCList)
-        //{
-        //  string sSTID = item.STID;
-        //  string snowwarm = item.nowwarm;
-
-        //  if (snowwarm == "N") //現在低於警戒
-        //  {
-        //    //判斷歷史資料三小時(用2.5小時切)皆沒警戒資料
-        //    ssql = @" select distinct RecTime from LRTIAlertHis 
-        //              where nowwarm = 'Y' and stid = '{0}' and RecTime > '{1}' ";
-        //    int iTemp = dbDapper.QueryTotalCount(string.Format(ssql, sSTID, sDtd25));
-        //    if (iTemp == 0) //變更狀態(C警戒=>O警戒調降)
-        //    {
-        //      ssql = @" update LRTIAlert set statuscheck = 'Y' 
-        //              , status = '{0}' , statustime = '{1}' where STID = '{2}' ";
-        //      dbDapper.Execute(string.Format(ssql, "O", sDt, sSTID));
-        //    }
-        //  }
-        //}
-
-
-        ////處理狀態(O)
-        //ssql = " select * from LRTIAlert where status = 'O' and statuscheck = 'N'  ";
-        //List<dynamic> StatusOList = dbDapper.Query(ssql);
-        //foreach (var item in StatusOList)
-        //{
-        //  string sSTID = item.STID;
-        //  string snowwarm = item.nowwarm;
-
-        //  if (snowwarm == "N") //現在低於警戒
-        //  {
-        //    //判斷歷史資料三小時(用2.5小時切)皆沒警戒資料
-        //    ssql = @" select distinct RecTime from LRTIAlertHis 
-        //              where nowwarm = 'Y' and stid = '{0}' and RecTime > '{1}' ";
-        //    int iTemp = dbDapper.QueryTotalCount(string.Format(ssql, sSTID, sDtd55));
-        //    if (iTemp == 0) //變更狀態(C警戒=>O警戒調降)
-        //    {
-        //      ssql = @" update LRTIAlert set statuscheck = 'Y' 
-        //              , status = '{0}' , statustime = '{1}' where STID = '{2}' ";
-        //      dbDapper.Execute(string.Format(ssql, "D", sDt, sSTID));
-        //    }
-        //  }
-        //}
-
-        ////處理狀態(新案)
-        ////取得目前超過警戒值的雨量站
-        //ssql = " select * from RunTimeRainData a "
-        //     + " left join StationErrLRTI b on a.STID = b.STID "
-        //     + " where CAST(a.LRTI AS decimal(8, 2))  > CAST(b.ELRTI AS decimal(8, 2)) ";
-        //oDal.CommandText = ssql;
-        //dt.Clear();
-        //dt = oDal.DataTable();
-        //foreach (DataRow dr in dt.Rows)
-        //{
-        //  //1050715 即時雨量資料異常，則不發報
-        //  if (dr["STATUS"].ToString() == "-99") continue;
-
-
-        //  DataTable dt_temp = new DataTable();
-        //  string sSTID = dr["STID"].ToString();
-
-        //  //判斷狀態
-        //  ssql = " select STID from  LRTIAlert where STID = '" + sSTID + "' ";
-        //  oDal.CommandText = ssql;
-        //  object oValue = oDal.Value();
-
-        //  decimal dELRTI = 0;
-        //  decimal.TryParse(dr["ELRTI"].ToString(), out dELRTI);
-        //  dELRTI = Math.Round(dELRTI, 2);
-        //  if (oValue == null)
-        //  {            
-        //    //1050715 修改抓警戒資料的鄉鎮資料
-        //    ssql = " select * from StationVillageLRTI "
-        //         + " where STID = '" + sSTID + "' "
-        //         ;
-        //    oDal.CommandText = ssql;
-        //    dt_temp = oDal.DataTable();
-
-        //    foreach (DataRow dr_temp in dt_temp.Rows)
-        //    {
-        //      //寫入警戒雨量站資料，註記新增(I)
-        //      ssql = " insert into LRTIAlert "
-        //      + " values  "
-        //      + " ( "
-        //      + " '" + dr_temp["STID"].ToString() + "' "
-        //      + " ,'" + dr_temp["Country"].ToString() + "' "
-        //      + " ,'" + dr_temp["Town"].ToString() + "' "
-        //      + " ,'" + dr_temp["Village"].ToString() + "' "
-        //      + " ,'I' "
-        //      + " ,'" + dr["HOUR3"].ToString() + "' "
-        //      + " ,'" + dr["RT"].ToString() + "' "
-        //      + " ,'" + dr["LRTI"].ToString() + "' "
-        //      + " ,'" + dELRTI.ToString() + "' "
-        //      + " ,'" + dr["HOUR2"].ToString() + "' "
-        //      + " ,'" + dr["RAIN"].ToString() + "' "
-        //      + " ,'Y' "
-        //      + " ,'" + sDt + "' "
-        //      + " ,'Y' "
-        //      + " ) "
-        //      ;
-        //      oDal.CommandText = ssql;
-        //      oDal.ExecuteSql();
-        //    }
-        //  }         
-        //}
-
         
       }
       catch (Exception ex)

@@ -57,12 +57,50 @@ namespace M10Api.Controllers
       string sType = Params["type"];
 
       string ssql = @" 
-        select c.relano ,c.lat,c.lng from LRTIAlert a
-        inner join StationVillageLRTI b on a.STID =b.STID and a.country =b.Country and a.village =b.village 
-        inner join Coordinate c on b.no = c.relano and c.type = 'stvillage'
+        select a.villageid as relano ,c.lat,c.lng from LRTIAlert a
+        inner join areacode b on a.villageid = b.villageid
+        inner join mapvillage c on a.villageid = c.villageid and c.type = 'stvillage'
         where 1=1 {0}
-        order by b.stid,b.country,b.town,b.village,c.pointseq   
+        order by a.villageid
         ";
+      if (sType == "R")
+      {
+        ssql = string.Format(ssql, " and a.status = 'C' ");
+      }
+
+      if (sType == "Y")
+      {
+        ssql = string.Format(ssql, " and a.status in ('I','O') ");
+      }
+
+      var list = dbDapper.Query(ssql);
+
+
+      return list;
+    }
+
+    /// <summary>
+    /// 1060804 修改架構備份(已不使用)
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    [Route("getCoordinateBackup")]
+    public List<dynamic> getCoordinateBackup()
+    {
+      if (string.IsNullOrWhiteSpace(ActionContext.Request.RequestUri.Query) == true) return new List<dynamic>();
+
+      var Params = lib.M10apiLib.ParseQueryString(ActionContext.Request.RequestUri.Query);
+
+      string sType = Params["type"];
+
+      string ssql = "";
+      //ssql = @" 
+      //  select c.relano ,c.lat,c.lng from LRTIAlert a
+      //  inner join StationVillageLRTI b on a.STID =b.STID and a.country =b.Country and a.village =b.village 
+      //  inner join Coordinate c on b.no = c.relano and c.type = 'stvillage'
+      //  where 1=1 {0}
+      //  order by b.stid,b.country,b.town,b.village,c.pointseq   
+      //  ";
       if (sType == "R")
       {
         ssql = string.Format(ssql, " and a.status = 'C' ");
@@ -124,6 +162,7 @@ namespace M10Api.Controllers
       return resultList.ToList<dynamic>();
     }
 
+
     [HttpGet]
     [Route("getMapDatas")]
     public List<dynamic> getMapDatas()
@@ -136,8 +175,8 @@ namespace M10Api.Controllers
       string sType = Params["type"];
 
       string ssql = @" 
-          select *,b.no as relano from LRTIAlert a
-          inner join StationVillageLRTI b on a.STID =b.STID and a.country =b.Country and a.village =b.village           
+          select *,b.villageid as relano from LRTIAlert a
+          inner join areacode b on a.villageid = b.villageid
           where 1 = 1 
           ";
       if (sType == "R")
@@ -157,9 +196,6 @@ namespace M10Api.Controllers
       foreach (var item in list)
       {
         //處理狀態改中文顯示
-        //if (item.status == "I") item.status = "新增";
-        //if (item.status == "C") item.status = "持續";
-        //if (item.status == "D") item.status = "刪除";
         if (item.status == "I") item.status = Constants.AlertStatus.I;
         if (item.status == "C") item.status = Constants.AlertStatus.C;
         if (item.status == "O") item.status = Constants.AlertStatus.O;
@@ -185,9 +221,67 @@ namespace M10Api.Controllers
     }
 
 
+    /// <summary>
+    /// 1060804 修改架構備份(已不使用)
+    /// </summary>
+    /// <returns></returns>
+    [HttpGet]
+    [Route("getMapDatasBackup")]
+    public List<dynamic> getMapDatasBackup()
+    {
+
+      if (string.IsNullOrWhiteSpace(ActionContext.Request.RequestUri.Query) == true) return new List<dynamic>();
+
+      var Params = lib.M10apiLib.ParseQueryString(ActionContext.Request.RequestUri.Query);
+
+      string sType = Params["type"];
+
+      string ssql = "";
+      //ssql = @" 
+      //    select *,b.no as relano from LRTIAlert a
+      //    inner join StationVillageLRTI b on a.STID =b.STID and a.country =b.Country and a.village =b.village           
+      //    where 1 = 1 
+      //    ";
+      if (sType == "R")
+      {
+        ssql += " and a.status = 'C' ";
+      }
+
+      if (sType == "Y")
+      {
+        ssql += " and a.status in ('I','O') ";
+      }
+
+      var list = dbDapper.Query(ssql);
 
 
+      //格式化資料
+      foreach (var item in list)
+      {
+        //處理狀態改中文顯示
+        if (item.status == "I") item.status = Constants.AlertStatus.I;
+        if (item.status == "C") item.status = Constants.AlertStatus.C;
+        if (item.status == "O") item.status = Constants.AlertStatus.O;
+        if (item.status == "D") item.status = Constants.AlertStatus.D;
 
+
+        //處理ELRTI無條件捨去
+        decimal dELRTI = 0;
+        if (decimal.TryParse(Convert.ToString(item.ELRTI), out dELRTI))
+        {
+          item.ELRTI = Math.Round(dELRTI, 2).ToString();
+        }
+
+        decimal dRT = 0;
+        if (decimal.TryParse(Convert.ToString(item.RT), out dRT))
+        {
+          item.RT = Math.Round(dRT, 2).ToString();
+        }
+
+      }
+
+      return list;
+    }
   }
 
 
