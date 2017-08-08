@@ -7,7 +7,7 @@ using System.Data;
 using System.ComponentModel;
 using System.Reflection;
 using System.IO;
-
+using System.Web;
 
 namespace M10.lib
 {
@@ -39,7 +39,12 @@ namespace M10.lib
     }
 
 
-    
+    public static System.Collections.Specialized.NameValueCollection ParseQueryString(string QueryString)
+    {
+      System.Collections.Specialized.NameValueCollection result = new System.Collections.Specialized.NameValueCollection();
+      result = HttpUtility.ParseQueryString(QueryString);
+      return result;
+    }
 
 
 

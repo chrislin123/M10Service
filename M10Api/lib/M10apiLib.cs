@@ -9,7 +9,7 @@ namespace M10Api.lib
   {
 
     public static System.Collections.Specialized.NameValueCollection ParseQueryString(string QueryString)
-    {
+    { 
       System.Collections.Specialized.NameValueCollection result = new System.Collections.Specialized.NameValueCollection();
       result =  HttpUtility.ParseQueryString(QueryString);
       return result;
