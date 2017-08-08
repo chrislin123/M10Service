@@ -70,55 +70,105 @@ namespace M10Tools
 
     private void btnStockTrans_Click(object sender, EventArgs e)
     {
-      string stype = "";
-      string surl = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=2";
 
-      HtmlWeb webClient = new HtmlWeb();
-      //網頁特殊編碼
-      webClient.OverrideEncoding = Encoding.GetEncoding(950);
-
-      // 載入網頁資料 
-      HtmlAgilityPack.HtmlDocument doc = webClient.Load(surl);
-
-      // 裝載查詢結果 
-      HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//table[2]/tr");
-      
-      foreach (HtmlNode node in nodes)
+      try
       {
+        List<string> TypeList = new List<string>();
+        TypeList.Add("tse");
+        TypeList.Add("otc");
 
-        HtmlNodeCollection tdnodes = node.SelectNodes("td");
-
-        if (tdnodes.Count>0)
+        foreach (string sType in TypeList)
         {
-          HtmlNode tdnode = tdnodes[0];
-          string[] StockInfoSplit = tdnode.InnerText.Split('　');
+          string surl = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=2";
 
-          if (StockInfoSplit.Length != 2) continue;
+          if (sType == "tse") surl = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=2";
+          if (sType == "otc") surl = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=4";
 
-          string sCode = StockInfoSplit[0];
-          string sName = StockInfoSplit[1];
 
-          //判斷代碼存在則更新，不存在新增
-          ssql = " select * from stockinfo where stockcode = '{0}' ";
-          StockInfo si = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, sCode));
+          HtmlWeb webClient = new HtmlWeb();
+          //網頁特殊編碼
+          webClient.OverrideEncoding = Encoding.GetEncoding(950);
 
-          if (si == null) //不存在新增
+          // 載入網頁資料 
+          HtmlAgilityPack.HtmlDocument doc = webClient.Load(surl);
+
+          // 裝載查詢結果 
+          HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//table[2]/tr");
+
+          int idx = 1;
+          foreach (HtmlNode node in nodes)
           {
-            si = new StockInfo();
-            si.stockcode = sCode;
-            si.stockname = sName;
-            si.type = stype;
-            dbDapper.Insert(si);
-          }
-          else
-          {
+            string sCode = "";
+            string sName = "";
+            string sStatus = "";
+            HtmlNodeCollection tdnodes = node.SelectNodes("td");
+
+            if (tdnodes.Count > 0)
+            {
+              HtmlNode tdnode = tdnodes[0];
+              string[] StockInfoSplit = tdnode.InnerText.Split('　');
+
+              if (StockInfoSplit.Length != 2) continue;
+
+              sCode = StockInfoSplit[0];
+              sName = StockInfoSplit[1];
+
+              //判斷代碼存在則更新，不存在新增
+              ssql = " select * from stockinfo where stockcode = '{0}' ";
+              StockInfo StockInfoItem = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, sCode));
+
+              if (StockInfoItem == null) //不存在新增
+              {
+                sStatus = "新增";
+                StockInfoItem = new StockInfo();
+                StockInfoItem.stockcode = sCode;
+                StockInfoItem.stockname = sName;
+                StockInfoItem.type = sType;
+                dbDapper.Insert(StockInfoItem);
+
+
+              }
+              else
+              {
+                sStatus = "比對";
+                //有異動則更新資料
+                if (StockInfoItem.type != sType)
+                {
+                  sStatus = "更新";
+                  StockInfoItem.type = sType;
+                  dbDapper.Update(StockInfoItem);
+                }
+
+
+              }
+            }
+
+
+            
+            StatusLabel.Text =
+              string.Format("{0}進度({1}/{2})=>[{3}]{4} 狀態：{5}", sType, idx, nodes.Count, sCode, sName, sStatus);
+            //this.Refresh();
+            Application.DoEvents();
+
+            idx++;
 
           }
+
         }
 
       }
+      catch (Exception)
+      {
 
-      
+        throw;
+      }
+
+      MessageBox.Show("Finish");
+
+
     }
+
+
+
   }
 }

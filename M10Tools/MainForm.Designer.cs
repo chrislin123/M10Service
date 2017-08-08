@@ -31,6 +31,10 @@
       this.btnImpErrLRTI = new System.Windows.Forms.Button();
       this.btnKML = new System.Windows.Forms.Button();
       this.btnStockTrans = new System.Windows.Forms.Button();
+      this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+      this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+      this.StatusLabel = new System.Windows.Forms.Label();
+      this.statusStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
       // btnImpErrLRTI
@@ -63,17 +67,47 @@
       this.btnStockTrans.UseVisualStyleBackColor = true;
       this.btnStockTrans.Click += new System.EventHandler(this.btnStockTrans_Click);
       // 
+      // statusStrip1
+      // 
+      this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripStatusLabel1});
+      this.statusStrip1.Location = new System.Drawing.Point(0, 240);
+      this.statusStrip1.Name = "statusStrip1";
+      this.statusStrip1.Size = new System.Drawing.Size(440, 22);
+      this.statusStrip1.TabIndex = 7;
+      this.statusStrip1.Text = "statusStrip1";
+      // 
+      // toolStripStatusLabel1
+      // 
+      this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+      this.toolStripStatusLabel1.Size = new System.Drawing.Size(129, 17);
+      this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
+      // 
+      // StatusLabel
+      // 
+      this.StatusLabel.AutoSize = true;
+      this.StatusLabel.Location = new System.Drawing.Point(12, 219);
+      this.StatusLabel.Name = "StatusLabel";
+      this.StatusLabel.Size = new System.Drawing.Size(58, 12);
+      this.StatusLabel.TabIndex = 8;
+      this.StatusLabel.Text = "StatusLabel";
+      // 
       // MainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(284, 262);
+      this.ClientSize = new System.Drawing.Size(440, 262);
+      this.Controls.Add(this.StatusLabel);
+      this.Controls.Add(this.statusStrip1);
       this.Controls.Add(this.btnStockTrans);
       this.Controls.Add(this.btnKML);
       this.Controls.Add(this.btnImpErrLRTI);
       this.Name = "MainForm";
       this.Text = "MainForm";
+      this.statusStrip1.ResumeLayout(false);
+      this.statusStrip1.PerformLayout();
       this.ResumeLayout(false);
+      this.PerformLayout();
 
     }
 
@@ -82,6 +116,9 @@
     private System.Windows.Forms.Button btnImpErrLRTI;
     private System.Windows.Forms.Button btnKML;
     private System.Windows.Forms.Button btnStockTrans;
+    private System.Windows.Forms.StatusStrip statusStrip1;
+    private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+    private System.Windows.Forms.Label StatusLabel;
   }
 }
 
