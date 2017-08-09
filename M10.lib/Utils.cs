@@ -46,6 +46,18 @@ namespace M10.lib
       return result;
     }
 
+    public static string getDatatimeString(DateTime dt)
+    {
+      return dt.ToString("yyyy-MM-ddTHH:mm:ss");
+    }
+
+    public static string getDatatimeString()
+    {
+      DateTime dt = DateTime.Now;
+      return getDatatimeString(dt);
+    }
+
+    
 
 
   }

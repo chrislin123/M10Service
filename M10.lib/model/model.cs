@@ -549,6 +549,10 @@ namespace M10.lib.model
 
     public string updatetime { get; set; }
 
+    public string status { get; set; }
+
+    public string updstatus { get; set; }
+
   }
 
 }

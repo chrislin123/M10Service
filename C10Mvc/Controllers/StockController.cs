@@ -23,7 +23,7 @@ namespace C10Mvc.Controllers
       NameValueCollection Params = M10.lib.Utils.ParseQueryString(ActionContext.Request.RequestUri.Query);
 
 
-      string ssql = " select * from stockinfo where 1=1 ";
+      string ssql = " select * from stockinfo where 1=1 and status = 'Y' ";
       if (Params["StockCode"] != null)
       {
         ssql += string.Format(" and stockcode = '{0}' ", Params["StockCode"]);
