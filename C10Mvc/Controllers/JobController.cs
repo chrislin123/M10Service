@@ -114,7 +114,7 @@ namespace C10Mvc.Controllers
     public void DoStockTrans()
     {
       //Log("START DoStockTrans() at " + DateTime.Now.ToString());
-
+      logger.Info("START DoStockTrans()");
       try
       {
         List<string> TypeList = new List<string>();
@@ -141,8 +141,8 @@ namespace C10Mvc.Controllers
 
           if (nodes.Count > 0)
           {
-            ssql = " update stockinfo set updstatus = 'N' ";
-            dbDapper.Execute(ssql);
+            ssql = " update stockinfo set updstatus = 'N' where type = '{0}'  ";
+            dbDapper.Execute(string.Format(ssql,sType));
           }
           int idx = 1;
           foreach (HtmlNode node in nodes)
@@ -212,6 +212,8 @@ namespace C10Mvc.Controllers
         
       }
 
+
+      logger.Info("END DoStockTrans()");
       //MessageBox.Show("Finish");
 
 

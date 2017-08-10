@@ -8,7 +8,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using Quartz;
 using C10Mvc.Controllers;
-
+using NLog;
 namespace C10Mvc
 {
   public class WebApiApplication : System.Web.HttpApplication
@@ -21,13 +21,20 @@ namespace C10Mvc
       RouteConfig.RegisterRoutes(RouteTable.Routes);
       BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+      //資料回覆為Json格式
+      GlobalConfiguration.Configuration.Formatters.XmlFormatter.SupportedMediaTypes.Clear();
 
+      //Quartz Log與Nlog綁定
       Common.Logging.LogManager.Adapter = new Common.Logging.Simple.ConsoleOutLoggerFactoryAdapter { Level = Common.Logging.LogLevel.Info };
+
+      NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+      _logger.Log(NLog.LogLevel.Info, "C10Mvc Application_Start()");
 
       //建立以Ram為儲存體的排程器
       ISchedulerFactory schedulerFactory = new Quartz.Impl.StdSchedulerFactory();
       IScheduler _Scheduler = schedulerFactory.GetScheduler();
-      
+
+
       //// 建立工作
       //IJobDetail job = JobBuilder.Create<SendMailTask>()
       //                    .WithIdentity("SendMailJob")
@@ -47,7 +54,7 @@ namespace C10Mvc
       //WithCronSchedule：https://www.quartz-scheduler.net/documentation/quartz-2.x/tutorial/crontriggers.html
       // 建立觸發器
       ITrigger trigger = TriggerBuilder.Create()
-                              .WithCronSchedule("0 0 3 * * ?")  // 每一分鐘觸發一次。
+                              .WithCronSchedule("0 10 3 * * ?")  // 每一分鐘觸發一次。
                               .WithIdentity("StockTransTrigger")
                               .Build();
 
@@ -66,7 +73,7 @@ namespace C10Mvc
       //  .WithCronSchedule("")
       //  .WithIdentity("")
       //  .Build();
-      
+
       //ISimpleTrigger trigger = (ISimpleTrigger)TriggerBuilder.Create()
       //    .WithSimpleSchedule(a => a.WithIntervalInSeconds(1).WithRepeatCount(10))
       //    .Build();
