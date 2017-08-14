@@ -168,7 +168,46 @@ namespace M10Tools
 
     }
 
+    private void btnBuildFolder_Click(object sender, EventArgs e)
+    {
+      DataTable dtresult = new DataTable();
+      dtresult.Columns.Add("country");
+      dtresult.Columns.Add("week");
+      dtresult.Columns.Add("car");
+      dtresult.Columns.Add("time");
+
+      string sFilepath = @"d:\list.csv";
+
+      string sType = "";
+
+      string sRootFolder = @"D:\google電影";
 
 
+      List<string> ll = new List<string>();
+
+      using (StreamReader SR = new StreamReader(sFilepath))
+      {
+        string Line;
+        while ((Line = SR.ReadLine()) != null)
+        {
+          
+          Line = Line.Replace(" ", "");
+
+          string[] aCol = Line.Split(',');
+          if (aCol[1] == "") continue;
+
+
+
+          string sTargetPath = Path.Combine(sRootFolder, aCol[0]);
+          sTargetPath = Path.Combine(sTargetPath, aCol[1]);
+
+          Directory.CreateDirectory(sTargetPath);
+        }
+      }
+
+
+
+      MessageBox.Show("Test");
+    }
   }
 }
