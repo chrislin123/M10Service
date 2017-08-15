@@ -23,6 +23,8 @@ namespace M10Tools
     private void btnImpErrLRTI_Click(object sender, EventArgs e)
     {
 
+      dataGridView1.AutoGenerateColumns = true;
+
       DataTable dtresult = new DataTable();
       dtresult.Columns.Add("STID");
       dtresult.Columns.Add("ELRTI");

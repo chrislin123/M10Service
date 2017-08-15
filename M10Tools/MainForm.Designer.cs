@@ -34,7 +34,9 @@
       this.statusStrip1 = new System.Windows.Forms.StatusStrip();
       this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
       this.StatusLabel = new System.Windows.Forms.Label();
+      this.dataGridView1 = new System.Windows.Forms.DataGridView();
       this.statusStrip1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
       this.SuspendLayout();
       // 
       // btnImpErrLRTI
@@ -92,11 +94,21 @@
       this.StatusLabel.TabIndex = 8;
       this.StatusLabel.Text = "StatusLabel";
       // 
+      // dataGridView1
+      // 
+      this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+      this.dataGridView1.Location = new System.Drawing.Point(173, 81);
+      this.dataGridView1.Name = "dataGridView1";
+      this.dataGridView1.RowTemplate.Height = 24;
+      this.dataGridView1.Size = new System.Drawing.Size(240, 150);
+      this.dataGridView1.TabIndex = 9;
+      // 
       // MainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(440, 262);
+      this.Controls.Add(this.dataGridView1);
       this.Controls.Add(this.StatusLabel);
       this.Controls.Add(this.statusStrip1);
       this.Controls.Add(this.btnStockTrans);
@@ -106,6 +118,7 @@
       this.Text = "MainForm";
       this.statusStrip1.ResumeLayout(false);
       this.statusStrip1.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -119,6 +132,7 @@
     private System.Windows.Forms.StatusStrip statusStrip1;
     private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
     private System.Windows.Forms.Label StatusLabel;
+    private System.Windows.Forms.DataGridView dataGridView1;
   }
 }
 

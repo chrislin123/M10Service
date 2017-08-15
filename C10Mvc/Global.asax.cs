@@ -108,5 +108,23 @@ namespace C10Mvc
 
 
     }
+
+
+    protected void Application_End()
+    {
+      NLog.Logger _logger = NLog.LogManager.GetCurrentClassLogger();
+      _logger.Log(NLog.LogLevel.Info, "C10Mvc Application_End()");
+
+      System.Threading.Thread.Sleep(3000);
+
+      string sUrl = "http://localhost/C10Mvc/StockApi/getStockType?StockCode=1475";
+      System.Net.HttpWebRequest req = (System.Net.HttpWebRequest)System.Net.HttpWebRequest.Create(sUrl);
+      System.Net.HttpWebResponse res = (System.Net.HttpWebResponse)req.GetResponse();
+
+      string desc = res.StatusDescription;
+
+      _logger.Log(NLog.LogLevel.Info, "C10Mvc Application_End(), Application Restart....." + desc);
+
+    }
   }
 }
