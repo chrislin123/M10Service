@@ -35,9 +35,7 @@
       this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
       this.StatusLabel = new System.Windows.Forms.Label();
       this.btnBuildFolder = new System.Windows.Forms.Button();
-      this.dataGridView1 = new System.Windows.Forms.DataGridView();
       this.statusStrip1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
       this.SuspendLayout();
       // 
       // btnImpErrLRTI
@@ -83,7 +81,7 @@
       // toolStripStatusLabel1
       // 
       this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-      this.toolStripStatusLabel1.Size = new System.Drawing.Size(128, 17);
+      this.toolStripStatusLabel1.Size = new System.Drawing.Size(129, 17);
       this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
       // 
       // StatusLabel
@@ -95,11 +93,22 @@
       this.StatusLabel.TabIndex = 8;
       this.StatusLabel.Text = "StatusLabel";
       // 
+      // btnBuildFolder
+      // 
+      this.btnBuildFolder.Location = new System.Drawing.Point(12, 99);
+      this.btnBuildFolder.Name = "btnBuildFolder";
+      this.btnBuildFolder.Size = new System.Drawing.Size(126, 23);
+      this.btnBuildFolder.TabIndex = 9;
+      this.btnBuildFolder.Text = "建立救援資料夾";
+      this.btnBuildFolder.UseVisualStyleBackColor = true;
+      this.btnBuildFolder.Click += new System.EventHandler(this.btnBuildFolder_Click);
+      // 
       // MainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(440, 262);
+      this.Controls.Add(this.btnBuildFolder);
       this.Controls.Add(this.StatusLabel);
       this.Controls.Add(this.statusStrip1);
       this.Controls.Add(this.btnStockTrans);
@@ -109,7 +118,6 @@
       this.Text = "MainForm";
       this.statusStrip1.ResumeLayout(false);
       this.statusStrip1.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -123,6 +131,7 @@
     private System.Windows.Forms.StatusStrip statusStrip1;
     private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
     private System.Windows.Forms.Label StatusLabel;
+    private System.Windows.Forms.Button btnBuildFolder;
   }
 }
 
