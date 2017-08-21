@@ -66,7 +66,7 @@ namespace C10Mvc
       // 建立觸發器
       ITrigger triggerThreeTrade = TriggerBuilder.Create()
                               .WithCronSchedule("0 0/30 16-17 * * ?")  // 每一分鐘觸發一次。
-                              //.WithCronSchedule("0 0/3 * * * ?")  // 每一分鐘觸發一次。
+                              //.WithCronSchedule("0/3 * * * * ?")  // 每一分鐘觸發一次。
                               .WithIdentity("triggerThreeTrade")
                               .Build();
 
