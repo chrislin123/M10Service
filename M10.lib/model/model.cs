@@ -555,4 +555,33 @@ namespace M10.lib.model
 
   }
 
+  [Table("Stockthreetrade")]
+  public class Stockthreetrade
+  {
+    //設定key
+    [Key]
+    public int no { get; set; }
+
+    public string date { get; set; }
+
+    public string stockcode { get; set; }
+
+    public string type { get; set; }
+
+    public int? foreigninv { get; set; }
+
+    public int? trustinv { get; set; }
+
+    public int? selfempinv { get; set; }
+
+    public int? threeinv { get; set; }
+
+    public string updatetime { get; set; }
+
+  }
+
+
+
+
+
 }

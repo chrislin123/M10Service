@@ -11,7 +11,7 @@ using M10.lib;
 using NLog;
 using M10.lib.model;
 using HtmlAgilityPack;
-
+using System.IO;
 
 namespace C10Mvc.Controllers
 {
@@ -240,6 +240,102 @@ namespace C10Mvc.Controllers
     }
   }
 
+
+  /// <summary>
+  ///
+  /// </summary>
+  //一次只執行一個體
+  [DisallowConcurrentExecutionAttribute]  
+  public class StockThreeTradeTask : BaseJob, IJob
+  {
+    
+    public void DoStockThreeTrade()
+    {
+
+      logger.Info("START DoStockThreeTrade()");
+
+      //全部
+      //string sUrl = "http://www.tse.com.tw/fund/T86?response=csv&date={0}&selectType=ALL";
+      //全部(不含權證、牛熊證、可展延牛熊證)
+      string sUrl = "http://www.tse.com.tw/fund/T86?response=csv&date={0}&selectType=ALLBUT0999";
+      string sDate = DateTime.Now.ToString("yyyyMMdd");
+      
+      HttpWebRequest req = (HttpWebRequest)WebRequest.Create(string.Format(sUrl, sDate));
+      HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+
+      using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
+      {
+        string Line;
+        while ((Line = SR.ReadLine()) != null)
+        {
+          Line = Line.Replace(" ", "");
+          Line = Line.Replace("\",\"", "|");
+          Line = Line.Replace("\"", "");
+          Line = Line.Replace(",", "");
+          Line = Line.Replace("=", "");
+
+          string[] aCol = Line.Split('|');
+          
+          if (aCol.Length == 16)
+          {
+            //檢核資料
+            int iCheck = -1;
+            
+            if (int.TryParse(aCol[15], out iCheck) == false)
+            {
+              continue;
+            }
+
+            ssql = " select * from Stockthreetrade where date = '{0}' and stockcode = '{1}' ";
+            Stockthreetrade st = dbDapper.QuerySingleOrDefault<Stockthreetrade>(string.Format(ssql,sDate, aCol[0]));
+
+            if (st == null)
+            {
+              st = new Stockthreetrade();
+              st.stockcode = aCol[0];
+              st.date = sDate;
+              st.type = "0";
+              st.foreigninv = Convert.ToInt32(aCol[4]);
+              st.trustinv = Convert.ToInt32(aCol[7]);
+              st.selfempinv = Convert.ToInt32(aCol[14]);
+              st.threeinv = Convert.ToInt32(aCol[15]);
+              st.updatetime = Utils.getDatatimeString();
+              dbDapper.Insert(st);
+            }
+            else
+            {
+              st.stockcode = aCol[0];
+              st.date = sDate;
+              st.type = "0";
+              st.foreigninv = Convert.ToInt32(aCol[4]);
+              st.trustinv = Convert.ToInt32(aCol[7]);
+              st.selfempinv = Convert.ToInt32(aCol[14]);
+              st.threeinv = Convert.ToInt32(aCol[15]);
+              st.updatetime = Utils.getDatatimeString();
+              dbDapper.Update(st);
+            }
+            
+          }
+        }
+      }
+
+      logger.Info("END DoStockThreeTrade()");
+    }
+
+    
+
+    public void Execute(IJobExecutionContext context)
+    {
+      try
+      {
+        DoStockThreeTrade();
+      }
+      catch (Exception ex)
+      {
+        logger.Log(NLog.LogLevel.Error, ex.Message);
+      }
+    }
+  }
 
 
 }

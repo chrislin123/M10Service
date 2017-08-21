@@ -58,8 +58,21 @@ namespace C10Mvc
                               .WithIdentity("StockTransTrigger")
                               .Build();
 
+      // 建立工作
+      IJobDetail jobThreeTrade = JobBuilder.Create<StockThreeTradeTask>()
+                          .WithIdentity("jobThreeTrade")
+                          .Build();
+      //WithCronSchedule：https://www.quartz-scheduler.net/documentation/quartz-2.x/tutorial/crontriggers.html
+      // 建立觸發器
+      ITrigger triggerThreeTrade = TriggerBuilder.Create()
+                              .WithCronSchedule("0 0/30 16-17 * * ?")  // 每一分鐘觸發一次。
+                              //.WithCronSchedule("0 0/3 * * * ?")  // 每一分鐘觸發一次。
+                              .WithIdentity("triggerThreeTrade")
+                              .Build();
+
       // 把工作加入排程
       _Scheduler.ScheduleJob(job, trigger);
+      _Scheduler.ScheduleJob(jobThreeTrade, triggerThreeTrade);
 
       // 啟動排程器
       _Scheduler.Start();
