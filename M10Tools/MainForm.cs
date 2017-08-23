@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using M10.lib.model;
 using HtmlAgilityPack;
+using System.Net;
 
 namespace M10Tools
 {
@@ -210,6 +211,49 @@ namespace M10Tools
 
 
       MessageBox.Show("Test");
+    }
+
+
+    double ConvertToUnixTimestamp(DateTime date)
+    {
+        DateTime st = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+        TimeSpan diff = date - st;
+        return Math.Floor(diff.TotalSeconds);
+    }
+  private void button1_Click(object sender, EventArgs e)
+    {
+      string Url = "http://{0}/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw%7cotc_o00.tw%7ctse_FRMSA.tw&json=1&delay=0&_={1}";
+      double dd = ConvertToUnixTimestamp(DateTime.Now);
+      
+      
+      string MISTWSE = "mis.twse.com.tw";
+      string host = "61.57.47.179";
+      string USER_AGENT = "curl/7.32.0";
+
+      Url = string.Format(Url, host, dd);
+      HttpWebRequest myRequest = (HttpWebRequest)WebRequest.Create(Url);
+
+      //myRequest.Host = MISTWSE;
+      //myRequest.UserAgent = USER_AGENT;
+      //myRequest.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+      myRequest.Referer = string.Format("http://{0}/stock/fibest.jsp?lang=zh_tw", host);
+      myRequest.ContentType = "application/json; charset=utf-8";
+      //myRequest.Headers.Add("Host", MISTWSE);
+      //myRequest.Headers.Add("User-Agent", USER_AGENT);
+      //myRequest.Headers.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+      //myRequest.Headers.Add("Accept-Language", "zh-TW,zh;q=0.8,en-US;q=0.5,en;q=0.3");
+      //myRequest.Headers.Add("Accept-Encoding", "gzip, deflate");
+      //myRequest.Headers.Add("Upgrade-Insecure-Requests", "1");
+      //myRequest.Headers.Add("Referer", string.Format("http://%s/stock/fibest.jsp?lang=zh_tw", host));
+
+      myRequest.Method = "GET";
+      WebResponse myResponse = myRequest.GetResponse();
+      using (StreamReader sr = new StreamReader(myResponse.GetResponseStream(), System.Text.Encoding.Default))
+      {
+        string result = sr.ReadToEnd();
+        myResponse.Close();
+      }
+      
     }
   }
 }
