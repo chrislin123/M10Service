@@ -580,7 +580,49 @@ namespace M10.lib.model
 
   }
 
+  
+  public class StockRuntime
+  {
+    
+    
+    /// <summary>
+    /// 目前成交價
+    /// </summary>
+    public string z { get; set; }
 
+    /// <summary>
+    /// 昨日成交價
+    /// </summary>
+    public string y { get; set; }
+
+    /// <summary>
+    /// 漲停價
+    /// </summary>
+    public string u { get; set; }
+
+    /// <summary>
+    /// 跌停價
+    /// </summary>
+    public string w { get; set; }
+
+    /// <summary>
+    /// yahoo漲跌
+    /// </summary>
+    public string xx { get; set; }
+
+    /// <summary>
+    /// 名稱
+    /// </summary>
+    public string n { get; set; }
+
+    /// <summary>
+    /// 代碼
+    /// </summary>
+    public string c { get; set; }
+
+
+
+  }
 
 
 

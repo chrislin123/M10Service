@@ -258,7 +258,7 @@ namespace M10Tools
       ////request.Content = new StringContent("{\"name\":\"John Doe\",\"age\":33}",
       ////                                    Encoding.UTF8,
       ////                                    "application/json");//CONTENT-TYPE header
-      
+
       //client.SendAsync(request)
       //      .ContinueWith(responseTask =>
       //      {
@@ -294,7 +294,7 @@ namespace M10Tools
 
       //string url = "http://140.116.38.211/C10Mvc/StockApi/getStockType?StockCode=00672L";
 
-     
+
 
 
 
@@ -387,7 +387,7 @@ namespace M10Tools
 
 
       //ExeCommand();
-      
+
 
       HttpClient hc = new HttpClient();
 
@@ -448,7 +448,7 @@ namespace M10Tools
       string sCookie = "";
       WebResponse myResponse = myRequest.GetResponse();
 
-      
+
       //myResponse.Cookies = 
       CookieCollection cook = myRequest.CookieContainer.GetCookies(myRequest.RequestUri);
       string strcrook = myRequest.CookieContainer.GetCookieHeader(myRequest.RequestUri);
@@ -456,8 +456,8 @@ namespace M10Tools
 
       using (StreamReader sr = new StreamReader(myResponse.GetResponseStream(), System.Text.Encoding.Default))
       {
-        
-       
+
+
 
         string result = sr.ReadToEnd();
 
@@ -489,8 +489,8 @@ namespace M10Tools
       //hwc.Headers.Add("Upgrade-Insecure-Requests", "1");
       //hwc.Headers.Add("Referer", string.Format("http://{0}/stock/fibest.jsp?stock=4506", MISTWSE));
       myRequest.Referer = url4;
-      
-     
+
+
       //myRequest2.Headers.Add("Accept-Language", "zh-TW");
       //myRequest2.Headers.Add("Referer", url4);
       //myRequest2.Headers.Add("Cookie", sCookie);
@@ -563,10 +563,10 @@ namespace M10Tools
         strOutput[1] = p.StandardOutput.ReadToEnd();
 
         p.WaitForExit();
-        
+
 
         //p.StandardInput.WriteLine("exit");
-        
+
 
 
 
@@ -578,7 +578,7 @@ namespace M10Tools
       }
       finally
       {
-        
+
         p.Close();
       }
       return strOutput;
@@ -601,50 +601,149 @@ namespace M10Tools
     //  return tExeValue;
     //}
     #endregion
-  }
 
-
-  public class HttpWebClient : WebClient
-  {
-    // Cookie 容器
-    private CookieContainer cookieContainer;
-
-    public HttpWebClient()
+    private void button2_Click(object sender, EventArgs e)
     {
-      this.cookieContainer = new CookieContainer();
-    }
+      string surl = "https://tw.stock.yahoo.com/q/q?s=1475";
 
-    public HttpWebClient(CookieContainer cc)
-    {
-      this.cookieContainer = cc;
-    }
+      HtmlWeb webClient = new HtmlWeb();
+      //網頁特殊編碼
+      webClient.OverrideEncoding = Encoding.GetEncoding(950);
+      //webClient.OverrideEncoding = Encoding;
 
-    /// <summary>
-    /// Cookie 容器
-    /// </summary>
-    public CookieContainer MyCookies
-    {
-      get { return this.cookieContainer; }
-      set { this.cookieContainer = value; }
-    }
+      // 載入網頁資料 
+      HtmlAgilityPack.HtmlDocument doc = webClient.Load(surl);
+      //*[@id="yui_3_5_1_13_1503571196918_6"]/table[2]/tbody/tr/td/table
+      //*[@id="yui_3_5_1_13_1503571196918_6"]/table[2]/tbody/tr/td/table/tbody/tr[2]
+      // 裝載查詢結果 
+      HtmlNode nnn = doc.DocumentNode.SelectSingleNode("//table[2]/tr/td/table/tr[2]");
+      HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//table[2]/tr/td/table/tr[2]");
 
-    /// <summary>
-    /// 覆寫web request方法，讓webclient能保持session
-    /// </summary>
-    /// <param name="address"></param>
-    /// <returns></returns>
-    protected override WebRequest GetWebRequest(Uri address)
-    {
-      //throw new Exception(); 
-      WebRequest request;
-      request = base.GetWebRequest(address);
-      //判斷是不是HttpWebRequest.只有HttpWebRequest才有此属性 
-      if (request is HttpWebRequest)
+      HtmlNodeCollection tdnodes = nnn.SelectNodes("td");
+
+      //HtmlNodeCollection nodes1 = doc.DocumentNode.SelectNodes("//table[2]/tbody/tr/td/table/tbody/tr[2]");
+
+      var temp = new {a="",b="",c="" };
+      int idx = 0;
+      foreach (HtmlNode node in tdnodes)
       {
-        HttpWebRequest httpRequest = request as HttpWebRequest;
-        httpRequest.CookieContainer = this.cookieContainer;
+        string sCode = "";
+
+
+        //成交價
+        if (idx == 2)
+        {
+          //temp.a = node.InnerText;
+        }
+
+        //漲跌
+        if (idx == 4)
+        {
+
+        }
+
+        //昨收
+        if (idx == 7)
+        {
+
+        }
+
+
+
+
+        idx++;
+
+
+
+        //if (tdnodes.Count > 0)
+        //{
+        //  HtmlNode tdnode = tdnodes[0];
+        //  string[] StockInfoSplit = tdnode.InnerText.Split('　');
+
+        //  if (StockInfoSplit.Length != 2) continue;
+
+        //  sCode = StockInfoSplit[0];
+        //  sName = StockInfoSplit[1];
+
+        //  //判斷代碼存在則更新，不存在新增
+        //  ssql = " select * from stockinfo where stockcode = '{0}' ";
+        //  StockInfo StockInfoItem = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, sCode));
+
+        //  if (StockInfoItem == null) //不存在新增
+        //  {
+        //    sStatus = "新增";
+        //    StockInfoItem = new StockInfo();
+        //    StockInfoItem.stockcode = sCode;
+        //    StockInfoItem.stockname = sName;
+        //    StockInfoItem.type = sType;
+        //    dbDapper.Insert(StockInfoItem);
+
+
+        //  }
+        //  else
+        //  {
+        //    sStatus = "比對";
+        //    //有異動則更新資料
+        //    if (StockInfoItem.type != sType)
+        //    {
+        //      sStatus = "更新";
+        //      StockInfoItem.type = sType;
+        //      dbDapper.Update(StockInfoItem);
+        //    }
+
+
+        //  }
+        //}
+
+
+
+
       }
-      return request;
+    }
+
+
+    public class HttpWebClient : WebClient
+    {
+      // Cookie 容器
+      private CookieContainer cookieContainer;
+
+      public HttpWebClient()
+      {
+        this.cookieContainer = new CookieContainer();
+      }
+
+      public HttpWebClient(CookieContainer cc)
+      {
+        this.cookieContainer = cc;
+      }
+
+      /// <summary>
+      /// Cookie 容器
+      /// </summary>
+      public CookieContainer MyCookies
+      {
+        get { return this.cookieContainer; }
+        set { this.cookieContainer = value; }
+      }
+
+      /// <summary>
+      /// 覆寫web request方法，讓webclient能保持session
+      /// </summary>
+      /// <param name="address"></param>
+      /// <returns></returns>
+      protected override WebRequest GetWebRequest(Uri address)
+      {
+        //throw new Exception(); 
+        WebRequest request;
+        request = base.GetWebRequest(address);
+        //判斷是不是HttpWebRequest.只有HttpWebRequest才有此属性 
+        if (request is HttpWebRequest)
+        {
+          HttpWebRequest httpRequest = request as HttpWebRequest;
+          httpRequest.CookieContainer = this.cookieContainer;
+        }
+        return request;
+      }
     }
   }
 }
