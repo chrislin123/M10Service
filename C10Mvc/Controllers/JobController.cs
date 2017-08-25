@@ -259,7 +259,8 @@ namespace C10Mvc.Controllers
       //全部(不含權證、牛熊證、可展延牛熊證)
       string sUrl = "http://www.tse.com.tw/fund/T86?response=csv&date={0}&selectType=ALLBUT0999";
       string sDate = DateTime.Now.ToString("yyyyMMdd");
-      
+      //sDate = "20170816";
+
       HttpWebRequest req = (HttpWebRequest)WebRequest.Create(string.Format(sUrl, sDate));
       HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
 

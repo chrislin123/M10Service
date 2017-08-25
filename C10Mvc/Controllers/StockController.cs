@@ -99,6 +99,84 @@ namespace C10Mvc.Controllers
       return dd;
     }
 
+    [HttpGet]
+    [Route("getStockThreeTrade3d")]
+    public dynamic getStockThreeTrade3d()
+    {
+      ////if (string.IsNullOrWhiteSpace(ActionContext.Request.RequestUri.Query) == true) return null;
+
+      ////NameValueCollection Params = M10.lib.Utils.ParseQueryString(ActionContext.Request.RequestUri.Query);
+
+      string sMaxDate = "";
+      string ssql = " select max(date) from Stockthreetrade ";
+
+      var maxdate = dbDapper.ExecuteScale(ssql);
+      if (maxdate != null)
+      {
+        sMaxDate = maxdate.ToString();
+      }
+
+      ssql = @"
+            select top 30 * from (
+              select stockcode,count(*) as tt , sum(threeinv) as threeinv  from (
+                select * from Stockthreetrade
+                where date in (
+                  select top 3 * from (
+                    select distinct date from Stockthreetrade 
+                  ) as a order by a.date desc
+                ) and threeinv > 0
+              ) b group by stockcode
+            ) as c 
+            left join stockinfo d on c.stockcode = d.stockcode
+            where c.tt =3 order by threeinv desc
+            ";
+
+      List<dynamic> ThreeTradeList = dbDapper.Query<dynamic>(ssql);
+
+      List<dynamic> ListB3d = ThreeTradeList
+                  .Select(t => new
+                  {
+                    stockcode = t.stockcode
+                    ,
+                    threeinv = t.threeinv
+                                    ,
+                    stockname = t.stockname
+                  })
+                  .ToList<dynamic>();
+
+      ssql = @"
+            select top 30 * from (
+              select stockcode,count(*) as tt , sum(threeinv) as threeinv  from (
+                select * from Stockthreetrade
+                where date in (
+                  select top 3 * from (
+                    select distinct date from Stockthreetrade 
+                  ) as a order by a.date desc
+                ) and threeinv < 0
+              ) b group by stockcode
+            ) as c 
+            left join stockinfo d on c.stockcode = d.stockcode
+            where c.tt =3 order by threeinv asc
+                ";
+
+      ThreeTradeList = dbDapper.Query<dynamic>(string.Format(ssql, sMaxDate));
+
+      List<dynamic> ListS3d = ThreeTradeList
+                  .Select(t => new
+                  {
+                    stockcode = t.stockcode
+                    ,
+                    threeinv = t.threeinv
+                                    ,
+                    stockname = t.stockname
+                  })
+                  .ToList<dynamic>();
+
+      dynamic dd = new { date = sMaxDate, s = ListS3d, b = ListB3d };
+
+      return dd;
+    }
+
 
 
     [HttpGet]
