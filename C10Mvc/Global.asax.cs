@@ -65,7 +65,7 @@ namespace C10Mvc
       //WithCronSchedule：https://www.quartz-scheduler.net/documentation/quartz-2.x/tutorial/crontriggers.html
       // 建立觸發器
       ITrigger triggerThreeTrade = TriggerBuilder.Create()
-                              .WithCronSchedule("0 1/30 16-17 * * ?")  // 每一分鐘觸發一次。
+                              .WithCronSchedule("0 5/30 16-17 * * ?")  // 每一分鐘觸發一次。
                               //.WithCronSchedule("0/3 * * * * ?")  // 每一分鐘觸發一次。
                               .WithIdentity("triggerThreeTrade")
                               .Build();

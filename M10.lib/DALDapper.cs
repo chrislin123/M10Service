@@ -76,177 +76,215 @@ namespace M10.lib
 
     public int QueryTotalCount(string sql)
     {
-      using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-      { 
-        return cn.Query(sql).Count();
+      int i = 0;
+
+      try
+      {
+        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+        {
+          i = cn.Query(sql).Count();
+        }
       }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
+
+      return i;
     }
 
     public int QueryTotalCount(string sql, object param)
     {
-      using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+      int i = 0;
+
+      try
       {
-        return cn.Query(sql, param).Count();
+        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+        {
+          i = cn.Query(sql, param).Count();
+        }
       }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
+
+      return i;
     }
 
     public int Execute(string sql, object param)
     {
-      using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+      int i = 0;
+
+      try
       {
-        return cn.Execute(sql, param);
+        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+        {
+          i = cn.Execute(sql, param);
+        }
       }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
+      return i;
     }
 
     public int Execute(string sql)
     {
-      using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+      int i = 0;
+
+      try
       {
-        return cn.Execute(sql);
+        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+        {
+          i = cn.Execute(sql);
+        }
       }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
+      return i;
     }
 
     public int Execute(List<SqlObject> SqlList)
     {
       int i = 0;
-      using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-      {
-        using (var transactionScope = new TransactionScope())
-        {
-          foreach (SqlObject d in SqlList)
-          {
-            i += cn.Execute(d.sql, d.param);
-          }
-          transactionScope.Complete();
 
+      try
+      {
+        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+        {
+          using (var transactionScope = new TransactionScope())
+          {
+            foreach (SqlObject d in SqlList)
+            {
+              i += cn.Execute(d.sql, d.param);
+            }
+
+            transactionScope.Complete();
+          }
         }
+      }
+      catch (Exception ex)
+      {
+        throw ex;
       }
       return i;
     }
 
     public bool Update<T>(T entityToUpdate) where T : class
     {
+      bool bResult = false;
+
       try
       {
         using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
         {
-          return cn.Update<T>(entityToUpdate);
-        }
-      }
-      catch (Exception)
-      {
-        return false;
-      }
-    }
-
-    public T QuerySingleOrDefault<T>(string sql) where T : class
-    {
-      try
-      {
-        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-        { 
-          return cn.QuerySingleOrDefault<T>(sql);
-        }
-      }
-      catch (Exception)
-      {
-        return null;
-      }
-    }
-   
-
-
-    
-
-    public T QuerySingleOrDefault<T>(string sql,object param) where T : class
-    {
-      try
-      {
-        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-        {
-          return cn.QuerySingleOrDefault<T>(sql, param);
-        }
-      }
-      catch (Exception)
-      {
-        return null;
-      }
-    }
-
-    public long Insert<T>(T entityToInsert) where T : class
-    {
-      try
-      {
-        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-        { 
-          
-          return cn.Insert<T>(entityToInsert);
+          bResult = cn.Update<T>(entityToUpdate);
         }
       }
       catch (Exception ex)
       {
-        return 0;
+        throw ex;
       }
+
+      return bResult;
     }
 
+    public T QuerySingleOrDefault<T>(string sql) where T : class
+    {
+      object oo = new object();
 
+      try
+      {
+        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+        {
+          oo = cn.QuerySingleOrDefault<T>(sql);
+        }
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
 
+      return oo as T;
+    }
 
-    //public int InsertMasterAndDetail(SqlObject firstSO, ArrayList secondSOs, string masterIdInDetailColumnName)
-    //{
-    //  int i = 0;
-    //  using (var cn = new MySql.Data.MySqlClient.MySqlConnection(this.Database.Connection.ConnectionString))
-    //  {
-    //    using (var transactionScope = new TransactionScope())
-    //    {
-    //      int id = cn.Query<int>(firstSO.sql, firstSO.param).Single();
+    public T QuerySingleOrDefault<T>(string sql, object param) where T : class
+    {
+      object oo = null;
 
-    //      foreach (SqlObject so in secondSOs)
-    //      {
-    //        DynamicParameters dp = (DynamicParameters)so.param;
-    //        dp.Add(masterIdInDetailColumnName, id, System.Data.DbType.Int16);
+      try
+      {
+        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+        {
+          oo = cn.QuerySingleOrDefault<T>(sql, param);
+        }
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
 
-    //        i += cn.Execute(so.sql, dp);
-    //      }
-    //      transactionScope.Complete();
-    //    }
-    //  }
-    //  return i;
-    //}
+      return oo as T;
+    }
 
-    //public int Insert(ArrayList alSqlObjectl)
-    //{
-    //  int i = 0;
-    //  using (var cn = new MySql.Data.MySqlClient.MySqlConnection(this.Database.Connection.ConnectionString))
-    //  {
-    //    using (var transactionScope = new TransactionScope())
-    //    {
-    //      foreach (SqlObject so in alSqlObjectl)
-    //      {
-    //        DynamicParameters dp = (DynamicParameters)so.param;
-    //        i += cn.Execute(so.sql, dp);
-    //      }
-    //      transactionScope.Complete();
-    //    }
-    //  }
-    //  return i;
-    //}
+    public long Insert<T>(T entityToInsert) where T : class
+    {
+      long lResult = 0;
+      try
+      {
+        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+        {
+          lResult = cn.Insert<T>(entityToInsert);
+        }
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
 
+      return lResult;
+    }
 
     public object ExecuteScale(string sql, object param)
     {
-      using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+      object oo = null;
+
+      try
       {
-        return cn.ExecuteScalar(sql, param);
+        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+        {
+          oo = cn.ExecuteScalar(sql, param);
+        }
       }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
+
+      return oo;
     }
 
     public object ExecuteScale(string sql)
     {
-      using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+      object oo = null;
+
+      try
       {
-        return cn.ExecuteScalar(sql);
+        using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+        {
+          oo = cn.ExecuteScalar(sql);
+        }
       }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
+
+      return oo;
     }
 
     //public List<dynamic> Query(string sql, int currentPage, int recordsPerPage)

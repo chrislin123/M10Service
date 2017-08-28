@@ -19,19 +19,20 @@ namespace C10Mvc.Controllers
   {
   }
 
-  public class BaseJob 
+  public class BaseJob
   {
-    private NLog.Logger _logger ;
+    private NLog.Logger _logger;
     protected string ssql = string.Empty;
     private string _ConnectionString;
     private DALDapper _dbDapper;
 
-    protected Logger logger {
+    protected Logger logger
+    {
       get
       {
         if (_logger == null)
         {
-          _logger =  NLog.LogManager.GetCurrentClassLogger();
+          _logger = NLog.LogManager.GetCurrentClassLogger();
         }
 
         return _logger;
@@ -68,7 +69,7 @@ namespace C10Mvc.Controllers
   public class SendMailTask : BaseJob, IJob
   {
     private void Log(string msg)
-    { 
+    {
       System.IO.File.AppendAllText(@"C:\Temp\log.txt", msg + Environment.NewLine);
     }
 
@@ -85,8 +86,8 @@ namespace C10Mvc.Controllers
 
     }
 
-    public void  Execute(IJobExecutionContext context)
-    { 
+    public void Execute(IJobExecutionContext context)
+    {
       try
       {
         DoSendMail();
@@ -142,7 +143,7 @@ namespace C10Mvc.Controllers
           if (nodes.Count > 0)
           {
             ssql = " update stockinfo set updstatus = 'N' where type = '{0}'  ";
-            dbDapper.Execute(string.Format(ssql,sType));
+            dbDapper.Execute(string.Format(ssql, sType));
           }
           int idx = 1;
           foreach (HtmlNode node in nodes)
@@ -188,13 +189,13 @@ namespace C10Mvc.Controllers
                 StockInfoItem.updstatus = "Y";
                 StockInfoItem.status = "Y";
                 dbDapper.Update(StockInfoItem);
-                
+
               }
             }
 
             //Log(string.Format("{0}進度({1}/{2})=>[{3}]{4} 狀態：{5}"
             //  , sType, idx, nodes.Count, sCode, sName, sStatus));
-            
+
 
             idx++;
 
@@ -209,7 +210,7 @@ namespace C10Mvc.Controllers
       catch (Exception)
       {
 
-        
+
       }
 
 
@@ -235,7 +236,7 @@ namespace C10Mvc.Controllers
       catch (Exception ex)
       {
         logger.Log(NLog.LogLevel.Error, ex.Message);
-        
+
       }
     }
   }
@@ -245,17 +246,16 @@ namespace C10Mvc.Controllers
   ///
   /// </summary>
   //一次只執行一個體
-  [DisallowConcurrentExecutionAttribute]  
+  [DisallowConcurrentExecutionAttribute]
   public class StockThreeTradeTask : BaseJob, IJob
   {
-    
+
     public void DoStockThreeTrade()
     {
 
       logger.Info("START DoStockThreeTrade()");
 
-      //全部
-      //string sUrl = "http://www.tse.com.tw/fund/T86?response=csv&date={0}&selectType=ALL";
+      #region tse-threeTrade
       //全部(不含權證、牛熊證、可展延牛熊證)
       string sUrl = "http://www.tse.com.tw/fund/T86?response=csv&date={0}&selectType=ALLBUT0999";
       string sDate = DateTime.Now.ToString("yyyyMMdd");
@@ -276,26 +276,26 @@ namespace C10Mvc.Controllers
           Line = Line.Replace("=", "");
 
           string[] aCol = Line.Split('|');
-          
+
           if (aCol.Length == 16)
           {
             //檢核資料
             int iCheck = -1;
-            
+
             if (int.TryParse(aCol[15], out iCheck) == false)
             {
               continue;
             }
 
             ssql = " select * from Stockthreetrade where date = '{0}' and stockcode = '{1}' ";
-            Stockthreetrade st = dbDapper.QuerySingleOrDefault<Stockthreetrade>(string.Format(ssql,sDate, aCol[0]));
+            Stockthreetrade st = dbDapper.QuerySingleOrDefault<Stockthreetrade>(string.Format(ssql, sDate, aCol[0]));
 
             if (st == null)
             {
               st = new Stockthreetrade();
               st.stockcode = aCol[0];
               st.date = sDate;
-              st.type = "0";
+              st.type = "tse";
               st.foreigninv = Convert.ToInt32(aCol[4]);
               st.trustinv = Convert.ToInt32(aCol[7]);
               st.selfempinv = Convert.ToInt32(aCol[14]);
@@ -307,7 +307,7 @@ namespace C10Mvc.Controllers
             {
               st.stockcode = aCol[0];
               st.date = sDate;
-              st.type = "0";
+              st.type = "tse";
               st.foreigninv = Convert.ToInt32(aCol[4]);
               st.trustinv = Convert.ToInt32(aCol[7]);
               st.selfempinv = Convert.ToInt32(aCol[14]);
@@ -315,15 +315,91 @@ namespace C10Mvc.Controllers
               st.updatetime = Utils.getDatatimeString();
               dbDapper.Update(st);
             }
-            
+
           }
         }
       }
+      #endregion
+
+      #region otc-threeTrade
+
+      DateTime dt = DateTime.Now;
+      sUrl = "http://www.tpex.org.tw/web/stock/3insti/daily_trade/3itrade_hedge_download.php?l=zh-tw&se=EW&t=D&d={0}&s=0,asc";
+      //sDate = DateTime.Now.ToString("yyyyMMdd");
+      int iyear = dt.Year - 1911;
+      sDate = string.Format("{0}/{1}/{2}", iyear.ToString(), dt.ToString("MM"), dt.ToString("dd"));
+
+      req = (HttpWebRequest)WebRequest.Create(string.Format(sUrl, sDate));
+
+      //改為寫入資料庫格式
+      sDate = dt.ToString("yyyyMMdd");
+
+      resp = (HttpWebResponse)req.GetResponse();
+      using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
+      {
+        string Line;
+        while ((Line = SR.ReadLine()) != null)
+        {
+          Line = Line.Replace(" ", "");
+          Line = Line.Replace("\",\"", "|");
+          Line = Line.Replace("\"", "");
+          Line = Line.Replace(",", "");
+          Line = Line.Replace("=", "");
+
+          string[] aCol = Line.Split('|');
+
+          if (aCol.Length == 16)
+          {
+            //檢核資料
+            int iCheck = -1;
+
+            if (int.TryParse(aCol[15], out iCheck) == false)
+            {
+              continue;
+            }
+
+            ssql = " select * from Stockthreetrade where date = '{0}' and stockcode = '{1}' ";
+            Stockthreetrade st = dbDapper.QuerySingleOrDefault<Stockthreetrade>(string.Format(ssql, sDate, aCol[0]));
+
+            if (st == null)
+            {
+              st = new Stockthreetrade();
+              st.stockcode = aCol[0];
+              st.date = sDate;
+              st.type = "otc";
+              st.foreigninv = Convert.ToInt32(aCol[4]);
+              st.trustinv = Convert.ToInt32(aCol[7]);
+              st.selfempinv = Convert.ToInt32(aCol[14]);
+              st.threeinv = Convert.ToInt32(aCol[15]);
+              st.updatetime = Utils.getDatatimeString();
+              dbDapper.Insert(st);
+            }
+            else
+            {
+              st.stockcode = aCol[0];
+              st.date = sDate;
+              st.type = "otc";
+              st.foreigninv = Convert.ToInt32(aCol[4]);
+              st.trustinv = Convert.ToInt32(aCol[7]);
+              st.selfempinv = Convert.ToInt32(aCol[14]);
+              st.threeinv = Convert.ToInt32(aCol[15]);
+              st.updatetime = Utils.getDatatimeString();
+              dbDapper.Update(st);
+            }
+          }
+
+        }
+      }
+
+
+      #endregion
+
+
 
       logger.Info("END DoStockThreeTrade()");
     }
 
-    
+
 
     public void Execute(IJobExecutionContext context)
     {

@@ -45,7 +45,7 @@ namespace M10Tools
     
     public void InitForm()
     { 
-      _dbDapper = new DALDapper(_ConnectionString);
+      //_dbDapper = new DALDapper(ConnectionString);
       logger = NLog.LogManager.GetCurrentClassLogger();
     }
 

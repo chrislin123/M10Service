@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using M10.lib.model;
+using M10.lib;
 using HtmlAgilityPack;
 using System.Net;
 using System.Diagnostics;
@@ -24,6 +25,9 @@ namespace M10Tools
     public MainForm()
     {
       InitializeComponent();
+
+      //載入BaseForm資料
+      base.InitForm();
     }
 
     private void btnImpErrLRTI_Click(object sender, EventArgs e)
@@ -623,7 +627,7 @@ namespace M10Tools
 
       //HtmlNodeCollection nodes1 = doc.DocumentNode.SelectNodes("//table[2]/tbody/tr/td/table/tbody/tr[2]");
 
-      var temp = new {a="",b="",c="" };
+      var temp = new { a = "", b = "", c = "" };
       int idx = 0;
       foreach (HtmlNode node in tdnodes)
       {
@@ -743,6 +747,256 @@ namespace M10Tools
           httpRequest.CookieContainer = this.cookieContainer;
         }
         return request;
+      }
+    }
+
+    private void button3_Click(object sender, EventArgs e)
+    {
+      try
+      {
+
+        DateTime dt = new DateTime(2012, 5, 2);
+        DateTime dttarget = new DateTime(2017, 8, 28);
+        DateTime dtnew = dt.AddDays(1);
+
+        while (true)
+        {
+          if (dt.ToString("yyyyMMdd") == dttarget.ToString("yyyyMMdd")) break;
+
+
+          //全部(不含權證、牛熊證、可展延牛熊證)
+          string sUrl = "http://www.tse.com.tw/fund/T86?response=csv&date={0}&selectType=ALLBUT0999";
+          string sDate = DateTime.Now.ToString("yyyyMMdd");
+          sDate = dt.ToString("yyyyMMdd");
+
+          //System.Threading.Thread.Sleep(500);
+          StatusLabel.Text = string.Format("{0}進度({1})", sDate, "");
+          Application.DoEvents();
+
+          HttpWebRequest req = (HttpWebRequest)WebRequest.Create(string.Format(sUrl, sDate));
+          HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+
+          using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
+          {
+            string Line;
+            while ((Line = SR.ReadLine()) != null)
+            {
+              Line = Line.Replace(" ", "");
+              Line = Line.Replace("\",\"", "|");
+              Line = Line.Replace("\"", "");
+              Line = Line.Replace(",", "");
+              Line = Line.Replace("=", "");
+
+              string[] aCol = Line.Split('|');
+
+              if (aCol.Length == 16)
+              {
+                //檢核資料
+                int iCheck = -1;
+
+                if (int.TryParse(aCol[15], out iCheck) == false)
+                {
+                  continue;
+                }
+
+                ssql = " select * from Stockthreetrade where date = '{0}' and stockcode = '{1}' ";
+                Stockthreetrade st = dbDapper.QuerySingleOrDefault<Stockthreetrade>(string.Format(ssql, sDate, aCol[0]));
+
+                if (st == null)
+                {
+                  st = new Stockthreetrade();
+                  st.stockcode = aCol[0];
+                  st.date = sDate;
+                  st.type = "tse";
+                  st.foreigninv = Convert.ToInt32(aCol[4]);
+                  st.trustinv = Convert.ToInt32(aCol[7]);
+                  st.selfempinv = Convert.ToInt32(aCol[14]);
+                  st.threeinv = Convert.ToInt32(aCol[15]);
+                  st.updatetime = Utils.getDatatimeString();
+                  dbDapper.Insert(st);
+                }
+                else
+                {
+                  st.stockcode = aCol[0];
+                  st.date = sDate;
+                  st.type = "tse";
+                  st.foreigninv = Convert.ToInt32(aCol[4]);
+                  st.trustinv = Convert.ToInt32(aCol[7]);
+                  st.selfempinv = Convert.ToInt32(aCol[14]);
+                  st.threeinv = Convert.ToInt32(aCol[15]);
+                  st.updatetime = Utils.getDatatimeString();
+                  dbDapper.Update(st);
+                }
+
+
+                StatusLabel.Text = string.Format("{0}進度({1})", sDate, aCol[0]);
+
+
+                Application.DoEvents();
+              }
+
+              if (aCol.Length == 12)
+              {
+                //檢核資料
+                int iCheck = -1;
+
+                if (int.TryParse(aCol[11], out iCheck) == false)
+                {
+                  continue;
+                }
+
+                ssql = " select * from Stockthreetrade where date = '{0}' and stockcode = '{1}' ";
+                Stockthreetrade st = dbDapper.QuerySingleOrDefault<Stockthreetrade>(string.Format(ssql, sDate, aCol[0]));
+
+                if (st == null)
+                {
+                  st = new Stockthreetrade();
+                  st.stockcode = aCol[0];
+                  st.date = sDate;
+                  st.type = "tse";
+                  st.foreigninv = Convert.ToInt32(aCol[4]);
+                  st.trustinv = Convert.ToInt32(aCol[7]);
+                  st.selfempinv = Convert.ToInt32(aCol[10]);
+                  st.threeinv = Convert.ToInt32(aCol[11]);
+                  st.updatetime = Utils.getDatatimeString();
+                  dbDapper.Insert(st);
+                }
+                else
+                {
+                  st.stockcode = aCol[0];
+                  st.date = sDate;
+                  st.type = "tse";
+                  st.foreigninv = Convert.ToInt32(aCol[4]);
+                  st.trustinv = Convert.ToInt32(aCol[7]);
+                  st.selfempinv = Convert.ToInt32(aCol[10]);
+                  st.threeinv = Convert.ToInt32(aCol[11]);
+                  st.updatetime = Utils.getDatatimeString();
+                  dbDapper.Update(st);
+                }
+
+
+                StatusLabel.Text = string.Format("{0}進度({1})", sDate, aCol[0]);
+
+
+                Application.DoEvents();
+              }
+            }
+          }
+
+
+          dt = dt.AddDays(1);
+        }
+      }
+      catch (Exception ex)
+      {   
+        logger.Error(ex);
+        throw ex;  
+      }
+    }
+
+    private void button4_Click(object sender, EventArgs e)
+    {
+      try
+      {
+        DateTime dt = new DateTime(2014, 12, 1);
+        DateTime dttarget = new DateTime(2017, 8, 27);
+        DateTime dtnew = dt.AddDays(1);
+
+        while (true)
+        {
+          if (dt.ToString("yyyyMMdd") == dttarget.ToString("yyyyMMdd")) break;
+
+          
+          //http://www.tpex.org.tw/web/stock/3insti/daily_trade/3itrade_hedge_download.php?l=zh-tw&se=EW&t=D&d=106/08/25&s=0,asc
+          string sUrl = "http://www.tpex.org.tw/web/stock/3insti/daily_trade/3itrade_hedge_download.php?l=zh-tw&se=EW&t=D&d={0}&s=0,asc";
+          string sDate = DateTime.Now.ToString("yyyyMMdd");
+          int iyear = dt.Year - 1911;
+          sDate = string.Format("{0}/{1}/{2}", iyear.ToString(), dt.ToString("MM"), dt.ToString("dd"));
+
+          //sDate = dt.ToString("yyyyMMdd");
+
+          //System.Threading.Thread.Sleep(500);
+          StatusLabel.Text = string.Format("{0}進度({1})", sDate, "");
+          Application.DoEvents();
+
+         
+          HttpWebRequest req = (HttpWebRequest)WebRequest.Create(string.Format(sUrl, sDate));
+
+          //改為寫入資料庫格式
+          sDate = dt.ToString("yyyyMMdd");
+
+          HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+          using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
+          {
+            string Line;
+            while ((Line = SR.ReadLine()) != null)
+            {
+              Line = Line.Replace(" ", "");
+              Line = Line.Replace("\",\"", "|");
+              Line = Line.Replace("\"", "");
+              Line = Line.Replace(",", "");
+              Line = Line.Replace("=", "");
+
+              string[] aCol = Line.Split('|');
+
+              if (aCol.Length == 16)
+              {
+                //檢核資料
+                int iCheck = -1;
+
+                if (int.TryParse(aCol[15], out iCheck) == false)
+                {
+                  continue;
+                }
+
+                ssql = " select * from Stockthreetrade where date = '{0}' and stockcode = '{1}' ";
+                Stockthreetrade st = dbDapper.QuerySingleOrDefault<Stockthreetrade>(string.Format(ssql, sDate, aCol[0]));
+
+                if (st == null)
+                {
+                  st = new Stockthreetrade();
+                  st.stockcode = aCol[0];
+                  st.date = sDate;
+                  st.type = "otc";
+                  st.foreigninv = Convert.ToInt32(aCol[4]);
+                  st.trustinv = Convert.ToInt32(aCol[7]);
+                  st.selfempinv = Convert.ToInt32(aCol[14]);
+                  st.threeinv = Convert.ToInt32(aCol[15]);
+                  st.updatetime = Utils.getDatatimeString();
+                  dbDapper.Insert(st);
+                }
+                else
+                {
+                  st.stockcode = aCol[0];
+                  st.date = sDate;
+                  st.type = "otc";
+                  st.foreigninv = Convert.ToInt32(aCol[4]);
+                  st.trustinv = Convert.ToInt32(aCol[7]);
+                  st.selfempinv = Convert.ToInt32(aCol[14]);
+                  st.threeinv = Convert.ToInt32(aCol[15]);
+                  st.updatetime = Utils.getDatatimeString();
+                  dbDapper.Update(st);
+                }
+
+
+                StatusLabel.Text = string.Format("{0}進度({1})", sDate, aCol[0]);
+
+
+                Application.DoEvents();
+              }
+
+            
+            }
+          }
+
+
+          dt = dt.AddDays(1);
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error(ex);
+        throw ex;
       }
     }
   }
