@@ -755,16 +755,14 @@ namespace M10Tools
       try
       {
 
-        DateTime dt = new DateTime(2012, 5, 2);
-        DateTime dttarget = new DateTime(2017, 8, 28);
+        DateTime dt = new DateTime(2014, 11, 21);
+        DateTime dttarget = new DateTime(2017, 1, 1);
         DateTime dtnew = dt.AddDays(1);
 
         while (true)
         {
           if (dt.ToString("yyyyMMdd") == dttarget.ToString("yyyyMMdd")) break;
-
-
-          //全部(不含權證、牛熊證、可展延牛熊證)
+          
           string sUrl = "http://www.tse.com.tw/fund/T86?response=csv&date={0}&selectType=ALLBUT0999";
           string sDate = DateTime.Now.ToString("yyyyMMdd");
           sDate = dt.ToString("yyyyMMdd");
@@ -991,6 +989,133 @@ namespace M10Tools
 
 
           dt = dt.AddDays(1);
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error(ex);
+        throw ex;
+      }
+    }
+
+    private void button5_Click(object sender, EventArgs e)
+    {
+      
+    }
+
+    private void button6_Click(object sender, EventArgs e)
+    {
+      try
+      {
+        DateTime dt = new DateTime(2017, 8, 29);
+        DateTime dttarget = new DateTime(2016, 12, 31);
+        DateTime dtnew = dt.AddDays(1);
+
+        while (true)
+        {
+          if (dt.ToString("yyyyMMdd") == dttarget.ToString("yyyyMMdd")) break;
+
+          string sUrl = "http://www.tpex.org.tw/web/stock/aftertrading/daily_close_quotes/stk_quote_download.php?l=zh-tw&d={0}&s=0,asc,0";
+          string sDate = DateTime.Now.ToString("yyyyMMdd");
+          int iyear = dt.Year - 1911;
+          sDate = string.Format("{0}/{1}/{2}", iyear.ToString(), dt.ToString("MM"), dt.ToString("dd"));
+
+          StatusLabel.Text = string.Format("{0}進度({1})", sDate, "");
+          Application.DoEvents();
+
+          sUrl = string.Format(sUrl, sDate);
+          HttpWebRequest req = (HttpWebRequest)WebRequest.Create(sUrl);
+
+          //改為寫入資料庫格式
+          sDate = dt.ToString("yyyyMMdd");
+          HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+          using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
+          {
+            string Line;
+            while ((Line = SR.ReadLine()) != null)
+            {
+              Line = Line.Replace(" ", "");
+              Line = Line.Replace("\",\"", "|");
+              Line = Line.Replace("\"", "");
+              Line = Line.Replace(",", "");
+              Line = Line.Replace("=", "");
+
+              string[] aCol = Line.Split('|');
+
+              if (aCol.Length == 17)
+              {
+                //檢核資料
+                Decimal iCheck = -1;
+
+                if (Decimal.TryParse(aCol[2], out iCheck) == false)
+                {
+                  continue;
+                }
+
+                ssql = " select * from stockafter  where stockdate = '{0}' and stockcode = '{1}'  ";
+                Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(string.Format(ssql, sDate, aCol[0]));
+
+                if (aCol[0] == "3226")
+                {
+                  string aaaa = string.Empty;
+                }
+                if (sa == null)
+                {
+                  sa = new Stockafter();
+                  sa.stockdate = sDate;
+                  sa.stocktype = "otc";
+                  sa.stockcode = aCol[0];
+                  sa.pricelast = Convert.ToDecimal(aCol[2]);
+                  sa.pricediff = aCol[3];
+                  sa.priceopen = Convert.ToDecimal(aCol[4]);
+                  sa.pricetop = Convert.ToDecimal(aCol[5]);
+                  sa.pricelow = Convert.ToDecimal(aCol[6]);
+                  sa.priceavg = Convert.ToDecimal(aCol[7]);
+                  sa.dealnum = Convert.ToInt64(aCol[8]);
+                  sa.dealmoney = Convert.ToInt64(aCol[9]);
+                  sa.dealamount = Convert.ToInt64(aCol[10]);
+                  sa.pricelastbuy = Convert.ToDecimal(aCol[11]);
+                  sa.pricelastsell = Convert.ToDecimal(aCol[12]);
+                  sa.publicnum = Convert.ToInt64(aCol[13]);
+                  sa.pricenextday = Convert.ToDecimal(aCol[14]);
+                  sa.pricenextlimittop = Convert.ToDecimal(aCol[15]);
+                  sa.pricenextlimitlow = Convert.ToDecimal(aCol[16]);
+                  dbDapper.Insert(sa);
+                }
+                else
+                {
+                  //sa.stockcode = aCol[0];
+                  sa.pricelast = Convert.ToDecimal(aCol[2]);
+                  sa.pricediff = aCol[3];
+                  sa.priceopen = Convert.ToDecimal(aCol[4]);
+                  sa.pricetop = Convert.ToDecimal(aCol[5]);
+                  sa.pricelow = Convert.ToDecimal(aCol[6]);
+                  sa.priceavg = Convert.ToDecimal(aCol[7]);
+                  sa.dealnum = Convert.ToInt64(aCol[8]);
+                  sa.dealmoney = Convert.ToInt64(aCol[9]);
+                  sa.dealamount = Convert.ToInt64(aCol[10]);
+                  sa.pricelastbuy = Convert.ToDecimal(aCol[11]);
+                  sa.pricelastsell = Convert.ToDecimal(aCol[12]);
+                  sa.publicnum = Convert.ToInt64(aCol[13]);
+                  sa.pricenextday = Convert.ToDecimal(aCol[14]);
+                  sa.pricenextlimittop = Convert.ToDecimal(aCol[15]);
+                  sa.pricenextlimitlow = Convert.ToDecimal(aCol[16]);
+                  dbDapper.Update(sa);
+                }
+
+
+                StatusLabel.Text = string.Format("{0}進度({1})", sDate, aCol[0]);
+
+
+                Application.DoEvents();
+              }
+
+
+            }
+          }
+
+
+          dt = dt.AddDays(-1);
         }
       }
       catch (Exception ex)

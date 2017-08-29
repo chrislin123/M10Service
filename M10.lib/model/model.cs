@@ -619,8 +619,51 @@ namespace M10.lib.model
     /// 代碼
     /// </summary>
     public string c { get; set; }
+  }
 
 
+  [Table("Stockafter")]
+  public class Stockafter
+  {
+    //設定key
+    [Key]
+    public int no { get; set; }
+
+    public string stockcode { get; set; }
+
+    public string stockdate { get; set; }
+
+    public string stocktype { get; set; }
+
+    public decimal? pricelast { get; set; }
+
+    public string pricediff { get; set; }
+
+    public decimal? priceopen { get; set; }
+
+    public decimal? pricetop { get; set; }
+
+    public decimal? pricelow { get; set; }
+
+    public decimal? priceavg { get; set; }
+
+    public long? dealnum { get; set; }
+
+    public long? dealmoney { get; set; }
+
+    public long? dealamount { get; set; }
+
+    public decimal? pricelastbuy { get; set; }
+
+    public decimal? pricelastsell { get; set; }
+
+    public long? publicnum { get; set; }
+
+    public decimal? pricenextday { get; set; }
+
+    public decimal? pricenextlimittop { get; set; }
+
+    public decimal? pricenextlimitlow { get; set; }
 
   }
 
