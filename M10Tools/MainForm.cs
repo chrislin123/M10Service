@@ -17,6 +17,8 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
 using System.Collections;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace M10Tools
 {
@@ -762,7 +764,7 @@ namespace M10Tools
         while (true)
         {
           if (dt.ToString("yyyyMMdd") == dttarget.ToString("yyyyMMdd")) break;
-          
+
           string sUrl = "http://www.tse.com.tw/fund/T86?response=csv&date={0}&selectType=ALLBUT0999";
           string sDate = DateTime.Now.ToString("yyyyMMdd");
           sDate = dt.ToString("yyyyMMdd");
@@ -773,7 +775,15 @@ namespace M10Tools
 
           HttpWebRequest req = (HttpWebRequest)WebRequest.Create(string.Format(sUrl, sDate));
           HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+          //判斷http回應狀態(HttpStatusCode.OK=200)
+          if (resp.StatusCode != HttpStatusCode.OK)
+          {
+            StatusLabel.Text = string.Format("{0}進度({1})", sDate, "連線異常，資料重新取得");
+            Application.DoEvents();
 
+            System.Threading.Thread.Sleep(3000);
+            continue;
+          }
           using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
           {
             string Line;
@@ -861,9 +871,6 @@ namespace M10Tools
                 }
                 else
                 {
-                  st.stockcode = aCol[0];
-                  st.date = sDate;
-                  st.type = "tse";
                   st.foreigninv = Convert.ToInt32(aCol[4]);
                   st.trustinv = Convert.ToInt32(aCol[7]);
                   st.selfempinv = Convert.ToInt32(aCol[10]);
@@ -886,9 +893,9 @@ namespace M10Tools
         }
       }
       catch (Exception ex)
-      {   
+      {
         logger.Error(ex);
-        throw ex;  
+        throw ex;
       }
     }
 
@@ -904,7 +911,7 @@ namespace M10Tools
         {
           if (dt.ToString("yyyyMMdd") == dttarget.ToString("yyyyMMdd")) break;
 
-          
+
           //http://www.tpex.org.tw/web/stock/3insti/daily_trade/3itrade_hedge_download.php?l=zh-tw&se=EW&t=D&d=106/08/25&s=0,asc
           string sUrl = "http://www.tpex.org.tw/web/stock/3insti/daily_trade/3itrade_hedge_download.php?l=zh-tw&se=EW&t=D&d={0}&s=0,asc";
           string sDate = DateTime.Now.ToString("yyyyMMdd");
@@ -917,13 +924,24 @@ namespace M10Tools
           StatusLabel.Text = string.Format("{0}進度({1})", sDate, "");
           Application.DoEvents();
 
-         
+
           HttpWebRequest req = (HttpWebRequest)WebRequest.Create(string.Format(sUrl, sDate));
 
           //改為寫入資料庫格式
           sDate = dt.ToString("yyyyMMdd");
 
           HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+
+          //判斷http回應狀態(HttpStatusCode.OK=200)
+          if (resp.StatusCode != HttpStatusCode.OK)
+          {
+            StatusLabel.Text = string.Format("{0}進度({1})", sDate, "連線異常，資料重新取得");
+            Application.DoEvents();
+
+            System.Threading.Thread.Sleep(3000);
+            continue;
+          }
+
           using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
           {
             string Line;
@@ -965,9 +983,6 @@ namespace M10Tools
                 }
                 else
                 {
-                  st.stockcode = aCol[0];
-                  st.date = sDate;
-                  st.type = "otc";
                   st.foreigninv = Convert.ToInt32(aCol[4]);
                   st.trustinv = Convert.ToInt32(aCol[7]);
                   st.selfempinv = Convert.ToInt32(aCol[14]);
@@ -983,7 +998,7 @@ namespace M10Tools
                 Application.DoEvents();
               }
 
-            
+
             }
           }
 
@@ -1000,35 +1015,38 @@ namespace M10Tools
 
     private void button5_Click(object sender, EventArgs e)
     {
-      
-    }
-
-    private void button6_Click(object sender, EventArgs e)
-    {
       try
       {
-        DateTime dt = new DateTime(2017, 8, 29);
-        DateTime dttarget = new DateTime(2016, 12, 31);
-        DateTime dtnew = dt.AddDays(1);
+        //開始日期
+        DateTime dt = new DateTime(2017, 2, 14);
+        //結束日期
+        DateTime dttarget = new DateTime(2015, 12, 31);
+
 
         while (true)
         {
           if (dt.ToString("yyyyMMdd") == dttarget.ToString("yyyyMMdd")) break;
 
-          string sUrl = "http://www.tpex.org.tw/web/stock/aftertrading/daily_close_quotes/stk_quote_download.php?l=zh-tw&d={0}&s=0,asc,0";
+          string sUrl = "http://www.tse.com.tw/exchangeReport/MI_INDEX?response=csv&date=20170829&type=ALLBUT0999";
           string sDate = DateTime.Now.ToString("yyyyMMdd");
-          int iyear = dt.Year - 1911;
-          sDate = string.Format("{0}/{1}/{2}", iyear.ToString(), dt.ToString("MM"), dt.ToString("dd"));
 
           StatusLabel.Text = string.Format("{0}進度({1})", sDate, "");
           Application.DoEvents();
 
           sUrl = string.Format(sUrl, sDate);
           HttpWebRequest req = (HttpWebRequest)WebRequest.Create(sUrl);
-
-          //改為寫入資料庫格式
-          sDate = dt.ToString("yyyyMMdd");
           HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+
+          //判斷http回應狀態(HttpStatusCode.OK=200)
+          if (resp.StatusCode != HttpStatusCode.OK)
+          {
+            StatusLabel.Text = string.Format("{0}進度({1})", sDate, "連線異常，資料重新取得");
+            Application.DoEvents();
+
+            System.Threading.Thread.Sleep(3000);
+            continue;
+          }
+
           using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
           {
             string Line;
@@ -1063,7 +1081,7 @@ namespace M10Tools
                 {
                   sa = new Stockafter();
                   sa.stockdate = sDate;
-                  sa.stocktype = "otc";
+                  sa.stocktype = "tse";
                   sa.stockcode = aCol[0];
                   sa.pricelast = Convert.ToDecimal(aCol[2]);
                   sa.pricediff = aCol[3];
@@ -1080,11 +1098,11 @@ namespace M10Tools
                   sa.pricenextday = Convert.ToDecimal(aCol[14]);
                   sa.pricenextlimittop = Convert.ToDecimal(aCol[15]);
                   sa.pricenextlimitlow = Convert.ToDecimal(aCol[16]);
+                  sa.updatetime = Utils.getDatatimeString();
                   dbDapper.Insert(sa);
                 }
                 else
                 {
-                  //sa.stockcode = aCol[0];
                   sa.pricelast = Convert.ToDecimal(aCol[2]);
                   sa.pricediff = aCol[3];
                   sa.priceopen = Convert.ToDecimal(aCol[4]);
@@ -1100,20 +1118,16 @@ namespace M10Tools
                   sa.pricenextday = Convert.ToDecimal(aCol[14]);
                   sa.pricenextlimittop = Convert.ToDecimal(aCol[15]);
                   sa.pricenextlimitlow = Convert.ToDecimal(aCol[16]);
+                  sa.updatetime = Utils.getDatatimeString();
                   dbDapper.Update(sa);
                 }
 
 
                 StatusLabel.Text = string.Format("{0}進度({1})", sDate, aCol[0]);
-
-
                 Application.DoEvents();
               }
-
-
             }
           }
-
 
           dt = dt.AddDays(-1);
         }
@@ -1123,6 +1137,173 @@ namespace M10Tools
         logger.Error(ex);
         throw ex;
       }
+    }
+
+    private void button6_Click(object sender, EventArgs e)
+    {
+      try
+      {
+        //開始日期
+        DateTime dt = new DateTime(2017, 8, 29);
+        //結束日期
+        DateTime dttarget = new DateTime(2015, 12, 31);
+
+        while (true)
+        {
+          if (dt.ToString("yyyyMMdd") == dttarget.ToString("yyyyMMdd")) break;
+
+          string sUrl = "http://www.tpex.org.tw/web/stock/aftertrading/daily_close_quotes/stk_quote_download.php?l=zh-tw&d={0}&s=0,asc,0";
+          string sDate = DateTime.Now.ToString("yyyyMMdd");
+          int iyear = dt.Year - 1911;
+          sDate = string.Format("{0}/{1}/{2}", iyear.ToString(), dt.ToString("MM"), dt.ToString("dd"));
+
+          StatusLabel.Text = string.Format("{0}進度({1})", sDate, "");
+          Application.DoEvents();
+
+          sUrl = string.Format(sUrl, sDate);
+          HttpWebRequest req = (HttpWebRequest)WebRequest.Create(sUrl);
+
+          //改為寫入資料庫格式
+          sDate = dt.ToString("yyyyMMdd");
+          HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+
+          //判斷http回應狀態(HttpStatusCode.OK=200)
+          if (resp.StatusCode != HttpStatusCode.OK)
+          {
+            StatusLabel.Text = string.Format("{0}進度({1})", sDate, "連線異常，資料重新取得");
+            Application.DoEvents();
+
+            System.Threading.Thread.Sleep(10000);
+            continue;
+          }
+
+          using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
+          {
+            string Line;
+            while ((Line = SR.ReadLine()) != null)
+            {
+              Line = Line.Replace(" ", "");
+              Line = Line.Replace("\",\"", "|");
+              Line = Line.Replace("\"", "");
+              Line = Line.Replace(",", "");
+              Line = Line.Replace("=", "");
+
+              string[] aCol = Line.Split('|');
+
+              if (aCol.Length == 17)
+              {
+                //檢核資料
+                Decimal iCheck = -1;
+
+                if (Decimal.TryParse(aCol[2], out iCheck) == false)
+                {
+                  continue;
+                }
+
+                //資訊整理
+                string sDiff = aCol[3];
+                string sUpdown = "X";
+                string sPricediff = "0.00";
+                if (sDiff.Length > 0)
+                {
+                  string sCheck = sDiff.Substring(0, 1);
+                  if (sCheck == "+")
+                  {
+                    sUpdown = "+";
+                    sPricediff = sDiff.Replace("+", "");
+                  }
+                  if (sCheck == "-")
+                  {
+                    sUpdown = "-";
+                    sPricediff = sDiff.Replace("-", "");
+                  }
+                  if (sCheck == "0")
+                  {
+                    sUpdown = "X";
+                  }
+
+                  if (sCheck != "+" && sCheck != "-" && sCheck != "0")
+                  {
+                    sUpdown = "X";
+                  }
+                }
+
+                ssql = " select * from stockafter  where stockdate = '{0}' and stockcode = '{1}'  ";
+                Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(string.Format(ssql, sDate, aCol[0]));
+
+                if (aCol[0] == "3226")
+                {
+                  string aaaa = string.Empty;
+                }
+                if (sa == null)
+                {
+                  sa = new Stockafter();
+                  sa.stockdate = sDate;
+                  sa.stocktype = "otc";
+                  sa.stockcode = aCol[0];
+                  sa.pricelast = Convert.ToDecimal(aCol[2]);
+                  sa.updown = sUpdown;
+                  sa.pricediff = sPricediff;
+                  sa.priceopen = Convert.ToDecimal(aCol[4]);
+                  sa.pricetop = Convert.ToDecimal(aCol[5]);
+                  sa.pricelow = Convert.ToDecimal(aCol[6]);
+                  sa.priceavg = Convert.ToDecimal(aCol[7]);
+                  sa.dealnum = Convert.ToInt64(aCol[8]);
+                  sa.dealmoney = Convert.ToInt64(aCol[9]);
+                  sa.dealamount = Convert.ToInt64(aCol[10]);
+                  sa.pricelastbuy = Convert.ToDecimal(aCol[11]);
+                  sa.pricelastsell = Convert.ToDecimal(aCol[12]);
+                  sa.publicnum = Convert.ToInt64(aCol[13]);
+                  sa.pricenextday = Convert.ToDecimal(aCol[14]);
+                  sa.pricenextlimittop = Convert.ToDecimal(aCol[15]);
+                  sa.pricenextlimitlow = Convert.ToDecimal(aCol[16]);
+                  sa.updatetime = Utils.getDatatimeString();
+                  dbDapper.Insert(sa);
+                }
+                else
+                {
+                  sa.pricelast = Convert.ToDecimal(aCol[2]);
+                  sa.updown = sUpdown;
+                  sa.pricediff = sPricediff;
+                  sa.priceopen = Convert.ToDecimal(aCol[4]);
+                  sa.pricetop = Convert.ToDecimal(aCol[5]);
+                  sa.pricelow = Convert.ToDecimal(aCol[6]);
+                  sa.priceavg = Convert.ToDecimal(aCol[7]);
+                  sa.dealnum = Convert.ToInt64(aCol[8]);
+                  sa.dealmoney = Convert.ToInt64(aCol[9]);
+                  sa.dealamount = Convert.ToInt64(aCol[10]);
+                  sa.pricelastbuy = Convert.ToDecimal(aCol[11]);
+                  sa.pricelastsell = Convert.ToDecimal(aCol[12]);
+                  sa.publicnum = Convert.ToInt64(aCol[13]);
+                  sa.pricenextday = Convert.ToDecimal(aCol[14]);
+                  sa.pricenextlimittop = Convert.ToDecimal(aCol[15]);
+                  sa.pricenextlimitlow = Convert.ToDecimal(aCol[16]);
+                  sa.updatetime = Utils.getDatatimeString();
+                  dbDapper.Update(sa);
+                }
+
+
+                StatusLabel.Text = string.Format("{0}進度({1})", sDate, aCol[0]);
+
+
+                Application.DoEvents();
+              }
+            }
+          }
+
+          dt = dt.AddDays(-1);
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error(ex);
+        throw ex;
+      }
+    }
+
+    private void button7_Click(object sender, EventArgs e)
+    {
+      
     }
   }
 }

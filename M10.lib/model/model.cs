@@ -637,6 +637,8 @@ namespace M10.lib.model
 
     public decimal? pricelast { get; set; }
 
+    public string updown { get; set; }
+
     public string pricediff { get; set; }
 
     public decimal? priceopen { get; set; }
@@ -664,6 +666,9 @@ namespace M10.lib.model
     public decimal? pricenextlimittop { get; set; }
 
     public decimal? pricenextlimitlow { get; set; }
+
+    public string updatetime { get; set; }
+
 
   }
 

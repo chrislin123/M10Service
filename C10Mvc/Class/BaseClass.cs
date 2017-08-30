@@ -2,18 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using System.Web.Http;
 using M10.lib;
 using System.Web.Configuration;
 
 namespace C10Mvc.Class
 {
-  public class BaseApiController : ApiController
+  public class BaseClass
   {
     public string ssql = string.Empty;
     private DALDapper _dbDapper;
     private string _ConnectionString;
-    private StockUtil _StockUtil;
+
     public DALDapper dbDapper
     {
       get
@@ -39,19 +38,5 @@ namespace C10Mvc.Class
         return _ConnectionString;
       }
     }
-
-    public StockUtil oStockUtil
-    {
-      get
-      {
-        if (_StockUtil == null)
-        {
-          _StockUtil = new StockUtil();
-        }
-
-        return _StockUtil;
-      }
-    }
-
   }
 }

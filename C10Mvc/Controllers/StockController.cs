@@ -9,6 +9,7 @@ using C10Mvc.Class;
 using M10.lib.model;
 using HtmlAgilityPack;
 
+
 namespace C10Mvc.Controllers
 {
   [RoutePrefix("StockApi")]
@@ -183,74 +184,11 @@ namespace C10Mvc.Controllers
     [Route("getStockRealtime")]
     public dynamic getStockRealtime(string stockcode)
     {
-      
-      string surl = "https://tw.stock.yahoo.com/q/q?s=" + stockcode;
+      //get from yahoo web
+      StockRuntime sr = oStockUtil.getStockRealtimeYahooWeb(stockcode);
 
-      HtmlWeb webClient = new HtmlWeb();
-      //網頁特殊編碼
-      webClient.OverrideEncoding = System.Text.Encoding.GetEncoding(950);
-      //webClient.OverrideEncoding = Encoding;
-
-      // 載入網頁資料 
-      HtmlAgilityPack.HtmlDocument doc = webClient.Load(surl);
-      //*[@id="yui_3_5_1_13_1503571196918_6"]/table[2]/tbody/tr/td/table
-      //*[@id="yui_3_5_1_13_1503571196918_6"]/table[2]/tbody/tr/td/table/tbody/tr[2]
-      // 裝載查詢結果 
-      //HtmlNode nnn = doc.DocumentNode.SelectSingleNode("//table[2]/tr/td/table/tr[2]");
-      HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//table[2]/tr/td/table/tr[2]/td");
-
-      //HtmlNodeCollection tdnodes = nnn.SelectNodes("td");
-
-      //HtmlNodeCollection nodes1 = doc.DocumentNode.SelectNodes("//table[2]/tbody/tr/td/table/tbody/tr[2]");
-
-      StockRuntime sr = new StockRuntime();
-      sr.z = "";
-      sr.y = "";
-      sr.u = "";
-      sr.w = "";      
-      sr.n = "";
-      sr.c = "";
-      sr.xx = "";
-
-      int idx = 0;
-      foreach (HtmlNode node in nodes)
-      {
-        //目前成交價
-        if (idx == 2)
-        {
-          sr.z = node.InnerText;
-        }
-
-        //yahoo漲跌
-        if (idx == 5)
-        {
-          if (node.InnerText.Length >0)
-          {
-            sr.xx = node.InnerText.Substring(0, 1);
-          }
-          
-        }
-
-        //昨收
-        if (idx == 7)
-        {
-          sr.y = node.InnerText;
-        }
-
-        idx++;
-      }
-
-      //取得個股資訊
-      ssql = " select * from StockInfo where stockcode = '{0}' ";
-      StockInfo si = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, stockcode));
-      if (si != null)
-      {
-        //個股名稱
-        sr.n = si.stockname;
-        //個股代碼
-        sr.c = si.stockcode;
-      }
-
+      //get from yahoo api
+      //StockRuntime sr = oStockUtil.getStockRealtimeYahooApi(stockcode);
 
 
       return sr;

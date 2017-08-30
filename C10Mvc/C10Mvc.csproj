@@ -226,7 +226,9 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Class\BaseApiController.cs" />
+    <Compile Include="Class\BaseClass.cs" />
     <Compile Include="Class\BaseController.cs" />
+    <Compile Include="Class\StockUtil.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JobController.cs" />
