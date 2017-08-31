@@ -106,7 +106,7 @@ namespace C10Mvc.Class
                                                         
 //----
 //(OK)
-//open
+//昨收
 
 //"129":27.6,
 //27.6
@@ -151,8 +151,7 @@ namespace C10Mvc.Class
             Line = Line.Replace(");", "");
 
             JObject jobj = JsonConvert.DeserializeObject(Line) as JObject;
-
-            //jobj["mem"]["125"];
+            
 
             //目前成交價
             sr.z = jobj["mem"]["125"].ToString();
@@ -160,10 +159,12 @@ namespace C10Mvc.Class
         
             //昨收
             sr.y = jobj["mem"]["129"].ToString();
-            //最高
-            sr.u = jobj["mem"]["130"].ToString();
-            //最低
-            sr.w = jobj["mem"]["131"].ToString();
+            //漲停
+            sr.u = getPriceLimitUpOrDown("UP", sr.y).ToString();
+            //sr.u = jobj["mem"]["132"].ToString();
+            //跌停
+            sr.u = getPriceLimitUpOrDown("DOWN", sr.y).ToString();
+            //sr.w = jobj["mem"]["133"].ToString();
 
             //  if(StockInfo.z == StockInfo.u) mark="▲";
             //  if(StockInfo.z == StockInfo.w) mark="▼";
@@ -197,7 +198,78 @@ namespace C10Mvc.Class
       return sr;
     }
 
+    private decimal getPriceLimitUpOrDown(string limitType, string  sPriceClose)
+    {
+      // reference: http://stock7.0123456789.tw/
 
+
+      double price = 0;
+      double.TryParse(sPriceClose, out price);
+
+      //double price = dClose;
+      //double limitUp = price * (PriceToday.Date >= new DateTime(2015, 6, 1) ? 1.10 : 1.07);
+      //double limitDown = price * (PriceToday.Date >= new DateTime(2015, 6, 1) ? 0.90 : 0.93);
+      double limitUp = price * 1.10 ;
+      double limitDown = price * 0.90 ;
+      double STOCKUP = 0, STOCKDW = 0;
+      if (limitUp < 10 && limitDown < 10)
+      {
+        STOCKUP = ((Math.Floor((Math.Floor(limitUp * 100) * 100))) / 100) / 100;
+        STOCKDW = ((Math.Floor((Math.Ceiling(limitDown * 100) * 100))) / 100) / 100;
+      }
+      else if (limitUp > 10 && limitDown < 10)
+      {
+        STOCKUP = ((Math.Floor(((Math.Floor(limitUp / 0.05) * 0.05) * 100) * 100)) / 100) / 100;
+        STOCKDW = ((Math.Floor((Math.Ceiling(limitDown * 100) * 100))) / 100) / 100;
+      }
+      else if (limitUp >= 10 && limitDown >= 10 && limitUp <= 50 && limitDown < 50)
+      {
+        STOCKUP = ((Math.Floor(((Math.Floor(limitUp / 0.05) * 0.05) * 100) * 100)) / 100) / 100;
+        STOCKDW = ((Math.Floor(((Math.Ceiling(limitDown / 0.05) * 0.05) * 100) * 100)) / 100) / 100;
+      }
+      else if (limitUp >= 50 && limitDown >= 50 && limitUp < 100 && limitDown < 100)
+      {
+        STOCKUP = ((Math.Floor(((Math.Floor(limitUp / 0.1) * 0.1) * 100) * 100)) / 100) / 100;
+        STOCKDW = ((Math.Floor(((Math.Ceiling(limitDown / 0.1) * 0.1) * 100) * 100)) / 100) / 100;
+      }
+      else if (limitUp >= 50 && limitDown < 50)
+      {
+        STOCKUP = ((Math.Floor(((Math.Floor(limitUp / 0.1) * 0.1) * 100) * 100)) / 100) / 100;
+        STOCKDW = (Math.Floor((Math.Ceiling(limitDown / 0.05) * 0.05) * 100)) / 100;
+      }
+      else if (limitUp >= 100 && limitDown >= 100 && limitUp < 1000 && limitDown < 1000)
+      {
+        STOCKUP = ((Math.Floor(((Math.Floor(limitUp / 0.5) * 0.5) * 100) * 100)) / 100) / 100;
+        STOCKDW = ((Math.Floor(((Math.Ceiling(limitDown / 0.5) * 0.5) * 100) * 100)) / 100) / 100;
+      }
+      else if (limitUp >= 100 && limitDown < 100)
+      {
+        STOCKUP = ((Math.Floor(((Math.Floor(limitUp / 0.5) * 0.5) * 100) * 100)) / 100) / 100;
+        STOCKDW = ((Math.Floor(((Math.Ceiling(limitDown / 0.1) * 0.1) * 100) * 100)) / 100) / 100;
+      }
+      else if (limitUp >= 1000 && limitDown <= 1000)
+      {
+        STOCKUP = ((Math.Floor(((Math.Floor(limitUp / 5) * 5) * 100) * 100)) / 100) / 100;
+        STOCKDW = ((Math.Floor(((Math.Ceiling(limitDown / 5) * 5) * 100) * 100)) / 100) / 100;
+      }
+      else if (limitUp >= 1000 && limitDown >= 1000)
+      {
+        STOCKUP = ((Math.Floor(((Math.Floor(limitUp / 5) * 5) * 100) * 100)) / 100) / 100;
+        STOCKDW = ((Math.Floor(((Math.Ceiling(limitDown / 5) * 5) * 100) * 100)) / 100) / 100;
+      }
+     
+      STOCKUP = ((Math.Floor(((Math.Floor(limitUp / 0.5) * 0.5) * 100) * 100)) / 100) / 100;
+      STOCKDW = ((Math.Floor(((Math.Ceiling(limitDown / 0.5) * 0.5) * 100) * 100)) / 100) / 100;
+
+      if (limitType.ToUpper() == "UP")
+      {
+        return Convert.ToDecimal(STOCKUP);
+      }
+      else
+      {
+        return Convert.ToDecimal(STOCKDW);
+      }
+    }
 
 
   }
