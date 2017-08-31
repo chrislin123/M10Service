@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace M10.lib
 {
-  public static class Constants
+  public static class M10Const
   {
     public static class AlertStatus
     {
@@ -14,6 +14,12 @@ namespace M10.lib
       public const string C = "黃升紅";
       public const string O = "紅降黃";
       public const string D = "解除黃色";
+    }
+
+    public static class StockType
+    {
+      public const string otc = "otc";
+      public const string tse = "tse";
     }
 
   }

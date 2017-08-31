@@ -196,10 +196,10 @@ namespace M10Api.Controllers
       foreach (var item in list)
       {
         //處理狀態改中文顯示
-        if (item.status == "I") item.status = Constants.AlertStatus.I;
-        if (item.status == "C") item.status = Constants.AlertStatus.C;
-        if (item.status == "O") item.status = Constants.AlertStatus.O;
-        if (item.status == "D") item.status = Constants.AlertStatus.D;
+        if (item.status == "I") item.status = M10Const.AlertStatus.I;
+        if (item.status == "C") item.status = M10Const.AlertStatus.C;
+        if (item.status == "O") item.status = M10Const.AlertStatus.O;
+        if (item.status == "D") item.status = M10Const.AlertStatus.D;
 
 
         //處理ELRTI無條件捨去
@@ -259,10 +259,10 @@ namespace M10Api.Controllers
       foreach (var item in list)
       {
         //處理狀態改中文顯示
-        if (item.status == "I") item.status = Constants.AlertStatus.I;
-        if (item.status == "C") item.status = Constants.AlertStatus.C;
-        if (item.status == "O") item.status = Constants.AlertStatus.O;
-        if (item.status == "D") item.status = Constants.AlertStatus.D;
+        if (item.status == "I") item.status = M10Const.AlertStatus.I;
+        if (item.status == "C") item.status = M10Const.AlertStatus.C;
+        if (item.status == "O") item.status = M10Const.AlertStatus.O;
+        if (item.status == "D") item.status = M10Const.AlertStatus.D;
 
 
         //處理ELRTI無條件捨去

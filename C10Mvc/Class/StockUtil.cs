@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using M10.lib.model;
+using M10.lib;
 using HtmlAgilityPack;
 using Newtonsoft.Json;
 using System.Net;
@@ -28,7 +29,7 @@ namespace C10Mvc.Class
 
 
       string surl = "https://tw.stock.yahoo.com/q/q?s=" + stockcode;
-
+      //surl = "https://tw.stock.yahoo.com/s/tse.php";
       HtmlWeb webClient = new HtmlWeb();
       //網頁特殊編碼
       webClient.OverrideEncoding = System.Text.Encoding.GetEncoding(950);
@@ -66,15 +67,29 @@ namespace C10Mvc.Class
         idx++;
       }
 
-      //取得個股資訊
+      
+
+
+      //取得資訊
       ssql = " select * from StockInfo where stockcode = '{0}' ";
       StockInfo si = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, stockcode));
       if (si != null)
       {
-        //個股名稱
+        //名稱
         sr.n = si.stockname;
-        //個股代碼
+        //代碼
         sr.c = si.stockcode;
+      }
+
+
+      //使用api呼叫取得
+      if (stockcode == "0000" || stockcode == "t00")
+      {
+        StockRuntime sr_0000 = getStockRealtimeYahooApi(stockcode);
+
+        sr = sr_0000;
+        sr.n = "加權指數";
+        sr.c = "0000";
       }
 
       return sr;
@@ -124,6 +139,9 @@ namespace C10Mvc.Class
 
       try
       {
+        if (stockcode == "0000") stockcode = "%23001";
+        if (stockcode == "t00") stockcode = "%23001";
+
         string sUrl = "https://tw.quote.finance.yahoo.net/quote/q?type=tick&sym={0}";
         string sDate = DateTime.Now.ToString("yyyyMMdd");
 
@@ -150,20 +168,26 @@ namespace C10Mvc.Class
             Line = Line.Replace("null(", "");
             Line = Line.Replace(");", "");
 
-            JObject jobj = JsonConvert.DeserializeObject(Line) as JObject;
+            //JObject jobj = JsonConvert.DeserializeObject(Line) as JObject;
+            if (stockcode == "%23001")
+            {
+              Line = Line.Insert(Line.IndexOf(",\"143\":") + 7, "\"").Insert(Line.IndexOf(",\"143\":") + 14, "\"");
+            }
+            
 
+            JObject jobj = JObject.Parse(Line);
             //jobj["mem"]["125"];
 
-            //目前成交價
+            //Price
             sr.z = jobj["mem"]["125"].ToString();
 
         
             //昨收
             sr.y = jobj["mem"]["129"].ToString();
             //最高
-            sr.u = jobj["mem"]["130"].ToString();
+            //sr.u = jobj["mem"]["130"].ToString();
             //最低
-            sr.w = jobj["mem"]["131"].ToString();
+            //sr.w = jobj["mem"]["131"].ToString();
 
             //  if(StockInfo.z == StockInfo.u) mark="▲";
             //  if(StockInfo.z == StockInfo.w) mark="▼";

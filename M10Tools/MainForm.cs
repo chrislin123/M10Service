@@ -1015,140 +1015,201 @@ namespace M10Tools
 
     private void button5_Click(object sender, EventArgs e)
     {
-      try
+      //開始日期
+      DateTime dt = new DateTime(2017, 8, 30);
+      //結束日期
+      DateTime dttarget = new DateTime(2007, 1, 1);
+
+      //取得資料庫最後一天
+      ssql = " select  distinct stockdate  from stockafter where stocktype = '{0}' order by stockdate asc ";
+
+      var vDbDate = dbDapper.ExecuteScale(string.Format(ssql, M10Const.StockType.tse));
+      if (vDbDate != null)
       {
-        //開始日期
-        DateTime dt = new DateTime(2017, 2, 14);
-        //結束日期
-        DateTime dttarget = new DateTime(2015, 12, 31);
+        string sDbDate = vDbDate.ToString();
+        dt = new DateTime(Convert.ToInt32(sDbDate.Substring(0, 4))
+          , Convert.ToInt32(sDbDate.Substring(4, 2))
+          , Convert.ToInt32(sDbDate.Substring(6, 2)));
+      }
 
 
-        while (true)
+      while (true)
+      {
+        string sLineTrans = "";
+        try
         {
           if (dt.ToString("yyyyMMdd") == dttarget.ToString("yyyyMMdd")) break;
 
-          string sUrl = "http://www.tse.com.tw/exchangeReport/MI_INDEX?response=csv&date=20170829&type=ALLBUT0999";
-          string sDate = DateTime.Now.ToString("yyyyMMdd");
+          string sUrl = "http://www.tse.com.tw/exchangeReport/MI_INDEX?response=csv&date={0}&type=ALLBUT0999";
+          string sDate = dt.ToString("yyyyMMdd");
 
-          StatusLabel.Text = string.Format("{0}進度({1})", sDate, "");
+          StatusLabel.Text = string.Format("{2}-{0}進度({1})", sDate, "", M10Const.StockType.tse);
           Application.DoEvents();
 
           sUrl = string.Format(sUrl, sDate);
           HttpWebRequest req = (HttpWebRequest)WebRequest.Create(sUrl);
-          HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
-
-          //判斷http回應狀態(HttpStatusCode.OK=200)
-          if (resp.StatusCode != HttpStatusCode.OK)
+          req.Proxy = null;
+          string sTemp = "";
+          using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
           {
-            StatusLabel.Text = string.Format("{0}進度({1})", sDate, "連線異常，資料重新取得");
-            Application.DoEvents();
+            //判斷http回應狀態(HttpStatusCode.OK=200)
+            if (resp.StatusCode != HttpStatusCode.OK)
+            {
+              StatusLabel.Text = string.Format("{0}進度({1})", sDate, "連線異常，資料重新取得");
+              Application.DoEvents();
 
-            System.Threading.Thread.Sleep(3000);
-            continue;
+              System.Threading.Thread.Sleep(3000);
+              continue;
+            }
+
+            using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
+            {
+              sTemp = SR.ReadToEnd();
+            }
+
           }
 
-          using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
+          using (Stream s = GenerateStreamFromString(sTemp))
           {
-            string Line;
-            while ((Line = SR.ReadLine()) != null)
+
+            using (StreamReader sr = new StreamReader(s))
             {
-              Line = Line.Replace(" ", "");
-              Line = Line.Replace("\",\"", "|");
-              Line = Line.Replace("\"", "");
-              Line = Line.Replace(",", "");
-              Line = Line.Replace("=", "");
 
-              string[] aCol = Line.Split('|');
 
-              if (aCol.Length == 17)
+              string Line;
+              while ((Line = sr.ReadLine()) != null)
               {
-                //檢核資料
-                Decimal iCheck = -1;
+                Line = Line.Replace(" ", "");
+                Line = Line.Replace("\",\"", "|");
+                Line = Line.Replace("\"", "");
+                Line = Line.Replace(",", "");
+                Line = Line.Replace("=", "");
+                sLineTrans = Line;
+                string[] aCol = Line.Split('|');
 
-                if (Decimal.TryParse(aCol[2], out iCheck) == false)
+
+                if (aCol.Length == 16)
                 {
-                  continue;
-                }
+                  //檢核資料
+                  Decimal iCheck = -1;
 
-                ssql = " select * from stockafter  where stockdate = '{0}' and stockcode = '{1}'  ";
-                Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(string.Format(ssql, sDate, aCol[0]));
+                  if (Decimal.TryParse(aCol[8], out iCheck) == false)
+                  {
+                    continue;
+                  }
 
-                if (aCol[0] == "3226")
-                {
-                  string aaaa = string.Empty;
-                }
-                if (sa == null)
-                {
-                  sa = new Stockafter();
-                  sa.stockdate = sDate;
-                  sa.stocktype = "tse";
-                  sa.stockcode = aCol[0];
-                  sa.pricelast = Convert.ToDecimal(aCol[2]);
-                  sa.pricediff = aCol[3];
-                  sa.priceopen = Convert.ToDecimal(aCol[4]);
-                  sa.pricetop = Convert.ToDecimal(aCol[5]);
-                  sa.pricelow = Convert.ToDecimal(aCol[6]);
-                  sa.priceavg = Convert.ToDecimal(aCol[7]);
-                  sa.dealnum = Convert.ToInt64(aCol[8]);
-                  sa.dealmoney = Convert.ToInt64(aCol[9]);
-                  sa.dealamount = Convert.ToInt64(aCol[10]);
-                  sa.pricelastbuy = Convert.ToDecimal(aCol[11]);
-                  sa.pricelastsell = Convert.ToDecimal(aCol[12]);
-                  sa.publicnum = Convert.ToInt64(aCol[13]);
-                  sa.pricenextday = Convert.ToDecimal(aCol[14]);
-                  sa.pricenextlimittop = Convert.ToDecimal(aCol[15]);
-                  sa.pricenextlimitlow = Convert.ToDecimal(aCol[16]);
-                  sa.updatetime = Utils.getDatatimeString();
-                  dbDapper.Insert(sa);
-                }
-                else
-                {
-                  sa.pricelast = Convert.ToDecimal(aCol[2]);
-                  sa.pricediff = aCol[3];
-                  sa.priceopen = Convert.ToDecimal(aCol[4]);
-                  sa.pricetop = Convert.ToDecimal(aCol[5]);
-                  sa.pricelow = Convert.ToDecimal(aCol[6]);
-                  sa.priceavg = Convert.ToDecimal(aCol[7]);
-                  sa.dealnum = Convert.ToInt64(aCol[8]);
-                  sa.dealmoney = Convert.ToInt64(aCol[9]);
-                  sa.dealamount = Convert.ToInt64(aCol[10]);
-                  sa.pricelastbuy = Convert.ToDecimal(aCol[11]);
-                  sa.pricelastsell = Convert.ToDecimal(aCol[12]);
-                  sa.publicnum = Convert.ToInt64(aCol[13]);
-                  sa.pricenextday = Convert.ToDecimal(aCol[14]);
-                  sa.pricenextlimittop = Convert.ToDecimal(aCol[15]);
-                  sa.pricenextlimitlow = Convert.ToDecimal(aCol[16]);
-                  sa.updatetime = Utils.getDatatimeString();
-                  dbDapper.Update(sa);
-                }
+                  ssql = " select * from stockafter  where stockdate = '{0}' and stockcode = '{1}'  ";
+                  Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(string.Format(ssql, sDate, aCol[0]));
+
+                  decimal dpricelastbuy = 0;
+                  decimal.TryParse(aCol[11], out dpricelastbuy);
+
+                  decimal dpricelastsell = 0;
+                  decimal.TryParse(aCol[13], out dpricelastsell);
+
+                  if (sa == null)
+                  {
+                    sa = new Stockafter();
+                    sa.stockdate = sDate;
+                    sa.stocktype = M10Const.StockType.tse;
+                    sa.stockcode = aCol[0];
+                    sa.pricelast = Convert.ToDecimal(aCol[8]);
+                    sa.updown = aCol[9];
+                    sa.pricediff = aCol[10];
+                    sa.priceopen = Convert.ToDecimal(aCol[5]);
+                    sa.pricetop = Convert.ToDecimal(aCol[6]);
+                    sa.pricelow = Convert.ToDecimal(aCol[7]);
+                    sa.priceavg = 0;
+                    sa.dealnum = Convert.ToInt64(aCol[2]);
+                    sa.dealmoney = Convert.ToInt64(aCol[4]);
+                    sa.dealamount = Convert.ToInt64(aCol[3]);
+                    sa.pricelastbuy = dpricelastbuy;
+                    sa.pricelastsell = dpricelastsell;
+                    sa.publicnum = 0;
+                    sa.pricenextday = Convert.ToDecimal(aCol[8]);
+                    sa.pricenextlimittop = 0;
+                    sa.pricenextlimitlow = 0;
+                    sa.updatetime = Utils.getDatatimeString();
+                    dbDapper.Insert(sa);
+                  }
+                  else
+                  {
+                    sa.pricelast = Convert.ToDecimal(aCol[8]);
+                    sa.updown = aCol[9];
+                    sa.pricediff = aCol[10];
+                    sa.priceopen = Convert.ToDecimal(aCol[5]);
+                    sa.pricetop = Convert.ToDecimal(aCol[6]);
+                    sa.pricelow = Convert.ToDecimal(aCol[7]);
+                    sa.priceavg = 0;
+                    sa.dealnum = Convert.ToInt64(aCol[2]);
+                    sa.dealmoney = Convert.ToInt64(aCol[4]);
+                    sa.dealamount = Convert.ToInt64(aCol[3]);
+                    sa.pricelastbuy = dpricelastbuy;
+                    sa.pricelastsell = dpricelastsell;
+                    sa.publicnum = 0;
+                    sa.pricenextday = Convert.ToDecimal(aCol[8]);
+                    sa.pricenextlimittop = 0;
+                    sa.pricenextlimitlow = 0;
+                    sa.updatetime = Utils.getDatatimeString();
+                    dbDapper.Update(sa);
+                  }
 
 
-                StatusLabel.Text = string.Format("{0}進度({1})", sDate, aCol[0]);
-                Application.DoEvents();
+                  StatusLabel.Text = string.Format("{2}-{0}進度({1})", sDate, aCol[0], M10Const.StockType.tse);
+                  Application.DoEvents();
+                }
               }
             }
           }
 
           dt = dt.AddDays(-1);
+
+        }
+        catch (Exception ex)
+        {
+          logger.Error(ex, "stock after:" + sLineTrans);
+          System.Threading.Thread.Sleep(10000);
         }
       }
-      catch (Exception ex)
-      {
-        logger.Error(ex);
-        throw ex;
-      }
+
     }
+
+
+
+    public static Stream GenerateStreamFromString(string s)
+    {
+      MemoryStream stream = new MemoryStream();
+      StreamWriter writer = new StreamWriter(stream);
+      writer.Write(s);
+      writer.Flush();
+      stream.Position = 0;
+      return stream;
+    }
+
 
     private void button6_Click(object sender, EventArgs e)
     {
-      try
-      {
-        //開始日期
-        DateTime dt = new DateTime(2017, 8, 29);
-        //結束日期
-        DateTime dttarget = new DateTime(2015, 12, 31);
+      //開始日期
+      DateTime dt = new DateTime(2017, 8, 29);
+      //結束日期
+      DateTime dttarget = new DateTime(2014, 12, 31);
 
-        while (true)
+      //取得資料庫最後一天
+      ssql = " select  distinct stockdate  from stockafter where stocktype = '{0}' order by stockdate asc ";
+
+      var vDbDate = dbDapper.ExecuteScale(string.Format(ssql, M10Const.StockType.otc));
+      if (vDbDate != null)
+      {
+        string sDbDate = vDbDate.ToString();
+        dt = new DateTime(Convert.ToInt32(sDbDate.Substring(0, 4))
+          , Convert.ToInt32(sDbDate.Substring(4, 2))
+          , Convert.ToInt32(sDbDate.Substring(6, 2)));
+      }
+
+      while (true)
+      {
+        System.Threading.Thread.Sleep(2000);
+        try
         {
           if (dt.ToString("yyyyMMdd") == dttarget.ToString("yyyyMMdd")) break;
 
@@ -1157,153 +1218,246 @@ namespace M10Tools
           int iyear = dt.Year - 1911;
           sDate = string.Format("{0}/{1}/{2}", iyear.ToString(), dt.ToString("MM"), dt.ToString("dd"));
 
-          StatusLabel.Text = string.Format("{0}進度({1})", sDate, "");
+          StatusLabel.Text = string.Format("{2}-{0}進度({1})", sDate, "", M10Const.StockType.otc);
           Application.DoEvents();
 
           sUrl = string.Format(sUrl, sDate);
           HttpWebRequest req = (HttpWebRequest)WebRequest.Create(sUrl);
+          req.Proxy = null;
 
           //改為寫入資料庫格式
           sDate = dt.ToString("yyyyMMdd");
-          HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
 
-          //判斷http回應狀態(HttpStatusCode.OK=200)
-          if (resp.StatusCode != HttpStatusCode.OK)
+          string sTemp = "";
+          using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
           {
-            StatusLabel.Text = string.Format("{0}進度({1})", sDate, "連線異常，資料重新取得");
-            Application.DoEvents();
+            //判斷http回應狀態(HttpStatusCode.OK=200)
+            if (resp.StatusCode != HttpStatusCode.OK)
+            {
+              StatusLabel.Text = string.Format("{0}進度({1})", sDate, "連線異常，資料重新取得");
+              Application.DoEvents();
 
-            System.Threading.Thread.Sleep(10000);
-            continue;
+              System.Threading.Thread.Sleep(10000);
+              continue;
+            }
+
+            using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
+            {
+              sTemp = SR.ReadToEnd();
+            }
           }
 
-          using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
+
+          using (Stream s = GenerateStreamFromString(sTemp))
           {
-            string Line;
-            while ((Line = SR.ReadLine()) != null)
+
+            using (StreamReader sr = new StreamReader(s))
             {
-              Line = Line.Replace(" ", "");
-              Line = Line.Replace("\",\"", "|");
-              Line = Line.Replace("\"", "");
-              Line = Line.Replace(",", "");
-              Line = Line.Replace("=", "");
 
-              string[] aCol = Line.Split('|');
-
-              if (aCol.Length == 17)
+              string Line;
+              while ((Line = sr.ReadLine()) != null)
               {
-                //檢核資料
-                Decimal iCheck = -1;
+                Line = Line.Replace(" ", "");
+                Line = Line.Replace("\",\"", "|");
+                Line = Line.Replace("\"", "");
+                Line = Line.Replace(",", "");
+                Line = Line.Replace("=", "");
 
-                if (Decimal.TryParse(aCol[2], out iCheck) == false)
-                {
-                  continue;
-                }
+                string[] aCol = Line.Split('|');
 
-                //資訊整理
-                string sDiff = aCol[3];
-                string sUpdown = "X";
-                string sPricediff = "0.00";
-                if (sDiff.Length > 0)
+                if (aCol.Length == 17)
                 {
-                  string sCheck = sDiff.Substring(0, 1);
-                  if (sCheck == "+")
+                  //檢核資料
+                  Decimal iCheck = -1;
+
+                  if (Decimal.TryParse(aCol[2], out iCheck) == false)
                   {
-                    sUpdown = "+";
-                    sPricediff = sDiff.Replace("+", "");
-                  }
-                  if (sCheck == "-")
-                  {
-                    sUpdown = "-";
-                    sPricediff = sDiff.Replace("-", "");
-                  }
-                  if (sCheck == "0")
-                  {
-                    sUpdown = "X";
+                    continue;
                   }
 
-                  if (sCheck != "+" && sCheck != "-" && sCheck != "0")
+                  //資訊整理
+                  string sDiff = aCol[3];
+                  string sUpdown = "X";
+                  string sPricediff = "0.00";
+                  if (sDiff.Length > 0)
                   {
-                    sUpdown = "X";
+                    string sCheck = sDiff.Substring(0, 1);
+                    if (sCheck == "+")
+                    {
+                      sUpdown = "+";
+                      sPricediff = sDiff.Replace("+", "");
+                    }
+                    if (sCheck == "-")
+                    {
+                      sUpdown = "-";
+                      sPricediff = sDiff.Replace("-", "");
+                    }
+                    if (sCheck == "0")
+                    {
+                      sUpdown = "X";
+                    }
+
+                    if (sCheck != "+" && sCheck != "-" && sCheck != "0")
+                    {
+                      sUpdown = "X";
+                    }
                   }
+
+                  ssql = " select * from stockafter  where stockdate = '{0}' and stockcode = '{1}'  ";
+                  Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(string.Format(ssql, sDate, aCol[0]));
+
+                  if (aCol[0] == "3226")
+                  {
+                    string aaaa = string.Empty;
+                  }
+                  if (sa == null)
+                  {
+                    sa = new Stockafter();
+                    sa.stockdate = sDate;
+                    sa.stocktype = M10Const.StockType.otc;
+                    sa.stockcode = aCol[0];
+                    sa.pricelast = Convert.ToDecimal(aCol[2]);
+                    sa.updown = sUpdown;
+                    sa.pricediff = sPricediff;
+                    sa.priceopen = Convert.ToDecimal(aCol[4]);
+                    sa.pricetop = Convert.ToDecimal(aCol[5]);
+                    sa.pricelow = Convert.ToDecimal(aCol[6]);
+                    sa.priceavg = Convert.ToDecimal(aCol[7]);
+                    sa.dealnum = Convert.ToInt64(aCol[8]);
+                    sa.dealmoney = Convert.ToInt64(aCol[9]);
+                    sa.dealamount = Convert.ToInt64(aCol[10]);
+                    sa.pricelastbuy = Convert.ToDecimal(aCol[11]);
+                    sa.pricelastsell = Convert.ToDecimal(aCol[12]);
+                    sa.publicnum = Convert.ToInt64(aCol[13]);
+                    sa.pricenextday = Convert.ToDecimal(aCol[14]);
+                    sa.pricenextlimittop = Convert.ToDecimal(aCol[15]);
+                    sa.pricenextlimitlow = Convert.ToDecimal(aCol[16]);
+                    sa.updatetime = Utils.getDatatimeString();
+                    dbDapper.Insert(sa);
+                  }
+                  else
+                  {
+                    sa.pricelast = Convert.ToDecimal(aCol[2]);
+                    sa.updown = sUpdown;
+                    sa.pricediff = sPricediff;
+                    sa.priceopen = Convert.ToDecimal(aCol[4]);
+                    sa.pricetop = Convert.ToDecimal(aCol[5]);
+                    sa.pricelow = Convert.ToDecimal(aCol[6]);
+                    sa.priceavg = Convert.ToDecimal(aCol[7]);
+                    sa.dealnum = Convert.ToInt64(aCol[8]);
+                    sa.dealmoney = Convert.ToInt64(aCol[9]);
+                    sa.dealamount = Convert.ToInt64(aCol[10]);
+                    sa.pricelastbuy = Convert.ToDecimal(aCol[11]);
+                    sa.pricelastsell = Convert.ToDecimal(aCol[12]);
+                    sa.publicnum = Convert.ToInt64(aCol[13]);
+                    sa.pricenextday = Convert.ToDecimal(aCol[14]);
+                    sa.pricenextlimittop = Convert.ToDecimal(aCol[15]);
+                    sa.pricenextlimitlow = Convert.ToDecimal(aCol[16]);
+                    sa.updatetime = Utils.getDatatimeString();
+                    dbDapper.Update(sa);
+                  }
+
+                  StatusLabel.Text = string.Format("{2}-{0}進度({1})", sDate, aCol[0], M10Const.StockType.otc);
+                  Application.DoEvents();
                 }
-
-                ssql = " select * from stockafter  where stockdate = '{0}' and stockcode = '{1}'  ";
-                Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(string.Format(ssql, sDate, aCol[0]));
-
-                if (aCol[0] == "3226")
-                {
-                  string aaaa = string.Empty;
-                }
-                if (sa == null)
-                {
-                  sa = new Stockafter();
-                  sa.stockdate = sDate;
-                  sa.stocktype = "otc";
-                  sa.stockcode = aCol[0];
-                  sa.pricelast = Convert.ToDecimal(aCol[2]);
-                  sa.updown = sUpdown;
-                  sa.pricediff = sPricediff;
-                  sa.priceopen = Convert.ToDecimal(aCol[4]);
-                  sa.pricetop = Convert.ToDecimal(aCol[5]);
-                  sa.pricelow = Convert.ToDecimal(aCol[6]);
-                  sa.priceavg = Convert.ToDecimal(aCol[7]);
-                  sa.dealnum = Convert.ToInt64(aCol[8]);
-                  sa.dealmoney = Convert.ToInt64(aCol[9]);
-                  sa.dealamount = Convert.ToInt64(aCol[10]);
-                  sa.pricelastbuy = Convert.ToDecimal(aCol[11]);
-                  sa.pricelastsell = Convert.ToDecimal(aCol[12]);
-                  sa.publicnum = Convert.ToInt64(aCol[13]);
-                  sa.pricenextday = Convert.ToDecimal(aCol[14]);
-                  sa.pricenextlimittop = Convert.ToDecimal(aCol[15]);
-                  sa.pricenextlimitlow = Convert.ToDecimal(aCol[16]);
-                  sa.updatetime = Utils.getDatatimeString();
-                  dbDapper.Insert(sa);
-                }
-                else
-                {
-                  sa.pricelast = Convert.ToDecimal(aCol[2]);
-                  sa.updown = sUpdown;
-                  sa.pricediff = sPricediff;
-                  sa.priceopen = Convert.ToDecimal(aCol[4]);
-                  sa.pricetop = Convert.ToDecimal(aCol[5]);
-                  sa.pricelow = Convert.ToDecimal(aCol[6]);
-                  sa.priceavg = Convert.ToDecimal(aCol[7]);
-                  sa.dealnum = Convert.ToInt64(aCol[8]);
-                  sa.dealmoney = Convert.ToInt64(aCol[9]);
-                  sa.dealamount = Convert.ToInt64(aCol[10]);
-                  sa.pricelastbuy = Convert.ToDecimal(aCol[11]);
-                  sa.pricelastsell = Convert.ToDecimal(aCol[12]);
-                  sa.publicnum = Convert.ToInt64(aCol[13]);
-                  sa.pricenextday = Convert.ToDecimal(aCol[14]);
-                  sa.pricenextlimittop = Convert.ToDecimal(aCol[15]);
-                  sa.pricenextlimitlow = Convert.ToDecimal(aCol[16]);
-                  sa.updatetime = Utils.getDatatimeString();
-                  dbDapper.Update(sa);
-                }
-
-
-                StatusLabel.Text = string.Format("{0}進度({1})", sDate, aCol[0]);
-
-
-                Application.DoEvents();
               }
             }
           }
 
+
           dt = dt.AddDays(-1);
+
+        }
+        catch (Exception ex)
+        {
+          logger.Error(ex);
+          System.Threading.Thread.Sleep(10000);
         }
       }
-      catch (Exception ex)
-      {
-        logger.Error(ex);
-        throw ex;
-      }
+
     }
 
     private void button7_Click(object sender, EventArgs e)
     {
-      
+      try
+      {
+        string stockcode = "0000";
+        if (stockcode == "0000") stockcode = "%23001";
+
+        string sUrl = "https://tw.quote.finance.yahoo.net/quote/q?type=tick&sym={0}";
+        string sDate = DateTime.Now.ToString("yyyyMMdd");
+
+
+        sUrl = string.Format(sUrl, stockcode);
+        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(sUrl);
+        req.Proxy = null;
+        //改為寫入資料庫格式
+
+        HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
+
+        //判斷http回應狀態(HttpStatusCode.OK=200)
+        //if (resp.StatusCode != HttpStatusCode.OK)
+        //{
+        //  return sr;
+        //}
+
+        //using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
+        using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.UTF8))
+        {
+          string Line;
+          while ((Line = SR.ReadLine()) != null)
+          {
+            Line = Line.Replace("null(", "");
+            Line = Line.Replace(");", "");
+
+            //JObject jobj = JsonConvert.DeserializeObject(Line) as JObject;
+
+            Line = Line.Insert(Line.IndexOf(",\"143\":") + 7, "\"").Insert(Line.IndexOf(",\"143\":") + 14, "\"");
+            JObject jobj = JObject.Parse(Line);
+            //jobj["mem"]["125"];
+
+            //Price
+            //sr.z = jobj["mem"]["125"].ToString();
+
+
+            ////昨收
+            //sr.y = jobj["mem"]["129"].ToString();
+            //最高
+            //sr.u = jobj["mem"]["130"].ToString();
+            //最低
+            //sr.w = jobj["mem"]["131"].ToString();
+
+            //  if(StockInfo.z == StockInfo.u) mark="▲";
+            //  if(StockInfo.z == StockInfo.w) mark="▼";
+            //  if(ud>0) mark="△";
+            //  if(ud<0) mark="▽";
+            //var mark = "±";
+          }
+
+        }
+
+
+        //取得個股資訊
+        //ssql = " select * from StockInfo where stockcode = '{0}' ";
+        //StockInfo si = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, stockcode));
+        //if (si != null)
+        //{
+        //  //個股名稱
+        //  sr.n = si.stockname;
+        //  //個股代碼
+        //  sr.c = si.stockcode;
+        //}
+      }
+      catch (Exception ex)
+      {
+        //logger.Error(ex);
+        //throw ex;
+      }
+
+
+
+      //return sr;
+
     }
   }
 }

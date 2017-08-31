@@ -230,31 +230,31 @@ namespace M10AlertLRTI
         AlertDList = dbDapper.Query(string.Format(ssql, "D"));
         foreach (var item in AlertIList)
         {
-          if (item.status == "I") item.status = Constants.AlertStatus.I;
-          if (item.status == "C") item.status = Constants.AlertStatus.C;
-          if (item.status == "O") item.status = Constants.AlertStatus.O;
-          if (item.status == "D") item.status = Constants.AlertStatus.D;
+          if (item.status == "I") item.status = M10Const.AlertStatus.I;
+          if (item.status == "C") item.status = M10Const.AlertStatus.C;
+          if (item.status == "O") item.status = M10Const.AlertStatus.O;
+          if (item.status == "D") item.status = M10Const.AlertStatus.D;
         }
         foreach (var item in AlertCList)
         {
-          if (item.status == "I") item.status = Constants.AlertStatus.I;
-          if (item.status == "C") item.status = Constants.AlertStatus.C;
-          if (item.status == "O") item.status = Constants.AlertStatus.O;
-          if (item.status == "D") item.status = Constants.AlertStatus.D;
+          if (item.status == "I") item.status = M10Const.AlertStatus.I;
+          if (item.status == "C") item.status = M10Const.AlertStatus.C;
+          if (item.status == "O") item.status = M10Const.AlertStatus.O;
+          if (item.status == "D") item.status = M10Const.AlertStatus.D;
         }
         foreach (var item in AlertOList)
         {
-          if (item.status == "I") item.status = Constants.AlertStatus.I;
-          if (item.status == "C") item.status = Constants.AlertStatus.C;
-          if (item.status == "O") item.status = Constants.AlertStatus.O;
-          if (item.status == "D") item.status = Constants.AlertStatus.D;
+          if (item.status == "I") item.status = M10Const.AlertStatus.I;
+          if (item.status == "C") item.status = M10Const.AlertStatus.C;
+          if (item.status == "O") item.status = M10Const.AlertStatus.O;
+          if (item.status == "D") item.status = M10Const.AlertStatus.D;
         }
         foreach (var item in AlertDList)
         {
-          if (item.status == "I") item.status = Constants.AlertStatus.I;
-          if (item.status == "C") item.status = Constants.AlertStatus.C;
-          if (item.status == "O") item.status = Constants.AlertStatus.O;
-          if (item.status == "D") item.status = Constants.AlertStatus.D;
+          if (item.status == "I") item.status = M10Const.AlertStatus.I;
+          if (item.status == "C") item.status = M10Const.AlertStatus.C;
+          if (item.status == "O") item.status = M10Const.AlertStatus.O;
+          if (item.status == "D") item.status = M10Const.AlertStatus.D;
         }
 
 
