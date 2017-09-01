@@ -186,7 +186,7 @@ namespace C10Mvc.Controllers
     {
       //get from yahoo web
       StockRuntime sr = oStockUtil.getStockRealtimeYahooWeb(stockcode);
-      0 
+     
       //get from yahoo api
       //StockRuntime sr = oStockUtil.getStockRealtimeYahooApi(stockcode);
 

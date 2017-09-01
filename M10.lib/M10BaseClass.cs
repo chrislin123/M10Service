@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.Http;
-using System.Web.Mvc;
+using System.Text;
+using System.Threading.Tasks;
 using System.Configuration;
-using M10.lib;
-using M10Api.Models;
 
-namespace M10Api.Class
+namespace M10.lib
 {
-  public class BaseController : Controller
+  public class M10BaseClass
   {
     public string ssql = string.Empty;
     private DALDapper _dbDapper;
     private string _ConnectionString;
-
 
     public DALDapper dbDapper
     {
@@ -42,6 +38,5 @@ namespace M10Api.Class
         return _ConnectionString;
       }
     }
-
   }
 }

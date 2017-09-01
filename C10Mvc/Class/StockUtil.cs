@@ -2,22 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using M10.lib.model;
-using M10.lib;
-using HtmlAgilityPack;
-using Newtonsoft.Json;
 using System.Net;
 using System.IO;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using HtmlAgilityPack;
+using M10.lib.model;
+using M10.lib;
 
 namespace C10Mvc.Class
 {
-  public  class StockUtil : BaseClass
+  public  class StockUtil : M10BaseClass
   {
-
-
     public StockRuntime getStockRealtimeYahooWeb(string stockcode)
     {
+      if (stockcode == "t00") stockcode = "0000";
+      //if (stockcode == "t00") stockcode = "0000";
+
       StockRuntime sr = new StockRuntime();
       sr.z = "";
       sr.y = "";
@@ -67,8 +68,14 @@ namespace C10Mvc.Class
         idx++;
       }
 
-      
 
+      //使用api呼叫取得
+      if (stockcode == "0000" || stockcode == "9999")
+      {
+        StockRuntime sr_0000 = getStockRealtimeYahooApi(stockcode);
+
+        sr = sr_0000;
+      }
 
       //取得資訊
       ssql = " select * from StockInfo where stockcode = '{0}' ";
@@ -82,15 +89,7 @@ namespace C10Mvc.Class
       }
 
 
-      //使用api呼叫取得
-      if (stockcode == "0000" || stockcode == "t00")
-      {
-        StockRuntime sr_0000 = getStockRealtimeYahooApi(stockcode);
-
-        sr = sr_0000;
-        sr.n = "加權指數";
-        sr.c = "0000";
-      }
+      
 
       return sr;
     }
@@ -139,10 +138,17 @@ namespace C10Mvc.Class
 
       try
       {
-        if (stockcode == "0000") stockcode = "%23001";
-        if (stockcode == "t00") stockcode = "%23001";
-
         string sUrl = "https://tw.quote.finance.yahoo.net/quote/q?type=tick&sym={0}";
+
+        if (stockcode == "0000") stockcode = "%23001";
+        if (stockcode == "9999")
+        {
+          stockcode = "WTX%26";
+          sUrl = "https://tw.screener.finance.yahoo.net/future/q?type=tick&mkt=01&sym={0}";
+        }
+        
+
+        
         string sDate = DateTime.Now.ToString("yyyyMMdd");
 
     
@@ -169,7 +175,7 @@ namespace C10Mvc.Class
             Line = Line.Replace(");", "");
 
             //JObject jobj = JsonConvert.DeserializeObject(Line) as JObject;
-            if (stockcode == "%23001")
+            if (stockcode == "%23001" || stockcode == "WTX%26")
             {
               Line = Line.Insert(Line.IndexOf(",\"143\":") + 7, "\"").Insert(Line.IndexOf(",\"143\":") + 14, "\"");
             }

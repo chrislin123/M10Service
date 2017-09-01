@@ -1459,5 +1459,107 @@ namespace M10Tools
       //return sr;
 
     }
+
+    private void button8_Click(object sender, EventArgs e)
+    {
+
+      dbDapper.Execute("delete stockget");
+
+
+      List<StockInfo> siList = new List<StockInfo>();
+      ssql = " select * from stockinfo where status = 'Y' ";
+      siList = dbDapper.Query<StockInfo>(ssql);
+
+      foreach (StockInfo item in siList)
+      {
+        string stockcode = item.stockcode;
+
+        DateTime dt = DateTime.Now;
+        DateTime dtTarget = dt.AddDays(-180);
+
+
+        while (true)
+        {
+          if (dt.ToString("yyyyMMdd") == dtTarget.ToString("yyyyMMdd")) break;
+
+
+          StatusLabel.Text = string.Format("{0}({1})", stockcode, dt.ToString("yyyyMMdd"));
+          Application.DoEvents();
+
+          if (dt.ToString("yyyyMMdd") == "20170726")
+          {
+            ssql = "";
+          }
+
+          ssql = @" select top 3 * from stockafter 
+               where stockdate <= '{0}' and stockcode = '{1}' order by stockdate desc
+               ";
+          ssql = string.Format(ssql, dt.ToString("yyyyMMdd"), stockcode);
+          List<Stockafter> saList = dbDapper.Query<Stockafter>(ssql);
+
+          if (saList.Count != 3)
+          {
+            dt = dt.AddDays(-1);
+            continue;
+          }
+
+          Boolean bCon1 = false;
+          if (saList.Count == 3)
+          {
+            //to
+            Stockafter saToday = saList[0];
+            //yes
+            Stockafter saYes = saList[1];
+            //per
+            Stockafter saPer = saList[2];
+
+            if (saYes.updown == "+")
+            {
+              double aa = 0.09;
+              decimal dd = 0;
+              dd = (Convert.ToDecimal(saYes.pricelast) - Convert.ToDecimal(saPer.pricelast)) / Convert.ToDecimal(saPer.pricelast);
+              if (dd > Convert.ToDecimal(aa))
+              {
+
+                ssql = @" select max(dealnum) from (
+                select top 180 * from stockafter where stockcode = '{1}' 
+                and stockdate <= '{0}'  order by stockdate desc
+                ) as dd 
+               ";
+                ssql = string.Format(ssql, dt.ToString("yyyyMMdd"), stockcode);
+                object sa = dbDapper.ExecuteScale(ssql);
+                if (sa != null)
+                {
+                  long lDealNum = Convert.ToInt64(sa.ToString());
+
+                  if (saToday.dealnum == lDealNum)
+                  {
+                    StockGet sg = new StockGet();
+                    sg.getdate = DateTime.Now.ToString("yyyyMMdd");
+                    sg.stockcode = saToday.stockcode;
+                    sg.stockdate = saToday.stockdate;
+
+                    dbDapper.Insert(sg);
+
+
+                    string sssss = dt.ToString("yyyyMMdd");
+                    bCon1 = true;
+                  }
+                }
+              }
+            }
+          }
+
+          dt = dt.AddDays(-1);
+          continue;
+
+        }
+      }
+
+
+      StatusLabel.Text = "轉檔完畢";
+      Application.DoEvents();
+
+    }
   }
 }

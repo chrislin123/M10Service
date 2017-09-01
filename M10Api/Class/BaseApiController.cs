@@ -1,11 +1,11 @@
-﻿using M10Api.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Http;
+using System.Configuration;
 using M10.lib;
-using System.Web.Configuration;
+using M10Api.Models;
 
 namespace M10Api.Class
 {
@@ -34,7 +34,7 @@ namespace M10Api.Class
       {
         if (string.IsNullOrEmpty(_ConnectionString))
         {
-          _ConnectionString = WebConfigurationManager.ConnectionStrings[WebConfigurationManager.AppSettings["DBDefault"]].ConnectionString;
+          _ConnectionString = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]].ConnectionString;
         }
 
         return _ConnectionString;

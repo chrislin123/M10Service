@@ -672,6 +672,19 @@ namespace M10.lib.model
 
   }
 
+  [Table("StockGet")]
+  public class StockGet
+  {
+    //設定key
+    [Key]
+    public int no { get; set; }
 
+    public string getdate { get; set; }
+
+    public string stockcode { get; set; }
+
+    public string stockdate { get; set; }
+
+  }
 
 }

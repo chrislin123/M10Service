@@ -4,8 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
+using System.Configuration;
 using M10.lib;
-using System.Web.Configuration;
 
 namespace C10Mvc.Class
 {
@@ -34,8 +34,8 @@ namespace C10Mvc.Class
       get
       {
         if (string.IsNullOrEmpty(_ConnectionString))
-        { 
-          _ConnectionString = WebConfigurationManager.ConnectionStrings[WebConfigurationManager.AppSettings["DBDefault"]].ConnectionString;
+        {
+          _ConnectionString = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]].ConnectionString;         
         }
 
         return _ConnectionString;
