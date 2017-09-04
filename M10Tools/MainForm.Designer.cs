@@ -89,7 +89,7 @@
       // toolStripStatusLabel1
       // 
       this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-      this.toolStripStatusLabel1.Size = new System.Drawing.Size(129, 17);
+      this.toolStripStatusLabel1.Size = new System.Drawing.Size(128, 17);
       this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
       // 
       // StatusLabel
@@ -187,7 +187,7 @@
       this.button8.Name = "button8";
       this.button8.Size = new System.Drawing.Size(126, 23);
       this.button8.TabIndex = 17;
-      this.button8.Text = "function1";
+      this.button8.Text = "巨量換手搜尋";
       this.button8.UseVisualStyleBackColor = true;
       this.button8.Click += new System.EventHandler(this.button8_Click);
       // 
