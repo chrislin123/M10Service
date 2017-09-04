@@ -754,416 +754,97 @@ namespace M10Tools
 
     private void button3_Click(object sender, EventArgs e)
     {
-      try
+      //開始日期
+      DateTime dt = new DateTime(2017, 8, 25);
+      //結束日期
+      DateTime dtEnd = new DateTime(2017, 9, 4);
+
+      for (DateTime LoopDatetime = dt; LoopDatetime <= dtEnd; LoopDatetime = LoopDatetime.AddDays(1))
       {
-
-        DateTime dt = new DateTime(2014, 11, 21);
-        DateTime dttarget = new DateTime(2017, 1, 1);
-        DateTime dtnew = dt.AddDays(1);
-
-        while (true)
+        string sLineTrans = "";
+        try
         {
-          if (dt.ToString("yyyyMMdd") == dttarget.ToString("yyyyMMdd")) break;
-
-          string sUrl = "http://www.tse.com.tw/fund/T86?response=csv&date={0}&selectType=ALLBUT0999";
-          string sDate = DateTime.Now.ToString("yyyyMMdd");
-          sDate = dt.ToString("yyyyMMdd");
-
-          //System.Threading.Thread.Sleep(500);
-          StatusLabel.Text = string.Format("{0}進度({1})", sDate, "");
+          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.otc, LoopDatetime.ToString("yyyyMMdd"));
           Application.DoEvents();
-
-          HttpWebRequest req = (HttpWebRequest)WebRequest.Create(string.Format(sUrl, sDate));
-          HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
-          //判斷http回應狀態(HttpStatusCode.OK=200)
-          if (resp.StatusCode != HttpStatusCode.OK)
+          
+          if (Stockhelper.GetStockThreeTradeTse(LoopDatetime) == false)
           {
-            StatusLabel.Text = string.Format("{0}進度({1})", sDate, "連線異常，資料重新取得");
-            Application.DoEvents();
-
             System.Threading.Thread.Sleep(3000);
             continue;
           }
-          using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
-          {
-            string Line;
-            while ((Line = SR.ReadLine()) != null)
-            {
-              Line = Line.Replace(" ", "");
-              Line = Line.Replace("\",\"", "|");
-              Line = Line.Replace("\"", "");
-              Line = Line.Replace(",", "");
-              Line = Line.Replace("=", "");
-
-              string[] aCol = Line.Split('|');
-
-              if (aCol.Length == 16)
-              {
-                //檢核資料
-                int iCheck = -1;
-
-                if (int.TryParse(aCol[15], out iCheck) == false)
-                {
-                  continue;
-                }
-
-                ssql = " select * from Stockthreetrade where date = '{0}' and stockcode = '{1}' ";
-                Stockthreetrade st = dbDapper.QuerySingleOrDefault<Stockthreetrade>(string.Format(ssql, sDate, aCol[0]));
-
-                if (st == null)
-                {
-                  st = new Stockthreetrade();
-                  st.stockcode = aCol[0];
-                  st.date = sDate;
-                  st.type = "tse";
-                  st.foreigninv = Convert.ToInt32(aCol[4]);
-                  st.trustinv = Convert.ToInt32(aCol[7]);
-                  st.selfempinv = Convert.ToInt32(aCol[14]);
-                  st.threeinv = Convert.ToInt32(aCol[15]);
-                  st.updatetime = Utils.getDatatimeString();
-                  dbDapper.Insert(st);
-                }
-                else
-                {
-                  st.stockcode = aCol[0];
-                  st.date = sDate;
-                  st.type = "tse";
-                  st.foreigninv = Convert.ToInt32(aCol[4]);
-                  st.trustinv = Convert.ToInt32(aCol[7]);
-                  st.selfempinv = Convert.ToInt32(aCol[14]);
-                  st.threeinv = Convert.ToInt32(aCol[15]);
-                  st.updatetime = Utils.getDatatimeString();
-                  dbDapper.Update(st);
-                }
-
-
-                StatusLabel.Text = string.Format("{0}進度({1})", sDate, aCol[0]);
-
-
-                Application.DoEvents();
-              }
-
-              if (aCol.Length == 12)
-              {
-                //檢核資料
-                int iCheck = -1;
-
-                if (int.TryParse(aCol[11], out iCheck) == false)
-                {
-                  continue;
-                }
-
-                ssql = " select * from Stockthreetrade where date = '{0}' and stockcode = '{1}' ";
-                Stockthreetrade st = dbDapper.QuerySingleOrDefault<Stockthreetrade>(string.Format(ssql, sDate, aCol[0]));
-
-                if (st == null)
-                {
-                  st = new Stockthreetrade();
-                  st.stockcode = aCol[0];
-                  st.date = sDate;
-                  st.type = "tse";
-                  st.foreigninv = Convert.ToInt32(aCol[4]);
-                  st.trustinv = Convert.ToInt32(aCol[7]);
-                  st.selfempinv = Convert.ToInt32(aCol[10]);
-                  st.threeinv = Convert.ToInt32(aCol[11]);
-                  st.updatetime = Utils.getDatatimeString();
-                  dbDapper.Insert(st);
-                }
-                else
-                {
-                  st.foreigninv = Convert.ToInt32(aCol[4]);
-                  st.trustinv = Convert.ToInt32(aCol[7]);
-                  st.selfempinv = Convert.ToInt32(aCol[10]);
-                  st.threeinv = Convert.ToInt32(aCol[11]);
-                  st.updatetime = Utils.getDatatimeString();
-                  dbDapper.Update(st);
-                }
-
-
-                StatusLabel.Text = string.Format("{0}進度({1})", sDate, aCol[0]);
-
-
-                Application.DoEvents();
-              }
-            }
-          }
-
-
-          dt = dt.AddDays(1);
         }
-      }
-      catch (Exception ex)
-      {
-        logger.Error(ex);
-        throw ex;
+        catch (Exception ex)
+        {
+          logger.Error(ex, "stock after:" + sLineTrans);
+          System.Threading.Thread.Sleep(10000);
+        }
       }
     }
 
     private void button4_Click(object sender, EventArgs e)
     {
-      try
+
+      //開始日期
+      DateTime dt = new DateTime(2017, 8, 29);
+      //結束日期
+      DateTime dtEnd = new DateTime(2017, 9, 4);
+
+      for (DateTime LoopDatetime = dt; LoopDatetime <= dtEnd; LoopDatetime = LoopDatetime.AddDays(1))
       {
-        DateTime dt = new DateTime(2014, 12, 1);
-        DateTime dttarget = new DateTime(2017, 8, 27);
-        DateTime dtnew = dt.AddDays(1);
-
-        while (true)
+        string sLineTrans = "";
+        try
         {
-          if (dt.ToString("yyyyMMdd") == dttarget.ToString("yyyyMMdd")) break;
-
-
-          //http://www.tpex.org.tw/web/stock/3insti/daily_trade/3itrade_hedge_download.php?l=zh-tw&se=EW&t=D&d=106/08/25&s=0,asc
-          string sUrl = "http://www.tpex.org.tw/web/stock/3insti/daily_trade/3itrade_hedge_download.php?l=zh-tw&se=EW&t=D&d={0}&s=0,asc";
-          string sDate = DateTime.Now.ToString("yyyyMMdd");
-          int iyear = dt.Year - 1911;
-          sDate = string.Format("{0}/{1}/{2}", iyear.ToString(), dt.ToString("MM"), dt.ToString("dd"));
-
-          //sDate = dt.ToString("yyyyMMdd");
-
-          //System.Threading.Thread.Sleep(500);
-          StatusLabel.Text = string.Format("{0}進度({1})", sDate, "");
+          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.otc, LoopDatetime.ToString("yyyyMMdd"));
           Application.DoEvents();
-
-
-          HttpWebRequest req = (HttpWebRequest)WebRequest.Create(string.Format(sUrl, sDate));
-
-          //改為寫入資料庫格式
-          sDate = dt.ToString("yyyyMMdd");
-
-          HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
-
-          //判斷http回應狀態(HttpStatusCode.OK=200)
-          if (resp.StatusCode != HttpStatusCode.OK)
+        
+          if (Stockhelper.GetStockThreeTradeOtc(LoopDatetime) == false)
           {
-            StatusLabel.Text = string.Format("{0}進度({1})", sDate, "連線異常，資料重新取得");
-            Application.DoEvents();
-
             System.Threading.Thread.Sleep(3000);
             continue;
           }
-
-          using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
-          {
-            string Line;
-            while ((Line = SR.ReadLine()) != null)
-            {
-              Line = Line.Replace(" ", "");
-              Line = Line.Replace("\",\"", "|");
-              Line = Line.Replace("\"", "");
-              Line = Line.Replace(",", "");
-              Line = Line.Replace("=", "");
-
-              string[] aCol = Line.Split('|');
-
-              if (aCol.Length == 16)
-              {
-                //檢核資料
-                int iCheck = -1;
-
-                if (int.TryParse(aCol[15], out iCheck) == false)
-                {
-                  continue;
-                }
-
-                ssql = " select * from Stockthreetrade where date = '{0}' and stockcode = '{1}' ";
-                Stockthreetrade st = dbDapper.QuerySingleOrDefault<Stockthreetrade>(string.Format(ssql, sDate, aCol[0]));
-
-                if (st == null)
-                {
-                  st = new Stockthreetrade();
-                  st.stockcode = aCol[0];
-                  st.date = sDate;
-                  st.type = "otc";
-                  st.foreigninv = Convert.ToInt32(aCol[4]);
-                  st.trustinv = Convert.ToInt32(aCol[7]);
-                  st.selfempinv = Convert.ToInt32(aCol[14]);
-                  st.threeinv = Convert.ToInt32(aCol[15]);
-                  st.updatetime = Utils.getDatatimeString();
-                  dbDapper.Insert(st);
-                }
-                else
-                {
-                  st.foreigninv = Convert.ToInt32(aCol[4]);
-                  st.trustinv = Convert.ToInt32(aCol[7]);
-                  st.selfempinv = Convert.ToInt32(aCol[14]);
-                  st.threeinv = Convert.ToInt32(aCol[15]);
-                  st.updatetime = Utils.getDatatimeString();
-                  dbDapper.Update(st);
-                }
-
-
-                StatusLabel.Text = string.Format("{0}進度({1})", sDate, aCol[0]);
-
-
-                Application.DoEvents();
-              }
-
-
-            }
-          }
-
-
-          dt = dt.AddDays(1);
+        }
+        catch (Exception ex)
+        {
+          logger.Error(ex, "stock after:" + sLineTrans);
+          System.Threading.Thread.Sleep(10000);
         }
       }
-      catch (Exception ex)
-      {
-        logger.Error(ex);
-        throw ex;
-      }
+
     }
 
     private void button5_Click(object sender, EventArgs e)
     {
       //開始日期
-      DateTime dt = new DateTime(2017, 8, 30);
+      DateTime dt = new DateTime(2017, 8, 25);
       //結束日期
-      DateTime dttarget = new DateTime(2007, 1, 1);
+      DateTime dtEnd = new DateTime(2017, 9, 4);
 
-      //取得資料庫最後一天
-      ssql = " select  distinct stockdate  from stockafter where stocktype = '{0}' order by stockdate asc ";
+      ////取得資料庫最後一天
+      //ssql = " select  distinct stockdate  from stockafter where stocktype = '{0}' order by stockdate asc ";
 
-      var vDbDate = dbDapper.ExecuteScale(string.Format(ssql, M10Const.StockType.tse));
-      if (vDbDate != null)
-      {
-        string sDbDate = vDbDate.ToString();
-        dt = new DateTime(Convert.ToInt32(sDbDate.Substring(0, 4))
-          , Convert.ToInt32(sDbDate.Substring(4, 2))
-          , Convert.ToInt32(sDbDate.Substring(6, 2)));
-      }
+      //var vDbDate = dbDapper.ExecuteScale(string.Format(ssql, M10Const.StockType.tse));
+      //if (vDbDate != null)
+      //{
+      //  string sDbDate = vDbDate.ToString();
+      //  dt = new DateTime(Convert.ToInt32(sDbDate.Substring(0, 4))
+      //    , Convert.ToInt32(sDbDate.Substring(4, 2))
+      //    , Convert.ToInt32(sDbDate.Substring(6, 2)));
+      //}
 
-
-      while (true)
+      //for (DateTime date = checkBgn; date <= checkEnd; date = date.AddDays(1))
+      for (DateTime LoopDatetime = dt; LoopDatetime <= dtEnd; LoopDatetime = LoopDatetime.AddDays(1))
       {
         string sLineTrans = "";
         try
         {
-          if (dt.ToString("yyyyMMdd") == dttarget.ToString("yyyyMMdd")) break;
-
-          string sUrl = "http://www.tse.com.tw/exchangeReport/MI_INDEX?response=csv&date={0}&type=ALLBUT0999";
-          string sDate = dt.ToString("yyyyMMdd");
-
-          StatusLabel.Text = string.Format("{2}-{0}進度({1})", sDate, "", M10Const.StockType.tse);
+          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
           Application.DoEvents();
 
-          sUrl = string.Format(sUrl, sDate);
-          HttpWebRequest req = (HttpWebRequest)WebRequest.Create(sUrl);
-          req.Proxy = null;
-          string sTemp = "";
-          using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
+          if (Stockhelper.GetStockAfterTse(LoopDatetime) == false)
           {
-            //判斷http回應狀態(HttpStatusCode.OK=200)
-            if (resp.StatusCode != HttpStatusCode.OK)
-            {
-              StatusLabel.Text = string.Format("{0}進度({1})", sDate, "連線異常，資料重新取得");
-              Application.DoEvents();
-
-              System.Threading.Thread.Sleep(3000);
-              continue;
-            }
-
-            using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
-            {
-              sTemp = SR.ReadToEnd();
-            }
-
+            System.Threading.Thread.Sleep(3000);
+            continue;
           }
-
-          using (Stream s = GenerateStreamFromString(sTemp))
-          {
-
-            using (StreamReader sr = new StreamReader(s))
-            {
-
-
-              string Line;
-              while ((Line = sr.ReadLine()) != null)
-              {
-                Line = Line.Replace(" ", "");
-                Line = Line.Replace("\",\"", "|");
-                Line = Line.Replace("\"", "");
-                Line = Line.Replace(",", "");
-                Line = Line.Replace("=", "");
-                sLineTrans = Line;
-                string[] aCol = Line.Split('|');
-
-
-                if (aCol.Length == 16)
-                {
-                  //檢核資料
-                  Decimal iCheck = -1;
-
-                  if (Decimal.TryParse(aCol[8], out iCheck) == false)
-                  {
-                    continue;
-                  }
-
-                  ssql = " select * from stockafter  where stockdate = '{0}' and stockcode = '{1}'  ";
-                  Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(string.Format(ssql, sDate, aCol[0]));
-
-                  decimal dpricelastbuy = 0;
-                  decimal.TryParse(aCol[11], out dpricelastbuy);
-
-                  decimal dpricelastsell = 0;
-                  decimal.TryParse(aCol[13], out dpricelastsell);
-
-                  if (sa == null)
-                  {
-                    sa = new Stockafter();
-                    sa.stockdate = sDate;
-                    sa.stocktype = M10Const.StockType.tse;
-                    sa.stockcode = aCol[0];
-                    sa.pricelast = Convert.ToDecimal(aCol[8]);
-                    sa.updown = aCol[9];
-                    sa.pricediff = aCol[10];
-                    sa.priceopen = Convert.ToDecimal(aCol[5]);
-                    sa.pricetop = Convert.ToDecimal(aCol[6]);
-                    sa.pricelow = Convert.ToDecimal(aCol[7]);
-                    sa.priceavg = 0;
-                    sa.dealnum = Convert.ToInt64(aCol[2]);
-                    sa.dealmoney = Convert.ToInt64(aCol[4]);
-                    sa.dealamount = Convert.ToInt64(aCol[3]);
-                    sa.pricelastbuy = dpricelastbuy;
-                    sa.pricelastsell = dpricelastsell;
-                    sa.publicnum = 0;
-                    sa.pricenextday = Convert.ToDecimal(aCol[8]);
-                    sa.pricenextlimittop = 0;
-                    sa.pricenextlimitlow = 0;
-                    sa.updatetime = Utils.getDatatimeString();
-                    dbDapper.Insert(sa);
-                  }
-                  else
-                  {
-                    sa.pricelast = Convert.ToDecimal(aCol[8]);
-                    sa.updown = aCol[9];
-                    sa.pricediff = aCol[10];
-                    sa.priceopen = Convert.ToDecimal(aCol[5]);
-                    sa.pricetop = Convert.ToDecimal(aCol[6]);
-                    sa.pricelow = Convert.ToDecimal(aCol[7]);
-                    sa.priceavg = 0;
-                    sa.dealnum = Convert.ToInt64(aCol[2]);
-                    sa.dealmoney = Convert.ToInt64(aCol[4]);
-                    sa.dealamount = Convert.ToInt64(aCol[3]);
-                    sa.pricelastbuy = dpricelastbuy;
-                    sa.pricelastsell = dpricelastsell;
-                    sa.publicnum = 0;
-                    sa.pricenextday = Convert.ToDecimal(aCol[8]);
-                    sa.pricenextlimittop = 0;
-                    sa.pricenextlimitlow = 0;
-                    sa.updatetime = Utils.getDatatimeString();
-                    dbDapper.Update(sa);
-                  }
-
-
-                  StatusLabel.Text = string.Format("{2}-{0}進度({1})", sDate, aCol[0], M10Const.StockType.tse);
-                  Application.DoEvents();
-                }
-              }
-            }
-          }
-
-          dt = dt.AddDays(-1);
-
         }
         catch (Exception ex)
         {
@@ -1176,206 +857,48 @@ namespace M10Tools
 
 
 
-    public static Stream GenerateStreamFromString(string s)
-    {
-      MemoryStream stream = new MemoryStream();
-      StreamWriter writer = new StreamWriter(stream);
-      writer.Write(s);
-      writer.Flush();
-      stream.Position = 0;
-      return stream;
-    }
-
-
     private void button6_Click(object sender, EventArgs e)
     {
       //開始日期
       DateTime dt = new DateTime(2017, 8, 29);
       //結束日期
-      DateTime dttarget = new DateTime(2014, 12, 31);
+      DateTime dtEnd = new DateTime(2017, 9, 4);
 
       //取得資料庫最後一天
-      ssql = " select  distinct stockdate  from stockafter where stocktype = '{0}' order by stockdate asc ";
+      //ssql = " select  distinct stockdate  from stockafter where stocktype = '{0}' order by stockdate asc ";
 
-      var vDbDate = dbDapper.ExecuteScale(string.Format(ssql, M10Const.StockType.otc));
-      if (vDbDate != null)
-      {
-        string sDbDate = vDbDate.ToString();
-        dt = new DateTime(Convert.ToInt32(sDbDate.Substring(0, 4))
-          , Convert.ToInt32(sDbDate.Substring(4, 2))
-          , Convert.ToInt32(sDbDate.Substring(6, 2)));
-      }
+      //var vDbDate = dbDapper.ExecuteScale(string.Format(ssql, M10Const.StockType.otc));
+      //if (vDbDate != null)
+      //{
+      //  string sDbDate = vDbDate.ToString();
+      //  dt = new DateTime(Convert.ToInt32(sDbDate.Substring(0, 4))
+      //    , Convert.ToInt32(sDbDate.Substring(4, 2))
+      //    , Convert.ToInt32(sDbDate.Substring(6, 2)));
+      //}
 
-      while (true)
+      for (DateTime LoopDatetime = dt; LoopDatetime <= dtEnd; LoopDatetime = LoopDatetime.AddDays(1))
       {
-        System.Threading.Thread.Sleep(2000);
+        string sLineTrans = "";
         try
         {
-          if (dt.ToString("yyyyMMdd") == dttarget.ToString("yyyyMMdd")) break;
-
-          string sUrl = "http://www.tpex.org.tw/web/stock/aftertrading/daily_close_quotes/stk_quote_download.php?l=zh-tw&d={0}&s=0,asc,0";
-          string sDate = DateTime.Now.ToString("yyyyMMdd");
-          int iyear = dt.Year - 1911;
-          sDate = string.Format("{0}/{1}/{2}", iyear.ToString(), dt.ToString("MM"), dt.ToString("dd"));
-
-          StatusLabel.Text = string.Format("{2}-{0}進度({1})", sDate, "", M10Const.StockType.otc);
+          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
           Application.DoEvents();
 
-          sUrl = string.Format(sUrl, sDate);
-          HttpWebRequest req = (HttpWebRequest)WebRequest.Create(sUrl);
-          req.Proxy = null;
-
-          //改為寫入資料庫格式
-          sDate = dt.ToString("yyyyMMdd");
-
-          string sTemp = "";
-          using (HttpWebResponse resp = (HttpWebResponse)req.GetResponse())
+          if (Stockhelper.GetStockAfterOtc(LoopDatetime) == false)
           {
-            //判斷http回應狀態(HttpStatusCode.OK=200)
-            if (resp.StatusCode != HttpStatusCode.OK)
-            {
-              StatusLabel.Text = string.Format("{0}進度({1})", sDate, "連線異常，資料重新取得");
-              Application.DoEvents();
-
-              System.Threading.Thread.Sleep(10000);
-              continue;
-            }
-
-            using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
-            {
-              sTemp = SR.ReadToEnd();
-            }
+            System.Threading.Thread.Sleep(3000);
+            continue;
           }
-
-
-          using (Stream s = GenerateStreamFromString(sTemp))
-          {
-
-            using (StreamReader sr = new StreamReader(s))
-            {
-
-              string Line;
-              while ((Line = sr.ReadLine()) != null)
-              {
-                Line = Line.Replace(" ", "");
-                Line = Line.Replace("\",\"", "|");
-                Line = Line.Replace("\"", "");
-                Line = Line.Replace(",", "");
-                Line = Line.Replace("=", "");
-
-                string[] aCol = Line.Split('|');
-
-                if (aCol.Length == 17)
-                {
-                  //檢核資料
-                  Decimal iCheck = -1;
-
-                  if (Decimal.TryParse(aCol[2], out iCheck) == false)
-                  {
-                    continue;
-                  }
-
-                  //資訊整理
-                  string sDiff = aCol[3];
-                  string sUpdown = "X";
-                  string sPricediff = "0.00";
-                  if (sDiff.Length > 0)
-                  {
-                    string sCheck = sDiff.Substring(0, 1);
-                    if (sCheck == "+")
-                    {
-                      sUpdown = "+";
-                      sPricediff = sDiff.Replace("+", "");
-                    }
-                    if (sCheck == "-")
-                    {
-                      sUpdown = "-";
-                      sPricediff = sDiff.Replace("-", "");
-                    }
-                    if (sCheck == "0")
-                    {
-                      sUpdown = "X";
-                    }
-
-                    if (sCheck != "+" && sCheck != "-" && sCheck != "0")
-                    {
-                      sUpdown = "X";
-                    }
-                  }
-
-                  ssql = " select * from stockafter  where stockdate = '{0}' and stockcode = '{1}'  ";
-                  Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(string.Format(ssql, sDate, aCol[0]));
-
-                  if (aCol[0] == "3226")
-                  {
-                    string aaaa = string.Empty;
-                  }
-                  if (sa == null)
-                  {
-                    sa = new Stockafter();
-                    sa.stockdate = sDate;
-                    sa.stocktype = M10Const.StockType.otc;
-                    sa.stockcode = aCol[0];
-                    sa.pricelast = Convert.ToDecimal(aCol[2]);
-                    sa.updown = sUpdown;
-                    sa.pricediff = sPricediff;
-                    sa.priceopen = Convert.ToDecimal(aCol[4]);
-                    sa.pricetop = Convert.ToDecimal(aCol[5]);
-                    sa.pricelow = Convert.ToDecimal(aCol[6]);
-                    sa.priceavg = Convert.ToDecimal(aCol[7]);
-                    sa.dealnum = Convert.ToInt64(aCol[8]);
-                    sa.dealmoney = Convert.ToInt64(aCol[9]);
-                    sa.dealamount = Convert.ToInt64(aCol[10]);
-                    sa.pricelastbuy = Convert.ToDecimal(aCol[11]);
-                    sa.pricelastsell = Convert.ToDecimal(aCol[12]);
-                    sa.publicnum = Convert.ToInt64(aCol[13]);
-                    sa.pricenextday = Convert.ToDecimal(aCol[14]);
-                    sa.pricenextlimittop = Convert.ToDecimal(aCol[15]);
-                    sa.pricenextlimitlow = Convert.ToDecimal(aCol[16]);
-                    sa.updatetime = Utils.getDatatimeString();
-                    dbDapper.Insert(sa);
-                  }
-                  else
-                  {
-                    sa.pricelast = Convert.ToDecimal(aCol[2]);
-                    sa.updown = sUpdown;
-                    sa.pricediff = sPricediff;
-                    sa.priceopen = Convert.ToDecimal(aCol[4]);
-                    sa.pricetop = Convert.ToDecimal(aCol[5]);
-                    sa.pricelow = Convert.ToDecimal(aCol[6]);
-                    sa.priceavg = Convert.ToDecimal(aCol[7]);
-                    sa.dealnum = Convert.ToInt64(aCol[8]);
-                    sa.dealmoney = Convert.ToInt64(aCol[9]);
-                    sa.dealamount = Convert.ToInt64(aCol[10]);
-                    sa.pricelastbuy = Convert.ToDecimal(aCol[11]);
-                    sa.pricelastsell = Convert.ToDecimal(aCol[12]);
-                    sa.publicnum = Convert.ToInt64(aCol[13]);
-                    sa.pricenextday = Convert.ToDecimal(aCol[14]);
-                    sa.pricenextlimittop = Convert.ToDecimal(aCol[15]);
-                    sa.pricenextlimitlow = Convert.ToDecimal(aCol[16]);
-                    sa.updatetime = Utils.getDatatimeString();
-                    dbDapper.Update(sa);
-                  }
-
-                  StatusLabel.Text = string.Format("{2}-{0}進度({1})", sDate, aCol[0], M10Const.StockType.otc);
-                  Application.DoEvents();
-                }
-              }
-            }
-          }
-
-
-          dt = dt.AddDays(-1);
-
         }
         catch (Exception ex)
         {
-          logger.Error(ex);
+          logger.Error(ex, "stock after:" + sLineTrans);
           System.Threading.Thread.Sleep(10000);
         }
       }
 
     }
+
 
     private void button7_Click(object sender, EventArgs e)
     {
@@ -1554,7 +1077,7 @@ namespace M10Tools
 
               //今天量是昨天的兩倍
               Boolean bCheckTodayOver2 = checkTodayOver2(saToday, saYes);
-              
+
 
               if (bCheckUp9 == true && bCheck180Max == true && bCheckTodayOver2 == true)
               {

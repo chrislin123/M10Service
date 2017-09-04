@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
+using NLog;
 
 namespace M10.lib
 {
@@ -12,6 +13,7 @@ namespace M10.lib
     public string ssql = string.Empty;
     private DALDapper _dbDapper;
     private string _ConnectionString;
+    public Logger _logger;
 
     public DALDapper dbDapper
     {
@@ -36,6 +38,16 @@ namespace M10.lib
         }
 
         return _ConnectionString;
+      }
+    }
+
+    public Logger logger
+    {
+      get
+      {
+        _logger = NLog.LogManager.GetCurrentClassLogger();
+
+        return _logger;
       }
     }
   }

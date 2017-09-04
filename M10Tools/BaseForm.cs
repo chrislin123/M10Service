@@ -11,6 +11,7 @@ namespace M10Tools
     private DALDapper _dbDapper;
     public string ssql = string.Empty;
     public Logger logger;
+    private StockHelper _stockhelper;
 
     public DALDapper dbDapper
     {
@@ -36,6 +37,19 @@ namespace M10Tools
         
         return _ConnectionString;
       }
+    }
+
+    public StockHelper Stockhelper
+    {
+      get
+      {
+        if (_stockhelper == null)
+        {
+          _stockhelper = new StockHelper();
+        }
+        return _stockhelper;
+      }
+
     }
 
     public BaseForm()
