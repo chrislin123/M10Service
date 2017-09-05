@@ -185,10 +185,10 @@ namespace C10Mvc.Controllers
     public dynamic getStockRealtime(string stockcode)
     {
       //get from yahoo web
-      StockRuntime sr = oStockUtil.getStockRealtimeYahooWeb(stockcode);
+      //StockRuntime sr = oStockUtil.getStockRealtimeYahooWeb(stockcode);
      
       //get from yahoo api
-      //StockRuntime sr = oStockUtil.getStockRealtimeYahooApi(stockcode);
+      StockRuntime sr = oStockUtil.getStockRealtimeYahooApi(stockcode);
 
 
       return sr;

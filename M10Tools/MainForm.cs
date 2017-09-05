@@ -755,9 +755,9 @@ namespace M10Tools
     private void button3_Click(object sender, EventArgs e)
     {
       //開始日期
-      DateTime dt = new DateTime(2017, 8, 25);
+      DateTime dt = new DateTime(2017, 9, 1);
       //結束日期
-      DateTime dtEnd = new DateTime(2017, 9, 4);
+      DateTime dtEnd = new DateTime(2017, 9, 1);
 
       for (DateTime LoopDatetime = dt; LoopDatetime <= dtEnd; LoopDatetime = LoopDatetime.AddDays(1))
       {
@@ -779,15 +779,17 @@ namespace M10Tools
           System.Threading.Thread.Sleep(10000);
         }
       }
+
+      StatusLabel.Text = "完成";
     }
 
     private void button4_Click(object sender, EventArgs e)
     {
 
       //開始日期
-      DateTime dt = new DateTime(2017, 8, 29);
+      DateTime dt = new DateTime(2017, 9, 1);
       //結束日期
-      DateTime dtEnd = new DateTime(2017, 9, 4);
+      DateTime dtEnd = new DateTime(2017, 9, 1);
 
       for (DateTime LoopDatetime = dt; LoopDatetime <= dtEnd; LoopDatetime = LoopDatetime.AddDays(1))
       {
@@ -809,13 +811,13 @@ namespace M10Tools
           System.Threading.Thread.Sleep(10000);
         }
       }
-
+      StatusLabel.Text = "完成";
     }
 
     private void button5_Click(object sender, EventArgs e)
     {
       //開始日期
-      DateTime dt = new DateTime(2017, 8, 25);
+      DateTime dt = new DateTime(2017, 9, 4);
       //結束日期
       DateTime dtEnd = new DateTime(2017, 9, 4);
 
@@ -852,7 +854,7 @@ namespace M10Tools
           System.Threading.Thread.Sleep(10000);
         }
       }
-
+      StatusLabel.Text = "完成";
     }
 
 
@@ -860,7 +862,7 @@ namespace M10Tools
     private void button6_Click(object sender, EventArgs e)
     {
       //開始日期
-      DateTime dt = new DateTime(2017, 8, 29);
+      DateTime dt = new DateTime(2017, 9, 4);
       //結束日期
       DateTime dtEnd = new DateTime(2017, 9, 4);
 
@@ -896,7 +898,7 @@ namespace M10Tools
           System.Threading.Thread.Sleep(10000);
         }
       }
-
+      StatusLabel.Text = "完成";
     }
 
 
@@ -904,7 +906,7 @@ namespace M10Tools
     {
       try
       {
-        string stockcode = "0000";
+        string stockcode = "3162";
         if (stockcode == "0000") stockcode = "%23001";
 
         string sUrl = "https://tw.quote.finance.yahoo.net/quote/q?type=tick&sym={0}";
@@ -912,6 +914,45 @@ namespace M10Tools
 
 
         sUrl = string.Format(sUrl, stockcode);
+
+        
+
+        using (WebClient wc = StockHelper.getNewWebClient())
+        {
+          //wc.Encoding = Encoding.GetEncoding(950);
+          string text = wc.DownloadString(sUrl);
+
+          text = text.Replace("null(", "");
+          text = text.Replace(");", "");
+
+
+          text = text.Insert(text.IndexOf(",\"143\":") + 7, "\"").Insert(text.IndexOf(",\"143\":") + 14, "\"");
+          JObject jobj = JObject.Parse(text);
+
+          StockRuntime sr = new StockRuntime();
+          //Price
+          sr.z = jobj["mem"]["125"].ToString();
+
+
+          ////昨收
+          sr.y = jobj["mem"]["129"].ToString();
+          //最高
+          sr.u = jobj["mem"]["130"].ToString();
+          //最低
+          sr.w = jobj["mem"]["131"].ToString();
+
+
+
+        }
+
+
+
+
+
+
+
+
+
         HttpWebRequest req = (HttpWebRequest)WebRequest.Create(sUrl);
         req.Proxy = null;
         //改為寫入資料庫格式

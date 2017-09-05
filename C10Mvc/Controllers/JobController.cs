@@ -25,6 +25,21 @@ namespace C10Mvc.Controllers
     protected string ssql = string.Empty;
     private string _ConnectionString;
     private DALDapper _dbDapper;
+    private StockHelper _stockhelper;
+
+    public StockHelper Stockhelper
+    {
+      get
+      {
+        if (_stockhelper == null)
+        {
+          _stockhelper = new StockHelper();
+        }
+        return _stockhelper;
+      }
+
+    }
+
 
     protected Logger logger
     {
@@ -248,164 +263,72 @@ namespace C10Mvc.Controllers
   //一次只執行一個體
   [DisallowConcurrentExecutionAttribute]
   public class StockThreeTradeTask : BaseJob, IJob
-  {
-
+  { 
     public void DoStockThreeTrade()
     {
-
+     
       logger.Info("START DoStockThreeTrade()");
 
+      DateTime dt = DateTime.Now;
+      //dt = new DateTime(2017, 9, 1);
+
+
       #region tse-threeTrade
-      //全部(不含權證、牛熊證、可展延牛熊證)
-      string sUrl = "http://www.tse.com.tw/fund/T86?response=csv&date={0}&selectType=ALLBUT0999";
-      string sDate = DateTime.Now.ToString("yyyyMMdd");
-      //sDate = "20170816";
-
-      HttpWebRequest req = (HttpWebRequest)WebRequest.Create(string.Format(sUrl, sDate));
-      HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
-
-      using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
-      {
-        string Line;
-        while ((Line = SR.ReadLine()) != null)
-        {
-          Line = Line.Replace(" ", "");
-          Line = Line.Replace("\",\"", "|");
-          Line = Line.Replace("\"", "");
-          Line = Line.Replace(",", "");
-          Line = Line.Replace("=", "");
-
-          string[] aCol = Line.Split('|');
-
-          if (aCol.Length == 16)
-          {
-            //檢核資料
-            int iCheck = -1;
-
-            if (int.TryParse(aCol[15], out iCheck) == false)
-            {
-              continue;
-            }
-
-            ssql = " select * from Stockthreetrade where date = '{0}' and stockcode = '{1}' ";
-            Stockthreetrade st = dbDapper.QuerySingleOrDefault<Stockthreetrade>(string.Format(ssql, sDate, aCol[0]));
-
-            if (st == null)
-            {
-              st = new Stockthreetrade();
-              st.stockcode = aCol[0];
-              st.date = sDate;
-              st.type = "tse";
-              st.foreigninv = Convert.ToInt32(aCol[4]);
-              st.trustinv = Convert.ToInt32(aCol[7]);
-              st.selfempinv = Convert.ToInt32(aCol[14]);
-              st.threeinv = Convert.ToInt32(aCol[15]);
-              st.updatetime = Utils.getDatatimeString();
-              dbDapper.Insert(st);
-            }
-            else
-            {
-              st.stockcode = aCol[0];
-              st.date = sDate;
-              st.type = "tse";
-              st.foreigninv = Convert.ToInt32(aCol[4]);
-              st.trustinv = Convert.ToInt32(aCol[7]);
-              st.selfempinv = Convert.ToInt32(aCol[14]);
-              st.threeinv = Convert.ToInt32(aCol[15]);
-              st.updatetime = Utils.getDatatimeString();
-              dbDapper.Update(st);
-            }
-
-          }
-        }
-      }
+      Stockhelper.GetStockThreeTradeTse(dt);
       #endregion
 
       #region otc-threeTrade
-
-      DateTime dt = DateTime.Now;
-      sUrl = "http://www.tpex.org.tw/web/stock/3insti/daily_trade/3itrade_hedge_download.php?l=zh-tw&se=EW&t=D&d={0}&s=0,asc";
-      //sDate = DateTime.Now.ToString("yyyyMMdd");
-      int iyear = dt.Year - 1911;
-      sDate = string.Format("{0}/{1}/{2}", iyear.ToString(), dt.ToString("MM"), dt.ToString("dd"));
-
-      req = (HttpWebRequest)WebRequest.Create(string.Format(sUrl, sDate));
-
-      //改為寫入資料庫格式
-      sDate = dt.ToString("yyyyMMdd");
-
-      resp = (HttpWebResponse)req.GetResponse();
-      using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
-      {
-        string Line;
-        while ((Line = SR.ReadLine()) != null)
-        {
-          Line = Line.Replace(" ", "");
-          Line = Line.Replace("\",\"", "|");
-          Line = Line.Replace("\"", "");
-          Line = Line.Replace(",", "");
-          Line = Line.Replace("=", "");
-
-          string[] aCol = Line.Split('|');
-
-          if (aCol.Length == 16)
-          {
-            //檢核資料
-            int iCheck = -1;
-
-            if (int.TryParse(aCol[15], out iCheck) == false)
-            {
-              continue;
-            }
-
-            ssql = " select * from Stockthreetrade where date = '{0}' and stockcode = '{1}' ";
-            Stockthreetrade st = dbDapper.QuerySingleOrDefault<Stockthreetrade>(string.Format(ssql, sDate, aCol[0]));
-
-            if (st == null)
-            {
-              st = new Stockthreetrade();
-              st.stockcode = aCol[0];
-              st.date = sDate;
-              st.type = "otc";
-              st.foreigninv = Convert.ToInt32(aCol[4]);
-              st.trustinv = Convert.ToInt32(aCol[7]);
-              st.selfempinv = Convert.ToInt32(aCol[14]);
-              st.threeinv = Convert.ToInt32(aCol[15]);
-              st.updatetime = Utils.getDatatimeString();
-              dbDapper.Insert(st);
-            }
-            else
-            {
-              st.stockcode = aCol[0];
-              st.date = sDate;
-              st.type = "otc";
-              st.foreigninv = Convert.ToInt32(aCol[4]);
-              st.trustinv = Convert.ToInt32(aCol[7]);
-              st.selfempinv = Convert.ToInt32(aCol[14]);
-              st.threeinv = Convert.ToInt32(aCol[15]);
-              st.updatetime = Utils.getDatatimeString();
-              dbDapper.Update(st);
-            }
-          }
-
-        }
-      }
-
-
+      Stockhelper.GetStockThreeTradeOtc(dt);
       #endregion
-
-
 
       logger.Info("END DoStockThreeTrade()");
     }
-
-
 
     public void Execute(IJobExecutionContext context)
     {
       try
       {
         DoStockThreeTrade();
+      }
+      catch (Exception ex)
+      {
+        logger.Log(NLog.LogLevel.Error, ex.Message);
+      }
+    }
+  }
+
+
+  /// <summary>
+  /// 
+  /// </summary>
+  //一次只執行一個體
+  [DisallowConcurrentExecutionAttribute]
+  public class StockAfterTask : BaseJob, IJob
+  {
+    public void DoStockAfter()
+    {
+
+      logger.Info("START DoStockAfter()");
+      DateTime dt = DateTime.Now;
+      //dt = new DateTime(2017, 9, 1);
+
+      #region tse-StockAfter
+      Stockhelper.GetStockAfterTse(dt);
+      #endregion
+
+      #region otc-StockAfter
+      Stockhelper.GetStockAfterOtc(dt);
+      #endregion
+
+      logger.Info("END DoStockAfter()");
+    }
+
+
+    public void Execute(IJobExecutionContext context)
+    {
+      try
+      { 
+        DoStockAfter();
       }
       catch (Exception ex)
       {

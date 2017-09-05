@@ -33,25 +33,14 @@ namespace C10Mvc
       //建立以Ram為儲存體的排程器
       ISchedulerFactory schedulerFactory = new Quartz.Impl.StdSchedulerFactory();
       IScheduler _Scheduler = schedulerFactory.GetScheduler();
+      //WithCronSchedule：https://www.quartz-scheduler.net/documentation/quartz-2.x/tutorial/crontriggers.html
 
-
-      //// 建立工作
-      //IJobDetail job = JobBuilder.Create<SendMailTask>()
-      //                    .WithIdentity("SendMailJob")
-      //                    .Build();
-      ////WithCronSchedule：https://www.quartz-scheduler.net/documentation/quartz-2.x/tutorial/crontriggers.html
-      //// 建立觸發器
-      //ITrigger trigger = TriggerBuilder.Create()
-      //                        .WithCronSchedule("0/10 * * * * ?")  // 每一分鐘觸發一次。
-      //                        .WithIdentity("SendMailTrigger")
-      //                        .Build();
 
 
       // 建立工作
       IJobDetail job = JobBuilder.Create<StockTransTask>()
                           .WithIdentity("StockTransJob")
                           .Build();
-      //WithCronSchedule：https://www.quartz-scheduler.net/documentation/quartz-2.x/tutorial/crontriggers.html
       // 建立觸發器
       ITrigger trigger = TriggerBuilder.Create()
                               .WithCronSchedule("0 10 3 * * ?")  // 每一分鐘觸發一次。
@@ -62,17 +51,30 @@ namespace C10Mvc
       IJobDetail jobThreeTrade = JobBuilder.Create<StockThreeTradeTask>()
                           .WithIdentity("jobThreeTrade")
                           .Build();
-      //WithCronSchedule：https://www.quartz-scheduler.net/documentation/quartz-2.x/tutorial/crontriggers.html
       // 建立觸發器
       ITrigger triggerThreeTrade = TriggerBuilder.Create()
                               .WithCronSchedule("0 5/30 16-17 * * ?")  // 每一分鐘觸發一次。
-                              //.WithCronSchedule("0/3 * * * * ?")  // 每一分鐘觸發一次。
+                              //.WithCronSchedule("0/3 * * * * ?")  // 每三秒觸發一次。
                               .WithIdentity("triggerThreeTrade")
                               .Build();
+
+      // 建立工作
+      IJobDetail jobStockAfter = JobBuilder.Create<StockAfterTask>()
+                          .WithIdentity("jobStockAfter")
+                          .Build();
+      // 建立觸發器
+      ITrigger triggerStockAfter = TriggerBuilder.Create()
+                              .WithCronSchedule("0 11/30 15-16 * * ?")  // 每一分鐘觸發一次。
+                              //.WithCronSchedule("0/3 * * * * ?")  // 每三秒觸發一次。
+                              .WithIdentity("triggerStockAfter")
+                              .Build();
+
+
 
       // 把工作加入排程
       _Scheduler.ScheduleJob(job, trigger);
       _Scheduler.ScheduleJob(jobThreeTrade, triggerThreeTrade);
+      _Scheduler.ScheduleJob(jobStockAfter, triggerStockAfter);
 
       // 啟動排程器
       _Scheduler.Start();

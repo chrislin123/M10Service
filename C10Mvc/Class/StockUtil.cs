@@ -105,105 +105,52 @@ namespace C10Mvc.Class
       sr.c = "";
       sr.xx = "";
 
-//https://tw.quote.finance.yahoo.net/quote/q?type=tick&sym=%23001
-//https://tw.quote.finance.yahoo.net/quote/q?type=tick&sym=3019
-//https://tw.quote.finance.yahoo.net/quote/q?type=tick&sym=3162
-
-//(OK)
-//成
-//"125":115.5,
-
-//----
-//(OK)
-//pricediff
-//"184":-1.5,
-                                                        
-//----
-//(OK)
-//昨收
-
-//"129":27.6,
-//27.6
-
-//(OK)
-//最高
-//"130":120.5,
-//"130":29.65,
-
-
-//(OK)
-//最低
-//"131":462.5,
-
-
       try
       {
         string sUrl = "https://tw.quote.finance.yahoo.net/quote/q?type=tick&sym={0}";
-
-        if (stockcode == "0000") stockcode = "%23001";
+        string sStockcodeUrl = "";
+        sStockcodeUrl = stockcode;
+        if (stockcode == "0000") sStockcodeUrl = "%23001";
         if (stockcode == "9999")
         {
-          stockcode = "WTX%26";
+          sStockcodeUrl = "WTX%26";
           sUrl = "https://tw.screener.finance.yahoo.net/future/q?type=tick&mkt=01&sym={0}";
         }
-        
 
-        
-        string sDate = DateTime.Now.ToString("yyyyMMdd");
-
-    
-        sUrl = string.Format(sUrl, stockcode);
-        HttpWebRequest req = (HttpWebRequest)WebRequest.Create(sUrl);
-        req.Proxy = null;
-        //改為寫入資料庫格式
-
-        HttpWebResponse resp = (HttpWebResponse)req.GetResponse();
-
-        //判斷http回應狀態(HttpStatusCode.OK=200)
-        if (resp.StatusCode != HttpStatusCode.OK)
+        using (WebClient wc = StockHelper.getNewWebClient())
         {
-          return sr;
-        }
+          sUrl = string.Format(sUrl, sStockcodeUrl);
+          string text = wc.DownloadString(sUrl);
 
-        //using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.GetEncoding(950)))
-        using (StreamReader SR = new StreamReader(resp.GetResponseStream(), System.Text.Encoding.UTF8))
-        {
-          string Line;
-          while ((Line = SR.ReadLine()) != null)
-          {
-            Line = Line.Replace("null(", "");
-            Line = Line.Replace(");", "");
+          text = text.Replace("null(", "");
+          text = text.Replace(");", "");
 
-            //JObject jobj = JsonConvert.DeserializeObject(Line) as JObject;
-            if (stockcode == "%23001" || stockcode == "WTX%26")
-            {
-              Line = Line.Insert(Line.IndexOf(",\"143\":") + 7, "\"").Insert(Line.IndexOf(",\"143\":") + 14, "\"");
-            }
-            
 
-            JObject jobj = JObject.Parse(Line);
-            //jobj["mem"]["125"];
+          text = text.Insert(text.IndexOf(",\"143\":") + 7, "\"").Insert(text.IndexOf(",\"143\":") + 14, "\"");
+          JObject jobj = JObject.Parse(text);
 
-            //Price
+          //Price
+          if (jobj["mem"]["125"] !=null)
             sr.z = jobj["mem"]["125"].ToString();
-
-        
-            //昨收
+          ////昨收
+          if (jobj["mem"]["129"] != null)
             sr.y = jobj["mem"]["129"].ToString();
-            //最高
-            sr.u = jobj["mem"]["130"].ToString();
-            //最低
-            sr.w = jobj["mem"]["131"].ToString();
-
-            //  if(StockInfo.z == StockInfo.u) mark="▲";
-            //  if(StockInfo.z == StockInfo.w) mark="▼";
-            //  if(ud>0) mark="△";
-            //  if(ud<0) mark="▽";
-            //var mark = "±";
-          }
-
+          ////最高
+          //if (jobj["mem"]["130"] != null)
+          //  sr.u = jobj["mem"]["130"].ToString();
+          ////最低
+          //if (jobj["mem"]["131"] != null)
+          //  sr.w = jobj["mem"]["131"].ToString();
+          if (stockcode != "0000" && stockcode != "9999")
+          {
+            //LimitUp
+            if (jobj["mem"]["132"] != null)
+              sr.u = jobj["mem"]["132"].ToString();
+            //LimitDw
+            if (jobj["mem"]["133"] != null)
+              sr.w = jobj["mem"]["133"].ToString();
+          }        
         }
-
 
         //取得個股資訊
         ssql = " select * from StockInfo where stockcode = '{0}' ";
@@ -218,11 +165,8 @@ namespace C10Mvc.Class
       }
       catch (Exception ex)
       {
-        //logger.Error(ex);
-        //throw ex;
+        logger.Error(ex);
       }
-
-
 
       return sr;
     }
