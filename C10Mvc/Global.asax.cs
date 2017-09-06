@@ -38,24 +38,24 @@ namespace C10Mvc
 
 
       // 建立工作
-      IJobDetail job = JobBuilder.Create<StockTransTask>()
-                          .WithIdentity("StockTransJob")
+      IJobDetail jobStockInfo = JobBuilder.Create<StockInfoTask>()
+                          .WithIdentity("jobStockInfo")
                           .Build();
       // 建立觸發器
-      ITrigger trigger = TriggerBuilder.Create()
+      ITrigger triggerStockInfo = TriggerBuilder.Create()
                               .WithCronSchedule("0 10 3 * * ?")  // 每一分鐘觸發一次。
-                              .WithIdentity("StockTransTrigger")
+                              .WithIdentity("triggerStockInfo")
                               .Build();
 
       // 建立工作
-      IJobDetail jobThreeTrade = JobBuilder.Create<StockThreeTradeTask>()
-                          .WithIdentity("jobThreeTrade")
+      IJobDetail jobStockThreeTrade = JobBuilder.Create<StockThreeTradeTask>()
+                          .WithIdentity("jobStockThreeTrade")
                           .Build();
       // 建立觸發器
-      ITrigger triggerThreeTrade = TriggerBuilder.Create()
+      ITrigger triggerStockThreeTrade = TriggerBuilder.Create()
                               .WithCronSchedule("0 5/30 16-17 * * ?")  // 每一分鐘觸發一次。
                               //.WithCronSchedule("0/3 * * * * ?")  // 每三秒觸發一次。
-                              .WithIdentity("triggerThreeTrade")
+                              .WithIdentity("triggerStockThreeTrade")
                               .Build();
 
       // 建立工作
@@ -64,7 +64,7 @@ namespace C10Mvc
                           .Build();
       // 建立觸發器
       ITrigger triggerStockAfter = TriggerBuilder.Create()
-                              .WithCronSchedule("0 11/30 15-16 * * ?")  // 每一分鐘觸發一次。
+                              .WithCronSchedule("0 11/30 15-17 * * ?")  // 每一分鐘觸發一次。
                               //.WithCronSchedule("0/3 * * * * ?")  // 每三秒觸發一次。
                               .WithIdentity("triggerStockAfter")
                               .Build();
@@ -72,10 +72,10 @@ namespace C10Mvc
 
 
       // 把工作加入排程
-      _Scheduler.ScheduleJob(job, trigger);
-      _Scheduler.ScheduleJob(jobThreeTrade, triggerThreeTrade);
+      _Scheduler.ScheduleJob(jobStockInfo, triggerStockInfo);
+      _Scheduler.ScheduleJob(jobStockThreeTrade, triggerStockThreeTrade);
       _Scheduler.ScheduleJob(jobStockAfter, triggerStockAfter);
-
+      
       // 啟動排程器
       _Scheduler.Start();
 

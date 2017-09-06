@@ -14,6 +14,10 @@ namespace M10.lib
     public static string StockThreeTradeTse = "http://www.tse.com.tw/fund/T86?response=csv&date={0}&selectType=ALLBUT0999";
     public static string StockThreeTradeOtc = "http://www.tpex.org.tw/web/stock/3insti/daily_trade/3itrade_hedge_download.php?l=zh-tw&se=EW&t=D&d={0}&s=0,asc";
 
+    public static string StockInfoTse = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=2";
+    public static string StockInfoOtc = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=4";
+
+
     public static class AlertStatus
     {
       public const string I = "發布黃色";

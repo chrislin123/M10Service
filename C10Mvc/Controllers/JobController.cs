@@ -116,17 +116,8 @@ namespace C10Mvc.Controllers
 
   //一次只執行一個體
   [DisallowConcurrentExecutionAttribute]
-  public class StockTransTask : BaseJob, IJob
-  {
-    /// <summary>
-    /// 寫入執行log
-    /// </summary>
-    /// <param name="msg"></param>
-    private void Log(string msg)
-    {
-      System.IO.File.AppendAllText(@"C:\Temp\log.txt", msg + Environment.NewLine);
-    }
-
+  public class StockInfoTask : BaseJob, IJob
+  { 
     public void DoStockTrans()
     {
       //Log("START DoStockTrans() at " + DateTime.Now.ToString());

@@ -124,17 +124,18 @@ namespace C10Mvc.Class
 
           text = text.Replace("null(", "");
           text = text.Replace(");", "");
-
-
+          text = text.Replace(",\"tick\":[]}", "");
+          text = text.Replace(text.Substring(0,text.IndexOf(",\"mem\":")+7), "");
+          
           text = text.Insert(text.IndexOf(",\"143\":") + 7, "\"").Insert(text.IndexOf(",\"143\":") + 14, "\"");
           JObject jobj = JObject.Parse(text);
 
           //Price
-          if (jobj["mem"]["125"] !=null)
-            sr.z = jobj["mem"]["125"].ToString();
+          if (jobj["125"] !=null)
+            sr.z = jobj["125"].ToString();
           ////昨收
-          if (jobj["mem"]["129"] != null)
-            sr.y = jobj["mem"]["129"].ToString();
+          if (jobj["129"] != null)
+            sr.y = jobj["129"].ToString();
           ////最高
           //if (jobj["mem"]["130"] != null)
           //  sr.u = jobj["mem"]["130"].ToString();
@@ -144,11 +145,11 @@ namespace C10Mvc.Class
           if (stockcode != "0000" && stockcode != "9999")
           {
             //LimitUp
-            if (jobj["mem"]["132"] != null)
-              sr.u = jobj["mem"]["132"].ToString();
+            if (jobj["132"] != null)
+              sr.u = jobj["132"].ToString();
             //LimitDw
-            if (jobj["mem"]["133"] != null)
-              sr.w = jobj["mem"]["133"].ToString();
+            if (jobj["133"] != null)
+              sr.w = jobj["133"].ToString();
           }        
         }
 
@@ -165,7 +166,7 @@ namespace C10Mvc.Class
       }
       catch (Exception ex)
       {
-        logger.Error(ex);
+        //logger.Error(ex);
       }
 
       return sr;

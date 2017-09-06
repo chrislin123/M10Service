@@ -36,12 +36,10 @@
       this.StatusLabel = new System.Windows.Forms.Label();
       this.btnBuildFolder = new System.Windows.Forms.Button();
       this.button1 = new System.Windows.Forms.Button();
-      this.button2 = new System.Windows.Forms.Button();
       this.button3 = new System.Windows.Forms.Button();
       this.button4 = new System.Windows.Forms.Button();
       this.button5 = new System.Windows.Forms.Button();
       this.button6 = new System.Windows.Forms.Button();
-      this.button7 = new System.Windows.Forms.Button();
       this.button8 = new System.Windows.Forms.Button();
       this.statusStrip1.SuspendLayout();
       this.SuspendLayout();
@@ -89,7 +87,7 @@
       // toolStripStatusLabel1
       // 
       this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-      this.toolStripStatusLabel1.Size = new System.Drawing.Size(128, 17);
+      this.toolStripStatusLabel1.Size = new System.Drawing.Size(129, 17);
       this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
       // 
       // StatusLabel
@@ -120,16 +118,6 @@
       this.button1.Text = "test";
       this.button1.UseVisualStyleBackColor = true;
       this.button1.Click += new System.EventHandler(this.button1_Click);
-      // 
-      // button2
-      // 
-      this.button2.Location = new System.Drawing.Point(12, 157);
-      this.button2.Name = "button2";
-      this.button2.Size = new System.Drawing.Size(126, 23);
-      this.button2.TabIndex = 11;
-      this.button2.Text = "yahoo";
-      this.button2.UseVisualStyleBackColor = true;
-      this.button2.Click += new System.EventHandler(this.button2_Click);
       // 
       // button3
       // 
@@ -171,19 +159,9 @@
       this.button6.UseVisualStyleBackColor = true;
       this.button6.Click += new System.EventHandler(this.button6_Click);
       // 
-      // button7
-      // 
-      this.button7.Location = new System.Drawing.Point(144, 128);
-      this.button7.Name = "button7";
-      this.button7.Size = new System.Drawing.Size(126, 23);
-      this.button7.TabIndex = 16;
-      this.button7.Text = "test";
-      this.button7.UseVisualStyleBackColor = true;
-      this.button7.Click += new System.EventHandler(this.button7_Click);
-      // 
       // button8
       // 
-      this.button8.Location = new System.Drawing.Point(144, 157);
+      this.button8.Location = new System.Drawing.Point(14, 157);
       this.button8.Name = "button8";
       this.button8.Size = new System.Drawing.Size(126, 23);
       this.button8.TabIndex = 17;
@@ -197,12 +175,10 @@
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(440, 262);
       this.Controls.Add(this.button8);
-      this.Controls.Add(this.button7);
       this.Controls.Add(this.button6);
       this.Controls.Add(this.button5);
       this.Controls.Add(this.button4);
       this.Controls.Add(this.button3);
-      this.Controls.Add(this.button2);
       this.Controls.Add(this.button1);
       this.Controls.Add(this.btnBuildFolder);
       this.Controls.Add(this.StatusLabel);
@@ -229,12 +205,10 @@
     private System.Windows.Forms.Label StatusLabel;
     private System.Windows.Forms.Button btnBuildFolder;
     private System.Windows.Forms.Button button1;
-    private System.Windows.Forms.Button button2;
     private System.Windows.Forms.Button button3;
     private System.Windows.Forms.Button button4;
     private System.Windows.Forms.Button button5;
     private System.Windows.Forms.Button button6;
-    private System.Windows.Forms.Button button7;
     private System.Windows.Forms.Button button8;
   }
 }
