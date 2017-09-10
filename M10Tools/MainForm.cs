@@ -540,9 +540,9 @@ namespace M10Tools
     private void button5_Click(object sender, EventArgs e)
     {
       //開始日期
-      DateTime dt = new DateTime(2017, 9, 4);
+      DateTime dt = new DateTime(2017, 9, 6);
       //結束日期
-      DateTime dtEnd = new DateTime(2017, 9, 4);
+      DateTime dtEnd = new DateTime(2017, 9, 6);
 
       ////取得資料庫最後一天
       //ssql = " select  distinct stockdate  from stockafter where stocktype = '{0}' order by stockdate asc ";
@@ -585,9 +585,9 @@ namespace M10Tools
     private void button6_Click(object sender, EventArgs e)
     {
       //開始日期
-      DateTime dt = new DateTime(2017, 9, 4);
+      DateTime dt = new DateTime(2017, 9, 6);
       //結束日期
-      DateTime dtEnd = new DateTime(2017, 9, 4);
+      DateTime dtEnd = new DateTime(2017, 9, 6);
 
       //取得資料庫最後一天
       //ssql = " select  distinct stockdate  from stockafter where stocktype = '{0}' order by stockdate asc ";
