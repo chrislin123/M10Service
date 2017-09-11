@@ -963,5 +963,16 @@ namespace M10Tools
       return bResult;
     }
 
+    private void button2_Click_1(object sender, EventArgs e)
+    {
+      StatusLabel.Text = string.Format("StockInfor Trans 開始");
+      Application.DoEvents();
+
+      Stockhelper.GetStockInfo();
+
+      StatusLabel.Text = string.Format("StockInfor Trans 完成");
+      Application.DoEvents();
+
+    }
   }
 }

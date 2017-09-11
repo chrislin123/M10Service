@@ -126,8 +126,12 @@ namespace C10Mvc.Class
           text = text.Replace(");", "");
           text = text.Replace(",\"tick\":[]}", "");
           text = text.Replace(text.Substring(0,text.IndexOf(",\"mem\":")+7), "");
+
+          if (text.Contains(",\"143\":"))
+          {
+            text = text.Insert(text.IndexOf(",\"143\":") + 7, "\"").Insert(text.IndexOf(",\"143\":") + 14, "\"");
+          }
           
-          text = text.Insert(text.IndexOf(",\"143\":") + 7, "\"").Insert(text.IndexOf(",\"143\":") + 14, "\"");
           JObject jobj = JObject.Parse(text);
 
           //Price

@@ -41,6 +41,7 @@
       this.button5 = new System.Windows.Forms.Button();
       this.button6 = new System.Windows.Forms.Button();
       this.button8 = new System.Windows.Forms.Button();
+      this.button2 = new System.Windows.Forms.Button();
       this.statusStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -169,11 +170,22 @@
       this.button8.UseVisualStyleBackColor = true;
       this.button8.Click += new System.EventHandler(this.button8_Click);
       // 
+      // button2
+      // 
+      this.button2.Location = new System.Drawing.Point(144, 128);
+      this.button2.Name = "button2";
+      this.button2.Size = new System.Drawing.Size(126, 23);
+      this.button2.TabIndex = 18;
+      this.button2.Text = "StockInfo";
+      this.button2.UseVisualStyleBackColor = true;
+      this.button2.Click += new System.EventHandler(this.button2_Click_1);
+      // 
       // MainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(440, 262);
+      this.Controls.Add(this.button2);
       this.Controls.Add(this.button8);
       this.Controls.Add(this.button6);
       this.Controls.Add(this.button5);
@@ -210,6 +222,7 @@
     private System.Windows.Forms.Button button5;
     private System.Windows.Forms.Button button6;
     private System.Windows.Forms.Button button8;
+    private System.Windows.Forms.Button button2;
   }
 }
 

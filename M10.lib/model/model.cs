@@ -687,4 +687,24 @@ namespace M10.lib.model
 
   }
 
+  [Table("StockLog")]
+  public class StockLog
+  {
+    //設定key
+    [Key]
+    public int no { get; set; }
+
+    public string logtype { get; set; }
+
+    public string logdate { get; set; }
+
+    public string logstatus { get; set; }
+
+    public string memo { get; set; }
+
+    public string logdatetime { get; set; }
+
+  }
+  
+
 }

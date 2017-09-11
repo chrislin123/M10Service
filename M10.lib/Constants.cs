@@ -32,11 +32,23 @@ namespace M10.lib
       public const string tse = "tse";
     }
 
-    public static class DataStringType1
+
+    public static class StockLogStatus
     {
-      public const string ChineseT1 = "ChineseT1";
-      public const string ChineseT2 = "ChineseT2";
+      public const string s200 = "success";
+      public const string s400 = "failure";
     }
+
+    public static class StockLogType
+    {
+      public const string StockAfterTse = "StockAfterTse";
+      public const string StockAfterOtc = "StockAfterOtc";
+      public const string StockThreeTse = "StockThreeTse";
+      public const string StockThreeOtc = "StockThreeOtc";
+      public const string StockInfoTse = "StockInfoTse";
+      public const string StockInfoOtc = "StockInfoOtc";
+    }
+
 
 
     public enum DataStringType
