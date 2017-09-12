@@ -170,7 +170,7 @@ namespace C10Mvc.Class
       }
       catch (Exception ex)
       {
-        //logger.Error(ex);
+        logger.Error(ex);
       }
 
       return sr;

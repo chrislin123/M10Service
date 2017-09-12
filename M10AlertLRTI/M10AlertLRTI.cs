@@ -572,6 +572,8 @@ namespace M10AlertLRTI
       string sDt = dtNow.ToString("yyyy-MM-ddTHH:mm:ss");
       string sDtd35 = dtNow.AddHours(-3.5).ToString("yyyy-MM-ddTHH:mm:ss");
       string sDtd65 = dtNow.AddHours(-6.5).ToString("yyyy-MM-ddTHH:mm:ss");
+
+      string mark = "start";
       try
       { 
         //刪除已解除註記資料
@@ -589,6 +591,7 @@ namespace M10AlertLRTI
 
           ssql = " select * from RunTimeRainData where STID = '" + sSTID + "' ";
 
+          mark = "start1";
           RunTimeRainData RuntimeData = dbDapper.QuerySingleOrDefault<RunTimeRainData>(ssql);
           if (RuntimeData != null)
           {
@@ -628,7 +631,8 @@ namespace M10AlertLRTI
           //更新
           dbDapper.Update<LRTIAlert>(AlertItem);
         }
-        
+
+        mark = "start2";
         string sqlQuery = " select * from LRTIAlert where status = '{0}' and statuscheck = 'N' ";
         string sqlCheck = @" select distinct RecTime from LRTIAlertHis 
                       where nowwarm = 'Y' and stid = '{0}' and RecTime > '{1}' ";
@@ -670,6 +674,7 @@ namespace M10AlertLRTI
           dbDapper.Update<LRTIAlert>(AlertItem);
         }
 
+        mark = "start3";
         //處理狀態(C)
         AlertList.Clear();
         AlertList = dbDapper.Query<LRTIAlert>(string.Format(sqlQuery, "C"));
@@ -698,6 +703,7 @@ namespace M10AlertLRTI
           dbDapper.Update<LRTIAlert>(AlertItem);
         }
 
+        mark = "start4";
         //處理狀態(O)
         AlertList.Clear();
         AlertList = dbDapper.Query<LRTIAlert>(string.Format(sqlQuery, "O"));
@@ -736,6 +742,7 @@ namespace M10AlertLRTI
           dbDapper.Update<LRTIAlert>(AlertItem);
         }
 
+        mark = "start5";
         //處理狀態(新案)
         //取得目前超過警戒值的雨量站
         ssql = @" select * from RunTimeRainData a 
@@ -747,6 +754,7 @@ namespace M10AlertLRTI
         {
           if (RumtimeItem.STATUS == "-99") continue;
 
+          mark = "start6";
           //判斷資料是否已存在
           ssql = " select STID from  LRTIAlert where STID = '{0}' ";
           int iCount = dbDapper.QueryTotalCount(string.Format(ssql,RumtimeItem.STID));
@@ -756,7 +764,8 @@ namespace M10AlertLRTI
           decimal.TryParse(RumtimeItem.elrti, out dELRTI);
           dELRTI = Math.Round(dELRTI, 2);
 
-          ssql = " select * from lrtibasic where STID = '{0}' where type = 'now' ";
+          mark = "start7";
+          ssql = " select * from lrtibasic where STID = '{0}' and type = 'now' ";
           List<LrtiBasic> LrtiBasicList = dbDapper.Query<LrtiBasic>(string.Format(ssql, RumtimeItem.STID));
           foreach (LrtiBasic LrtiBasicItem in LrtiBasicList)
           {
@@ -783,14 +792,15 @@ namespace M10AlertLRTI
             AlertItem.statuscheck = "Y";
             AlertItem.villageid = LrtiBasicItem.villageid;
 
+            mark = "start8";
             dbDapper.Insert(AlertItem);
           }
         }
-        
+       
       }
       catch (Exception ex)
       {
-        logger.Error(ex, "");
+        logger.Error(ex, mark);
       }
     }
 
