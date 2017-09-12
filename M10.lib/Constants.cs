@@ -51,7 +51,7 @@ namespace M10.lib
 
 
 
-    public enum DataStringType
+    public enum DateStringType
     {
       /// <summary>
       /// 日期格式化：民國年1060904
@@ -73,6 +73,28 @@ namespace M10.lib
       ADT2,
 
     }
-    
+
+    public enum DatetimeStringType
+    {
+      /// <summary>
+      /// 日期格式化：民國年1060904
+      /// </summary>
+      //ChineseT1,
+      /// <summary>
+      /// 日期格式化：民國年106/09/04
+      /// </summary>
+      //ChineseT2,
+
+
+      /// <summary>
+      /// 日期格式化：yyyyMMddTHHmmss(20150805173000)
+      /// </summary>
+      ADDT1,
+      /// <summary>
+      /// 日期格式化：yyyy-MM-ddTHH:mm:ss(2015-08-05T17:30:00)
+      /// </summary>
+      ADDT2,
+
+    }
   }
 }

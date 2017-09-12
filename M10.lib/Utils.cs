@@ -58,24 +58,24 @@ namespace M10.lib
     }
 
 
-    public static string getDataString(DateTime dt, M10Const.DataStringType dsType)
+    public static string getDateString(DateTime dt, M10Const.DateStringType dsType)
     {
-      if (dsType == M10Const.DataStringType.ChineseT1)
+      if (dsType == M10Const.DateStringType.ChineseT1)
       {
         return string.Format("{0}{1}{2}", Convert.ToString(dt.Year - 1911), dt.ToString("MM"), dt.ToString("dd"));
       }
 
-      if (dsType == M10Const.DataStringType.ChineseT2)
+      if (dsType == M10Const.DateStringType.ChineseT2)
       {
         return string.Format("{0}/{1}/{2}", Convert.ToString(dt.Year - 1911), dt.ToString("MM"), dt.ToString("dd"));
       }
 
-      if (dsType == M10Const.DataStringType.ADT1)
+      if (dsType == M10Const.DateStringType.ADT1)
       {
         return dt.ToString("yyyyMMdd");
       }
 
-      if (dsType == M10Const.DataStringType.ADT2)
+      if (dsType == M10Const.DateStringType.ADT2)
       {
         return dt.ToString("yyyy/MM/dd");
       }
@@ -84,7 +84,30 @@ namespace M10.lib
     }
 
 
+    public static string getDatatimeString(DateTime dt, M10Const.DatetimeStringType dsType)
+    {
+      //if (dsType == M10Const.DateStringType.ChineseT1)
+      //{
+      //  return string.Format("{0}{1}{2}", Convert.ToString(dt.Year - 1911), dt.ToString("MM"), dt.ToString("dd"));
+      //}
 
+      //if (dsType == M10Const.DateStringType.ChineseT2)
+      //{
+      //  return string.Format("{0}/{1}/{2}", Convert.ToString(dt.Year - 1911), dt.ToString("MM"), dt.ToString("dd"));
+      //}
+
+      if (dsType == M10Const.DatetimeStringType.ADDT1)
+      {
+        return dt.ToString("yyyyMMddTHHmmss");
+      }
+
+      if (dsType == M10Const.DatetimeStringType.ADDT2)
+      {
+        return dt.ToString("yyyy-MM-ddTHH:mm:ss");
+      }
+
+      return "";
+    }
 
 
 

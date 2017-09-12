@@ -34,12 +34,10 @@ namespace M10Tools
 
     private void btnImpErrLRTI_Click(object sender, EventArgs e)
     {
-
-
-
       DataTable dtresult = new DataTable();
       dtresult.Columns.Add("STID");
       dtresult.Columns.Add("ELRTI");
+
 
       string sFilePath = @"C:\ErrLRTI.csv";
 
@@ -242,7 +240,7 @@ namespace M10Tools
       string USER_AGENT = "curl/7.32.0";
 
       Url = string.Format(Url, host, dd);
-      
+
 
 
 
@@ -328,8 +326,8 @@ namespace M10Tools
         myResponse2.Close();
       }
     }
-    
-    
+
+
 
     private void button2_Click(object sender, EventArgs e)
     {
@@ -489,7 +487,7 @@ namespace M10Tools
         {
           StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.otc, LoopDatetime.ToString("yyyyMMdd"));
           Application.DoEvents();
-          
+
           if (Stockhelper.GetStockThreeTradeTse(LoopDatetime) == false)
           {
             System.Threading.Thread.Sleep(3000);
@@ -521,7 +519,7 @@ namespace M10Tools
         {
           StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.otc, LoopDatetime.ToString("yyyyMMdd"));
           Application.DoEvents();
-        
+
           if (Stockhelper.GetStockThreeTradeOtc(LoopDatetime) == false)
           {
             System.Threading.Thread.Sleep(3000);
@@ -638,7 +636,7 @@ namespace M10Tools
 
         sUrl = string.Format(sUrl, stockcode);
 
-        
+
 
         using (WebClient wc = StockHelper.getNewWebClient())
         {
@@ -972,6 +970,61 @@ namespace M10Tools
 
       StatusLabel.Text = string.Format("StockInfor Trans 完成");
       Application.DoEvents();
+
+    }
+
+    private void button7_Click_1(object sender, EventArgs e)
+    {
+      try
+      {
+        //Excel檔案，先轉csv檔案
+        OpenFileDialog dialog = new OpenFileDialog();
+        dialog.Filter = "csv files (*.*)|*.csv";
+        if (dialog.ShowDialog() == DialogResult.OK)
+        {
+          string sFilePath = dialog.FileName;
+
+          using (StreamReader SR = new StreamReader(sFilePath, System.Text.Encoding.Default))
+          {
+            string Line;
+            while ((Line = SR.ReadLine()) != null)
+            {
+
+              string[] sSplit = Line.Split('|');
+
+              if (sSplit.Length < 3) continue;
+
+              Decimal iCheck = -1;
+
+              if (Decimal.TryParse(sSplit[1], out iCheck) == false)
+              {
+                continue;
+              }
+
+              LrtiBasic lbItem = new LrtiBasic();
+              lbItem.type = Utils.getDateString(DateTime.Now, M10Const.DateStringType.ADT1);
+              lbItem.stid = sSplit[0];
+              lbItem.elrti = sSplit[1];
+              lbItem.villageid = sSplit[2];
+              dbDapper.Insert(lbItem);
+
+              StatusLabel.Text = string.Format(sSplit[0]);
+              Application.DoEvents();
+
+            }
+          }
+
+
+        }
+
+        StatusLabel.Text = string.Format("完成");
+        Application.DoEvents();
+      }
+      catch (Exception ex)
+      {
+
+        throw ex;
+      }
 
     }
   }

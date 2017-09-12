@@ -80,9 +80,6 @@ namespace M10AlertLRTI
 
     private void btnStart_Click(object sender, EventArgs e)
     {
-
-     
-
       try
       {
         //紀錄資料更新時間(2017-05-16T10:31:14)
@@ -108,10 +105,11 @@ namespace M10AlertLRTI
 
         //1060519 判斷是否啟動發報功能，修改使用dapper
         var chkMailFlag = dbDapper.ExecuteScale("select value from LRTIAlertMail where type = 'isal' and value = 'Y'");
-        if (string.IsNullOrEmpty(chkMailFlag as string)) return;
+        if (string.IsNullOrEmpty(chkMailFlag as string) == false) {
+          //Alert LRTI寄送發布mail
+          LRTIAlertSendMail(sAttachFileName);
+        }
 
-        //Alert LRTI寄送發布mail
-        LRTIAlertSendMail(sAttachFileName);
 
 
         //開啟excel
@@ -202,14 +200,11 @@ namespace M10AlertLRTI
 
     private void LRTIAlertUpdateTime()
     {
-
-      string sDt = dtNow.ToString("yyyy-MM-ddTHH:mm:ss");
-
-      LRTIAlertMail item = dbDapper.QuerySingleOrDefault<LRTIAlertMail>(
-        " select * from LRTIAlertMail where type = 'altm' ");
+      ssql = " select * from LRTIAlertMail where type = 'altm' ";
+      LRTIAlertMail item = dbDapper.QuerySingleOrDefault<LRTIAlertMail>(ssql);
       if (item != null)
       {
-        item.value = sDt;
+        item.value = Utils.getDatatimeString(dtNow, M10Const.DatetimeStringType.ADDT2);
         dbDapper.Update(item);
       }
 
@@ -617,7 +612,7 @@ namespace M10AlertLRTI
 
           //更新目前警戒中的警戒狀態
           ssql = @" select * from RunTimeRainData a 
-                    left join (select distinct stid,elrti from lrtibasic) b on a.STID = b.STID 
+                    left join (select distinct stid,elrti from lrtibasic where type = 'now') b on a.STID = b.STID 
                     where CAST(a.LRTI AS decimal(8, 2))  > CAST(b.ELRTI AS decimal(8, 2)) 
                     and a.STID = '{0}' ";
           int iCount = dbDapper.QueryTotalCount(string.Format(ssql, sSTID));
@@ -744,7 +739,7 @@ namespace M10AlertLRTI
         //處理狀態(新案)
         //取得目前超過警戒值的雨量站
         ssql = @" select * from RunTimeRainData a 
-                  left join (select distinct stid,elrti from lrtibasic) b on a.STID = b.STID 
+                  left join (select distinct stid,elrti from lrtibasic where type = 'now') b on a.STID = b.STID 
                   where CAST(a.LRTI AS decimal(8, 2))  > CAST(b.ELRTI AS decimal(8, 2)) ";
         List<dynamic> RuntimeList = dbDapper.Query(ssql);
         
@@ -761,7 +756,7 @@ namespace M10AlertLRTI
           decimal.TryParse(RumtimeItem.elrti, out dELRTI);
           dELRTI = Math.Round(dELRTI, 2);
 
-          ssql = " select * from lrtibasic where STID = '{0}' ";
+          ssql = " select * from lrtibasic where STID = '{0}' where type = 'now' ";
           List<LrtiBasic> LrtiBasicList = dbDapper.Query<LrtiBasic>(string.Format(ssql, RumtimeItem.STID));
           foreach (LrtiBasic LrtiBasicItem in LrtiBasicList)
           {

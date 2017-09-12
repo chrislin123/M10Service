@@ -28,7 +28,7 @@ namespace M10.lib
       string sLineTrans = "";
       try
       {
-        string sDate = Utils.getDataString(GetDatetime, M10Const.DataStringType.ADT1);
+        string sDate = Utils.getDateString(GetDatetime, M10Const.DateStringType.ADT1);
         string sUrl = string.Format(M10Const.StockAfterTseUrl, sDate);
 
 
@@ -123,7 +123,7 @@ namespace M10.lib
         }
 
         StockLog sl = new StockLog();
-        sl.logdate = Utils.getDataString(DateTime.Now, M10Const.DataStringType.ADT1);
+        sl.logdate = Utils.getDateString(DateTime.Now, M10Const.DateStringType.ADT1);
         sl.logdatetime = Utils.getDatatimeString();
         sl.logstatus = M10Const.StockLogStatus.s200;
         sl.memo = "";
@@ -144,9 +144,9 @@ namespace M10.lib
     {
       try
       {
-        string sDate = Utils.getDataString(GetDatetime, M10Const.DataStringType.ChineseT2);
+        string sDate = Utils.getDateString(GetDatetime, M10Const.DateStringType.ChineseT2);
         string sUrl = string.Format(M10Const.StockAfterOtcUrl, sDate);
-        sDate = Utils.getDataString(GetDatetime, M10Const.DataStringType.ADT1);
+        sDate = Utils.getDateString(GetDatetime, M10Const.DateStringType.ADT1);
 
 
         using (WebClient wc = getNewWebClient())
@@ -270,7 +270,7 @@ namespace M10.lib
         }
 
         StockLog sl = new StockLog();
-        sl.logdate = Utils.getDataString(DateTime.Now, M10Const.DataStringType.ADT1);
+        sl.logdate = Utils.getDateString(DateTime.Now, M10Const.DateStringType.ADT1);
         sl.logdatetime = Utils.getDatatimeString();
         sl.logstatus = M10Const.StockLogStatus.s200;
         sl.memo = "";
@@ -294,7 +294,7 @@ namespace M10.lib
     {
       try
       {
-        string sDate = Utils.getDataString(GetDatetime, M10Const.DataStringType.ADT1);
+        string sDate = Utils.getDateString(GetDatetime, M10Const.DateStringType.ADT1);
         string sUrl = string.Format(M10Const.StockThreeTradeTse, sDate);
 
         using (WebClient wc = getNewWebClient())
@@ -400,7 +400,7 @@ namespace M10.lib
 
 
         StockLog sl = new StockLog();
-        sl.logdate = Utils.getDataString(DateTime.Now, M10Const.DataStringType.ADT1);
+        sl.logdate = Utils.getDateString(DateTime.Now, M10Const.DateStringType.ADT1);
         sl.logdatetime = Utils.getDatatimeString();
         sl.logstatus = M10Const.StockLogStatus.s200;
         sl.memo = "";
@@ -422,10 +422,10 @@ namespace M10.lib
     {
       try
       {
-        string sDate = Utils.getDataString(GetDatetime, M10Const.DataStringType.ChineseT2);
+        string sDate = Utils.getDateString(GetDatetime, M10Const.DateStringType.ChineseT2);
         string sUrl = string.Format(M10Const.StockThreeTradeOtc, sDate);
         //改為寫入資料庫格式
-        sDate = Utils.getDataString(GetDatetime, M10Const.DataStringType.ADT1);
+        sDate = Utils.getDateString(GetDatetime, M10Const.DateStringType.ADT1);
 
         using (WebClient wc = getNewWebClient())
         {
@@ -487,7 +487,7 @@ namespace M10.lib
         }
 
         StockLog sl = new StockLog();
-        sl.logdate = Utils.getDataString(DateTime.Now, M10Const.DataStringType.ADT1);
+        sl.logdate = Utils.getDateString(DateTime.Now, M10Const.DateStringType.ADT1);
         sl.logdatetime = Utils.getDatatimeString();
         sl.logstatus = M10Const.StockLogStatus.s200;
         sl.memo = "";
@@ -586,7 +586,7 @@ namespace M10.lib
 
 
           StockLog sl = new StockLog();
-          sl.logdate = Utils.getDataString(DateTime.Now, M10Const.DataStringType.ADT1);
+          sl.logdate = Utils.getDateString(DateTime.Now, M10Const.DateStringType.ADT1);
           sl.logdatetime = Utils.getDatatimeString();
           sl.logstatus = M10Const.StockLogStatus.s200;
           sl.memo = "";
