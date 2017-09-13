@@ -705,6 +705,21 @@ namespace M10.lib.model
     public string logdatetime { get; set; }
 
   }
-  
+
+  [Table("StockSet")]
+  public class StockSet
+  {
+    //設定key
+    [Key]
+    public int no { get; set; }
+
+    public string settype { get; set; }
+
+    public int setseq { get; set; }
+
+    public string setvalue { get; set; }
+
+  }
+
 
 }
