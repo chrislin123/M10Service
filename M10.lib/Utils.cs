@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Reflection;
 using System.IO;
 using System.Web;
+using System.Net;
 
 namespace M10.lib
 {
@@ -110,6 +111,14 @@ namespace M10.lib
     }
 
 
+    public static WebClient getNewWebClient()
+    {
+      var wc = new WebClient();
+      //wc.Headers.Add("User-Agent", HttpHelper.GetRandomAgent());
+      wc.Encoding = Encoding.UTF8;
+      wc.Proxy = null;
+      return wc;
+    }
 
   }
 }

@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M10Tools", "M10Tools\M10Too
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C10Mvc", "C10Mvc\C10Mvc.csproj", "{6B4249D7-0B27-4FFD-BCCA-9B7495F166D7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C10Routine", "C10Routine\C10Routine.csproj", "{17923DD4-1252-4997-BC12-1C42371E65EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,6 +91,10 @@ Global
 		{6B4249D7-0B27-4FFD-BCCA-9B7495F166D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B4249D7-0B27-4FFD-BCCA-9B7495F166D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B4249D7-0B27-4FFD-BCCA-9B7495F166D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17923DD4-1252-4997-BC12-1C42371E65EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17923DD4-1252-4997-BC12-1C42371E65EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17923DD4-1252-4997-BC12-1C42371E65EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17923DD4-1252-4997-BC12-1C42371E65EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
