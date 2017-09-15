@@ -14,6 +14,7 @@ namespace C10Mvc.Class
     private DALDapper _dbDapper;
     private string _ConnectionString;
     private StockUtil _StockUtil;
+    private StockHelper _stockhelper;
     public DALDapper dbDapper
     {
       get
@@ -51,6 +52,19 @@ namespace C10Mvc.Class
 
         return _StockUtil;
       }
+    }
+
+    public StockHelper stockhelper
+    {
+      get
+      {
+        if (_stockhelper == null)
+        {
+          _stockhelper = new StockHelper();
+        }
+        return _stockhelper;
+      }
+
     }
 
   }

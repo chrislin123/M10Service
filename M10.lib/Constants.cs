@@ -49,6 +49,19 @@ namespace M10.lib
       public const string StockInfoOtc = "StockInfoOtc";
     }
 
+    public enum StockRuntimeStatus:int
+    {
+      /// <summary>
+      /// YahooApi
+      /// </summary>
+      YahooApi=10,
+      /// <summary>
+      /// 歷史資料
+      /// </summary>
+      Histroy=99,
+      
+    }
+
 
 
     public enum DateStringType

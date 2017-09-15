@@ -476,16 +476,16 @@ namespace M10Tools
     private void button3_Click(object sender, EventArgs e)
     {
       //開始日期
-      DateTime dt = new DateTime(2017, 9, 1);
+      DateTime dt = new DateTime(2017, 9, 8);
       //結束日期
-      DateTime dtEnd = new DateTime(2017, 9, 1);
+      DateTime dtEnd = new DateTime(2017, 9, 12);
 
       for (DateTime LoopDatetime = dt; LoopDatetime <= dtEnd; LoopDatetime = LoopDatetime.AddDays(1))
       {
         string sLineTrans = "";
         try
         {
-          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.otc, LoopDatetime.ToString("yyyyMMdd"));
+          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
           Application.DoEvents();
 
           if (Stockhelper.GetStockThreeTradeTse(LoopDatetime) == false)
@@ -493,6 +493,9 @@ namespace M10Tools
             System.Threading.Thread.Sleep(3000);
             continue;
           }
+
+          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.tse, "完成");
+          Application.DoEvents();
         }
         catch (Exception ex)
         {
@@ -508,9 +511,9 @@ namespace M10Tools
     {
 
       //開始日期
-      DateTime dt = new DateTime(2017, 9, 1);
+      DateTime dt = new DateTime(2017, 9, 8);
       //結束日期
-      DateTime dtEnd = new DateTime(2017, 9, 1);
+      DateTime dtEnd = new DateTime(2017, 9, 12);
 
       for (DateTime LoopDatetime = dt; LoopDatetime <= dtEnd; LoopDatetime = LoopDatetime.AddDays(1))
       {
@@ -525,6 +528,9 @@ namespace M10Tools
             System.Threading.Thread.Sleep(3000);
             continue;
           }
+
+          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.otc, "完成");
+          Application.DoEvents();
         }
         catch (Exception ex)
         {
@@ -538,9 +544,9 @@ namespace M10Tools
     private void button5_Click(object sender, EventArgs e)
     {
       //開始日期
-      DateTime dt = new DateTime(2017, 9, 6);
+      DateTime dt = new DateTime(2017, 9, 8);
       //結束日期
-      DateTime dtEnd = new DateTime(2017, 9, 6);
+      DateTime dtEnd = new DateTime(2017, 9, 12);
 
       ////取得資料庫最後一天
       //ssql = " select  distinct stockdate  from stockafter where stocktype = '{0}' order by stockdate asc ";
@@ -568,6 +574,9 @@ namespace M10Tools
             System.Threading.Thread.Sleep(3000);
             continue;
           }
+
+          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.tse, "完成");
+          Application.DoEvents();
         }
         catch (Exception ex)
         {
@@ -583,9 +592,9 @@ namespace M10Tools
     private void button6_Click(object sender, EventArgs e)
     {
       //開始日期
-      DateTime dt = new DateTime(2017, 9, 6);
+      DateTime dt = new DateTime(2017, 9, 8);
       //結束日期
-      DateTime dtEnd = new DateTime(2017, 9, 6);
+      DateTime dtEnd = new DateTime(2017, 9, 12);
 
       //取得資料庫最後一天
       //ssql = " select  distinct stockdate  from stockafter where stocktype = '{0}' order by stockdate asc ";
@@ -604,7 +613,7 @@ namespace M10Tools
         string sLineTrans = "";
         try
         {
-          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
+          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.otc, LoopDatetime.ToString("yyyyMMdd"));
           Application.DoEvents();
 
           if (Stockhelper.GetStockAfterOtc(LoopDatetime) == false)
@@ -612,6 +621,9 @@ namespace M10Tools
             System.Threading.Thread.Sleep(3000);
             continue;
           }
+
+          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.otc, "完成");
+          Application.DoEvents();
         }
         catch (Exception ex)
         {
@@ -1025,6 +1037,50 @@ namespace M10Tools
 
         throw ex;
       }
+
+    }
+
+    private void button9_Click(object sender, EventArgs e)
+    {
+
+
+
+      while (true)
+      {
+        ssql = " select top 1 * from stockafter where priceyesterday is null ";
+        if (dbDapper.QueryTotalCount(ssql) == 0)
+        {
+          StatusLabel.Text = string.Format("完成");
+          Application.DoEvents();
+
+          return;
+        }
+
+
+        ssql = "select top 1000 * from stockafter where priceyesterday is null  ";
+        List<Stockafter> SaList = dbDapper.Query<Stockafter>(ssql);
+
+        foreach (Stockafter LoopItem in SaList)
+        {
+
+          StatusLabel.Text = string.Format("[{0}]{1}",LoopItem.stockdate,LoopItem.stockcode);
+          Application.DoEvents();
+
+          Decimal dPriceYesterday = Stockhelper.CalcPriceYesterday(LoopItem.pricelast.ToString(), LoopItem.updown, LoopItem.pricediff);
+
+          LoopItem.priceyesterday = dPriceYesterday;
+
+          dbDapper.Update(LoopItem);
+        }
+
+
+
+
+      }
+
+
+
+
 
     }
   }

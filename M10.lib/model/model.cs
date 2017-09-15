@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper.Contrib.Extensions;
+using M10.lib;
 
 namespace M10.lib.model
 {
@@ -619,6 +620,11 @@ namespace M10.lib.model
     /// 代碼
     /// </summary>
     public string c { get; set; }
+
+    /// <summary>
+    /// 代碼
+    /// </summary>
+    public  M10Const.StockRuntimeStatus status { get; set; }
   }
 
 
@@ -669,6 +675,7 @@ namespace M10.lib.model
 
     public string updatetime { get; set; }
 
+    public decimal? priceyesterday { get; set; }
 
   }
 

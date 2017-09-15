@@ -7,7 +7,8 @@ using System.Net.Http;
 using System.Web.Http;
 using C10Mvc.Class;
 using M10.lib.model;
-using HtmlAgilityPack;
+using M10.lib;
+
 
 
 namespace C10Mvc.Controllers
@@ -188,8 +189,21 @@ namespace C10Mvc.Controllers
       //StockRuntime sr = oStockUtil.getStockRealtimeYahooWeb(stockcode);
      
       //get from yahoo api
-      StockRuntime sr = oStockUtil.getStockRealtimeYahooApi(stockcode);
+      StockRuntime sr = stockhelper.getStockRealtimeYahooApi(stockcode);
 
+      //盤前沒資料改取得歷史資料
+      //if (sr.z == "")
+      //{
+      //  ssql = " select top 1 * from stockafter where stockcode = '{0}' order by stockdate desc ";
+      //  ssql = string.Format(ssql, stockcode);
+      //  Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(ssql);
+      //  if (sa != null)
+      //  {
+      //    sr.status = M10Const.StockRuntimeStatus.Histroy;
+      //    sr.z = sa.pricelast.ToString();
+      //    sr.y = sa.priceyesterday.ToString();
+      //  }
+      //}
 
       return sr;
     }
