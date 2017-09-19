@@ -64,6 +64,8 @@ namespace M10.lib.modeldhoe
 
     public string dttm { get; set; }
 
+    public string cover { get; set; }
+
   }
 
   [Table("Books")]
