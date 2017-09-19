@@ -267,6 +267,8 @@
     <Content Include="Views\Members\CenterMember.cshtml" />
     <Content Include="Views\Photo\Photo.cshtml" />
     <Content Include="Views\Members\StudentDetail.cshtml" />
+    <Content Include="Views\Shared\_IndexLayout.cshtml" />
+    <Content Include="Views\Home\IndexDhoe.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

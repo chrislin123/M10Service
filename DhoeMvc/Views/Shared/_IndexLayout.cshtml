@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>@ViewBag.Title</title>
+  <link href="css/the-big-picture.css" rel="stylesheet">
+
+
+  <style type='text/css'>
+      .container_div {
+        background-color: #CCC;
+        width: 200px;
+        height: 200px;
+      }
+
+      .empty_div {
+        float: left;
+        height: 50%; /*父元素高度的50%*/
+        margin-bottom: -65px; /*置中元素高度的一半*/
+        *width:: 1px; /*only for IE7*/
+      }
+
+      .content_div {
+        clear: both; /*清除浮動*/
+        height: 130px;
+        position: relative;
+      }
+  </style>
+
+</head>
+<body>
+ 
+  <div class="container body-content">
+    @RenderBody()
+    
+  </div>
+ 
+
+</body>
+</html>

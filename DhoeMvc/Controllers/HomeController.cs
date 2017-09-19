@@ -26,5 +26,10 @@ namespace DhoeMvc.Controllers
 
       return View();
     }
+
+    public ActionResult IndexDhoe()
+    {
+      return View();
+    }
   }
 }
