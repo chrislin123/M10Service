@@ -92,70 +92,50 @@ namespace DhoeMvc.Controllers
 
     public ActionResult PhotoDF(string name)
     {
+      string PhotoRootPath = Server.MapPath("~\\photo\\N");
 
-      ViewBag.test = name;
-      List<AlbumM> DataList = dbDapper.Query<AlbumM>(@"select * from AlbumM
-                        order by sort desc");
+      string PhotoPath = PhotoRootPath + string.Format("\\{0}\\", name);
 
-      ViewData["DataList"] = DataList;
+      //資料夾不存在，跳離
+      if (Directory.Exists(PhotoPath) == false) return View();
 
+      DirectoryInfo di = new DirectoryInfo(PhotoPath);
+      FileInfo[] afi = di.GetFiles();
 
       StringBuilder html = new StringBuilder();
-
       int idx = 0;
-      foreach (AlbumM LoopItem in DataList)
+      foreach (FileInfo LoopItem in afi)
       {
-        string sImgSrc = "";
-        if (LoopItem.cover != null)
-        {
-          sImgSrc = string.Format(@"/photo/n/{0}/{1}", LoopItem.name, LoopItem.cover);
-        }
-        else
-        {
-          string PhotoRootPath = Server.MapPath("~\\photo\\N");
-
-          string PhotoPath = PhotoRootPath + string.Format("\\{0}\\", LoopItem.name);
-
-          //資料夾不存在，跳離
-          if (Directory.Exists(PhotoPath) == false) continue;
-
-          DirectoryInfo di = new DirectoryInfo(PhotoPath);
-
-          FileInfo[] afi = di.GetFiles();
-
-          if (afi.Length > 0)
-          {
-            sImgSrc = string.Format(@"/photo/n/{0}/{1}", LoopItem.name, afi[0].Name);
-          }
-        }
-
-        //string sHref = string.Format("<a href='{0}' class='{1}'>{2}</a>", "#", "album_info_title_hy", LoopItem.name);
-        string sHref = string.Format("PhotoDF.aspx?name={0}", LoopItem.name);
-
         idx++;
 
         if (idx % 3 == 1)
         {
           html.Append("<div class='row'>");
         }
+
+       
+        string sImgSrc = string.Format(@"/photo/n/{0}/{1}", name, LoopItem.Name);
+        string sFileName = LoopItem.Name.Replace(LoopItem.Extension, "");
+        //只取檔名前20個字
+        sFileName = sFileName.Length >= 20 ? sFileName.Substring(0, 20) : sFileName;
         string sHtmlTemp = @"
-        <div class='col-md-4'>
-          <div class='album_item inline-block'>
-            <div class='fix_png'>
-              <a href='{2}' > 
-                <img src='{1}' class='img-thumbnail' style='width:100%' />
-              </a>
-            </div>
-            <div class='album_info'>
-              <p class='album_info_title'>
-                <a href='{2}' class='album_info_title_hy'>{0}</a>
-              </p>
+          <div class='col-md-4'>
+            <div class='album_item inline-block'>
+              <div class='fix_png'>
+                <a href='{1}' class='fancybox-buttons' data-fancybox-group='button' > 
+                  <img src='{1}' class='img-thumbnail' style='width:100%' border='0'  />
+                </a>
+              </div>
+              <div class='album_info'>
+                <p class='album_info_title'>
+                  <span class='album_info_title_hy'>{0}</span>                
+                </p>
+              </div>
             </div>
           </div>
-        </div>
         ";
 
-        html.Append(string.Format(sHtmlTemp, LoopItem.name, sImgSrc, sHref));
+        html.Append(string.Format(sHtmlTemp, sFileName, sImgSrc));
 
 
         if (idx % 3 == 0)
@@ -164,7 +144,7 @@ namespace DhoeMvc.Controllers
         }
       }
 
-      ViewBag.test = html.ToString();
+      ViewBag.HtmlPhoto = html.ToString();
 
       return View();
     }

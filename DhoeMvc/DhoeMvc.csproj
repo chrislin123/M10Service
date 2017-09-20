@@ -188,6 +188,23 @@
   <ItemGroup>
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\fancyBox\lib\jquery-1.10.2.min.js" />
+    <Content Include="Content\fancyBox\lib\jquery.mousewheel.pack.js" />
+    <Content Include="Content\fancyBox\source\blank.gif" />
+    <Content Include="Content\fancyBox\source\fancybox_loading%402x.gif" />
+    <Content Include="Content\fancyBox\source\fancybox_loading.gif" />
+    <Content Include="Content\fancyBox\source\fancybox_overlay.png" />
+    <Content Include="Content\fancyBox\source\fancybox_sprite%402x.png" />
+    <Content Include="Content\fancyBox\source\fancybox_sprite.png" />
+    <Content Include="Content\fancyBox\source\helpers\fancybox_buttons.png" />
+    <Content Include="Content\fancyBox\source\helpers\jquery.fancybox-buttons.css" />
+    <Content Include="Content\fancyBox\source\helpers\jquery.fancybox-buttons.js" />
+    <Content Include="Content\fancyBox\source\helpers\jquery.fancybox-media.js" />
+    <Content Include="Content\fancyBox\source\helpers\jquery.fancybox-thumbs.css" />
+    <Content Include="Content\fancyBox\source\helpers\jquery.fancybox-thumbs.js" />
+    <Content Include="Content\fancyBox\source\jquery.fancybox.css" />
+    <Content Include="Content\fancyBox\source\jquery.fancybox.js" />
+    <Content Include="Content\fancyBox\source\jquery.fancybox.pack.js" />
     <Content Include="Content\fix.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />

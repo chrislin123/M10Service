@@ -1,7 +1,7 @@
 ﻿
 @{
-    ViewBag.Title = "PhotoDF";
-    Layout = "~/Views/Shared/_DhoeLayout.cshtml";
+  ViewBag.Title = "PhotoDF";
+  Layout = "~/Views/Shared/_DhoeLayout.cshtml";
 }
 
 
@@ -23,10 +23,54 @@
       padding: 0 5px;
     }
     /*.fix_png {
-              color: #936f4a;
-              background: url(../images/p_bg02.png) no-repeat;
-            }*/
+                color: #936f4a;
+                background: url(../images/p_bg02.png) no-repeat;
+              }*/
 </style>
+
+<!-- Add jQuery library -->
+<script type="text/javascript" src="~/Content/fancyBox/lib/jquery-1.10.2.min.js"></script>
+
+<!-- Add mousewheel plugin (this is optional) -->
+<script type="text/javascript" src="~/Content/fancyBox/lib/jquery.mousewheel.pack.js"></script>
+
+<!-- Add fancyBox main JS and CSS files -->
+<script type="text/javascript" src="~/Content/fancyBox/source/jquery.fancybox.js?v=2.1.5"></script>
+<link rel="stylesheet" type="text/css" href="~/Content/fancyBox/source/jquery.fancybox.css?v=2.1.5" media="screen" />
+
+<!-- Add Button helper (this is optional) -->
+<link rel="stylesheet" type="text/css" href="~/Content/fancyBox/source/helpers/jquery.fancybox-buttons.css?v=1.0.5" />
+<script type="text/javascript" src="~/Content/fancyBox/source/helpers/jquery.fancybox-buttons.js?v=1.0.5"></script>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $('.fancybox-buttons').fancybox({
+      openEffect: 'none',
+      closeEffect: 'none',
+
+      prevEffect: 'none',
+      nextEffect: 'none',
+      autoPlay: 'true',
+
+      closeBtn: true,
+
+      helpers: {
+        title: {
+          type: 'inside'
+        },
+        buttons: {}
+      },
+
+      afterLoad: function () {
+        this.title = 'Image ' + (this.index + 1) + ' of ' + this.group.length + (this.title ? ' - ' + this.title : '');
+      }
+    });
+
+
+  });
+</script>
+
+
 
 <div class="container">
 
@@ -34,7 +78,7 @@
 
   @*<img src="~/images/Professor.jpg" alt="Alternate Tex" />*@
 
-  @Html.Raw(@ViewBag.test)
+  @Html.Raw(@ViewBag.HtmlPhoto)
 
 
 </div>
