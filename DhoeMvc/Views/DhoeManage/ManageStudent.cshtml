@@ -1,0 +1,175 @@
+﻿
+@{
+  ViewBag.Title = "ManageStudent";
+  Layout = "~/Views/Shared/_DhoeManageLayout.cshtml";
+}
+
+
+類別：
+<select class="easyui-combobox" name="state" id="state" label="State:" labelPosition="top" style="width:200px;">
+  <option value="CurrSt">在學生</option>
+  <option value="HisPhd">博士</option>
+  <option value="HisMas">碩士</option>
+</select>
+
+<table id="dg" title="學生資料維護" class="easyui-datagrid" style="width:100%;height:400px"
+       toolbar="#toolbar" @*pagination="true"*@
+       rownumbers="true" fitColumns="true" singleSelect="true">
+  <thead>
+    <tr>
+      <th field="kind" width="50">類別</th>
+      <th field="name" width="50">姓名</th>
+    </tr>
+  </thead>
+</table>
+
+<div id="toolbar">
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newUser()">新增</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editUser()">修改</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">刪除</a>
+</div>
+
+<div id="dlg" class="easyui-dialog" style="width:400px"
+     closed="true" buttons="#dlg-buttons">
+  <form id="fm" method="post" novalidate style="margin:0;padding:20px 50px">
+    <div style="margin-bottom:20px;font-size:14px;border-bottom:1px solid #ccc">學生資料</div>
+    <div style="margin-bottom:10px">
+      類別：
+     
+      <select class="easyui-combobox" name="stateedit" id="stateedit" label="State:" labelPosition="top" style="width:200px;" 
+                            @*data-options="method: 'get',valueField: 'id',textField: 'text'"*@>
+        @*<option value="博士班">博士班</option>
+        <option value="test">test</option>*@
+      </select>
+    </div>
+    <div style="margin-bottom:10px">
+      姓名：
+      <input name="name" id="name" class="easyui-textbox" required="true" label="Name:" style="width:100%">
+    </div>
+  </form>
+</div>
+<div id="dlg-buttons">
+  <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width:90px">確定</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">取消</a>
+</div>
+<script type="text/javascript">
+
+  $(document).ready(function () {
+    $('#dg').datagrid({
+      url: '@Url.Action("getstudentdata", "DhoeManage")' + '?type=' + $('#state').combobox('getValue'),
+    });
+
+    $('#stateedit').combobox({
+      valueField: 'value',
+      textField: 'text',
+      method: 'get',
+      url: '@Url.Action("ManageStudentGetKindData", "DhoeManage")' + '?kind=' + $('#state').combobox('getValue'),
+    });
+
+  });
+
+  $('#state').combobox({
+    onChange: function (newValue, oldValue) {
+      $('#dg').datagrid({
+        url: '@Url.Action("getstudentdata", "DhoeManage")' + '?type=' + newValue,
+      });
+
+
+      $('#stateedit').combobox({
+        valueField: 'value',
+        textField: 'text',
+        method: 'get',
+        url: '@Url.Action("ManageStudentGetKindData", "DhoeManage")' + '?kind=' + $('#state').combobox('getValue'),
+      });
+
+    }
+  });
+
+  var url;
+  function newUser() {
+    $('#dlg').dialog('open').dialog('center').dialog('setTitle', '新增');
+    $('#fm').form('clear');
+    url = 'save_user.php';
+  }
+  function editUser() {
+    var row = $('#dg').datagrid('getSelected');
+    if (row) {
+      $('#dlg').dialog('open').dialog('center').dialog('setTitle', '修改');
+      $('#fm').form('load', row);
+      url = 'update_user.php?id=' + row.id;
+    }
+  }
+  function saveUser() {
+    //$('#')
+
+    try {
+      var Students = {
+        Name: $('#name').val(),
+        DataType: $('#state').combobox('getValue'),
+        Kind: $('#stateedit').combobox('getValue')
+      };
+
+
+      $.post('@Url.Action("ManageStudentAdd", "DhoeManage")', Students)
+        .done(function (data) {
+          alert(data);
+          $('#dlg').dialog('close');        // close the dialog
+          $('#dg').datagrid('reload');      // reload the user data
+        })
+        .fail(function (data) {
+          alert("error");
+        });
+    } catch (e) {
+      alert(e);
+    }
+
+
+
+
+    @*$.postJson('@Url.Action("ManageStudentAdd", "DhoeManage1")', players, function (res) {
+      alert(res);
+    });*@
+
+    //return;
+
+    //$('#fm').form('submit', {
+    //  url: url,
+    //  onSubmit: function () {
+    //    return $(this).form('validate');
+    //  },
+    //  success: function (result) {
+    //    var result = eval('(' + result + ')');
+    //    if (result.errorMsg) {
+    //      $.messager.show({
+    //        title: 'Error',
+    //        msg: result.errorMsg
+    //      });
+    //    } else {
+    //      $('#dlg').dialog('close');        // close the dialog
+    //      $('#dg').datagrid('reload');    // reload the user data
+    //    }
+    //  }
+    //});
+  }
+  function destroyUser() {
+    var row = $('#dg').datagrid('getSelected');
+    if (row) {
+      $.messager.confirm('Confirm', 'Are you sure you want to destroy this user?', function (r) {
+        if (r) {
+          $.post('destroy_user.php', { id: row.id }, function (result) {
+            if (result.success) {
+              $('#dg').datagrid('reload');    // reload the user data
+            } else {
+              $.messager.show({    // show error message
+                title: 'Error',
+                msg: result.errorMsg
+              });
+            }
+          }, 'json');
+        }
+      });
+    }
+  }
+</script>
+
+

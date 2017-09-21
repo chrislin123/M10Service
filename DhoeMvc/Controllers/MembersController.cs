@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using DhoeMvc.Class;
 using M10.lib.modeldhoe;
+using M10.lib;
 
 namespace DhoeMvc.Controllers
 {
@@ -12,39 +13,22 @@ namespace DhoeMvc.Controllers
   {
     // GET: Students詹錢登教授研究室
     public ActionResult Students()
-    {
-      string sDataType = "currst";
-      ssql = @" select * from students
-              where datatype = '{0}'";
-      List<Students> StudentList = dbDapper.Query<Students>(string.Format(ssql, sDataType));
-      
-      List<string> KindList = StudentList.Select(x => x.kind).Distinct().ToList();
-      
+    { 
+      ssql = @" select * from students where datatype = '{0}' order by kind desc ";
+      List<Students> StudentList = dbDapper.Query<Students>(string.Format(ssql, DhoeConst.StudentType.CurrSt));
+      List<string> KindList = StudentList.Select(x => x.kind).Distinct().ToList();      
       ViewData["DataMList"] = KindList;
       ViewData["DataDList"] = StudentList;
 
-      sDataType = "phd";
-      ssql = @" select * from students
-              where datatype = '{0}'";
-      StudentList = dbDapper.Query<Students>(string.Format(ssql, sDataType));
-
+      StudentList = dbDapper.Query<Students>(string.Format(ssql, DhoeConst.StudentType.HisPhd));
       KindList = StudentList.Select(x => x.kind).Distinct().ToList();
-
       ViewData["PhdMList"] = KindList;
       ViewData["PhdDList"] = StudentList;
-
-      sDataType = "masdeg";
-      ssql = @" select * from students
-              where datatype = '{0}'";
-      StudentList = dbDapper.Query<Students>(string.Format(ssql, sDataType));
-
+      
+      StudentList = dbDapper.Query<Students>(string.Format(ssql, DhoeConst.StudentType.HisMas));
       KindList = StudentList.Select(x => x.kind).Distinct().ToList();
-
       ViewData["MasMList"] = KindList;
       ViewData["MasDList"] = StudentList;
-
-
-
 
       return View();
     }
@@ -52,12 +36,7 @@ namespace DhoeMvc.Controllers
     // GET: StudentDetail 
     public ActionResult StudentDetail(string name)
     {
-
       ViewBag.name = name;
-
-     
-
-
 
       return View();
     }

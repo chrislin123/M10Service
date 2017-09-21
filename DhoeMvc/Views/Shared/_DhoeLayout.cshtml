@@ -11,7 +11,7 @@
   @Scripts.Render("~/bundles/bootstrap")
 
   @*<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">*@
-   
+
   @*各分頁自行定義的Style*@
   @RenderSection("Styles", required: false)
 
@@ -46,14 +46,16 @@
     <table border="0">
       <tr>
         <td>
-          <input type="image" src="~/images/logo.jpg" height="60px" />
+          <a href="/DhoeManage/ManageStudent">
+            <input type="image" src="~/images/logo.jpg" height="60px" />
+          </a>
           @*<asp:Image ID="Image1" runat="server" Height="60px" ImageUrl="~/images/logo.jpg" />*@
         </td>
         <td>
           <div class="container-fluid">
             <ul class="nav navbar-nav">
               <li>
-                <a href="/News/News">
+                <a href="/DhoeManage/ManageStudent">
                   News&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
                   最新消息
                 </a>
@@ -62,7 +64,7 @@
                   </a>*@
               </li>
               <li class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" id="Professor" >
+                <a class="dropdown-toggle" data-toggle="dropdown" id="Professor">
                   Professor&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
                   教授<span class="caret"></span>
                 </a>
@@ -94,7 +96,7 @@
                 </ul>
               </li>
               <li>
-                <a href="/Photo/Photo" >
+                <a href="/Photo/Photo">
                   Photo Albums&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br />
                   活動花絮
                 </a>
@@ -143,7 +145,7 @@
   </div>
 
 
-  
+
 
   <script type="text/javascript">
     $(function () {

@@ -206,5 +206,22 @@ namespace M10.lib.modeldhoe
 
   }
 
+  [Table("DhoeSet")]
+  public class DhoeSet
+  {
+    //設定key
+    [Key]
+    public int no { get; set; }
+
+    public string settype { get; set; }
+
+    public string setkind { get; set; }
+
+    public int setseq { get; set; }
+
+    public string setvalue { get; set; }
+
+  }
+
 
 }

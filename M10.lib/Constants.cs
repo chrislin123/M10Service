@@ -110,4 +110,37 @@ namespace M10.lib
 
     }
   }
+
+  public static class DhoeConst
+  {
+    public static string StockAfterTseUrl = "http://www.tse.com.tw/exchangeReport/MI_INDEX?response=csv&date={0}&type=ALLBUT0999";
+
+
+    public static class StudentType
+    {
+      public const string CurrSt = "CurrSt";
+      //public const string CurrPhd = "CurrPhd";
+      //public const string CurrMas = "CurrMas";
+      public const string HisPhd = "HisPhd";
+      public const string HisMas = "HisMas";
+
+    }
+    
+
+    public enum StockRuntimeStatus : int
+    {
+      /// <summary>
+      /// YahooApi
+      /// </summary>
+      YahooApi = 10,
+      /// <summary>
+      /// 歷史資料
+      /// </summary>
+      Histroy = 99,
+
+    }
+
+
+  }
+
 }
