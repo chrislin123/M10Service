@@ -175,7 +175,7 @@ namespace M10.lib.modeldhoe
   {
     //設定key
     [Key]
-    public int inseq { get; set; }
+    public int no { get; set; }
 
     public string kind { get; set; }
 

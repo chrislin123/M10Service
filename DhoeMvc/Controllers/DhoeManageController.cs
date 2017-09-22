@@ -40,6 +40,7 @@ namespace DhoeMvc.Controllers
           {"name",LoopItem.name },
           {"kind",LoopItem.kind },
           {"datatype",LoopItem.datatype },
+          {"no",LoopItem.no },
         };
 
         ja.Add(itemobj);
@@ -53,19 +54,66 @@ namespace DhoeMvc.Controllers
     }
 
     [HttpPost]
-    public ActionResult ManageStudentAdd(StudentsData Data)
+    public ActionResult ManageStudentAdd(Students Data)
     {
 
-      Students st = new Students();
-      st.name = Data.Name;
-      st.datatype = Data.DataType;
-      st.kind = Data.Kind;
-      dbDapper.Insert(st);
+      //Students st = new Students();
+      //st.name = Data.Name;
+      //st.datatype = Data.DataType;
+      //st.kind = Data.Kind;
+      dbDapper.Insert(Data);
 
 
       JObject joResult = new JObject();
       joResult.Add("msg", "ok");
       
+      return Content(JsonConvert.SerializeObject(joResult), "application/json");
+    }
+
+    [HttpPost]
+    public ActionResult ManageStudentMod(Students Data)
+    {
+      JObject joResult = new JObject();
+
+      try
+      {
+        //Students st = new Students();
+        //st.name = Data.Name;
+        //st.datatype = Data.DataType;
+        //st.kind = Data.Kind;
+        //st.no = Data.no;
+        dbDapper.Update(Data);
+        
+        joResult.Add("msg", "ok");
+      }
+      catch (Exception ex)
+      {
+        joResult.Add("msg", ex.Message);
+      }
+
+      return Content(JsonConvert.SerializeObject(joResult), "application/json");
+    }
+
+
+    [HttpPost]
+    public ActionResult ManageStudentDel(string no)
+    {
+      JObject joResult = new JObject();
+      
+      try
+      {
+        ssql = " delete students where no = '{0}' ";
+        ssql = string.Format(ssql, no);
+
+        dbDapper.Execute(ssql);
+
+        joResult.Add("msg", "ok");
+      }
+      catch (Exception ex)
+      {
+        joResult.Add("msg", ex.Message);
+      }
+
       return Content(JsonConvert.SerializeObject(joResult), "application/json");
     }
 

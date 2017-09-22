@@ -17,6 +17,7 @@
        rownumbers="true" fitColumns="true" singleSelect="true">
   <thead>
     <tr>
+      <th field="no" width="50">no</th>
       <th field="kind" width="50">類別</th>
       <th field="name" width="50">姓名</th>
     </tr>
@@ -29,28 +30,53 @@
   <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="destroyUser()">刪除</a>
 </div>
 
-<div id="dlg" class="easyui-dialog" style="width:400px"
+<div id="dlg" class="easyui-dialog" style="width:600px"
      closed="true" buttons="#dlg-buttons">
   <form id="fm" method="post" novalidate style="margin:0;padding:20px 50px">
     <div style="margin-bottom:20px;font-size:14px;border-bottom:1px solid #ccc">學生資料</div>
     <div style="margin-bottom:10px">
       類別：
-     
-      <select class="easyui-combobox" name="stateedit" id="stateedit" label="State:" labelPosition="top" style="width:200px;" 
-                            @*data-options="method: 'get',valueField: 'id',textField: 'text'"*@>
-        @*<option value="博士班">博士班</option>
-        <option value="test">test</option>*@
-      </select>
+      <select class="easyui-combobox" name="stateedit" id="stateedit" label="State:" labelPosition="top" style="width:200px;"></select>
     </div>
     <div style="margin-bottom:10px">
       姓名：
-      <input name="name" id="name" class="easyui-textbox" required="true" label="Name:" style="width:100%">
+      <input name="name" id="name" class="easyui-textbox" label="Name:" style="width:300px">
+    </div>
+    <div style="margin-bottom:10px">
+      經歷：<input id="editexp" class="easyui-textbox" label="Name:" style="width:300px">
+      <table id="dgexp" class="easyui-datagrid" @*title="Row Editing in DataGrid"*@ style="width:500px;height:auto" fitColumns="true"
+             data-options="iconCls: 'icon-edit' ,singleSelect: true,toolbar: '#tbexp',">
+        <thead>
+          <tr>
+            <th data-options="field:'exp',width:480,editor:'textbox'">經歷</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
+    <div style="margin-bottom:10px">
+      相關研究：<input id="editres" class="easyui-textbox" label="Name:" style="width:300px">
+      <table id="dgres" class="easyui-datagrid" @*title="Row Editing in DataGrid"*@ style="width:500px;height:auto" fitColumns="true"
+             data-options="iconCls: 'icon-edit' ,singleSelect: true,toolbar: '#tbres',">
+        <thead>
+          <tr>
+            <th data-options="field:'res',width:480,editor:'textbox'">相關研究</th>
+          </tr>
+        </thead>
+      </table>
     </div>
   </form>
 </div>
 <div id="dlg-buttons">
   <a href="javascript:void(0)" class="easyui-linkbutton c6" iconCls="icon-ok" onclick="saveUser()" style="width:90px">確定</a>
   <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')" style="width:90px">取消</a>
+</div>
+<div id="tbexp" style="height:auto">
+  <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="AddExp()">新增</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="DelExp()">移除</a>
+</div>
+<div id="tbres" style="height:auto">
+  <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="AddRes()">新增</a>
+  <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="DelRes()">移除</a>
 </div>
 <script type="text/javascript">
 
@@ -86,33 +112,37 @@
   });
 
   var url;
+  var no;
   function newUser() {
     $('#dlg').dialog('open').dialog('center').dialog('setTitle', '新增');
     $('#fm').form('clear');
-    url = 'save_user.php';
+    url = '@Url.Action("ManageStudentAdd", "DhoeManage")';
   }
   function editUser() {
     var row = $('#dg').datagrid('getSelected');
     if (row) {
       $('#dlg').dialog('open').dialog('center').dialog('setTitle', '修改');
       $('#fm').form('load', row);
-      url = 'update_user.php?id=' + row.id;
+
+      $('#stateedit').combobox('setValue', row.kind);
+      url = '@Url.Action("ManageStudentMod", "DhoeManage")';
+      no = row.no;
     }
   }
   function saveUser() {
-    //$('#')
-
     try {
+      //var row = $('#dg').datagrid('getSelected');
+
       var Students = {
         Name: $('#name').val(),
         DataType: $('#state').combobox('getValue'),
-        Kind: $('#stateedit').combobox('getValue')
+        Kind: $('#stateedit').combobox('getValue'),
+        no: no,
       };
 
-
-      $.post('@Url.Action("ManageStudentAdd", "DhoeManage")', Students)
+      $.post(url, Students)
         .done(function (data) {
-          alert(data);
+          //alert(data);
           $('#dlg').dialog('close');        // close the dialog
           $('#dg').datagrid('reload');      // reload the user data
         })
@@ -123,52 +153,64 @@
       alert(e);
     }
 
-
-
-
-    @*$.postJson('@Url.Action("ManageStudentAdd", "DhoeManage1")', players, function (res) {
-      alert(res);
-    });*@
-
-    //return;
-
-    //$('#fm').form('submit', {
-    //  url: url,
-    //  onSubmit: function () {
-    //    return $(this).form('validate');
-    //  },
-    //  success: function (result) {
-    //    var result = eval('(' + result + ')');
-    //    if (result.errorMsg) {
-    //      $.messager.show({
-    //        title: 'Error',
-    //        msg: result.errorMsg
-    //      });
-    //    } else {
-    //      $('#dlg').dialog('close');        // close the dialog
-    //      $('#dg').datagrid('reload');    // reload the user data
-    //    }
-    //  }
-    //});
   }
+
   function destroyUser() {
     var row = $('#dg').datagrid('getSelected');
     if (row) {
-      $.messager.confirm('Confirm', 'Are you sure you want to destroy this user?', function (r) {
+      $.messager.confirm('Confirm', '確定刪除?', function (r) {
         if (r) {
-          $.post('destroy_user.php', { id: row.id }, function (result) {
-            if (result.success) {
+          $.post('@Url.Action("ManageStudentDel", "DhoeManage")', { no: row.no }, function (result) {
+            if (result.msg == 'ok') {
               $('#dg').datagrid('reload');    // reload the user data
+              $.messager.alert("訊息(info)", "完成", "info");
             } else {
-              $.messager.show({    // show error message
-                title: 'Error',
-                msg: result.errorMsg
-              });
+
+              $.messager.alert("訊息 (error)", result.msg, "error");
+              //$.messager.show({    // show error message
+              //  title: 'Error',
+              //  msg: result.msg
+              //});
             }
           }, 'json');
         }
       });
     }
+  }
+
+
+  function AddExp() {
+    $('#dgexp').datagrid('appendRow', {
+      exp: $('#editexp').val(),
+    });
+
+  }
+
+  function DelExp() {
+    var dg = $("#dgexp");
+
+    var selectedrow = dg.datagrid("getSelected");
+    var rowIndex = dg.datagrid("getRowIndex", selectedrow);
+
+    dg.datagrid("deleteRow", rowIndex);
+
+  }
+
+  function AddRes() {
+    $('#dgres').datagrid('appendRow', {
+      res: $('#editres').val(),
+    });
+
+  }
+
+  function DelRes() {
+    var dg = $("#dgres");
+
+    var selectedrow = dg.datagrid("getSelected");
+    var rowIndex = dg.datagrid("getRowIndex", selectedrow);
+
+    dg.datagrid("deleteRow", rowIndex);
+
   }
 </script>
 
