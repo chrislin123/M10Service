@@ -189,6 +189,21 @@ namespace M10.lib.modeldhoe
 
   }
 
+  [Table("StudentD")]
+  public class StudentD
+  {
+    //設定key
+    [Key]
+    public int? no { get; set; }
+
+    public int? studentno { get; set; }
+
+    public string type { get; set; }
+
+    public string value { get; set; }
+
+  }
+
   [Table("Research")]
   public class Research
   {

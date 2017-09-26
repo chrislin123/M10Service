@@ -54,13 +54,13 @@ namespace DhoeMvc.Controllers
     }
 
     [HttpPost]
-    public ActionResult ManageStudentAdd(Students Data)
+    public ActionResult ManageStudentAdd(StudentsData Data)
     {
 
-      //Students st = new Students();
-      //st.name = Data.Name;
-      //st.datatype = Data.DataType;
-      //st.kind = Data.Kind;
+      Students st = new Students();
+      st.name = Data.Name;
+      st.datatype = Data.DataType;
+      st.kind = Data.Kind;
       dbDapper.Insert(Data);
 
 
@@ -71,19 +71,52 @@ namespace DhoeMvc.Controllers
     }
 
     [HttpPost]
-    public ActionResult ManageStudentMod(Students Data)
+    public ActionResult ManageStudentMod(StudentsData Data)
     {
       JObject joResult = new JObject();
-
+      
       try
       {
-        //Students st = new Students();
-        //st.name = Data.Name;
-        //st.datatype = Data.DataType;
-        //st.kind = Data.Kind;
-        //st.no = Data.no;
-        dbDapper.Update(Data);
-        
+        Students st = new Students();
+        st.name = Data.Name;
+        st.datatype = Data.DataType;
+        st.kind = Data.Kind;
+        st.no = Convert.ToInt32(Data.no);
+        dbDapper.Update(st);
+
+        if (Data.ExperienceList != null)
+        {
+          ssql = " delete studentd where studentno = '{0}' and type = '{1}' ";
+          ssql = string.Format(ssql, Data.no.ToString(), "exp");
+          dbDapper.Execute(ssql);
+          foreach (string item in Data.ExperienceList)
+          {
+            StudentD sd = new StudentD();
+            sd.studentno = Convert.ToInt32(Data.no);
+            sd.type = "exp";
+            sd.value = item;
+            dbDapper.Insert(sd);
+          }
+        }
+
+        if (Data.ResearchList != null)
+        {
+          ssql = " delete studentd where studentno = '{0}' and type = '{1}' ";
+          ssql = string.Format(ssql, Data.no.ToString(), "res");
+          dbDapper.Execute(ssql);
+          foreach (string item in Data.ResearchList)
+          {
+            StudentD sd = new StudentD();
+            sd.studentno = Convert.ToInt32(Data.no);
+            sd.type = "res";
+            sd.value = item;
+            dbDapper.Insert(sd);
+          }
+        }
+
+         
+
+
         joResult.Add("msg", "ok");
       }
       catch (Exception ex)
@@ -146,11 +179,29 @@ namespace DhoeMvc.Controllers
     }
 
 
+    public ActionResult getstudentresdata(string no)
+    {
+      ssql = " select value from studentd where type = 'res' and studentno = '{0}' ";
+      ssql = string.Format(ssql, no);
+      List<string> resList = dbDapper.Query<string>(ssql);      
+
+      return Content(JsonConvert.SerializeObject(resList), "application/json");
+    }
+
+    public ActionResult getstudentexpdata(string no)
+    {
+      ssql = " select value from studentd where type = 'exp' and studentno = '{0}' ";
+      ssql = string.Format(ssql, no);
+      List<string> resList = dbDapper.Query<string>(ssql);
+
+      return Content(JsonConvert.SerializeObject(resList), "application/json");
+    }
+
 
 
   }
 
 
 
-  
+
 }

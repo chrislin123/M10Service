@@ -11,8 +11,10 @@ namespace DhoeMvc.Models.DhoeManageModels
     public string Name { get; set; }
     public string DataType { get; set; }
     public string Kind { get; set; }
-    public List<StudentsExperience> ExperienceList { get; set; }
-    public List<StudentsResearch> ResearchList { get; set; }
+    public List<string> ExperienceList { get; set; }
+    public List<string> ResearchList { get; set; }
+    //public List<StudentsExperience> ExperienceList { get; set; }
+    //public List<StudentsResearch> ResearchList { get; set; }
   }
 
   public class StudentsExperience

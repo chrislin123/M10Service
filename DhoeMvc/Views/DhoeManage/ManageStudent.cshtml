@@ -42,7 +42,7 @@
       姓名：
       <input name="name" id="name" class="easyui-textbox" label="Name:" style="width:300px">
     </div>
-    <div style="margin-bottom:10px">
+    <div style="margin-bottom:10px">      
       經歷：<input id="editexp" class="easyui-textbox" label="Name:" style="width:300px">
       <table id="dgexp" class="easyui-datagrid" @*title="Row Editing in DataGrid"*@ style="width:500px;height:auto" fitColumns="true"
              data-options="iconCls: 'icon-edit' ,singleSelect: true,toolbar: '#tbexp',">
@@ -100,7 +100,6 @@
         url: '@Url.Action("getstudentdata", "DhoeManage")' + '?type=' + newValue,
       });
 
-
       $('#stateedit').combobox({
         valueField: 'value',
         textField: 'text',
@@ -111,18 +110,42 @@
     }
   });
 
+  function editClear() {
+    $("#dgres").datagrid("loadData", []);
+    $("#dgexp").datagrid("loadData", []);
+  }
+
   var url;
   var no;
   function newUser() {
     $('#dlg').dialog('open').dialog('center').dialog('setTitle', '新增');
     $('#fm').form('clear');
     url = '@Url.Action("ManageStudentAdd", "DhoeManage")';
+    editClear();
   }
   function editUser() {
     var row = $('#dg').datagrid('getSelected');
     if (row) {
+      editClear();
+      $('#fm').form('clear');
       $('#dlg').dialog('open').dialog('center').dialog('setTitle', '修改');
       $('#fm').form('load', row);
+
+      $.get('@Url.Action("getstudentresdata", "DhoeManage")', { no: row.no }, function (result) {
+        for (var i = 0; i < result.length; i++) {
+          $('#dgres').datagrid('appendRow', {
+            res: result[i],
+          });
+        }
+      });
+      
+      $.get('@Url.Action("getstudentexpdata", "DhoeManage")', { no: row.no }, function (result) {
+        for (var i = 0; i < result.length; i++) {
+          $('#dgexp').datagrid('appendRow', {
+            exp: result[i],
+          });
+        }
+      });
 
       $('#stateedit').combobox('setValue', row.kind);
       url = '@Url.Action("ManageStudentMod", "DhoeManage")';
@@ -131,13 +154,26 @@
   }
   function saveUser() {
     try {
-      //var row = $('#dg').datagrid('getSelected');
+      var exp = [];
+      var res = [];
+
+      var rowsexp = $("#dgexp").datagrid("getRows");
+      for(var i=0;i<rowsexp.length;i++){
+        exp.push(rowsexp[i].exp);
+      }
+
+      var rowsres = $("#dgres").datagrid("getRows");
+      for (var i = 0; i < rowsres.length; i++) {
+        res.push(rowsres[i].res);
+      }
 
       var Students = {
         Name: $('#name').val(),
         DataType: $('#state').combobox('getValue'),
         Kind: $('#stateedit').combobox('getValue'),
         no: no,
+        ExperienceList: exp,
+        ResearchList: res,
       };
 
       $.post(url, Students)
@@ -167,10 +203,6 @@
             } else {
 
               $.messager.alert("訊息 (error)", result.msg, "error");
-              //$.messager.show({    // show error message
-              //  title: 'Error',
-              //  msg: result.msg
-              //});
             }
           }, 'json');
         }
