@@ -34,7 +34,6 @@
       // 
       // timer1
       // 
-      this.timer1.Enabled = true;
       this.timer1.Interval = 1000;
       this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
       // 
@@ -45,6 +44,7 @@
       this.ClientSize = new System.Drawing.Size(284, 262);
       this.Name = "C10RoutineForm";
       this.Text = "C10Routine";
+      this.Load += new System.EventHandler(this.C10RoutineForm_Load);
       this.ResumeLayout(false);
 
     }

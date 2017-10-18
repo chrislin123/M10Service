@@ -10,10 +10,16 @@ using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 
+
 namespace M10.lib
 {
   public class StockHelper : M10BaseClass
   {
+    
+
+
+
+
     public static WebClient getNewWebClient()
     {
       var wc = new WebClient();

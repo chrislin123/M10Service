@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using M10.lib.model;
 using M10.lib;
+using System.Net.Http;
 
 namespace C10Routine
 {
@@ -45,10 +46,58 @@ namespace C10Routine
       finally {
         this.Close();
       }
-      
-      
-      
+    }
 
+
+    //public async Task getLocalIp()
+    //{
+    //  //抓取localip對應的station 
+    //  HttpClient client = new HttpClient();
+    //  HttpResponseMessage response = await client.GetAsync("http://his.cmuh.org.tw/WebApi/PatientInfo/QueryInpPatient/GetStationByIP");
+    //  response.EnsureSuccessStatusCode();
+    //  string responseBody = await response.Content.ReadAsStringAsync();
+    //  labStation.Text = "";
+    //  labStation.Text = responseBody.Replace(@"""", "");
+    //}
+
+    public async Task<string> getLocalIp()
+    {
+      //抓取localip對應的station 
+      HttpClient client = new HttpClient();
+      
+      HttpResponseMessage response = await client.GetAsync("http://140.116.38.211/C10Mvc/StockApi/getStockRealtime?stockcode=3313");
+      response.EnsureSuccessStatusCode();
+      string responseBody = await response.Content.ReadAsStringAsync();     
+
+      return responseBody;
+    }
+    
+
+    private async void C10RoutineForm_Load(object sender, EventArgs e)
+    {
+      string  intResult = await getLocalIp();
+      this.Text = intResult;
+      
+      //this.Text = task.Result;
+
+
+      //this.Text = task.Result;
+
+      //Task<string> task = Task.Factory.StartNew<string>(async () =>
+      //{
+      //  HttpClient client = new HttpClient();
+
+      //  HttpResponseMessage response = await client.GetAsync("");
+      //  response.EnsureSuccessStatusCode();
+      //  string responseBody = await response.Content.ReadAsStringAsync();
+
+      //  return responseBody });
+
+      //Task<string> task = Task.Run(async () => await getLocalIp());
+      //task.Wait();
+      //this.Text = task.Result;
+
+      //MessageBox.Show(task.Result);
     }
   }
 }

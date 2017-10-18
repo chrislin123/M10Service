@@ -263,14 +263,16 @@ namespace C10Mvc.Controllers
       DateTime dt = DateTime.Now;
       //dt = new DateTime(2017, 9, 1);
 
+      for (DateTime dtTemp = dt; dtTemp < dt.AddDays(-3); dtTemp = dtTemp.AddDays(-1))
+      {
+        #region tse-threeTrade
+        Stockhelper.GetStockThreeTradeTse(dtTemp);
+        #endregion
 
-      #region tse-threeTrade
-      Stockhelper.GetStockThreeTradeTse(dt);
-      #endregion
-
-      #region otc-threeTrade
-      Stockhelper.GetStockThreeTradeOtc(dt);
-      #endregion
+        #region otc-threeTrade
+        Stockhelper.GetStockThreeTradeOtc(dtTemp);
+        #endregion
+      }
 
       logger.Info("END DoStockThreeTrade()");
     }
@@ -302,14 +304,19 @@ namespace C10Mvc.Controllers
       logger.Info("START DoStockAfter()");
       DateTime dt = DateTime.Now;
       //dt = new DateTime(2017, 9, 1);
+      
+    
+      for (DateTime dtTemp = dt; dtTemp < dt.AddDays(-3); dtTemp = dtTemp.AddDays(-1))
+      {
+        #region tse-StockAfter
+        Stockhelper.GetStockAfterTse(dtTemp);
+        #endregion
 
-      #region tse-StockAfter
-      Stockhelper.GetStockAfterTse(dt);
-      #endregion
+        #region otc-StockAfter
+        Stockhelper.GetStockAfterOtc(dtTemp);
+        #endregion
+      }
 
-      #region otc-StockAfter
-      Stockhelper.GetStockAfterOtc(dt);
-      #endregion
 
       logger.Info("END DoStockAfter()");
     }
