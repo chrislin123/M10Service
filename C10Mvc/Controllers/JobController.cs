@@ -261,10 +261,11 @@ namespace C10Mvc.Controllers
       logger.Info("START DoStockThreeTrade()");
 
       DateTime dt = DateTime.Now;
-      //dt = new DateTime(2017, 9, 1);
 
-      for (DateTime dtTemp = dt; dtTemp < dt.AddDays(-3); dtTemp = dtTemp.AddDays(-1))
+      for (DateTime dtTemp = dt; dtTemp >= dt.AddDays(-3); dtTemp = dtTemp.AddDays(-1))
       {
+        logger.Info(string.Format("{0}=={1}", "DoStockThreeTrade()", Utils.getDatatimeString(dtTemp)));
+
         #region tse-threeTrade
         Stockhelper.GetStockThreeTradeTse(dtTemp);
         #endregion
@@ -303,11 +304,10 @@ namespace C10Mvc.Controllers
 
       logger.Info("START DoStockAfter()");
       DateTime dt = DateTime.Now;
-      //dt = new DateTime(2017, 9, 1);
       
-    
-      for (DateTime dtTemp = dt; dtTemp < dt.AddDays(-3); dtTemp = dtTemp.AddDays(-1))
+      for (DateTime dtTemp = dt; dtTemp >= dt.AddDays(-3); dtTemp = dtTemp.AddDays(-1))
       {
+        logger.Info(string.Format("{0}=={1}", "DoStockAfter()", Utils.getDatatimeString(dtTemp)));
         #region tse-StockAfter
         Stockhelper.GetStockAfterTse(dtTemp);
         #endregion
