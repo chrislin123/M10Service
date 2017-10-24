@@ -156,7 +156,7 @@ namespace C10Mvc.Controllers
           {
             string sCode = "";
             string sName = "";
-            string sStatus = "";
+            //string sStatus = "";
             HtmlNodeCollection tdnodes = node.SelectNodes("td");
 
             if (tdnodes.Count > 0)
@@ -175,7 +175,7 @@ namespace C10Mvc.Controllers
 
               if (StockInfoItem == null) //不存在新增
               {
-                sStatus = "新增";
+                //sStatus = "新增";
                 StockInfoItem = new StockInfo();
                 StockInfoItem.stockcode = sCode;
                 StockInfoItem.stockname = sName;
@@ -189,7 +189,7 @@ namespace C10Mvc.Controllers
               }
               else
               {
-                sStatus = "更新";
+                //sStatus = "更新";
                 StockInfoItem.type = sType;
                 StockInfoItem.updatetime = Utils.getDatatimeString();
                 StockInfoItem.updstatus = "Y";
