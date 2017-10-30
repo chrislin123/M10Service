@@ -161,6 +161,9 @@ namespace CL.Data
             return Provider.ConvertTSQL(cmd);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public DbDataAdapter DataAdapter
         {
             get

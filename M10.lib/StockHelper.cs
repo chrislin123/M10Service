@@ -720,7 +720,9 @@ namespace M10.lib
       sr.n = "";
       sr.c = "";
       sr.xx = "";
+      sr.a = "";
 
+      string sJson = "";
       try
       {
         string sUrl = "https://tw.quote.finance.yahoo.net/quote/q?type=tick&sym={0}";
@@ -738,6 +740,8 @@ namespace M10.lib
           sUrl = string.Format(sUrl, sStockcodeUrl);
           string text = wc.DownloadString(sUrl);
 
+          
+
           text = text.Replace("null(", "");
           text = text.Replace(");", "");
           text = text.Replace(",\"tick\":[]}", "");
@@ -748,6 +752,8 @@ namespace M10.lib
             text = text.Insert(text.IndexOf(",\"143\":") + 7, "\"").Insert(text.IndexOf(",\"143\":") + 14, "\"");
           }
 
+
+          sJson = text;
           JObject jobj = JObject.Parse(text);
 
           //Price
@@ -756,6 +762,9 @@ namespace M10.lib
           ////昨收
           if (jobj["129"] != null)
             sr.y = jobj["129"].ToString();
+          //成交量
+          if (jobj["404"] != null)
+            sr.a = jobj["404"].ToString();
           ////最高
           //if (jobj["mem"]["130"] != null)
           //  sr.u = jobj["mem"]["130"].ToString();
@@ -773,6 +782,9 @@ namespace M10.lib
           }
         }
 
+        //大盤不顯示量
+        if (stockcode == "0000") sr.a = "";
+
         //取得個股資訊
         ssql = " select * from StockInfo where stockcode = '{0}' ";
         StockInfo si = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, stockcode));
@@ -789,7 +801,7 @@ namespace M10.lib
       }
       catch (Exception ex)
       {
-        logger.Error(ex);
+        logger.Error(ex, sJson);
       }
 
       return sr;

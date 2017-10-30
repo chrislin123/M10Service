@@ -622,6 +622,11 @@ namespace M10.lib.model
     public string c { get; set; }
 
     /// <summary>
+    /// 成交量
+    /// </summary>
+    public string a { get; set; }
+
+    /// <summary>
     /// 代碼
     /// </summary>
     public  M10Const.StockRuntimeStatus status { get; set; }

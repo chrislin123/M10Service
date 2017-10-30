@@ -144,13 +144,14 @@ namespace M10Web
 
             DateTime dt = DateTime.Now;
 
-            string syyyy, sMM, sdd, shh, smm, sss;
-            syyyy = sDate.Substring(6, 4);
+      //string syyyy, sMM, sdd, shh, smm, sss;
+      string syyyy, sMM, sdd, shh;
+      syyyy = sDate.Substring(6, 4);
             sMM = sDate.Substring(0, 2);
             sdd = sDate.Substring(3, 2);
             shh = sTime;
-            smm = "0";
-            sss = "0";
+            //smm = "0";
+            //sss = "0";
 
             dt = new DateTime(Convert.ToInt32(syyyy), Convert.ToInt32(sMM), Convert.ToInt32(sdd), Convert.ToInt32(shh), 0, 0);
 
@@ -226,7 +227,7 @@ namespace M10Web
                     Response.Write("This file does not exist.");
                 }            
             }
-            catch (Exception ex)
+            catch /*(Exception ex)*/
             {   
                 throw;
             }
@@ -300,7 +301,7 @@ namespace M10Web
                     Response.Write("This file does not exist.");
                 }
             }
-            catch (Exception ex)
+            catch /*(Exception ex)*/
             {
                 throw;
             }
@@ -354,7 +355,7 @@ namespace M10Web
                     Response.Write("This file does not exist.");
                 }
             }
-            catch (Exception ex)
+            catch /*(Exception ex)*/
             {
                 throw;
             }

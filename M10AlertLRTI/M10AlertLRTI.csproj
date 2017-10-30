@@ -74,7 +74,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Dapper, Version=1.50.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Dapper.1.50.2\lib\net45\Dapper.dll</HintPath>
+      <HintPath>..\packages\Dapper.1.50.2\lib\net451\Dapper.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Dapper.Contrib, Version=1.50.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -162,10 +162,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CLDataAccessLayer\DAL.csproj">
-      <Project>{f4ca59ed-2026-4af8-a343-456399d87676}</Project>
-      <Name>DAL</Name>
-    </ProjectReference>
     <ProjectReference Include="..\M10.lib\M10.lib.csproj">
       <Project>{255ce420-3148-456c-8492-461027afe9f8}</Project>
       <Name>M10.lib</Name>

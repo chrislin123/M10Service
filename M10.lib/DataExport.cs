@@ -161,7 +161,7 @@ namespace M10.lib
           ResultsData.Clear();
         }
       }
-      catch (Exception ex)
+      catch
       {
 
         bSuccess = false;
@@ -189,7 +189,7 @@ namespace M10.lib
           }
         }
       }
-      catch (Exception ex)
+      catch /*(Exception ex)*/
       {
         bSuccess = false;
       }

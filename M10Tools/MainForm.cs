@@ -190,7 +190,7 @@ namespace M10Tools
 
       string sFilepath = @"d:\list.csv";
 
-      string sType = "";
+      //string sType = "";
 
       string sRootFolder = @"D:\google電影";
 
@@ -237,7 +237,7 @@ namespace M10Tools
 
       string MISTWSE = "mis.twse.com.tw";
       string host = "61.57.47.179";
-      string USER_AGENT = "curl/7.32.0";
+      //string USER_AGENT = "curl/7.32.0";
 
       Url = string.Format(Url, host, dd);
 
@@ -271,7 +271,7 @@ namespace M10Tools
       url4 = string.Format(url4, host);
       hwc.Headers.Add("Host", host);
       hwc.Headers.Add("Referer", url4);
-      string bbbb = "";
+      //string bbbb = "";
 
       HttpClient hc = new HttpClient();
 
@@ -354,7 +354,7 @@ namespace M10Tools
       int idx = 0;
       foreach (HtmlNode node in tdnodes)
       {
-        string sCode = "";
+        //string sCode = "";
 
 
         //成交價
@@ -745,7 +745,7 @@ namespace M10Tools
         //  sr.c = si.stockcode;
         //}
       }
-      catch (Exception ex)
+      catch 
       {
         //logger.Error(ex);
         //throw ex;

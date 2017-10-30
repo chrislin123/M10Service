@@ -60,16 +60,16 @@ namespace M10Web
         {
             btnQuery_Click(sender, new EventArgs());
             return;
-            ssql = @"   select * from StationData 
-                        where COUNTY = '" + ddlCOUNTY.SelectedValue + @"'
-                        order by TOWN
-                    ";
-            oDal.CommandText = ssql;
+            //ssql = @"   select * from StationData 
+            //            where COUNTY = '" + ddlCOUNTY.SelectedValue + @"'
+            //            order by TOWN
+            //        ";
+            //oDal.CommandText = ssql;
 
-            foreach (DataRow dr in oDal.DataTable().Rows)
-            {
-                //ddlStation.Items.Add(new ListItem(dr["TOWN"].ToString() + dr["STNAME"].ToString(), dr["STID"].ToString()));
-            }
+            //foreach (DataRow dr in oDal.DataTable().Rows)
+            //{
+            //    //ddlStation.Items.Add(new ListItem(dr["TOWN"].ToString() + dr["STNAME"].ToString(), dr["STID"].ToString()));
+            //}
         }
 
         protected void btnQuery_Click(object sender, EventArgs e)

@@ -453,7 +453,7 @@ namespace M10CalRtiDetail
                 double dPASb = 0;
 
 
-                bool bCopy = false;
+                //bool bCopy = false;
                 foreach (DataRow dr in dt_rti.Rows)
                 {
                     //暫存前一筆

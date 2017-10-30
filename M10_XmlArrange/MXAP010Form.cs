@@ -112,7 +112,7 @@ namespace M10_XmlArrange
           }
         }
       }
-      catch (Exception ex)
+      catch /*(Exception ex)*/
       {
 
         

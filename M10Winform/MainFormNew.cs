@@ -46,7 +46,7 @@ namespace M10Winform
         if (!Directory.Exists(folderName)) Directory.CreateDirectory(folderName);
         if (!Directory.Exists(folderError)) Directory.CreateDirectory(folderError);
       }
-      catch (Exception ex)
+      catch 
       {
 
       }
@@ -110,7 +110,7 @@ namespace M10Winform
         }
 
       }
-      catch (Exception ex)
+      catch
       {
         
       }
@@ -276,7 +276,7 @@ namespace M10Winform
         foreach (DataRow dr in dt.Rows)
         {
           string sLRTI = "0";
-          string sWLRTI = "0";
+          //string sWLRTI = "0";
 
           sLRTI = CalLRTI(dr);
           dr["LRTI"] = sLRTI;
@@ -463,7 +463,7 @@ namespace M10Winform
 
         sResult = dResult.ToString();
       }
-      catch (Exception ex)
+      catch 
       {
 
       }
@@ -590,9 +590,9 @@ namespace M10Winform
         
       }
 
-      return;
+      
 
-
+      
 
 
       string sSTID = "01U8801";
@@ -627,8 +627,6 @@ namespace M10Winform
       {
         double.TryParse(oRainTemp3.ToString(), out dRain3);
       }
-
-      return;
 
 
       //測試帳號密碼

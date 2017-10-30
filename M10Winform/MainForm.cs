@@ -19,7 +19,7 @@ namespace M10Winform
 {
   public partial class MainForm : Form
   {
-    private Timer MyTimer;
+    //private Timer MyTimer;
     string ssql = string.Empty;
     string folderName = @"D:\m10\temp\";
     string folderBack = @"D:\m10\back\";
@@ -155,37 +155,37 @@ namespace M10Winform
         return;
 
         // 取得資料夾內所有檔案
-        foreach (string fname in System.IO.Directory.GetFiles(folderName))
-        {
-          //ShowMessageToFront("轉檔啟動");
-          //轉檔到DB
-          TransToDB(fname);
-          //ShowMessageToFront("轉檔完畢");
+        //foreach (string fname in System.IO.Directory.GetFiles(folderName))
+        //{
+        //  //ShowMessageToFront("轉檔啟動");
+        //  //轉檔到DB
+        //  TransToDB(fname);
+        //  //ShowMessageToFront("轉檔完畢");
 
 
           
-          FileInfo fi = new FileInfo(fname);
+        //  FileInfo fi = new FileInfo(fname);
 
-          //記錄轉檔資料
-          FileTransLog(fi.Name);
+        //  //記錄轉檔資料
+        //  FileTransLog(fi.Name);
 
-          //存至備份資料夾
-          fi.CopyTo(folderBack + fi.Name, true);
-          fi.Delete();
+        //  //存至備份資料夾
+        //  fi.CopyTo(folderBack + fi.Name, true);
+        //  fi.Delete();
 
-          //if (File.Exists(fname))
-          //{
-          //  if (File.Exists(folderBack + fi.Name))
-          //  {
-          //    fi.Delete();
-          //  }
-          //  else
-          //  {
-          //    fi.MoveTo(folderBack + fi.Name);
-          //  }
-          //}
+        //  //if (File.Exists(fname))
+        //  //{
+        //  //  if (File.Exists(folderBack + fi.Name))
+        //  //  {
+        //  //    fi.Delete();
+        //  //  }
+        //  //  else
+        //  //  {
+        //  //    fi.MoveTo(folderBack + fi.Name);
+        //  //  }
+        //  //}
 
-        }
+        //}
 
       }
       catch (Exception ex)
@@ -477,7 +477,7 @@ namespace M10Winform
         foreach (DataRow dr in dt.Rows)
         {
           string sLRTI = "0";
-          string sWLRTI = "0";
+          //string sWLRTI = "0";
 
           sLRTI = CalLRTI(dr);
           dr["LRTI"] = sLRTI;
@@ -942,7 +942,7 @@ namespace M10Winform
 
         sResult = dResult.ToString();
       }
-      catch (Exception ex)
+      catch 
       {
 
       }
@@ -1142,100 +1142,100 @@ namespace M10Winform
 
       return;
 
-      ftp ftpClient;
-      try
-      {
-        ShowMessageToFront("Ftp連線");
-        /* Create Object Instance */
-        ftpClient = new ftp(@"ftp://" + sIP + "/", sUser, sPassword);
+      //ftp ftpClient;
+      //try
+      //{
+      //  ShowMessageToFront("Ftp連線");
+      //  /* Create Object Instance */
+      //  ftpClient = new ftp(@"ftp://" + sIP + "/", sUser, sPassword);
 
-        /* Upload a File */
-        //ftpClient.upload("test/test.txt", @"C:\test.txt");
-
-
-        /* Download a File */
-        //ftpClient.download("test/test.txt", @"d:\test111.txt");
-
-        /* Delete a File */
-        //ftpClient.delete("etc/test.txt");
-
-        /* Rename a File */
-        ftpClient.rename("14_FCU_raindata/M10/2015_09_17_04_20.xml", "bak/2015_09_17_04_20.xml");
-
-        /* Create a New Directory */
-        //ftpClient.createDirectory("etc/test");
-
-        /* Get the Date/Time a File was Created */
-        //string fileDateTime = ftpClient.getFileCreatedDateTime("14_FCU_raindata/M10/2015_08_31_12_30.xml");
+      //  /* Upload a File */
+      //  //ftpClient.upload("test/test.txt", @"C:\test.txt");
 
 
-        /* Get the Size of a File */
-        //string fileSize = ftpClient.getFileSize("14_FCU_raindata/M10/2015_08_31_12_30.xml");
+      //  /* Download a File */
+      //  //ftpClient.download("test/test.txt", @"d:\test111.txt");
 
-        return;
+      //  /* Delete a File */
+      //  //ftpClient.delete("etc/test.txt");
 
+      //  /* Rename a File */
+      //  ftpClient.rename("14_FCU_raindata/M10/2015_09_17_04_20.xml", "bak/2015_09_17_04_20.xml");
 
-        ShowMessageToFront("Ftp取得清單");
-        /* Get Contents of a Directory (Names Only) */
-        //string[] simpleDirectoryListing = ftpClient.directoryListSimple("14_FCU_raindata/M10");
-        //for (int i = 0; i < simpleDirectoryListing.Count(); i++) { Console.WriteLine(simpleDirectoryListing[i]); }
+      //  /* Create a New Directory */
+      //  //ftpClient.createDirectory("etc/test");
 
-        /* Get Contents of a Directory with Detailed File/Directory Info */
-        string[] detailDirectoryListing = ftpClient.directoryListDetailed("14_FCU_raindata/M10");
-        //for (int i = 0; i < detailDirectoryListing.Count(); i++) { Console.WriteLine(detailDirectoryListing[i]); }
-
-
-        //取得檔案名稱清單
-        List<string> lstFileName = new List<string>();        
-
-        foreach (string sFullName in detailDirectoryListing)
-        {
-
-          if (sFullName != "")
-          {
-            //字串空白
-            string[] sary = sFullName.Split(' ');
-
-            string sFileName = sary[sary.Length - 1];
-            lstFileName.Add(sFileName);
-          }
-        }
+      //  /* Get the Date/Time a File was Created */
+      //  //string fileDateTime = ftpClient.getFileCreatedDateTime("14_FCU_raindata/M10/2015_08_31_12_30.xml");
 
 
-        //移動FTP檔案到FTP的備份區
-        //foreach (string sFileName in lstFileName)
-        //{
-        //    //移動兩天前的資料
-        //    DateTime dtRunTimeRainData = DateTime.Now.AddDays(-2);
+      //  /* Get the Size of a File */
+      //  //string fileSize = ftpClient.getFileSize("14_FCU_raindata/M10/2015_08_31_12_30.xml");
 
-        //    IFormatProvider yyyymmddFormat = new CultureInfo(String.Empty, false);
-        //    string f = "yyyy_MM_dd_HH_mm";
+      //  return;
 
 
+      //  ShowMessageToFront("Ftp取得清單");
+      //  /* Get Contents of a Directory (Names Only) */
+      //  //string[] simpleDirectoryListing = ftpClient.directoryListSimple("14_FCU_raindata/M10");
+      //  //for (int i = 0; i < simpleDirectoryListing.Count(); i++) { Console.WriteLine(simpleDirectoryListing[i]); }
 
-        //    //dtRTime = Convert.ToDateTime(sFileName.Split('.')[0]);
-
-        //    DateTime dtRTime = DateTime.ParseExact(sFileName.Split('.')[0], f, yyyymmddFormat);
-
-
-        //    if (DateTime.Compare(dtRTime, dtRunTimeRainData) <= 0)
-        //    {
-        //        ftpClient.rename("14_FCU_raindata/M10/" + sFileName, "//14_FCU_raindata/M10/bak/" + sFileName);
-        //        ftpClient.getFileSize("14_FCU_raindata/M10/" + sFileName);
+      //  /* Get Contents of a Directory with Detailed File/Directory Info */
+      //  string[] detailDirectoryListing = ftpClient.directoryListDetailed("14_FCU_raindata/M10");
+      //  //for (int i = 0; i < detailDirectoryListing.Count(); i++) { Console.WriteLine(detailDirectoryListing[i]); }
 
 
-        //        ftpClient.Move("14_FCU_raindata/M10/" + sFileName, "//14_FCU_raindata/M10/bak/" + sFileName);
-        //        //移動檔案
-        //        //bUpdateRuntim = true;
-        //    }                    
-        //}
+      //  //取得檔案名稱清單
+      //  List<string> lstFileName = new List<string>();        
 
-      }
-      catch (Exception ex)
-      {
-        ShowMessageToFront(ex.ToString());
+      //  foreach (string sFullName in detailDirectoryListing)
+      //  {
 
-      }
+      //    if (sFullName != "")
+      //    {
+      //      //字串空白
+      //      string[] sary = sFullName.Split(' ');
+
+      //      string sFileName = sary[sary.Length - 1];
+      //      lstFileName.Add(sFileName);
+      //    }
+      //  }
+
+
+      //  //移動FTP檔案到FTP的備份區
+      //  //foreach (string sFileName in lstFileName)
+      //  //{
+      //  //    //移動兩天前的資料
+      //  //    DateTime dtRunTimeRainData = DateTime.Now.AddDays(-2);
+
+      //  //    IFormatProvider yyyymmddFormat = new CultureInfo(String.Empty, false);
+      //  //    string f = "yyyy_MM_dd_HH_mm";
+
+
+
+      //  //    //dtRTime = Convert.ToDateTime(sFileName.Split('.')[0]);
+
+      //  //    DateTime dtRTime = DateTime.ParseExact(sFileName.Split('.')[0], f, yyyymmddFormat);
+
+
+      //  //    if (DateTime.Compare(dtRTime, dtRunTimeRainData) <= 0)
+      //  //    {
+      //  //        ftpClient.rename("14_FCU_raindata/M10/" + sFileName, "//14_FCU_raindata/M10/bak/" + sFileName);
+      //  //        ftpClient.getFileSize("14_FCU_raindata/M10/" + sFileName);
+
+
+      //  //        ftpClient.Move("14_FCU_raindata/M10/" + sFileName, "//14_FCU_raindata/M10/bak/" + sFileName);
+      //  //        //移動檔案
+      //  //        //bUpdateRuntim = true;
+      //  //    }                    
+      //  //}
+
+      //}
+      //catch (Exception ex)
+      //{
+      //  ShowMessageToFront(ex.ToString());
+
+      //}
     }
 
 
