@@ -323,7 +323,7 @@ namespace M10.lib
           wc.Encoding = Encoding.GetEncoding(950);
           string text = wc.DownloadString(sUrl);
 
-
+          
           List<string> StringList = text.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<string>();
 
           foreach (string LoopItem in StringList)
@@ -932,7 +932,176 @@ namespace M10.lib
       stream.Position = 0;
       return stream;
     }
-    
+
+
+
+    protected void AppendParameter(StringBuilder sb, string name, string value)
+    {
+      string encodedValue = System.Web.HttpUtility.UrlEncode(value);
+      sb.AppendFormat("{0}={1}&", name, encodedValue);
+    }
+
+    /// <summary>
+    /// 券商買賣證券日報表查詢系統
+    /// </summary>
+    /// <returns></returns>
+    public bool GetStockBrokerBS()
+    {
+      try
+      {
+
+        string surl1 = "http://www.tpex.org.tw/web/stock/aftertrading/broker_trading/brokerBS.php?l=zh-tw";
+
+
+        HtmlDocument doc1 = new HtmlDocument();
+
+
+        //[{"key":"stk_code","value":"6180","description":""}]
+
+        StringBuilder sb = new StringBuilder();
+        AppendParameter(sb, "stk_code", "6180");
+        AppendParameter(sb, "topage", "1");
+
+        byte[] byteArray = Encoding.UTF8.GetBytes(sb.ToString());
+
+        //string url = "http://example.com/"; //or: check where the form goes
+
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(surl1);
+        request.Method = "POST";
+        request.ContentType = "application/x-www-form-urlencoded";
+        //request.Credentials = CredentialCache.DefaultNetworkCredentials; // ??
+
+        using (Stream requestStream = request.GetRequestStream())
+        {
+          requestStream.Write(byteArray, 0, byteArray.Length);
+        }
+
+        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+
+        HtmlDocument doc2 = new HtmlDocument();
+        doc2.Load(response.GetResponseStream(),Encoding.Default);
+
+
+
+        using (var reader = new System.IO.StreamReader(response.GetResponseStream()))
+        {
+          string responseText = reader.ReadToEnd();
+
+          
+        }
+
+
+       
+
+
+        return true;
+
+
+
+        List<string> TypeList = new List<string>();
+        TypeList.Add(M10Const.StockType.tse);
+        TypeList.Add(M10Const.StockType.otc);
+
+        foreach (string sType in TypeList)
+        {
+          string surl = "";
+
+          if (sType == M10Const.StockType.tse) surl = M10Const.StockInfoTse;
+          if (sType == M10Const.StockType.otc) surl = M10Const.StockInfoOtc;
+
+          HtmlWeb webClient = new HtmlWeb();
+          
+          //網頁特殊編碼
+          webClient.OverrideEncoding = Encoding.GetEncoding(950);
+
+          // 載入網頁資料 
+          HtmlDocument doc = webClient.Load(surl);
+
+          // 裝載查詢結果 
+          HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//table[2]/tr");
+
+          if (nodes.Count > 0)
+          {
+            ssql = " update stockinfo set updstatus = 'N' where type = '{0}'  ";
+            dbDapper.Execute(string.Format(ssql, sType));
+          }
+
+          foreach (HtmlNode node in nodes)
+          {
+            string sCode = "";
+            string sName = "";
+
+            HtmlNodeCollection tdnodes = node.SelectNodes("td");
+
+            if (tdnodes.Count > 0)
+            {
+              HtmlNode tdnode = tdnodes[0];
+              string[] StockInfoSplit = tdnode.InnerText.Split('　');
+
+              if (StockInfoSplit.Length != 2) continue;
+
+              sCode = StockInfoSplit[0];
+              sName = StockInfoSplit[1];
+
+              //判斷代碼存在則更新，不存在新增
+              ssql = " select * from stockinfo where stockcode = '{0}' ";
+              StockInfo StockInfoItem = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, sCode));
+
+              if (StockInfoItem == null) //不存在新增
+              {
+                StockInfoItem = new StockInfo();
+                StockInfoItem.stockcode = sCode;
+                StockInfoItem.stockname = sName;
+                StockInfoItem.type = sType;
+                StockInfoItem.updatetime = Utils.getDatatimeString();
+                StockInfoItem.updstatus = "Y";
+                StockInfoItem.status = "Y";
+
+                dbDapper.Insert(StockInfoItem);
+              }
+              else
+              {
+                StockInfoItem.type = sType;
+                StockInfoItem.updatetime = Utils.getDatatimeString();
+                StockInfoItem.updstatus = "Y";
+                StockInfoItem.status = "Y";
+
+                dbDapper.Update(StockInfoItem);
+              }
+            }
+
+          }
+
+          ssql = "update stockinfo set status = 'N' where updstatus = 'N' ";
+          dbDapper.Execute(ssql);
+
+
+          StockLog sl = new StockLog();
+          sl.logdate = Utils.getDateString(DateTime.Now, M10Const.DateStringType.ADT1);
+          sl.logdatetime = Utils.getDatatimeString();
+          sl.logstatus = M10Const.StockLogStatus.s200;
+          sl.memo = "";
+          if (sType == M10Const.StockType.tse)
+          {
+            sl.logtype = M10Const.StockLogType.StockInfoTse;
+          }
+          if (sType == M10Const.StockType.otc)
+          {
+            sl.logtype = M10Const.StockLogType.StockInfoOtc;
+          }
+          dbDapper.Insert(sl);
+
+        }
+      }
+      catch (Exception ex)
+      {
+        logger.Error(ex);
+        return false;
+      }
+
+      return true;
+    }
 
   }
 }
