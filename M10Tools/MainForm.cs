@@ -1086,6 +1086,9 @@ namespace M10Tools
 
     private void button10_Click(object sender, EventArgs e)
     {
+
+      
+
       Stockhelper.GetStockBrokerBS();
     }
   }

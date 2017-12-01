@@ -941,6 +941,8 @@ namespace M10.lib
       sb.AppendFormat("{0}={1}&", name, encodedValue);
     }
 
+    
+
     /// <summary>
     /// 券商買賣證券日報表查詢系統
     /// </summary>
@@ -950,149 +952,179 @@ namespace M10.lib
       try
       {
 
-        string surl1 = "http://www.tpex.org.tw/web/stock/aftertrading/broker_trading/brokerBS.php?l=zh-tw";
+        //取得上櫃所有的股票代號
+        ssql = " select * from stockinfo where type = 'otc' and status = 'Y' and len(stockcode ) = 4 ";
+        List<StockInfo> StockInfoList = dbDapper.Query<StockInfo>(ssql);
 
-
-        HtmlDocument doc1 = new HtmlDocument();
-
-
-        //[{"key":"stk_code","value":"6180","description":""}]
-
-        StringBuilder sb = new StringBuilder();
-        AppendParameter(sb, "stk_code", "6180");
-        AppendParameter(sb, "topage", "1");
-
-        byte[] byteArray = Encoding.UTF8.GetBytes(sb.ToString());
-
-        //string url = "http://example.com/"; //or: check where the form goes
-
-        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(surl1);
-        request.Method = "POST";
-        request.ContentType = "application/x-www-form-urlencoded";
-        //request.Credentials = CredentialCache.DefaultNetworkCredentials; // ??
-
-        using (Stream requestStream = request.GetRequestStream())
+        foreach (StockInfo si in StockInfoList)
         {
-          requestStream.Write(byteArray, 0, byteArray.Length);
-        }
+          string sStockCode = si.stockcode;
 
-        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+          List<string> PageList = new List<string>();
+          string sUrl = "http://www.tpex.org.tw/web/stock/aftertrading/broker_trading/brokerBS.php?l=zh-tw";
 
+          StringBuilder sbPostData = new StringBuilder();
+          AppendParameter(sbPostData, "stk_code", sStockCode);
+          AppendParameter(sbPostData, "topage", "1");
 
-        HtmlDocument doc2 = new HtmlDocument();
-        doc2.Load(response.GetResponseStream(),Encoding.Default);
+          byte[] byteArray = Encoding.UTF8.GetBytes(sbPostData.ToString());
 
+          HttpWebRequest request = (HttpWebRequest)WebRequest.Create(sUrl);
+          request.Proxy = null;
+          request.Method = "POST";
+          request.ContentType = "application/x-www-form-urlencoded";
 
-
-        using (var reader = new System.IO.StreamReader(response.GetResponseStream()))
-        {
-          string responseText = reader.ReadToEnd();
-
-          
-        }
-
-
-       
-
-
-        return true;
-
-
-
-        List<string> TypeList = new List<string>();
-        TypeList.Add(M10Const.StockType.tse);
-        TypeList.Add(M10Const.StockType.otc);
-
-        foreach (string sType in TypeList)
-        {
-          string surl = "";
-
-          if (sType == M10Const.StockType.tse) surl = M10Const.StockInfoTse;
-          if (sType == M10Const.StockType.otc) surl = M10Const.StockInfoOtc;
-
-          HtmlWeb webClient = new HtmlWeb();
-          
-          //網頁特殊編碼
-          webClient.OverrideEncoding = Encoding.GetEncoding(950);
-
-          // 載入網頁資料 
-          HtmlDocument doc = webClient.Load(surl);
-
-          // 裝載查詢結果 
-          HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//table[2]/tr");
-
-          if (nodes.Count > 0)
+          // 寫入 Post Body Message 資料流
+          using (Stream requestStream = request.GetRequestStream())
           {
-            ssql = " update stockinfo set updstatus = 'N' where type = '{0}'  ";
-            dbDapper.Execute(string.Format(ssql, sType));
+            requestStream.Write(byteArray, 0, byteArray.Length);
           }
 
-          foreach (HtmlNode node in nodes)
+          using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
           {
-            string sCode = "";
-            string sName = "";
+            HtmlDocument HtmlDoc = new HtmlDocument();
+            HtmlDoc.Load(response.GetResponseStream(), Encoding.UTF8);
+            HtmlNodeCollection nodes1 = HtmlDoc.DocumentNode.SelectNodes("//form[@name='brokerBS2']");
 
-            HtmlNodeCollection tdnodes = node.SelectNodes("td");
-
-            if (tdnodes.Count > 0)
+            foreach (HtmlNode node in nodes1)
             {
-              HtmlNode tdnode = tdnodes[0];
-              string[] StockInfoSplit = tdnode.InnerText.Split('　');
+              //取得共有幾頁
+              HtmlNodeCollection tdnodes = node.SelectNodes("a");
 
-              if (StockInfoSplit.Length != 2) continue;
-
-              sCode = StockInfoSplit[0];
-              sName = StockInfoSplit[1];
-
-              //判斷代碼存在則更新，不存在新增
-              ssql = " select * from stockinfo where stockcode = '{0}' ";
-              StockInfo StockInfoItem = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, sCode));
-
-              if (StockInfoItem == null) //不存在新增
+              foreach (HtmlNode item in tdnodes)
               {
-                StockInfoItem = new StockInfo();
-                StockInfoItem.stockcode = sCode;
-                StockInfoItem.stockname = sName;
-                StockInfoItem.type = sType;
-                StockInfoItem.updatetime = Utils.getDatatimeString();
-                StockInfoItem.updstatus = "Y";
-                StockInfoItem.status = "Y";
-
-                dbDapper.Insert(StockInfoItem);
-              }
-              else
-              {
-                StockInfoItem.type = sType;
-                StockInfoItem.updatetime = Utils.getDatatimeString();
-                StockInfoItem.updstatus = "Y";
-                StockInfoItem.status = "Y";
-
-                dbDapper.Update(StockInfoItem);
+                PageList.Add(item.InnerText);
               }
             }
-
           }
 
-          ssql = "update stockinfo set status = 'N' where updstatus = 'N' ";
-          dbDapper.Execute(ssql);
-
-
-          StockLog sl = new StockLog();
-          sl.logdate = Utils.getDateString(DateTime.Now, M10Const.DateStringType.ADT1);
-          sl.logdatetime = Utils.getDatatimeString();
-          sl.logstatus = M10Const.StockLogStatus.s200;
-          sl.memo = "";
-          if (sType == M10Const.StockType.tse)
+          //每個分頁進行資料取得
+          foreach (string sPage in PageList)
           {
-            sl.logtype = M10Const.StockLogType.StockInfoTse;
-          }
-          if (sType == M10Const.StockType.otc)
-          {
-            sl.logtype = M10Const.StockLogType.StockInfoOtc;
-          }
-          dbDapper.Insert(sl);
+            sbPostData.Clear();
+            AppendParameter(sbPostData, "stk_code", sStockCode);
+            AppendParameter(sbPostData, "topage", sPage);
 
+            byteArray = Encoding.UTF8.GetBytes(sbPostData.ToString());
+
+            request = (HttpWebRequest)WebRequest.Create(sUrl);
+            request.Proxy = null;
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+
+            // 寫入 Post Body Message 資料流
+            using (Stream requestStream = request.GetRequestStream())
+            {
+              requestStream.Write(byteArray, 0, byteArray.Length);
+            }
+
+            using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+            {
+              HtmlDocument HtmlDoc = new HtmlDocument();
+              HtmlDoc.Load(response.GetResponseStream(), Encoding.UTF8);
+              HtmlNodeCollection MainTableNodes = HtmlDoc.DocumentNode.SelectNodes("//table[@id='data_01']");
+
+              if (MainTableNodes == null) continue;
+
+              //取得共有幾頁
+              HtmlNodeCollection SubTableNodes = MainTableNodes[0].SelectNodes("//table");
+
+              foreach (HtmlNode SubTableNode in SubTableNodes)
+              {
+                if (SubTableNode.Id == "data_01") continue;
+
+                DateTime dtTread = DateTime.Now;
+                HtmlNodeCollection TrNodes = SubTableNode.SelectNodes("tr");
+
+                foreach (HtmlNode TrNode in TrNodes)
+                {
+                  HtmlNodeCollection TdNodes = TrNode.SelectNodes("td");
+
+                  //取得日期
+                  if (TdNodes.Count == 4)
+                  {
+                    string sTreadDate = TdNodes[1].InnerText;
+                    sTreadDate = sTreadDate.Replace("年", "").Replace("月", "").Replace("日", "");
+                    dtTread = new DateTime(int.Parse(sTreadDate.Substring(0, 3)) + 1911, int.Parse(sTreadDate.Substring(3, 2)), int.Parse(sTreadDate.Substring(5, 2)));
+                  }
+
+                  if (TdNodes.Count != 5) continue;
+
+                  if (TdNodes[1].InnerText == "券商") continue;
+
+                  string sVoucher = TdNodes[1].InnerText;
+                  string sVoucherCode = "";
+                  string sVoucherName = "";
+                  string[] aVoucher = sVoucher.Split(new string[] { "&nbsp;" }, StringSplitOptions.None);
+                  if (aVoucher.Length == 2)
+                  {
+                    sVoucherCode = aVoucher[0];
+                    sVoucherName = aVoucher[1];
+
+                    //判斷Voucher資料是否存在，如不存在則新增一筆
+                    ssql = " select * from stockvoucher where vouchercode = '{0}' ";
+                    StockVoucher oStockVoucher = dbDapper.QuerySingleOrDefault<StockVoucher>(string.Format(ssql, sVoucherCode));
+
+                    if (oStockVoucher == null)
+                    {
+                      //新增
+                      oStockVoucher = new StockVoucher();
+                      oStockVoucher.vouchercode = sVoucherCode;
+                      oStockVoucher.vouchername = sVoucherName;
+                      oStockVoucher.updatetime = Utils.getDatatimeString();
+                      dbDapper.Insert(oStockVoucher);
+                    }
+                    else
+                    {
+                      //名稱不一樣進行更新
+                      if (oStockVoucher.vouchername != sVoucherName)
+                      {
+                        oStockVoucher.vouchername = sVoucherName;
+                        dbDapper.Update(oStockVoucher);
+                      }
+                    }
+                  }
+
+                  if (aVoucher.Length == 1)
+                  {
+                    sVoucherCode = aVoucher[0];
+                  }
+
+                  //判斷資料是否存在，
+                  ssql = " select * from StockBrokerBS where stockcode = '{0}' and stockdate = '{1}' and bsno = '{2}' ";
+                  StockBrokerBS oStockBrokerBS = dbDapper.QuerySingleOrDefault<StockBrokerBS>(string.Format(ssql
+                    , sStockCode, Utils.getDateString(dtTread, M10Const.DateStringType.ADT1)
+                    , TdNodes[0].InnerText));
+
+                  if (oStockBrokerBS == null)
+                  {
+                    oStockBrokerBS = new StockBrokerBS();
+                    oStockBrokerBS.stockcode = sStockCode;
+                    oStockBrokerBS.stockdate = Utils.getDateString(dtTread, M10Const.DateStringType.ADT1);
+                    oStockBrokerBS.vouchercode = sVoucherCode;
+                    oStockBrokerBS.bsno = TdNodes[0].InnerText;
+                    oStockBrokerBS.bsprice = Convert.ToDecimal(TdNodes[2].InnerText);
+                    oStockBrokerBS.bvol = int.Parse(TdNodes[3].InnerText.Replace(",", ""));
+                    oStockBrokerBS.svol = int.Parse(TdNodes[4].InnerText.Replace(",", ""));
+                    oStockBrokerBS.updatetime = Utils.getDatatimeString();
+                    dbDapper.Insert(oStockBrokerBS);
+                  }
+                  else
+                  {
+                    oStockBrokerBS.vouchercode = sVoucherCode;
+                    oStockBrokerBS.bsprice = Convert.ToDecimal(TdNodes[2].InnerText);
+                    oStockBrokerBS.bvol = int.Parse(TdNodes[3].InnerText.Replace(",", ""));
+                    oStockBrokerBS.svol = int.Parse(TdNodes[4].InnerText.Replace(",", ""));
+                    oStockBrokerBS.updatetime = Utils.getDatatimeString();
+                    dbDapper.Update(oStockBrokerBS);
+                  }
+                }
+              }
+
+            }
+          }
         }
+
       }
       catch (Exception ex)
       {

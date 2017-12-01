@@ -733,5 +733,49 @@ namespace M10.lib.model
 
   }
 
+  [Table("StockBrokerBS")]
+  public class StockBrokerBS
+  {
+    //設定key
+    [Key]
+    public int no { get; set; }
+
+    public string stockcode { get; set; }
+
+    public string stockdate { get; set; }
+
+    public string stocktype { get; set; }
+
+    public string bsno { get; set; }
+
+    public string vouchercode { get; set; }
+
+    public decimal? bsprice { get; set; }
+
+    public long? bvol { get; set; }
+
+    public long? svol { get; set; }
+
+    public string updatetime { get; set; }
+
+  }
+
+  [Table("StockVoucher")]
+  public class StockVoucher
+  {
+    //設定key
+    [Key]
+    public int no { get; set; }
+
+    public string vouchercode { get; set; }
+
+    public string vouchername { get; set; }
+
+    public string datatype { get; set; }
+
+    public string updatetime { get; set; }
+
+  }
+
 
 }

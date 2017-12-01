@@ -335,5 +335,51 @@ namespace C10Mvc.Controllers
     }
   }
 
+  /// <summary>
+  /// 
+  /// </summary>
+  //一次只執行一個體
+  [DisallowConcurrentExecutionAttribute]
+  public class StockBrokerBSTask : BaseJob, IJob
+  {
+    public void DoStockBrokerBS()
+    {
+
+      logger.Info("START DoStockBrokerBS()");
+
+      Stockhelper.GetStockBrokerBS();
+      //DateTime dt = DateTime.Now;
+
+      //for (DateTime dtTemp = dt; dtTemp >= dt.AddDays(-3); dtTemp = dtTemp.AddDays(-1))
+      //{
+      //  logger.Info(string.Format("{0}=={1}", "DoStockAfter()", Utils.getDatatimeString(dtTemp)));
+      //  #region tse-StockAfter
+      //  Stockhelper.GetStockAfterTse(dtTemp);
+      //  #endregion
+
+      //  #region otc-StockAfter
+      //  Stockhelper.GetStockAfterOtc(dtTemp);
+      //  #endregion
+      //}
+
+
+      logger.Info("END DoStockBrokerBS()");
+    }
+
+
+    public void Execute(IJobExecutionContext context)
+    {
+      try
+      {
+        DoStockBrokerBS();
+      }
+      catch (Exception ex)
+      {
+        logger.Log(NLog.LogLevel.Error, ex.Message);
+      }
+    }
+  }
+
+
 
 }
