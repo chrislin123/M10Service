@@ -951,6 +951,7 @@ namespace M10.lib
     {
       try
       {
+        DateTime dtTread = DateTime.MinValue;
 
         //取得上櫃所有的股票代號
         ssql = " select * from stockinfo where type = 'otc' and status = 'Y' and len(stockcode ) = 4 ";
@@ -959,6 +960,23 @@ namespace M10.lib
         foreach (StockInfo si in StockInfoList)
         {
           string sStockCode = si.stockcode;
+
+          
+
+          //未取交易日期，則取得目前提供資料的交易日期
+          if (dtTread == DateTime.MinValue)
+          {
+            dtTread = getStockBrokerBSNow(sStockCode);
+          }
+
+          //判斷是否已經轉檔成功
+          ssql = " select * from stocklog where logtype = '{0}' and logdate = '{1}' and  memo = '{2}'  ";
+          StockLog slchk = dbDapper.QuerySingleOrDefault<StockLog>(string.Format(
+            ssql, M10Const.StockLogType.StockBrokerBSOtc
+            , Utils.getDateString(dtTread, M10Const.DateStringType.ADT1), sStockCode));
+          if (slchk != null) continue;
+
+          System.Threading.Thread.Sleep(3 * 1000);
 
           List<string> PageList = new List<string>();
           string sUrl = "http://www.tpex.org.tw/web/stock/aftertrading/broker_trading/brokerBS.php?l=zh-tw";
@@ -986,21 +1004,27 @@ namespace M10.lib
             HtmlDoc.Load(response.GetResponseStream(), Encoding.UTF8);
             HtmlNodeCollection nodes1 = HtmlDoc.DocumentNode.SelectNodes("//form[@name='brokerBS2']");
 
-            foreach (HtmlNode node in nodes1)
+            if (nodes1 != null)
             {
-              //取得共有幾頁
-              HtmlNodeCollection tdnodes = node.SelectNodes("a");
-
-              foreach (HtmlNode item in tdnodes)
+              foreach (HtmlNode node in nodes1)
               {
-                PageList.Add(item.InnerText);
+                //取得共有幾頁
+                HtmlNodeCollection tdnodes = node.SelectNodes("a");
+
+                foreach (HtmlNode item in tdnodes)
+                {
+                  PageList.Add(item.InnerText);
+                }
               }
-            }
+            }            
           }
 
           //每個分頁進行資料取得
           foreach (string sPage in PageList)
           {
+            //每一個分頁，暫停十秒鐘
+            System.Threading.Thread.Sleep(3 * 1000);
+
             sbPostData.Clear();
             AppendParameter(sbPostData, "stk_code", sStockCode);
             AppendParameter(sbPostData, "topage", sPage);
@@ -1018,6 +1042,8 @@ namespace M10.lib
               requestStream.Write(byteArray, 0, byteArray.Length);
             }
 
+            
+
             using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
             {
               HtmlDocument HtmlDoc = new HtmlDocument();
@@ -1033,7 +1059,7 @@ namespace M10.lib
               {
                 if (SubTableNode.Id == "data_01") continue;
 
-                DateTime dtTread = DateTime.Now;
+                
                 HtmlNodeCollection TrNodes = SubTableNode.SelectNodes("tr");
 
                 foreach (HtmlNode TrNode in TrNodes)
@@ -1123,6 +1149,16 @@ namespace M10.lib
 
             }
           }
+
+          StockLog sl = new StockLog();
+          sl.logdate = Utils.getDateString(dtTread, M10Const.DateStringType.ADT1);
+          sl.logdatetime = Utils.getDatatimeString();
+          sl.logstatus = M10Const.StockLogStatus.s200;
+          sl.memo = sStockCode;
+          sl.logtype = M10Const.StockLogType.StockBrokerBSOtc;
+          dbDapper.Insert(sl);
+
+
         }
 
       }
@@ -1134,6 +1170,63 @@ namespace M10.lib
 
       return true;
     }
+
+    protected DateTime getStockBrokerBSNow(string sStockCode)
+    {
+      DateTime dt = DateTime.MinValue;
+      string sUrl = "http://www.tpex.org.tw/web/stock/aftertrading/broker_trading/brokerBS.php?l=zh-tw";
+
+      StringBuilder sbPostData = new StringBuilder();
+      AppendParameter(sbPostData, "stk_code", sStockCode);
+      AppendParameter(sbPostData, "topage", "1");
+
+      byte[] byteArray = Encoding.UTF8.GetBytes(sbPostData.ToString());
+
+      HttpWebRequest request = (HttpWebRequest)WebRequest.Create(sUrl);
+      request.Proxy = null;
+      request.Method = "POST";
+      request.ContentType = "application/x-www-form-urlencoded";
+
+      // 寫入 Post Body Message 資料流
+      using (Stream requestStream = request.GetRequestStream())
+      {
+        requestStream.Write(byteArray, 0, byteArray.Length);
+      }
+
+      using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+      {
+        HtmlDocument HtmlDoc = new HtmlDocument();
+        HtmlDoc.Load(response.GetResponseStream(), Encoding.UTF8);
+        HtmlNodeCollection MainTableNodes = HtmlDoc.DocumentNode.SelectNodes("//table[@id='data_01']");
+     
+        //取得共有幾頁
+        HtmlNodeCollection SubTableNodes = MainTableNodes[0].SelectNodes("//table");
+
+        foreach (HtmlNode SubTableNode in SubTableNodes)
+        {
+          if (SubTableNode.Id == "data_01") continue;
+
+
+          HtmlNodeCollection TrNodes = SubTableNode.SelectNodes("tr");
+
+          foreach (HtmlNode TrNode in TrNodes)
+          {
+            HtmlNodeCollection TdNodes = TrNode.SelectNodes("td");
+
+            //取得日期
+            if (TdNodes.Count == 4)
+            {
+              string sTreadDate = TdNodes[1].InnerText;
+              sTreadDate = sTreadDate.Replace("年", "").Replace("月", "").Replace("日", "");
+              dt = new DateTime(int.Parse(sTreadDate.Substring(0, 3)) + 1911, int.Parse(sTreadDate.Substring(3, 2)), int.Parse(sTreadDate.Substring(5, 2)));
+            }
+          }
+        }
+      }
+
+      return dt;
+    }
+
 
   }
 }

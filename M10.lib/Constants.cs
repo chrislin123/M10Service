@@ -47,6 +47,8 @@ namespace M10.lib
       public const string StockThreeOtc = "StockThreeOtc";
       public const string StockInfoTse = "StockInfoTse";
       public const string StockInfoOtc = "StockInfoOtc";
+      public const string StockBrokerBSTse = "StockBrokerBSTse";
+      public const string StockBrokerBSOtc = "StockBrokerBSOtc";
     }
 
     public enum StockRuntimeStatus:int

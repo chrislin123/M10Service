@@ -86,7 +86,7 @@ namespace C10Mvc
       _Scheduler.ScheduleJob(jobStockInfo, triggerStockInfo);
       _Scheduler.ScheduleJob(jobStockThreeTrade, triggerStockThreeTrade);
       _Scheduler.ScheduleJob(jobStockAfter, triggerStockAfter);
-      _Scheduler.ScheduleJob(jobStockBrokerBS, triggerStockBrokerBS);
+      //_Scheduler.ScheduleJob(jobStockBrokerBS, triggerStockBrokerBS);
 
       // 啟動排程器
       _Scheduler.Start();
