@@ -941,7 +941,53 @@ namespace M10.lib
       sb.AppendFormat("{0}={1}&", name, encodedValue);
     }
 
-    
+
+    public bool GetStockBrokerBSTSE()
+    {
+      //string sStockCode = "2330";
+      string sUrl = "http://bsr.twse.com.tw/bshtm/bsMenu.aspx";
+      StringBuilder sbPostData = new StringBuilder();
+      //AppendParameter(sbPostData, "stk_code", sStockCode);
+      //AppendParameter(sbPostData, "topage", "1");
+
+      byte[] byteArray = Encoding.UTF8.GetBytes(sbPostData.ToString());
+
+      HttpWebRequest request = (HttpWebRequest)WebRequest.Create(sUrl);
+      request.Proxy = null;
+      request.Method = "POST";
+      request.ContentType = "application/x-www-form-urlencoded";
+
+      // 寫入 Post Body Message 資料流
+      using (Stream requestStream = request.GetRequestStream())
+      {
+        requestStream.Write(byteArray, 0, byteArray.Length);
+      }
+
+      using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+      {
+
+
+
+        HtmlDocument HtmlDoc = new HtmlDocument();
+        HtmlDoc.Load(response.GetResponseStream(), Encoding.UTF8);
+        //HtmlNodeCollection nodes1 = HtmlDoc.DocumentNode.SelectNodes("//form[@name='brokerBS2']");
+
+        //if (nodes1 != null)
+        //{
+        //  foreach (HtmlNode node in nodes1)
+        //  {
+        //    //取得共有幾頁
+        //    HtmlNodeCollection tdnodes = node.SelectNodes("a");
+
+        //    foreach (HtmlNode item in tdnodes)
+        //    {
+        //      //PageList.Add(item.InnerText);
+        //    }
+        //  }
+        //}
+      }
+      return true;
+    }
 
     /// <summary>
     /// 券商買賣證券日報表查詢系統
