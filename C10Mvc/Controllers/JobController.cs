@@ -348,20 +348,6 @@ namespace C10Mvc.Controllers
       logger.Info("START DoStockBrokerBS()");
 
       Stockhelper.GetStockBrokerBS();
-      //DateTime dt = DateTime.Now;
-
-      //for (DateTime dtTemp = dt; dtTemp >= dt.AddDays(-3); dtTemp = dtTemp.AddDays(-1))
-      //{
-      //  logger.Info(string.Format("{0}=={1}", "DoStockAfter()", Utils.getDatatimeString(dtTemp)));
-      //  #region tse-StockAfter
-      //  Stockhelper.GetStockAfterTse(dtTemp);
-      //  #endregion
-
-      //  #region otc-StockAfter
-      //  Stockhelper.GetStockAfterOtc(dtTemp);
-      //  #endregion
-      //}
-
 
       logger.Info("END DoStockBrokerBS()");
     }

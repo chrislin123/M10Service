@@ -64,7 +64,7 @@ namespace C10Mvc
                           .Build();
       // 建立觸發器
       ITrigger triggerStockAfter = TriggerBuilder.Create()
-                              .WithCronSchedule("0 11/30 15-17 * * ?")  // 每一分鐘觸發一次。
+                              .WithCronSchedule("0 11/30 15-17 * * ?")  // 每天1511-1711，每三十分鐘一次
                               //.WithCronSchedule("0/3 * * * * ?")  // 每三秒觸發一次。
                               .WithIdentity("triggerStockAfter")
                               .Build();
@@ -75,7 +75,7 @@ namespace C10Mvc
                           .Build();
       // 建立觸發器
       ITrigger triggerStockBrokerBS = TriggerBuilder.Create()
-                              .WithCronSchedule("0 40 17 * * ?")  // 每一分鐘觸發一次。
+                              .WithCronSchedule("0 5 16,18 * * ?")  // 每天16:05 18:05執行
                               //.WithCronSchedule("0/3 * * * * ?")  // 每三秒觸發一次。
                               .WithIdentity("triggerStockBrokerBS")
                               .Build();
@@ -86,7 +86,7 @@ namespace C10Mvc
       _Scheduler.ScheduleJob(jobStockInfo, triggerStockInfo);
       _Scheduler.ScheduleJob(jobStockThreeTrade, triggerStockThreeTrade);
       _Scheduler.ScheduleJob(jobStockAfter, triggerStockAfter);
-      //_Scheduler.ScheduleJob(jobStockBrokerBS, triggerStockBrokerBS);
+      _Scheduler.ScheduleJob(jobStockBrokerBS, triggerStockBrokerBS);
 
       // 啟動排程器
       _Scheduler.Start();

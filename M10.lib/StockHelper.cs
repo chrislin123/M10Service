@@ -951,17 +951,18 @@ namespace M10.lib
     {
       try
       {
+        //網頁瀏覽停滯時間
+        int iSec = 2;
+
         DateTime dtTread = DateTime.MinValue;
 
         //取得上櫃所有的股票代號
-        ssql = " select * from stockinfo where type = 'otc' and status = 'Y' and len(stockcode ) = 4 ";
+        ssql = " select * from stockinfo where type = 'otc' and status = 'Y' and len(stockcode) = 4 ";
         List<StockInfo> StockInfoList = dbDapper.Query<StockInfo>(ssql);
 
         foreach (StockInfo si in StockInfoList)
         {
           string sStockCode = si.stockcode;
-
-          
 
           //未取交易日期，則取得目前提供資料的交易日期
           if (dtTread == DateTime.MinValue)
@@ -976,7 +977,7 @@ namespace M10.lib
             , Utils.getDateString(dtTread, M10Const.DateStringType.ADT1), sStockCode));
           if (slchk != null) continue;
 
-          System.Threading.Thread.Sleep(3 * 1000);
+          System.Threading.Thread.Sleep(iSec * 1000);
 
           List<string> PageList = new List<string>();
           string sUrl = "http://www.tpex.org.tw/web/stock/aftertrading/broker_trading/brokerBS.php?l=zh-tw";
@@ -1023,7 +1024,7 @@ namespace M10.lib
           foreach (string sPage in PageList)
           {
             //每一個分頁，暫停十秒鐘
-            System.Threading.Thread.Sleep(3 * 1000);
+            System.Threading.Thread.Sleep(iSec * 1000);
 
             sbPostData.Clear();
             AppendParameter(sbPostData, "stk_code", sStockCode);
@@ -1041,8 +1042,6 @@ namespace M10.lib
             {
               requestStream.Write(byteArray, 0, byteArray.Length);
             }
-
-            
 
             using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
             {
@@ -1150,6 +1149,7 @@ namespace M10.lib
             }
           }
 
+          //寫入log紀錄
           StockLog sl = new StockLog();
           sl.logdate = Utils.getDateString(dtTread, M10Const.DateStringType.ADT1);
           sl.logdatetime = Utils.getDatatimeString();
@@ -1157,8 +1157,6 @@ namespace M10.lib
           sl.memo = sStockCode;
           sl.logtype = M10Const.StockLogType.StockBrokerBSOtc;
           dbDapper.Insert(sl);
-
-
         }
 
       }
