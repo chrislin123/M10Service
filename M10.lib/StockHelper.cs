@@ -749,7 +749,14 @@ namespace M10.lib
 
           if (text.Contains(",\"143\":"))
           {
-            text = text.Insert(text.IndexOf(",\"143\":") + 7, "\"").Insert(text.IndexOf(",\"143\":") + 14, "\"");
+            //1061219 修改為取代
+            //text = text.Insert(text.IndexOf(",\"143\":") + 7, "\"").Insert(text.IndexOf(",\"143\":") + 14, "\"");
+
+            int iStart = text.IndexOf(",\"143\":");
+            int iEnd = text.IndexOf(",", iStart + 1);
+            string sRep = text.Substring(iStart, iEnd - iStart);
+
+            text = text.Replace(sRep,"");
           }
 
 
