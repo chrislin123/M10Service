@@ -576,7 +576,7 @@ namespace M10.lib
               //判斷代碼存在則更新，不存在新增
               ssql = " select * from stockinfo where stockcode = '{0}' ";
               StockInfo StockInfoItem = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, sCode));
-
+              
               if (StockInfoItem == null) //不存在新增
               { 
                 StockInfoItem = new StockInfo();
@@ -793,15 +793,15 @@ namespace M10.lib
         if (stockcode == "0000") sr.a = "";
 
         //取得個股資訊
-        ssql = " select * from StockInfo where stockcode = '{0}' ";
-        StockInfo si = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, stockcode));
-        if (si != null)
-        {
-          //個股名稱
-          sr.n = si.stockname;
-          //個股代碼
-          sr.c = si.stockcode;
-        }
+        //ssql = " select * from StockInfo where stockcode = '{0}' ";
+        //StockInfo si = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, stockcode));
+        //if (si != null)
+        //{
+        //  //個股名稱
+        //  sr.n = si.stockname;
+        //  //個股代碼
+        //  sr.c = si.stockcode;
+        //}
 
         sr.status = M10Const.StockRuntimeStatus.YahooApi;
 
@@ -814,7 +814,14 @@ namespace M10.lib
       return sr;
     }
 
-    private decimal getPriceLimitUpOrDown(string limitType, string sPriceClose)
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="limitType">UP , DOWN</param>
+    /// <param name="sPriceClose"></param>
+    /// <returns></returns>
+    public decimal getPriceLimitUpOrDown(string limitType, string sPriceClose)
     {
       // reference: http://stock7.0123456789.tw/
 
@@ -874,8 +881,8 @@ namespace M10.lib
         STOCKDW = ((Math.Floor(((Math.Ceiling(limitDown / 5) * 5) * 100) * 100)) / 100) / 100;
       }
 
-      STOCKUP = ((Math.Floor(((Math.Floor(limitUp / 0.5) * 0.5) * 100) * 100)) / 100) / 100;
-      STOCKDW = ((Math.Floor(((Math.Ceiling(limitDown / 0.5) * 0.5) * 100) * 100)) / 100) / 100;
+      //STOCKUP = ((Math.Floor(((Math.Floor(limitUp / 0.5) * 0.5) * 100) * 100)) / 100) / 100;
+      //STOCKDW = ((Math.Floor(((Math.Ceiling(limitDown / 0.5) * 0.5) * 100) * 100)) / 100) / 100;
 
       if (limitType.ToUpper() == "UP")
       {

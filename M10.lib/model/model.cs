@@ -554,6 +554,13 @@ namespace M10.lib.model
 
     public string updstatus { get; set; }
 
+    public StockInfo()
+    {
+      this.updatetime = Utils.getDatatimeString();
+      this.updstatus = "Y";
+      this.status = "Y";
+    }
+
   }
 
   [Table("Stockthreetrade")]

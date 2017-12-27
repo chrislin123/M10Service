@@ -1095,5 +1095,53 @@ namespace M10Tools
 
       Stockhelper.GetStockBrokerBSTSE();
     }
+
+    private void button11_Click(object sender, EventArgs e)
+    {
+
+      StockInfo st = new StockInfo();
+
+
+
+      Boolean bResult = false;
+
+
+      StockRuntime sr = Stockhelper.getStockRealtimeYahooApi(StockCodeTextBox.Text);
+
+      //u = up 
+      //w = down
+
+      Decimal dup =  Stockhelper.getPriceLimitUpOrDown("up", sr.y);
+      Decimal ddown = Stockhelper.getPriceLimitUpOrDown("down", sr.y);
+
+
+      string ssss = string.Empty;
+
+      if (sr.u == dup.ToString() && sr.w == ddown.ToString())
+      {
+        bResult = true;
+      }
+
+
+
+      label1.Text = string.Format("{0}={1}", StockCodeTextBox.Text, bResult.ToString());
+
+      StockCodeTextBox.Text = "";
+
+    }
+
+    private void StockCodeTextBox_Enter(object sender, EventArgs e)
+    {
+      button11_Click(sender, new EventArgs());
+    }
+
+    private void StockCodeTextBox_KeyDown(object sender, KeyEventArgs e)
+    {
+
+      if (e.KeyCode == Keys.Enter)
+      {
+        button11_Click(sender, new EventArgs());
+      }
+    }
   }
 }
