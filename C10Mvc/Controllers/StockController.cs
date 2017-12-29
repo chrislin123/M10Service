@@ -207,5 +207,35 @@ namespace C10Mvc.Controllers
 
       return sr;
     }
+
+    [HttpGet]
+    [Route("getStockDataLvstg")]
+    public dynamic getStockDataLvstg(string stockcode,string date)
+    {
+      //取得資料
+      List<dynamic> TempList = stockhelper.getStockDataLvstg(stockcode, date);
+
+
+
+
+
+
+
+      //盤前沒資料改取得歷史資料
+      //if (sr.z == "")
+      //{
+      //  ssql = " select top 1 * from stockafter where stockcode = '{0}' order by stockdate desc ";
+      //  ssql = string.Format(ssql, stockcode);
+      //  Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(ssql);
+      //  if (sa != null)
+      //  {
+      //    sr.status = M10Const.StockRuntimeStatus.Histroy;
+      //    sr.z = sa.pricelast.ToString();
+      //    sr.y = sa.priceyesterday.ToString();
+      //  }
+      //}
+
+      return TempList;
+    }
   }
 }

@@ -793,15 +793,15 @@ namespace M10.lib
         if (stockcode == "0000") sr.a = "";
 
         //取得個股資訊
-        //ssql = " select * from StockInfo where stockcode = '{0}' ";
-        //StockInfo si = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, stockcode));
-        //if (si != null)
-        //{
-        //  //個股名稱
-        //  sr.n = si.stockname;
-        //  //個股代碼
-        //  sr.c = si.stockcode;
-        //}
+        ssql = " select * from StockInfo where stockcode = '{0}' ";
+        StockInfo si = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, stockcode));
+        if (si != null)
+        {
+          //個股名稱
+          sr.n = si.stockname;
+          //個股代碼
+          sr.c = si.stockcode;
+        }
 
         sr.status = M10Const.StockRuntimeStatus.YahooApi;
 
@@ -1284,6 +1284,17 @@ namespace M10.lib
 
       return dt;
     }
+
+    public List<dynamic> getStockDataLvstg(string stockcode, string date)
+    {
+      List<dynamic> StockafterList = new List<dynamic>();
+
+      ssql = @" select stockcode, stockdate,pricelast as price from stockafter where stockcode = '{0}' and stockdate >= '{1}' order by stockdate asc ";
+      StockafterList = dbDapper.Query(string.Format(ssql, stockcode, date));   
+
+      return StockafterList;
+    }
+
 
 
   }
