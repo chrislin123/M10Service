@@ -721,6 +721,7 @@ namespace M10.lib
       sr.c = "";
       sr.xx = "";
       sr.a = "";
+      sr.TradeDay = "";
 
       string sJson = "";
       try
@@ -772,6 +773,10 @@ namespace M10.lib
           //成交量
           if (jobj["404"] != null)
             sr.a = jobj["404"].ToString();
+
+          //日期
+          if (jobj["TradeDay"] != null)
+            sr.TradeDay = jobj["TradeDay"].ToString();
           ////最高
           //if (jobj["mem"]["130"] != null)
           //  sr.u = jobj["mem"]["130"].ToString();

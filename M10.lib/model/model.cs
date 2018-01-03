@@ -629,6 +629,11 @@ namespace M10.lib.model
     public string c { get; set; }
 
     /// <summary>
+    /// 日期
+    /// </summary>
+    public string TradeDay { get; set; }
+
+    /// <summary>
     /// 成交量
     /// </summary>
     public string a { get; set; }
