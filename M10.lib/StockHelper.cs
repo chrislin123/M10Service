@@ -532,93 +532,11 @@ namespace M10.lib
         List<string> TypeList = new List<string>();
         TypeList.Add(M10Const.StockType.tse);
         TypeList.Add(M10Const.StockType.otc);
+        TypeList.Add(M10Const.StockType.otc1);
         
         foreach (string sType in TypeList)
         {
-          string surl = "";
-
-          if (sType == M10Const.StockType.tse) surl = M10Const.StockInfoTse;
-          if (sType == M10Const.StockType.otc) surl = M10Const.StockInfoOtc;
-
-          HtmlWeb webClient = new HtmlWeb();
-          //網頁特殊編碼
-          webClient.OverrideEncoding = Encoding.GetEncoding(950);
-
-          // 載入網頁資料 
-          HtmlDocument doc = webClient.Load(surl);
-
-          // 裝載查詢結果 
-          HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//table[2]/tr");
-
-          if (nodes.Count > 0)
-          {
-            ssql = " update stockinfo set updstatus = 'N' where type = '{0}'  ";
-            dbDapper.Execute(string.Format(ssql, sType));
-          }
-          
-          foreach (HtmlNode node in nodes)
-          {
-            string sCode = "";
-            string sName = "";
-            
-            HtmlNodeCollection tdnodes = node.SelectNodes("td");
-
-            if (tdnodes.Count > 0)
-            {
-              HtmlNode tdnode = tdnodes[0];
-              string[] StockInfoSplit = tdnode.InnerText.Split('　');
-
-              if (StockInfoSplit.Length != 2) continue;
-
-              sCode = StockInfoSplit[0];
-              sName = StockInfoSplit[1];
-
-              //判斷代碼存在則更新，不存在新增
-              ssql = " select * from stockinfo where stockcode = '{0}' ";
-              StockInfo StockInfoItem = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, sCode));
-              
-              if (StockInfoItem == null) //不存在新增
-              { 
-                StockInfoItem = new StockInfo();
-                StockInfoItem.stockcode = sCode;
-                StockInfoItem.stockname = sName;
-                StockInfoItem.type = sType;
-                StockInfoItem.updatetime = Utils.getDatatimeString();
-                StockInfoItem.updstatus = "Y";
-                StockInfoItem.status = "Y";
-
-                dbDapper.Insert(StockInfoItem);
-              }
-              else
-              {
-                StockInfoItem.type = sType;
-                StockInfoItem.updatetime = Utils.getDatatimeString();
-                StockInfoItem.updstatus = "Y";
-                StockInfoItem.status = "Y";
-
-                dbDapper.Update(StockInfoItem);
-              }
-            }
-            
-          }
-
-          ssql = "update stockinfo set status = 'N' where updstatus = 'N' ";
-          dbDapper.Execute(ssql);
-
-
-          StockLog sl = new StockLog();
-          sl.logdate = Utils.getDateString(DateTime.Now, M10Const.DateStringType.ADT1);
-          sl.logdatetime = Utils.getDatatimeString();
-          sl.logstatus = M10Const.StockLogStatus.s200;
-          sl.memo = "";
-          if (sType == M10Const.StockType.tse) {
-            sl.logtype = M10Const.StockLogType.StockInfoTse;
-          }
-          if (sType == M10Const.StockType.otc) {
-            sl.logtype = M10Const.StockLogType.StockInfoOtc;
-          }
-          dbDapper.Insert(sl);
-
+          GetStockInfoSub(sType);
         }
       }
       catch (Exception ex)
@@ -628,6 +546,107 @@ namespace M10.lib
       }
 
       return true;
+    }
+
+    public void GetStockInfoSub(string sType) {
+      string surl = "";
+
+      if (sType == M10Const.StockType.tse) surl = M10Const.StockInfoTse;
+      if (sType == M10Const.StockType.otc) surl = M10Const.StockInfoOtc;
+      if (sType == M10Const.StockType.otc1) surl = M10Const.StockInfoOtc1;
+
+      HtmlWeb webClient = new HtmlWeb();
+      //網頁特殊編碼
+      webClient.OverrideEncoding = Encoding.GetEncoding(950);
+
+      // 載入網頁資料 
+      HtmlDocument doc = webClient.Load(surl);
+
+      // 裝載查詢結果 
+      HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//table[2]/tr");
+
+      if (nodes.Count > 0)
+      {
+        ssql = " update stockinfo set updstatus = 'N' where type = '{0}'  ";
+        dbDapper.Execute(string.Format(ssql, sType));
+      }
+
+      foreach (HtmlNode node in nodes)
+      {
+        string sCode = "";
+        string sName = "";
+
+        HtmlNodeCollection tdnodes = node.SelectNodes("td");
+
+        if (tdnodes.Count > 0)
+        {
+          HtmlNode tdnode = tdnodes[0];
+          string[] StockInfoSplit = tdnode.InnerText.Split('　');
+
+          if (StockInfoSplit.Length != 2) continue;
+
+          sCode = StockInfoSplit[0];
+          sName = StockInfoSplit[1];
+
+          //判斷代碼存在則更新，不存在新增
+          ssql = " select * from stockinfo where stockcode = '{0}' ";
+          StockInfo StockInfoItem = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, sCode));
+
+          if (StockInfoItem == null) //不存在新增
+          {
+            StockInfoItem = new StockInfo();
+            StockInfoItem.stockcode = sCode;
+            StockInfoItem.stockname = sName;
+            StockInfoItem.type = sType;
+            StockInfoItem.updatetime = Utils.getDatatimeString();
+            StockInfoItem.updstatus = "Y";
+            StockInfoItem.status = "Y";
+
+            dbDapper.Insert(StockInfoItem);
+          }
+          else
+          {
+            StockInfoItem.type = sType;
+            StockInfoItem.updatetime = Utils.getDatatimeString();
+            StockInfoItem.updstatus = "Y";
+            StockInfoItem.status = "Y";
+
+            dbDapper.Update(StockInfoItem);
+          }
+        }
+
+      }
+
+      ssql = "update stockinfo set status = 'N' where updstatus = 'N' ";
+      dbDapper.Execute(ssql);
+
+      //興櫃轉上櫃
+      if (sType == M10Const.StockType.otc1)
+      {
+        ssql = "update stockinfo set type = 'otc' where type = 'otc1' ";
+        dbDapper.Execute(ssql);
+      }
+
+      StockLog sl = new StockLog();
+      sl.logdate = Utils.getDateString(DateTime.Now, M10Const.DateStringType.ADT1);
+      sl.logdatetime = Utils.getDatatimeString();
+      sl.logstatus = M10Const.StockLogStatus.s200;
+      sl.memo = "";
+      if (sType == M10Const.StockType.tse)
+      {
+        sl.logtype = M10Const.StockLogType.StockInfoTse;
+      }
+      if (sType == M10Const.StockType.otc)
+      {
+        sl.logtype = M10Const.StockLogType.StockInfoOtc;
+      }
+      if (sType == M10Const.StockType.otc1)
+      {
+        sl.logtype = M10Const.StockLogType.StockInfoOtc1;
+      }
+      dbDapper.Insert(sl);
+
+
     }
 
     public StockRuntime getStockRealtimeYahooWeb(string stockcode)
@@ -1299,6 +1318,9 @@ namespace M10.lib
 
       return StockafterList;
     }
+
+   
+
 
 
 

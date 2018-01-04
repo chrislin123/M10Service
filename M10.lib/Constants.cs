@@ -16,6 +16,7 @@ namespace M10.lib
 
     public static string StockInfoTse = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=2";
     public static string StockInfoOtc = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=4";
+    public static string StockInfoOtc1 = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=5";
 
 
     public static class AlertStatus
@@ -30,6 +31,7 @@ namespace M10.lib
     {
       public const string otc = "otc";
       public const string tse = "tse";
+      public const string otc1 = "otc1";
     }
 
 
@@ -47,6 +49,7 @@ namespace M10.lib
       public const string StockThreeOtc = "StockThreeOtc";
       public const string StockInfoTse = "StockInfoTse";
       public const string StockInfoOtc = "StockInfoOtc";
+      public const string StockInfoOtc1 = "StockInfoOtc1";
       public const string StockBrokerBSTse = "StockBrokerBSTse";
       public const string StockBrokerBSOtc = "StockBrokerBSOtc";
     }

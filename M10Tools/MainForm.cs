@@ -978,7 +978,10 @@ namespace M10Tools
       StatusLabel.Text = string.Format("StockInfor Trans 開始");
       Application.DoEvents();
 
-      Stockhelper.GetStockInfo();
+      //Stockhelper.GetStockInfo();
+      Stockhelper.GetStockInfoSub(M10Const.StockType.otc1);
+
+
 
       StatusLabel.Text = string.Format("StockInfor Trans 完成");
       Application.DoEvents();
