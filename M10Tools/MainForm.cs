@@ -1100,29 +1100,29 @@ namespace M10Tools
     }
 
 
-    private void createsubdir(string sdir) {
+    private void createsubdir(string sourcedir,string targetdir)
+    {
+      DirectoryInfo di = new DirectoryInfo(sourcedir);
 
+      string sParentPath = Path.Combine(targetdir,di.Name);
 
+      if (Directory.Exists(sParentPath) == false)
+      {
+        Directory.CreateDirectory(sParentPath);
+      }
+
+      foreach (DirectoryInfo tempid in di.GetDirectories())
+      {
+        createsubdir(tempid.FullName, sParentPath);
+      }
 
     }
 
     private void button11_Click(object sender, EventArgs e)
     {
 
-      System.IO.DirectoryInfo di = new DirectoryInfo(@"G:\我的雲端硬碟\!MyRoot");
 
-      string sRootPath = @"c:\!MyRoot";
-      if (Directory.Exists(sRootPath) == false)
-      {
-        Directory.CreateDirectory(sRootPath);
-
-        foreach (DirectoryInfo tempid in di.GetDirectories())
-        {
-          
-        }
-
-      }
-
+      createsubdir(@"d:\a", @"d:\e");
 
 
 
