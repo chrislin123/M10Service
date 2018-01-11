@@ -1100,30 +1100,13 @@ namespace M10Tools
     }
 
 
-    private void createsubdir(string sourcedir,string targetdir)
-    {
-      DirectoryInfo di = new DirectoryInfo(sourcedir);
-
-      string sParentPath = Path.Combine(targetdir,di.Name);
-
-      if (Directory.Exists(sParentPath) == false)
-      {
-        Directory.CreateDirectory(sParentPath);
-      }
-
-      foreach (DirectoryInfo tempid in di.GetDirectories())
-      {
-        createsubdir(tempid.FullName, sParentPath);
-      }
-
-    }
+    
 
     private void button11_Click(object sender, EventArgs e)
     {
 
-
-      createsubdir(@"d:\a", @"d:\e");
-
+      //建立資料夾副本
+      Utils.CreateDirByCopy(@"G:\我的雲端硬碟\!MyRoot", @"d:\");
 
 
 

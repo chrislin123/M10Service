@@ -120,5 +120,28 @@ namespace M10.lib
       return wc;
     }
 
+    /// <summary>
+    /// 建立資料夾副本
+    /// </summary>
+    /// <param name="SourceDir">來源資料夾</param>
+    /// <param name="TargetDir">目標資料夾</param>
+    public static void CreateDirByCopy(string SourceDir, string TargetDir)
+    {
+      DirectoryInfo di = new DirectoryInfo(SourceDir);
+
+      string sParentPath = Path.Combine(TargetDir, di.Name);
+
+      if (Directory.Exists(sParentPath) == false)
+      {
+        Directory.CreateDirectory(sParentPath);
+      }
+
+      foreach (DirectoryInfo tempid in di.GetDirectories())
+      {
+        CreateDirByCopy(tempid.FullName, sParentPath);
+      }
+
+    }
+
   }
 }
