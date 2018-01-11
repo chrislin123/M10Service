@@ -1099,37 +1099,67 @@ namespace M10Tools
       Stockhelper.GetStockBrokerBSTSE();
     }
 
+
+    private void createsubdir(string sdir) {
+
+
+
+    }
+
     private void button11_Click(object sender, EventArgs e)
     {
 
-      StockInfo st = new StockInfo();
+      System.IO.DirectoryInfo di = new DirectoryInfo(@"G:\我的雲端硬碟\!MyRoot");
 
-
-
-      Boolean bResult = false;
-
-
-      StockRuntime sr = Stockhelper.getStockRealtimeYahooApi(StockCodeTextBox.Text);
-
-      //u = up 
-      //w = down
-
-      Decimal dup =  Stockhelper.getPriceLimitUpOrDown("up", sr.y);
-      Decimal ddown = Stockhelper.getPriceLimitUpOrDown("down", sr.y);
-
-
-      string ssss = string.Empty;
-
-      if (sr.u == dup.ToString() && sr.w == ddown.ToString())
+      string sRootPath = @"c:\!MyRoot";
+      if (Directory.Exists(sRootPath) == false)
       {
-        bResult = true;
+        Directory.CreateDirectory(sRootPath);
+
+        foreach (DirectoryInfo tempid in di.GetDirectories())
+        {
+          
+        }
+
       }
 
 
 
-      label1.Text = string.Format("{0}={1}", StockCodeTextBox.Text, bResult.ToString());
 
-      StockCodeTextBox.Text = "";
+
+
+      string ssss = "";
+
+
+
+      //StockInfo st = new StockInfo();
+
+
+
+      //Boolean bResult = false;
+
+
+      //StockRuntime sr = Stockhelper.getStockRealtimeYahooApi(StockCodeTextBox.Text);
+
+      ////u = up 
+      ////w = down
+
+      //Decimal dup =  Stockhelper.getPriceLimitUpOrDown("up", sr.y);
+      //Decimal ddown = Stockhelper.getPriceLimitUpOrDown("down", sr.y);
+
+
+      //string ssss = string.Empty;
+
+      //if (sr.u == dup.ToString() && sr.w == ddown.ToString())
+      //{
+      //  bResult = true;
+      //}
+
+
+
+      //label1.Text = string.Format("{0}={1}", StockCodeTextBox.Text, bResult.ToString());
+
+      //StockCodeTextBox.Text = "";
 
     }
 
