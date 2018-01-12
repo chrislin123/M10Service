@@ -1106,10 +1106,32 @@ namespace M10Tools
     {
 
       //建立資料夾副本
-      Utils.CreateDirByCopy(@"G:\我的雲端硬碟\!MyRoot", @"d:\");
+      //Utils.CreateDirByCopy(@"G:\我的雲端硬碟\!MyRoot", @"d:\");
+
+      string strPath = "C:\\Test.csv";
+      string sPath = @"D:\HIS\OPDVGHTC\SourceCode\HISAssembly\DataObject\HIS.DataObject.ExmPrj";
+      DirectoryInfo di = new DirectoryInfo(sPath);
 
 
+      List<string> FileList = new List<string>();
+      foreach (FileInfo item in di.GetFiles("*.cs"))
+      {
+        FileList.Add(item.Name.Replace("HIS.DataObject.", "").Replace(".cs", ""));
+      }
 
+      using (FileStream fs = new FileStream(strPath, FileMode.Open, FileAccess.Write))
+      {
+        using (StreamWriter sw = new StreamWriter(fs, System.Text.Encoding.Default))
+        {
+
+          string sss = string.Join("\n", FileList.ToArray());
+
+          sw.Write(sss);
+
+        }
+      }
+   
+    
 
       string ssss = "";
 
