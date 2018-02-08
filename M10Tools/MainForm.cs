@@ -1109,7 +1109,7 @@ namespace M10Tools
       //Utils.CreateDirByCopy(@"G:\我的雲端硬碟\!MyRoot", @"d:\");
 
       string strPath = "C:\\Test.csv";
-      string sPath = @"D:\HIS\OPDVGHTC\SourceCode\HISAssembly\DataObject\HIS.DataObject.ExmPrj";
+      string sPath = @"D:\HIS\OPDVGHTC\SourceCode\HISAssembly\Report\HIS.Report.ExmPrj";
       DirectoryInfo di = new DirectoryInfo(sPath);
 
 

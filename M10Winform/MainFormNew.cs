@@ -45,6 +45,28 @@ namespace M10Winform
         if (!Directory.Exists(folderBack)) Directory.CreateDirectory(folderBack);
         if (!Directory.Exists(folderName)) Directory.CreateDirectory(folderName);
         if (!Directory.Exists(folderError)) Directory.CreateDirectory(folderError);
+
+
+
+        //StationData sd = new StationData();
+        //sd.STID = "test";
+        //sd.STNAME = "";
+        //sd.COUNTY = "";
+        //sd.TOWN = "";
+        //dbDapper.Insert(sd);
+
+        //ssql = @"insert into StationData  ([STID],[STNAME],[COUNTY],[TOWN])
+        //      VALUES 
+        //     ( 
+        //     '01AD90'
+        //     ,'覽勝橋' 
+        //      ,'新北市'
+        //      ,'烏來區'
+        //      )";
+
+        //dbDapper.Execute(ssql);
+
+
       }
       catch 
       {
@@ -217,6 +239,8 @@ namespace M10Winform
       {
         ShowMessageToFront("轉檔:" + sFilePath);
 
+
+        ShowMessageToFront( sFilePath + "狀態：轉XML DOC");
         XmlDocument xd = new XmlDocument();
 
         try
@@ -244,6 +268,7 @@ namespace M10Winform
           //
         }
 
+        ShowMessageToFront(sFilePath + "狀態：資料格式化");
         XmlNodeList nodelist = xd.SelectNodes("//Rain");
 
         DataTable dt = new DataTable();
@@ -282,6 +307,7 @@ namespace M10Winform
           dr["LRTI"] = sLRTI;
         }
 
+        
         //變更縣市資料 台北縣->新北市 台中縣->台中市 桃園縣->桃園市
         //1050703 變更縣市資料 臺北市->台北市 臺中市->台中市
         //1050705 變更縣市資料 台北市->臺北市 台中市->臺中市 台南市->臺南市
@@ -303,7 +329,8 @@ namespace M10Winform
           //臺南
           if (dr["COUNTY"].ToString() == "台南市") dr["COUNTY"] = "臺南市";
         }
-        
+
+        ShowMessageToFront(sFilePath + "狀態：轉入StationData");
         //轉入StationData
         foreach (DataRow dr in dt.Rows)
         {
@@ -322,23 +349,40 @@ namespace M10Winform
           //沒資料則寫入一筆新資料
           if (NewStationData == null)
           {
-            NewStationData = new StationData();
-            
-            NewStationData.STID = dr["STID"].ToString();
-            NewStationData.STNAME = dr["STNAME"].ToString();
-            NewStationData.COUNTY = dr["COUNTY"].ToString();
-            NewStationData.TOWN = dr["TOWN"].ToString();
+            //NewStationData = new StationData();
 
-            dbDapper.Insert(NewStationData);
+            //NewStationData.STID = dr["STID"].ToString();
+            //NewStationData.STNAME = dr["STNAME"].ToString();
+            //NewStationData.COUNTY = dr["COUNTY"].ToString();
+            //NewStationData.TOWN = dr["TOWN"].ToString();
+
+            //dbDapper.Insert(NewStationData);
+
+
+            ssql = " insert into StationData "
+                + "  ([STID],[STNAME],[COUNTY],[TOWN]) "
+                + " VALUES "
+                + " ( "
+                + " '" + dr["STID"].ToString() + "' "
+                + " ,'" + dr["STNAME"].ToString() + "' "
+                + " ,'" + dr["COUNTY"].ToString() + "' "
+                + " ,'" + dr["TOWN"].ToString() + "' "
+                + " ) "
+                ;
+
+            dbDapper.Execute(ssql);
+
           }
         }
 
         //清空runtime 資料表
         dbDapper.Execute("delete RunTimeRainData");
 
+        ShowMessageToFront(sFilePath + "狀態：寫入RuntimeRainData");
         //寫入RuntimeRainData
         foreach (DataRow dr in dt.Rows)
         {
+          
           RunTimeRainData RuntimeData = new RunTimeRainData();
           RuntimeData.STID = dr["STID"].ToString();
           RuntimeData.STNAME = dr["STNAME"].ToString();
@@ -381,6 +425,7 @@ namespace M10Winform
         //資料寫入sql
         foreach (DataRow dr in dt.Rows)
         {
+          ShowMessageToFront(sFilePath + "狀態：" + dr["STID"].ToString() + " 寫入RainStation");
           //刪除資料
           ssql = string.Format(" delete RainStation  where STID = '{0}' and RTime = '{1}' "
                 , dr["STID"].ToString()
@@ -427,9 +472,9 @@ namespace M10Winform
           dbDapper.Insert<RainStation>(NewData);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-
+        logger.Error(ex, "test error");
       }
     }
 
