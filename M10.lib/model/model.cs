@@ -389,7 +389,7 @@ namespace M10.lib.model
   public class StationData
   {
     //設定key
-    [Key]
+    //[Key]
     public string STID { get; set; }
 
     public string STNAME { get; set; }

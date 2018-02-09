@@ -45,30 +45,8 @@ namespace M10Winform
         if (!Directory.Exists(folderBack)) Directory.CreateDirectory(folderBack);
         if (!Directory.Exists(folderName)) Directory.CreateDirectory(folderName);
         if (!Directory.Exists(folderError)) Directory.CreateDirectory(folderError);
-
-
-
-        //StationData sd = new StationData();
-        //sd.STID = "test";
-        //sd.STNAME = "";
-        //sd.COUNTY = "";
-        //sd.TOWN = "";
-        //dbDapper.Insert(sd);
-
-        //ssql = @"insert into StationData  ([STID],[STNAME],[COUNTY],[TOWN])
-        //      VALUES 
-        //     ( 
-        //     '01AD90'
-        //     ,'覽勝橋' 
-        //      ,'新北市'
-        //      ,'烏來區'
-        //      )";
-
-        //dbDapper.Execute(ssql);
-
-
       }
-      catch 
+      catch (Exception ex)
       {
 
       }
@@ -112,9 +90,7 @@ namespace M10Winform
           //FtpDownload();
           FtpDownloadNew();
         }
-
-        //return;
-
+        
         // 取得資料夾內所有檔案
         foreach (string fname in System.IO.Directory.GetFiles(folderName))
         { 
@@ -237,6 +213,19 @@ namespace M10Winform
     {
       try
       {
+        FileInfo FiTrans = new FileInfo(sFilePath);
+        
+        string sFileTime = FiTrans.Name;
+                                   
+        sFileTime = string.Format("{0}-{1}-{2}T{3}:{4}:00"
+          , sFileTime.Substring(0, 4)
+          , sFileTime.Substring(5, 2)
+          , sFileTime.Substring(8, 2)
+          , sFileTime.Substring(11, 2)
+          , sFileTime.Substring(14, 2)
+          );
+
+
         ShowMessageToFront("轉檔:" + sFilePath);
 
 
@@ -271,39 +260,53 @@ namespace M10Winform
         ShowMessageToFront(sFilePath + "狀態：資料格式化");
         XmlNodeList nodelist = xd.SelectNodes("//Rain");
 
-        DataTable dt = new DataTable();
+        DataTable dtTemp = new DataTable();
 
         foreach (XmlNode OneNode in nodelist)
         {
           //檢查欄位，不足則新增
           foreach (XmlNode ChildNode in OneNode)
           {
-            if (dt.Columns.Contains(ChildNode.Name) == false)
+            if (dtTemp.Columns.Contains(ChildNode.Name) == false)
             {
-              dt.Columns.Add(ChildNode.Name);
+              dtTemp.Columns.Add(ChildNode.Name);
             }
           }
 
-          DataRow dr = dt.NewRow();
+          DataRow dr = dtTemp.NewRow();
           foreach (XmlNode ChildNode in OneNode)
           {
             dr[ChildNode.Name] = ChildNode.InnerText;
           }
 
-          dt.Rows.Add(dr);
+          dtTemp.Rows.Add(dr);
         }
+
+
+        DataTable dt = dtTemp.Select(" rtime = '" + sFileTime +  "' ").CopyToDataTable();
 
         //1040730 DataTable加入兩欄位
         dt.Columns.Add("LRTI");
         dt.Columns.Add("WLRTI");
 
+
+        //sFileTime = "2017-03-02T01:10:00";
+        DateTime dtRTime1 = Convert.ToDateTime(sFileTime);
+        DateTime dtRTime2 = dtRTime1.AddHours(-1);
+        DateTime dtRTime3 = dtRTime1.AddHours(-2);
+        List<RainStation> RainStationList = new List<RainStation>();               
+        ssql = "select  * from RainStation where rtime in ( '{0}','{1}','{2}') ";
+        ssql = string.Format(ssql, dtRTime1.ToString("s"), dtRTime2.ToString("s"), dtRTime3.ToString("s"));
+        RainStationList = dbDapper.Query<RainStation>(ssql);
+
         //計算LRTI 與 WLRTI
         foreach (DataRow dr in dt.Rows)
         {
+
           string sLRTI = "0";
           //string sWLRTI = "0";
 
-          sLRTI = CalLRTI(dr);
+          sLRTI = CalLRTI(dr, RainStationList);
           dr["LRTI"] = sLRTI;
         }
 
@@ -331,6 +334,11 @@ namespace M10Winform
         }
 
         ShowMessageToFront(sFilePath + "狀態：轉入StationData");
+
+        //取得所有StationData
+        ssql = " select * from StationData ";
+        List<StationData> StationDataList = dbDapper.Query<StationData>(ssql);
+
         //轉入StationData
         foreach (DataRow dr in dt.Rows)
         {
@@ -342,43 +350,29 @@ namespace M10Winform
           }
           
           string sSTID = dr["STID"].ToString();
-
-          ssql = " select * from StationData where STID = @STID ";       
-          StationData NewStationData = dbDapper.QuerySingleOrDefault<StationData>(ssql, new { STID = sSTID });
+        
+          StationData NewStationData = (from sdl in StationDataList
+                                        where sdl.STID == sSTID
+                                        select sdl).FirstOrDefault();
 
           //沒資料則寫入一筆新資料
           if (NewStationData == null)
           {
-            //NewStationData = new StationData();
+            NewStationData = new StationData();
 
-            //NewStationData.STID = dr["STID"].ToString();
-            //NewStationData.STNAME = dr["STNAME"].ToString();
-            //NewStationData.COUNTY = dr["COUNTY"].ToString();
-            //NewStationData.TOWN = dr["TOWN"].ToString();
+            NewStationData.STID = dr["STID"].ToString();
+            NewStationData.STNAME = dr["STNAME"].ToString();
+            NewStationData.COUNTY = dr["COUNTY"].ToString();
+            NewStationData.TOWN = dr["TOWN"].ToString();
 
-            //dbDapper.Insert(NewStationData);
-
-
-            ssql = " insert into StationData "
-                + "  ([STID],[STNAME],[COUNTY],[TOWN]) "
-                + " VALUES "
-                + " ( "
-                + " '" + dr["STID"].ToString() + "' "
-                + " ,'" + dr["STNAME"].ToString() + "' "
-                + " ,'" + dr["COUNTY"].ToString() + "' "
-                + " ,'" + dr["TOWN"].ToString() + "' "
-                + " ) "
-                ;
-
-            dbDapper.Execute(ssql);
-
+            dbDapper.Insert(NewStationData);
           }
         }
 
         //清空runtime 資料表
         dbDapper.Execute("delete RunTimeRainData");
 
-        ShowMessageToFront(sFilePath + "狀態：寫入RuntimeRainData");
+       
         //寫入RuntimeRainData
         foreach (DataRow dr in dt.Rows)
         {
@@ -425,7 +419,7 @@ namespace M10Winform
         //資料寫入sql
         foreach (DataRow dr in dt.Rows)
         {
-          ShowMessageToFront(sFilePath + "狀態：" + dr["STID"].ToString() + " 寫入RainStation");
+          
           //刪除資料
           ssql = string.Format(" delete RainStation  where STID = '{0}' and RTime = '{1}' "
                 , dr["STID"].ToString()
@@ -534,8 +528,9 @@ namespace M10Winform
       ProceStart();
     }
 
-    private string CalLRTI(DataRow pDr)
+    private string CalLRTI(DataRow pDr, List<RainStation> RainStationListBy3hr)
     {
+      
       string sSTID = pDr["STID"].ToString().Trim();
       string sRTIME = pDr["RTime"].ToString();
       string sResult = string.Empty;
@@ -572,22 +567,46 @@ namespace M10Winform
       double.TryParse(pDr["RT"].ToString(), out dRT);
 
 
-      
-      sFsql = " select RAIN from RainStation "
-                 + " where STID = @STID "
-                 + " and RTime = @RTime "
-                 ;      
-      object oRainTemp2 = dbDapper.ExecuteScale(sFsql, new { STID = sSTID, RTime = dtRTime2.ToString("s") });
-      if (oRainTemp2 != null)
+
+      //string sss = (from rsd in RainStationListBy3hr
+      //              where rsd.STID == "" && rsd.RTime == ""
+      //              select rsd.RAIN).FirstOrDefault();
+
+
+
+      string sRainTemp2 = (from rsd in RainStationListBy3hr
+                           where rsd.STID == sSTID && rsd.RTime == dtRTime2.ToString("s")
+                           select rsd.RAIN).FirstOrDefault();
+      if (sRainTemp2 != null)
       {
-        double.TryParse(oRainTemp2.ToString(), out dRain2);
+        double.TryParse(sRainTemp2, out dRain2);
       }
-      
-      object oRainTemp3 = dbDapper.ExecuteScale(sFsql, new { STID = sSTID, RTime = dtRTime3.ToString("s") });
-      if (oRainTemp3 != null)
+
+      string sRainTemp3 = (from rsd in RainStationListBy3hr
+                           where rsd.STID == sSTID && rsd.RTime == dtRTime3.ToString("s")
+                           select rsd.RAIN).FirstOrDefault();
+      if (sRainTemp3 != null)
       {
-        double.TryParse(oRainTemp3.ToString(), out dRain3);
+        double.TryParse(sRainTemp3, out dRain2);
       }
+
+
+      //1070209 改用linq 搜尋
+      //sFsql = " select RAIN from RainStation "
+      //           + " where STID = @STID "
+      //           + " and RTime = @RTime "
+      //           ;      
+      //object oRainTemp2 = dbDapper.ExecuteScale(sFsql, new { STID = sSTID, RTime = dtRTime2.ToString("s") });
+      //if (oRainTemp2 != null)
+      //{
+      //  double.TryParse(oRainTemp2.ToString(), out dRain2);
+      //}
+      
+      //object oRainTemp3 = dbDapper.ExecuteScale(sFsql, new { STID = sSTID, RTime = dtRTime3.ToString("s") });
+      //if (oRainTemp3 != null)
+      //{
+      //  double.TryParse(oRainTemp3.ToString(), out dRain3);
+      //}
 
       //sFsql = " select RAIN from RainStation "
       //            + " where STID = '{0}' "
@@ -738,6 +757,18 @@ namespace M10Winform
       client.Disconnect();
 
       ShowMessageToFront("完畢");
+    }
+
+    private void richTextBox1_TextChanged(object sender, EventArgs e)
+    {
+      RichTextBox rtb = sender as RichTextBox;
+
+      if (rtb.Lines.Length > 21)
+      {
+        rtb.Text = rtb.Text.Remove(0, rtb.Lines[0].Length + 1);
+      }
+
+      rtb.ScrollToCaret();
     }
   }
 }
