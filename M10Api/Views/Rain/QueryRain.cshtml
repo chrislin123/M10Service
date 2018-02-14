@@ -160,6 +160,14 @@
         $("#btnSetAlert").text("崩塌警戒發報-已關閉");
       }
     });
+
+    //指定60秒刷新一次
+    setInterval(function () {
+      if ($("#Product").val() != null) {
+        Query();
+      } 
+    }, 60000);
+
   });
 
   function Query() {
@@ -179,6 +187,9 @@
       }
     });
   }
+
+
+  
 
 
 

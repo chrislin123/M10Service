@@ -45,6 +45,16 @@ namespace M10Winform
         if (!Directory.Exists(folderBack)) Directory.CreateDirectory(folderBack);
         if (!Directory.Exists(folderName)) Directory.CreateDirectory(folderName);
         if (!Directory.Exists(folderError)) Directory.CreateDirectory(folderError);
+
+
+        ssql = " select * from StationData ";
+        List<StationData> StationDataList = dbDapper.Query<StationData>(ssql);
+
+        StationData sd = StationDataList.Where(o => o.STID == "55").FirstOrDefault();
+
+
+        string ssss = string.Empty;
+
       }
       catch (Exception ex)
       {
@@ -350,10 +360,7 @@ namespace M10Winform
           }
           
           string sSTID = dr["STID"].ToString();
-        
-          StationData NewStationData = (from sdl in StationDataList
-                                        where sdl.STID == sSTID
-                                        select sdl).FirstOrDefault();
+          StationData NewStationData = StationDataList.Where(o => o.STID == sSTID).FirstOrDefault();
 
           //沒資料則寫入一筆新資料
           if (NewStationData == null)
@@ -544,90 +551,28 @@ namespace M10Winform
       double dRain1 = 0;
       double dRain2 = 0;
       double dRain3 = 0;
-      double dRT = 0;
-
-      string sFsql = string.Empty;
-      //sFsql = " select * from RainStation "
-      //                + " where STID = '{0}' "
-      //                + " and RTime = '{1}' "
-      //                + "  "
-      //                + "  ";
-
-      //ssql = string.Format(sFsql, sSTID, dtRTime1.ToString("s"));
-      //oDal.CommandText = ssql;
-      //DataRow dr = oDal.DataRow();
-      //if (dr != null)
-      //{
-      //    double.TryParse(dr["RAIN"].ToString(), out dRain1);
-      //    double.TryParse(dr["RT"].ToString(), out dRT);
-      //}
+      double dRT = 0;    
 
       //由傳進來的資料解析
       double.TryParse(pDr["RAIN"].ToString(), out dRain1);
       double.TryParse(pDr["RT"].ToString(), out dRT);
 
 
-
-      //string sss = (from rsd in RainStationListBy3hr
-      //              where rsd.STID == "" && rsd.RTime == ""
-      //              select rsd.RAIN).FirstOrDefault();
-
-
-
-      string sRainTemp2 = (from rsd in RainStationListBy3hr
-                           where rsd.STID == sSTID && rsd.RTime == dtRTime2.ToString("s")
-                           select rsd.RAIN).FirstOrDefault();
-      if (sRainTemp2 != null)
+      //1070214 Linq SQL修改為 Linq Lamda 寫法並加入防呆
+      List<RainStation> rsTempList2 = RainStationListBy3hr
+                                      .Where(o => o.STID == sSTID && o.RTime == dtRTime2.ToString("s"))
+                                      .ToList<RainStation>();
+      if (rsTempList2.Count > 0)
       {
-        double.TryParse(sRainTemp2, out dRain2);
+        double.TryParse(rsTempList2[0].RAIN, out dRain2);
       }
-
-      string sRainTemp3 = (from rsd in RainStationListBy3hr
-                           where rsd.STID == sSTID && rsd.RTime == dtRTime3.ToString("s")
-                           select rsd.RAIN).FirstOrDefault();
-      if (sRainTemp3 != null)
+      List<RainStation> rsTempList3 = RainStationListBy3hr
+                                      .Where(o => o.STID == sSTID && o.RTime == dtRTime3.ToString("s"))
+                                      .ToList<RainStation>();
+      if (rsTempList3.Count > 0)
       {
-        double.TryParse(sRainTemp3, out dRain2);
-      }
-
-
-      //1070209 改用linq 搜尋
-      //sFsql = " select RAIN from RainStation "
-      //           + " where STID = @STID "
-      //           + " and RTime = @RTime "
-      //           ;      
-      //object oRainTemp2 = dbDapper.ExecuteScale(sFsql, new { STID = sSTID, RTime = dtRTime2.ToString("s") });
-      //if (oRainTemp2 != null)
-      //{
-      //  double.TryParse(oRainTemp2.ToString(), out dRain2);
-      //}
-      
-      //object oRainTemp3 = dbDapper.ExecuteScale(sFsql, new { STID = sSTID, RTime = dtRTime3.ToString("s") });
-      //if (oRainTemp3 != null)
-      //{
-      //  double.TryParse(oRainTemp3.ToString(), out dRain3);
-      //}
-
-      //sFsql = " select RAIN from RainStation "
-      //            + " where STID = '{0}' "
-      //            + " and RTime = '{1}' "
-      //            ;
-
-      //ssql = string.Format(sFsql, sSTID, dtRTime2.ToString("s"));
-      //oDal.CommandText = ssql;
-      //object oRainTemp2 = oDal.Value();
-      //if (oRainTemp2 != null)
-      //{
-      //  double.TryParse(oRainTemp2.ToString(), out dRain2);
-      //}
-
-      //ssql = string.Format(sFsql, sSTID, dtRTime3.ToString("s"));
-      //oDal.CommandText = ssql;
-      //object oRainTemp3 = oDal.Value();
-      //if (oRainTemp3 != null)
-      //{
-      //  double.TryParse(oRainTemp3.ToString(), out dRain3);
-      //}
+        double.TryParse(rsTempList3[0].RAIN, out dRain3);
+      }    
 
       //前三個小時平均 * RT值
       double dResult = (dRain1 + dRain2 + dRain3) / 3 * dRT;
@@ -638,9 +583,6 @@ namespace M10Winform
 
     private void button1_Click(object sender, EventArgs e)
     {
-
-
-
       try
       {
 
