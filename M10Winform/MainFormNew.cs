@@ -145,7 +145,7 @@ namespace M10Winform
       try
       { 
         client.Host = sIP;
-
+        client.SocketKeepAlive = true;
         // if you don't specify login credentials, we use the "anonymous" user account
         client.Credentials = new NetworkCredential(sUser, sPassword);
 
@@ -163,8 +163,9 @@ namespace M10Winform
           {
             lstFileName.Add(item.Name);
           }
-        }        
+        }
 
+        
         //FTP檔案整理
         foreach (string sFileName in lstFileName)
         {
