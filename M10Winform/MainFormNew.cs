@@ -293,8 +293,16 @@ namespace M10Winform
           dtTemp.Rows.Add(dr);
         }
 
+        //1070301 當select沒有datarow時，CopyToDataTable會出現錯誤。
+        //DataTable dt = dtTemp.Select(" rtime = '" + sFileTime +  "' ").CopyToDataTable();
+        
+        DataTable dt = dtTemp.Clone();
+        var q = dtTemp.AsEnumerable().Where(o => o.Field<string>("rtime") == sFileTime);
 
-        DataTable dt = dtTemp.Select(" rtime = '" + sFileTime +  "' ").CopyToDataTable();
+        if (q.Count() > 0)
+        {
+          dt = q.CopyToDataTable();
+        }
 
         //1040730 DataTable加入兩欄位
         dt.Columns.Add("LRTI");
@@ -475,8 +483,8 @@ namespace M10Winform
         }
       }
       catch (Exception ex)
-      {
-        logger.Error(ex, "test error");
+      { 
+        logger.Error(ex, string.Format("{0}:XML轉檔錯誤。", System.Reflection.MethodBase.GetCurrentMethod().Name));
       }
     }
 
