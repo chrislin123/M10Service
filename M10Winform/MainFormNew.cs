@@ -47,18 +47,30 @@ namespace M10Winform
         if (!Directory.Exists(folderError)) Directory.CreateDirectory(folderError);
 
 
-        ssql = " select * from StationData ";
-        List<StationData> StationDataList = dbDapper.Query<StationData>(ssql);
+        //ssql = " select * from StationData ";
+        //List<StationData> StationDataList = dbDapper.Query<StationData>(ssql);
 
-        StationData sd = StationDataList.Where(o => o.STID == "55").FirstOrDefault();
+        //StationData sd = StationDataList.Where(o => o.STID == "55").FirstOrDefault();
 
 
-        string ssss = string.Empty;
+        //string ssss = string.Empty;
+
+
+        //List<RainStation> RainStationListBy3hr = null;
+        //List<RainStation> rsTempList2 = RainStationListBy3hr
+        //                             .Where(o => o.STID == "" && o.RTime == "")
+        //                             .ToList<RainStation>();
+        //if (rsTempList2.Count > 0)
+        //{
+        //  //double.TryParse(rsTempList2[0].RAIN, out dRain2);
+        //}
+
+        //return;
 
       }
       catch (Exception ex)
       {
-
+        logger.Info(ex, string.Format("{0}:XML轉檔錯誤。", System.Reflection.MethodBase.GetCurrentMethod().Name));
       }
 
       timer1.Enabled = true;
@@ -222,11 +234,12 @@ namespace M10Winform
 
     private void TransToDB(string sFilePath)
     {
+      string sFileTime = "";
       try
       {
         FileInfo FiTrans = new FileInfo(sFilePath);
         
-        string sFileTime = FiTrans.Name;
+        sFileTime = FiTrans.Name;
                                    
         sFileTime = string.Format("{0}-{1}-{2}T{3}:{4}:00"
           , sFileTime.Substring(0, 4)
@@ -484,7 +497,7 @@ namespace M10Winform
       }
       catch (Exception ex)
       { 
-        logger.Error(ex, string.Format("{0}:XML轉檔錯誤。", System.Reflection.MethodBase.GetCurrentMethod().Name));
+        logger.Error(ex, string.Format("Function:{0},{1}:XML轉檔錯誤。", System.Reflection.MethodBase.GetCurrentMethod().Name, sFileTime));
       }
     }
 
