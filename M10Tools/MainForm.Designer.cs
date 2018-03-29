@@ -33,7 +33,6 @@
       this.btnStockTrans = new System.Windows.Forms.Button();
       this.statusStrip1 = new System.Windows.Forms.StatusStrip();
       this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-      this.StatusLabel = new System.Windows.Forms.Label();
       this.btnBuildFolder = new System.Windows.Forms.Button();
       this.button1 = new System.Windows.Forms.Button();
       this.button3 = new System.Windows.Forms.Button();
@@ -96,15 +95,6 @@
       this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
       this.toolStripStatusLabel1.Size = new System.Drawing.Size(129, 17);
       this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
-      // 
-      // StatusLabel
-      // 
-      this.StatusLabel.AutoSize = true;
-      this.StatusLabel.Location = new System.Drawing.Point(12, 219);
-      this.StatusLabel.Name = "StatusLabel";
-      this.StatusLabel.Size = new System.Drawing.Size(58, 12);
-      this.StatusLabel.TabIndex = 8;
-      this.StatusLabel.Text = "StatusLabel";
       // 
       // btnBuildFolder
       // 
@@ -262,7 +252,6 @@
       this.Controls.Add(this.button3);
       this.Controls.Add(this.button1);
       this.Controls.Add(this.btnBuildFolder);
-      this.Controls.Add(this.StatusLabel);
       this.Controls.Add(this.statusStrip1);
       this.Controls.Add(this.btnStockTrans);
       this.Controls.Add(this.btnKML);
@@ -283,7 +272,6 @@
     private System.Windows.Forms.Button btnStockTrans;
     private System.Windows.Forms.StatusStrip statusStrip1;
     private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-    private System.Windows.Forms.Label StatusLabel;
     private System.Windows.Forms.Button btnBuildFolder;
     private System.Windows.Forms.Button button1;
     private System.Windows.Forms.Button button3;

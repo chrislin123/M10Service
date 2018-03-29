@@ -328,12 +328,45 @@ namespace C10Mvc.Controllers
       logger.Info("END DoStockAfter()");
     }
 
+    public void DoStockHugeTurnover()
+    {
+
+      logger.Info("START DoStockHugeTurnover()");
+
+
+      //預設今天資料
+      string sRunDate = DateTime.Now.ToString("yyyyMMdd");
+
+      //轉最新資料
+      ssql = " select Max(stockdate) from stockafter where stockcode = '2330' ";
+      object oMax = dbDapper.ExecuteScale(ssql);
+      if (oMax != null)
+      {
+        sRunDate = Convert.ToString(Convert.ToInt32(oMax.ToString()));
+      }
+
+      List<StockInfo> siList = new List<StockInfo>();
+      ssql = " select * from stockinfo where status = 'Y' and LEN(stockcode) = 4 order by stockcode ";
+      siList = dbDapper.Query<StockInfo>(ssql);
+
+      foreach (StockInfo item in siList)
+      {
+        Stockhelper.GetHugeTurnover(item.stockcode, sRunDate);
+      }
+
+      logger.Info("END DoStockHugeTurnover()");
+    }
+
 
     public void Execute(IJobExecutionContext context)
     {
       try
       { 
+        //盤後資料
         DoStockAfter();
+
+        //搜尋巨量換手
+        DoStockHugeTurnover();
       }
       catch (Exception ex)
       {
@@ -372,6 +405,8 @@ namespace C10Mvc.Controllers
       }
     }
   }
+
+  
 
 
 

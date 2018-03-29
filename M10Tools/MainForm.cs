@@ -30,6 +30,8 @@ namespace M10Tools
 
       //載入BaseForm資料
       base.InitForm();
+
+      
     }
 
     private void btnImpErrLRTI_Click(object sender, EventArgs e)
@@ -157,7 +159,7 @@ namespace M10Tools
 
 
 
-            StatusLabel.Text =
+            toolStripStatusLabel1.Text =
               string.Format("{0}進度({1}/{2})=>[{3}]{4} 狀態：{5}", sType, idx, nodes.Count, sCode, sName, sStatus);
             //this.Refresh();
             Application.DoEvents();
@@ -485,7 +487,7 @@ namespace M10Tools
         string sLineTrans = "";
         try
         {
-          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
+          toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
           Application.DoEvents();
 
           if (Stockhelper.GetStockThreeTradeTse(LoopDatetime) == false)
@@ -494,7 +496,7 @@ namespace M10Tools
             continue;
           }
 
-          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.tse, "完成");
+          toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.tse, "完成");
           Application.DoEvents();
         }
         catch (Exception ex)
@@ -504,7 +506,7 @@ namespace M10Tools
         }
       }
 
-      StatusLabel.Text = "完成";
+      toolStripStatusLabel1.Text = "完成";
     }
 
     private void button4_Click(object sender, EventArgs e)
@@ -520,7 +522,7 @@ namespace M10Tools
         string sLineTrans = "";
         try
         {
-          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.otc, LoopDatetime.ToString("yyyyMMdd"));
+          toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.otc, LoopDatetime.ToString("yyyyMMdd"));
           Application.DoEvents();
 
           if (Stockhelper.GetStockThreeTradeOtc(LoopDatetime) == false)
@@ -529,7 +531,7 @@ namespace M10Tools
             continue;
           }
 
-          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.otc, "完成");
+          toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.otc, "完成");
           Application.DoEvents();
         }
         catch (Exception ex)
@@ -538,7 +540,7 @@ namespace M10Tools
           System.Threading.Thread.Sleep(10000);
         }
       }
-      StatusLabel.Text = "完成";
+      toolStripStatusLabel1.Text = "完成";
     }
 
     private void button5_Click(object sender, EventArgs e)
@@ -566,7 +568,7 @@ namespace M10Tools
         string sLineTrans = "";
         try
         {
-          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
+          toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
           Application.DoEvents();
 
           if (Stockhelper.GetStockAfterTse(LoopDatetime) == false)
@@ -575,7 +577,7 @@ namespace M10Tools
             continue;
           }
 
-          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.tse, "完成");
+          toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.tse, "完成");
           Application.DoEvents();
         }
         catch (Exception ex)
@@ -584,7 +586,7 @@ namespace M10Tools
           System.Threading.Thread.Sleep(10000);
         }
       }
-      StatusLabel.Text = "完成";
+      toolStripStatusLabel1.Text = "完成";
     }
 
 
@@ -613,7 +615,7 @@ namespace M10Tools
         string sLineTrans = "";
         try
         {
-          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.otc, LoopDatetime.ToString("yyyyMMdd"));
+          toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.otc, LoopDatetime.ToString("yyyyMMdd"));
           Application.DoEvents();
 
           if (Stockhelper.GetStockAfterOtc(LoopDatetime) == false)
@@ -622,7 +624,7 @@ namespace M10Tools
             continue;
           }
 
-          StatusLabel.Text = string.Format("{0}-{1}", M10Const.StockType.otc, "完成");
+          toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.otc, "完成");
           Application.DoEvents();
         }
         catch (Exception ex)
@@ -631,7 +633,7 @@ namespace M10Tools
           System.Threading.Thread.Sleep(10000);
         }
       }
-      StatusLabel.Text = "完成";
+      toolStripStatusLabel1.Text = "完成";
     }
 
 
@@ -759,16 +761,52 @@ namespace M10Tools
 
     private void button8_Click(object sender, EventArgs e)
     {
+      //預設今天資料
+      string sRunDate = DateTime.Now.ToString("yyyyMMdd");
+
+      //轉最新資料
+      ssql = " select Max(stockdate) from stockafter where stockcode = '2330' ";
+      object oMax = dbDapper.ExecuteScale(ssql);
+      if (oMax != null)
+      {
+        sRunDate = Convert.ToString(Convert.ToInt32(oMax.ToString()));
+      }
 
 
-      Stockhelper.GetHugeTurnover();
+      sRunDate = "20180329";
+
+      List<StockInfo> siList = new List<StockInfo>();
+      ssql = " select * from stockinfo where status = 'Y' and LEN(stockcode) = 4 order by stockcode ";
+      siList = dbDapper.Query<StockInfo>(ssql);
+
+      int iListTotal = siList.Count();
+      int idex = 0;
+
+      foreach (StockInfo item in siList)
+      {
+        idex++;
+
+        toolStripStatusLabel1.Text = string.Format("[{2}/{3}]{0}({1})"
+             , item.stockcode, sRunDate, idex.ToString(), iListTotal.ToString());
+        Application.DoEvents();
+
+        Stockhelper.GetHugeTurnover(item.stockcode,sRunDate);
+
+      }
+
+      toolStripStatusLabel1.Text += "轉檔完畢";
+      Application.DoEvents();
+
+      
+
+      
     }
 
-   
+
 
     private void button2_Click_1(object sender, EventArgs e)
     {
-      StatusLabel.Text = string.Format("StockInfor Trans 開始");
+      toolStripStatusLabel1.Text = string.Format("StockInfor Trans 開始");
       Application.DoEvents();
 
       //Stockhelper.GetStockInfo();
@@ -776,7 +814,7 @@ namespace M10Tools
 
 
 
-      StatusLabel.Text = string.Format("StockInfor Trans 完成");
+      toolStripStatusLabel1.Text = string.Format("StockInfor Trans 完成");
       Application.DoEvents();
 
     }
@@ -816,7 +854,7 @@ namespace M10Tools
               lbItem.villageid = sSplit[2];
               dbDapper.Insert(lbItem);
 
-              StatusLabel.Text = string.Format(sSplit[0]);
+              toolStripStatusLabel1.Text = string.Format(sSplit[0]);
               Application.DoEvents();
 
             }
@@ -825,7 +863,7 @@ namespace M10Tools
 
         }
 
-        StatusLabel.Text = string.Format("完成");
+        toolStripStatusLabel1.Text = string.Format("完成");
         Application.DoEvents();
       }
       catch (Exception ex)
@@ -846,7 +884,7 @@ namespace M10Tools
         ssql = " select top 1 * from stockafter where priceyesterday is null ";
         if (dbDapper.QueryTotalCount(ssql) == 0)
         {
-          StatusLabel.Text = string.Format("完成");
+          toolStripStatusLabel1.Text = string.Format("完成");
           Application.DoEvents();
 
           return;
@@ -859,7 +897,7 @@ namespace M10Tools
         foreach (Stockafter LoopItem in SaList)
         {
 
-          StatusLabel.Text = string.Format("[{0}]{1}",LoopItem.stockdate,LoopItem.stockcode);
+          toolStripStatusLabel1.Text = string.Format("[{0}]{1}",LoopItem.stockdate,LoopItem.stockcode);
           Application.DoEvents();
 
           Decimal dPriceYesterday = Stockhelper.CalcPriceYesterday(LoopItem.pricelast.ToString(), LoopItem.updown, LoopItem.pricediff);
@@ -868,10 +906,6 @@ namespace M10Tools
 
           dbDapper.Update(LoopItem);
         }
-
-
-
-
       }
 
 

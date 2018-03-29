@@ -15,11 +15,6 @@ namespace M10.lib
 {
   public class StockHelper : M10BaseClass
   {
-    
-
-
-
-
     public static WebClient getNewWebClient()
     {
       var wc = new WebClient();
@@ -106,7 +101,7 @@ namespace M10.lib
                 sa.pricenextlimitlow = 0;
                 sa.priceyesterday = dPriceYesterday;
                 sa.updatetime = Utils.getDatatimeString();
-                
+
                 dbDapper.Insert(sa);
               }
               else
@@ -154,7 +149,7 @@ namespace M10.lib
 
       return true;
     }
-    
+
     public bool GetStockAfterOtc(DateTime GetDatetime)
     {
       try
@@ -299,7 +294,7 @@ namespace M10.lib
         dbDapper.Insert(sl);
 
 
-        
+
       }
       catch (Exception ex)
       {
@@ -310,7 +305,7 @@ namespace M10.lib
 
       return true;
     }
-    
+
     public bool GetStockThreeTradeTse(DateTime GetDatetime)
     {
       try
@@ -323,7 +318,7 @@ namespace M10.lib
           wc.Encoding = Encoding.GetEncoding(950);
           string text = wc.DownloadString(sUrl);
 
-          
+
           List<string> StringList = text.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<string>();
 
           foreach (string LoopItem in StringList)
@@ -533,7 +528,7 @@ namespace M10.lib
         TypeList.Add(M10Const.StockType.tse);
         TypeList.Add(M10Const.StockType.otc);
         TypeList.Add(M10Const.StockType.otc1);
-        
+
         foreach (string sType in TypeList)
         {
           GetStockInfoSub(sType);
@@ -548,7 +543,8 @@ namespace M10.lib
       return true;
     }
 
-    public void GetStockInfoSub(string sType) {
+    public void GetStockInfoSub(string sType)
+    {
       string surl = "";
 
       if (sType == M10Const.StockType.tse) surl = M10Const.StockInfoTse;
@@ -760,7 +756,7 @@ namespace M10.lib
           sUrl = string.Format(sUrl, sStockcodeUrl);
           string text = wc.DownloadString(sUrl);
 
-          
+
 
           text = text.Replace("null(", "");
           text = text.Replace(");", "");
@@ -776,7 +772,7 @@ namespace M10.lib
             int iEnd = text.IndexOf(",", iStart + 1);
             string sRep = text.Substring(iStart, iEnd - iStart);
 
-            text = text.Replace(sRep,"");
+            text = text.Replace(sRep, "");
           }
 
 
@@ -919,7 +915,8 @@ namespace M10.lib
     }
 
 
-    public decimal CalcPriceYesterday(string price,string updown,string pricediff) {
+    public decimal CalcPriceYesterday(string price, string updown, string pricediff)
+    {
       Decimal dPrice = 0;
       Decimal dPricediff = 0;
       Decimal dResult = 0;
@@ -931,7 +928,7 @@ namespace M10.lib
         {
           return 0;
         }
-        
+
         //判斷平
         if (dPricediff == 0 || updown == "" || updown == "X")
         {
@@ -954,7 +951,7 @@ namespace M10.lib
         dResult = 0;
 
       }
-      
+
 
 
 
@@ -1101,7 +1098,7 @@ namespace M10.lib
                   PageList.Add(item.InnerText);
                 }
               }
-            }            
+            }
           }
 
           //每個分頁進行資料取得
@@ -1142,7 +1139,7 @@ namespace M10.lib
               {
                 if (SubTableNode.Id == "data_01") continue;
 
-                
+
                 HtmlNodeCollection TrNodes = SubTableNode.SelectNodes("tr");
 
                 foreach (HtmlNode TrNode in TrNodes)
@@ -1280,7 +1277,7 @@ namespace M10.lib
         HtmlDocument HtmlDoc = new HtmlDocument();
         HtmlDoc.Load(response.GetResponseStream(), Encoding.UTF8);
         HtmlNodeCollection MainTableNodes = HtmlDoc.DocumentNode.SelectNodes("//table[@id='data_01']");
-     
+
         //取得共有幾頁
         HtmlNodeCollection SubTableNodes = MainTableNodes[0].SelectNodes("//table");
 
@@ -1314,161 +1311,106 @@ namespace M10.lib
       List<dynamic> StockafterList = new List<dynamic>();
 
       ssql = @" select stockcode, stockdate,pricelast as price from stockafter where stockcode = '{0}' and stockdate >= '{1}' order by stockdate asc ";
-      StockafterList = dbDapper.Query(string.Format(ssql, stockcode, date));   
+      StockafterList = dbDapper.Query(string.Format(ssql, stockcode, date));
 
       return StockafterList;
+    }
+
+    //Api呼叫==取得巨量換手資料
+    public List<dynamic> getStockGet(string StockDate)
+    {
+      List<dynamic> StockGetList = new List<dynamic>();
+
+      ssql = @" select StockGet.stockcode,stockinfo.stockname from StockGet 
+                inner join stockinfo on StockGet.stockcode = stockinfo.stockcode
+                where stockdate = '{0}' order by StockGet.stockcode ";
+      StockGetList = dbDapper.Query<dynamic>(string.Format(ssql, StockDate));   
+
+      return StockGetList;
     }
 
 
     /// <summary>
     /// 計算每日巨量換手
     /// </summary>
-    public void GetHugeTurnover()
+    public void GetHugeTurnover(string sStockCode, string sRunDate)
     {
       try
       {
-
-        //預設今天資料
-        string sRunDate = DateTime.Now.ToString("yyyyMMdd");
-
-        //轉最新資料
-        ssql = " select Max(stockdate) from stockafter where stockcode = '2330' ";
-        object oMax = dbDapper.ExecuteScale(ssql);
-        if (oMax != null)
-        {
-          sRunDate = Convert.ToString(Convert.ToInt32(oMax.ToString()));
-        }
-
-
-        sRunDate = "20180326";
         //刪除目前存在資料
         //dbDapper.Execute("delete stockget");
 
-        List<StockInfo> siList = new List<StockInfo>();
-        ssql = " select * from stockinfo where status = 'Y' and LEN(stockcode) = 4 order by stockcode ";
-        siList = dbDapper.Query<StockInfo>(ssql);
+        //stockcode = "3162";
 
-        int iListTotal = siList.Count();
-        int idex = 0;
-
-        foreach (StockInfo item in siList)
+        //判斷盤後資料是否存在
+        ssql = " select * from StockAfter where stockcode  = '{0}' and stockdate = '{1}'  ";
+        ssql = string.Format(ssql, sStockCode,sRunDate);
+        int iTotal = dbDapper.QueryTotalCount(ssql);
+        if (iTotal == 0)
         {
-          idex++;
-          string stockcode = item.stockcode;
+          return;
+        }
 
-          //stockcode = "3162";
-
-          //判斷盤後資料是否存在
-          ssql = " select * from StockAfter where stockcode  = '{0}' ";
-          ssql = string.Format(ssql, stockcode);
-          int iTotal = dbDapper.QueryTotalCount(ssql);
-          if (iTotal == 0)
-          {
-            continue;
-          }
-
-
-
-          ssql = @" select top 3 * from stockafter 
-               where stockdate <= '{0}' and stockcode = '{1}' order by stockdate desc
-               ";
-          ssql = string.Format(ssql, sRunDate, stockcode);
-          List<Stockafter> saList = dbDapper.Query<Stockafter>(ssql);
-
-          //if (saList.Count != 3)
-          //{
-          //  dt = dt.AddDays(-1);
-          //  continue;
-          //}
-
-          if (saList.Count == 3)
-          {
-            //to
-            Stockafter saToday = saList[0];
-            //yes
-            Stockafter saYes = saList[1];
-            //per
-            Stockafter saPer = saList[2];
-
-            //判斷前一天+9%
-            Boolean bCheckUp9 = checkUp9(saYes, saPer);
-            //if (bCheckUp9 == false)
-            //{
-            //  dt = dt.AddDays(-1);
-            //  continue;
-            //}
-            //判斷當天為180天最大量
-            Boolean bCheck180Max = check180Max(saToday);
-
-            //今天量是昨天的兩倍
-            Boolean bCheckTodayOver2 = checkTodayOver2(saToday, saYes);
-
-
-            if (bCheckUp9 == true && bCheck180Max == true && bCheckTodayOver2 == true)
-            {
-              //確認資料是否已存在，如果存在則判斷下一天
-              ssql = " select * from StockGet where stockcode = '{0}' and stockdate = '{1}' and getdate  = '{2}' ";
-              ssql = string.Format(ssql, stockcode, saToday.stockdate, sRunDate);
-              StockGet sgcheck = dbDapper.QuerySingleOrDefault<StockGet>(ssql);
-              if (sgcheck == null)
-              {
-                StockGet sg = new StockGet();
-                sg.getdate = sRunDate;
-                sg.stockcode = saToday.stockcode;
-                sg.stockdate = saToday.stockdate;
-
-                dbDapper.Insert(sg);
-              }
-              
-            }
-
-
-          }
-
-
-
-          //DateTime dt = DateTime.Now;
-          //DateTime dtTarget = dt.AddDays(-180);
-
-
-          //while (true)
-          //{
-          //  if (dt.ToString("yyyyMMdd") == dtTarget.ToString("yyyyMMdd")) break;
-
-          //  //if (stockcode == "1413")
-          //  //{
-          //  //  ssql = "";
-          //  //}
-
-          //  //if (dt.ToString("yyyyMMdd") == "20170818" && stockcode == "3162")
-          //  //{
-          //  //  ssql = "";
-          //  //}
-
-          //  //StatusLabel.Text = string.Format("[{2}/{3}]{0}({1})"
-          //  //  , stockcode, dt.ToString("yyyyMMdd"), idex.ToString(), iListTotal.ToString());
-          //  //Application.DoEvents();
-
-            
-
-          //  dt = dt.AddDays(-1);
-          //  continue;
-
-          //}
+        //判斷當天為180天最大量
+        Boolean bCheck180Max = check180Max(sStockCode, sRunDate);
+        if (bCheck180Max == false)
+        {
+          return;
         }
 
 
-        //StatusLabel.Text = "轉檔完畢";
-        //Application.DoEvents();
+        ssql = @" select top 3 * from stockafter 
+               where stockdate <= '{0}' and stockcode = '{1}' order by stockdate desc
+               ";
+        ssql = string.Format(ssql, sRunDate, sStockCode);
+        List<Stockafter> saList = dbDapper.Query<Stockafter>(ssql);
+
+        if (saList.Count == 3)
+        {
+          //to
+          Stockafter saToday = saList[0];
+          //yes
+          Stockafter saYes = saList[1];
+          //per
+          Stockafter saPer = saList[2];
+
+          //判斷前一天+9%
+          //Boolean bCheckUp9 = checkUp9(saYes, saPer);
+
+          //判斷兩天+15%
+          Boolean bCheckUp15 = checkUp15(saYes, saPer);
+
+          //今天量是昨天的兩倍
+          Boolean bCheckTodayOver2 = checkTodayOver2(saToday, saYes);
 
 
+          if (bCheckUp15 == true && bCheck180Max == true && bCheckTodayOver2 == true)
+          {
+            //確認資料是否已存在
+            ssql = " select * from StockGet where stockcode = '{0}' and stockdate = '{1}' and getdate  = '{2}' ";
+            ssql = string.Format(ssql, sStockCode, saToday.stockdate, sRunDate);
+            StockGet sgcheck = dbDapper.QuerySingleOrDefault<StockGet>(ssql);
+            if (sgcheck == null)
+            {
+              StockGet sg = new StockGet();
+              sg.getdate = sRunDate;
+              sg.stockcode = saToday.stockcode;
+              sg.stockdate = saToday.stockdate;
+
+              dbDapper.Insert(sg);
+            }
+
+          }
+
+
+        }
       }
       catch (Exception ex)
       {
         logger.Error(ex, "巨量換手轉檔異常通報");
       }
 
-    }  
+    }
 
     /// <summary>
     /// 判斷前一天上漲>9%
@@ -1492,16 +1434,46 @@ namespace M10.lib
         }
       }
 
+      return bResult;
+    }
+
+    /// <summary>
+    /// 判斷兩天上漲15%
+    /// </summary>
+    /// <param name="saYes"></param>
+    /// <param name="saPer"></param>
+    /// <returns></returns>
+    public Boolean checkUp15(Stockafter saYes, Stockafter saPer)
+    {
+      Boolean bResult = false;
+
+      double dTarget = 0.15;
+      decimal dResult = 0;
+      //昨天漲幅
+      if (saYes.updown == "+")
+      {
+        dResult += Convert.ToDecimal(saYes.pricediff) / Convert.ToDecimal(saYes.priceyesterday);
+      }
+      //前天漲幅
+      if (saPer.updown == "+")
+      {
+        dResult += Convert.ToDecimal(saPer.pricediff) / Convert.ToDecimal(saPer.priceyesterday);
+      }
+
+      //大於15%
+      if (dResult > Convert.ToDecimal(dTarget))
+      {
+        bResult = true;
+      }
 
 
       return bResult;
     }
 
     /// <summary>
-    /// 當天是180天 最大量
+    /// 當天是180根K棒 最大量
     /// </summary>
-    /// <param name="saYes"></param>
-    /// <param name="saPer"></param>
+    /// <param name="saToday"></param>
     /// <returns></returns>
     public Boolean check180Max(Stockafter saToday)
     {
@@ -1528,6 +1500,30 @@ namespace M10.lib
 
       return bResult;
     }
+
+    /// <summary>
+    /// 當天是180根K棒 最大量
+    /// </summary>
+    /// <param name="sStockCode"></param>
+    /// <param name="sStockDate"></param>
+    /// <returns></returns>
+    public Boolean check180Max(string sStockCode, string sStockDate)
+    {
+      Boolean bResult = false;
+
+
+      ssql = @" select * from stockafter where stockcode = '{1}' and stockdate = '{0}' ";
+      ssql = string.Format(ssql, sStockDate, sStockCode);
+
+      Stockafter oStockAfter = dbDapper.QuerySingleOrDefault<Stockafter>(ssql);
+
+      bResult = check180Max(oStockAfter);
+
+
+      return bResult;
+    }
+
+
 
 
     /// <summary>

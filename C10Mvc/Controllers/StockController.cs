@@ -237,5 +237,19 @@ namespace C10Mvc.Controllers
 
       return TempList;
     }
+
+
+
+    [HttpGet]
+    [Route("getStockHugeTurnover")]
+    public List<dynamic> getStockHugeTurnover(string date)
+    {
+      //取得資料
+      //List<StockGet> TempList = stockhelper.getStockGet(date);
+
+      List<dynamic> TempList = stockhelper.getStockGet(date);
+
+      return TempList;
+    }
   }
 }

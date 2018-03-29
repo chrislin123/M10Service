@@ -58,7 +58,7 @@ namespace C10Mvc
                               .WithIdentity("triggerStockThreeTrade")
                               .Build();
 
-      // 建立工作
+      // 建立工作(盤後，巨量換手)
       IJobDetail jobStockAfter = JobBuilder.Create<StockAfterTask>()
                           .WithIdentity("jobStockAfter")
                           .Build();
@@ -80,13 +80,14 @@ namespace C10Mvc
                               .WithIdentity("triggerStockBrokerBS")
                               .Build();
 
+     
 
 
       // 把工作加入排程
       _Scheduler.ScheduleJob(jobStockInfo, triggerStockInfo);
       _Scheduler.ScheduleJob(jobStockThreeTrade, triggerStockThreeTrade);
       _Scheduler.ScheduleJob(jobStockAfter, triggerStockAfter);
-      _Scheduler.ScheduleJob(jobStockBrokerBS, triggerStockBrokerBS);
+      _Scheduler.ScheduleJob(jobStockBrokerBS, triggerStockBrokerBS);     
 
       // 啟動排程器
       _Scheduler.Start();
