@@ -25,14 +25,14 @@ namespace M10Winform
     string folderName = @"D:\m10\temp\";
     string folderBack = @"D:\m10\back\";
     string folderError = @"D:\m10\xmlerror\";
-    
+
     //1040806 新的ftp主機
     string sIP = "140.116.38.196";
     string sUser = "m10sys";
     string sPassword = "m10sys";
-    
+
     public MainFormNew()
-    { 
+    {
       InitializeComponent();
       base.InitForm();
     }
@@ -46,6 +46,8 @@ namespace M10Winform
         if (!Directory.Exists(folderName)) Directory.CreateDirectory(folderName);
         if (!Directory.Exists(folderError)) Directory.CreateDirectory(folderError);
 
+        ProcFilesByGoogleDrive();
+        
 
         //ssql = " select * from StationData ";
         //List<StationData> StationDataList = dbDapper.Query<StationData>(ssql);
@@ -81,18 +83,18 @@ namespace M10Winform
     {
       timer1.Enabled = false;
 
-      if (chktimer.Checked == false) return;      
+      if (chktimer.Checked == false) return;
 
       try
       {
         ShowMessageToFront("轉檔啟動");
-        
+
         ProceStart();
 
         ShowMessageToFront("轉檔完畢");
       }
       catch (Exception ex)
-      { 
+      {
         logger.Error(ex, "M10Winform轉檔錯誤:");
       }
 
@@ -105,24 +107,31 @@ namespace M10Winform
     {
       try
       {
+
+        //1070502 取消使用FTP，改用GoogleDrive
         // FTP 下載資料到本機
-        if (chkdownload.Checked == true)
-        {
-          //1060523 FTP改寫使用 FluentFTP
-          //FtpDownload();
-          FtpDownloadNew();
-        }
-        
+        //if (chkdownload.Checked == true)
+        //{
+        //  //1060523 FTP改寫使用 FluentFTP
+        //  //FtpDownload();
+        //  FtpDownloadNew();
+        //}
+        ProcFilesByGoogleDrive();
+
+
         // 取得資料夾內所有檔案
         foreach (string fname in System.IO.Directory.GetFiles(folderName))
-        { 
+        {
           //轉檔到DB
           TransToDB(fname);
-          
+
           FileInfo fi = new FileInfo(fname);
 
           //記錄轉檔資料
           FileTransLog(fi.Name);
+
+          //自動歸檔
+
 
           //存至備份資料夾
           fi.CopyTo(folderBack + fi.Name, true);
@@ -132,12 +141,12 @@ namespace M10Winform
       }
       catch
       {
-        
+
       }
     }
 
     private void FileTransLog(string pFileName)
-    { 
+    {
       FileTransLog item = new FileTransLog();
       item.FileTransName = pFileName;
       item.FileTransTime = DateTime.Now;
@@ -146,16 +155,106 @@ namespace M10Winform
       dbDapper.Insert(item);
     }
 
-    
+
+    private void ProcFilesByGoogleDrive()
+    {
+
+      //string sGoogleDrivePath = @"H:\我的雲端硬碟\10M";
+      string sGoogleDrivePath = @"D:\m10\GoogleDrive";
+
+      try
+      {
+        //取得最後轉檔資料
+        ssql = @"select top 1 * from FileTransLog order by FileTransNo desc";
+        FileTransLog FileTransLogData = dbDapper.QuerySingleOrDefault<FileTransLog>(ssql);
+
+        DateTime dtStart = DateTime.ParseExact(FileTransLogData.FileTransName.Split('.')[0], "yyyy_MM_dd_HH_mm", new CultureInfo(""));
+
+        //DateTime dtEnd = DateTime.ParseExact("201705211750", "yyyyMMddHHmm", new CultureInfo(""));
+        DateTime dtEnd = DateTime.Now;
+
+        for (DateTime dtTrans = dtStart; dtTrans < dtEnd; dtTrans = dtTrans.AddMinutes(10))
+        {
+          //2018_05_01_23_40.xml
+          string sSub1 = string.Format("10M{0}", dtTrans.Year.ToString());
+          string sSub2 = string.Format("10M{0}{1}", dtTrans.Month.ToString().PadLeft(2, '0'), dtTrans.Day.ToString().PadLeft(2, '0'));
+          string sTransFileName = dtTrans.ToString("yyyy_MM_dd_HH_mm") + ".xml";
+
+          string sGoogleFilePath = Path.Combine(sGoogleDrivePath, sSub1, sSub2, sTransFileName);
+          if (File.Exists(sGoogleFilePath))
+          {
+            //檔案存在，複製到轉檔路徑
+            FileInfo fi = new FileInfo(sGoogleFilePath);
+            fi.CopyTo(Path.Combine(folderName, sTransFileName), true);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        ShowMessageToFront(ex.ToString());
+      }
+
+
+      //等待五秒
+      System.Threading.Thread.Sleep(5000);
+    }
+
+    //
+    private void ArrangeTransFile(string FilePath) {
+      //FluentFTP 起始路徑都是跟目錄開始，目錄結尾都是/
+      string sFTPArrangePath = "/M10_System/M10/XML/";
+      string sFTPXmlPath = "/14_FCU_raindata/M10/";
+
+      FileInfo fi = new FileInfo(FilePath);
+      string sFileName = fi.Name.Replace(fi.Extension, "");
+      FtpClient client = new FtpClient();
+      try
+      {
+        client.Host = sIP;
+        client.SocketKeepAlive = true;       
+        client.Credentials = new NetworkCredential(sUser, sPassword);
+        client.Connect();
+
+        //FTP檔案整理
+        //==1060406 自動化歸檔-建立歸屬資料夾
+        List<string> slist = sFileName.Split('_').ToList<string>();
+        string sSaveFolder = string.Format(@"{0}{1}/{2}/{3}/", sFTPArrangePath, slist[0], slist[1], slist[2]);
+
+        //建立資料夾
+        client.CreateDirectory(sSaveFolder);
+
+        ShowMessageToFront(string.Format("Ftp[{0}]檔案移動到{0}", sFileName, sSaveFolder + sFileName));
+        //移動檔案至歸屬資料夾
+        //client.Rename(string.Format(@"{0}{1}", sFTPXmlPath, sFileName), string.Format(@"{0}{1}", sSaveFolder, sFileName));
+        client.MoveFile(string.Format(@"{0}{1}", sFTPXmlPath, sFileName), string.Format(@"{0}{1}", sSaveFolder, sFileName));
+
+        
+     
+      
+
+      }
+      catch (Exception ex)
+      {
+        ShowMessageToFront(ex.ToString());
+      }
+      finally
+      {
+        client.Disconnect();
+      }
+
+
+    }
+
+
     private void FtpDownloadNew()
     {
       //FluentFTP 起始路徑都是跟目錄開始，目錄結尾都是/
       string sFTPArrangePath = "/M10_System/M10/XML/";
       string sFTPXmlPath = "/14_FCU_raindata/M10/";
-      
-      FtpClient client = new FtpClient();      
+
+      FtpClient client = new FtpClient();
       try
-      { 
+      {
         client.Host = sIP;
         client.SocketKeepAlive = true;
         // if you don't specify login credentials, we use the "anonymous" user account
@@ -169,7 +268,7 @@ namespace M10Winform
 
         //取得檔案名稱清單
         List<string> lstFileName = new List<string>();
-        foreach (FtpListItem  item in client.GetListing(sFTPXmlPath))
+        foreach (FtpListItem item in client.GetListing(sFTPXmlPath))
         {
           if (item.Type == FtpFileSystemObjectType.File)
           {
@@ -177,7 +276,7 @@ namespace M10Winform
           }
         }
 
-        
+
         //FTP檔案整理
         foreach (string sFileName in lstFileName)
         {
@@ -188,12 +287,12 @@ namespace M10Winform
           //沒有下載紀錄則下載
           if (DataList.Count == 0)
           {
-            /* Download a File */            
+            /* Download a File */
             client.DownloadFile(folderName + sFileName, string.Format(@"{0}{1}", sFTPXmlPath, sFileName));
             ShowMessageToFront("Ftp下載檔案到" + folderName + sFileName);
           }
           else //已下載，且時間超過1天，則移動FTP檔案到bak資料夾
-          { 
+          {
             //1060408 修改為1天
             DateTime dtRunTimeRainData = DateTime.Now.AddDays(-1);
 
@@ -204,9 +303,9 @@ namespace M10Winform
             if (DateTime.Compare(dtRTime, dtRunTimeRainData) <= 0)
             {
               //==1060406 自動化歸檔-建立歸屬資料夾
-              List<string> slist = sFileName.Split('_').ToList<string>();              
+              List<string> slist = sFileName.Split('_').ToList<string>();
               string sSaveFolder = string.Format(@"{0}{1}/{2}/{3}/", sFTPArrangePath, slist[0], slist[1], slist[2]);
-              
+
               //建立資料夾
               client.CreateDirectory(sSaveFolder);
 
@@ -222,10 +321,11 @@ namespace M10Winform
       }
       catch (Exception ex)
       {
-        ShowMessageToFront(ex.ToString());        
-      }finally
+        ShowMessageToFront(ex.ToString());
+      }
+      finally
       {
-        client.Disconnect();        
+        client.Disconnect();
       }
 
       //等待五秒
@@ -238,9 +338,9 @@ namespace M10Winform
       try
       {
         FileInfo FiTrans = new FileInfo(sFilePath);
-        
+
         sFileTime = FiTrans.Name;
-                                   
+
         sFileTime = string.Format("{0}-{1}-{2}T{3}:{4}:00"
           , sFileTime.Substring(0, 4)
           , sFileTime.Substring(5, 2)
@@ -253,7 +353,7 @@ namespace M10Winform
         ShowMessageToFront("轉檔:" + sFilePath);
 
 
-        ShowMessageToFront( sFilePath + "狀態：轉XML DOC");
+        ShowMessageToFront(sFilePath + "狀態：轉XML DOC");
         XmlDocument xd = new XmlDocument();
 
         try
@@ -308,7 +408,7 @@ namespace M10Winform
 
         //1070301 當select沒有datarow時，CopyToDataTable會出現錯誤。
         //DataTable dt = dtTemp.Select(" rtime = '" + sFileTime +  "' ").CopyToDataTable();
-        
+
         DataTable dt = dtTemp.Clone();
         var q = dtTemp.AsEnumerable().Where(o => o.Field<string>("rtime") == sFileTime);
 
@@ -326,7 +426,7 @@ namespace M10Winform
         DateTime dtRTime1 = Convert.ToDateTime(sFileTime);
         DateTime dtRTime2 = dtRTime1.AddHours(-1);
         DateTime dtRTime3 = dtRTime1.AddHours(-2);
-        List<RainStation> RainStationList = new List<RainStation>();               
+        List<RainStation> RainStationList = new List<RainStation>();
         ssql = "select  * from RainStation where rtime in ( '{0}','{1}','{2}') ";
         ssql = string.Format(ssql, dtRTime1.ToString("s"), dtRTime2.ToString("s"), dtRTime3.ToString("s"));
         RainStationList = dbDapper.Query<RainStation>(ssql);
@@ -342,7 +442,7 @@ namespace M10Winform
           dr["LRTI"] = sLRTI;
         }
 
-        
+
         //變更縣市資料 台北縣->新北市 台中縣->台中市 桃園縣->桃園市
         //1050703 變更縣市資料 臺北市->台北市 臺中市->台中市
         //1050705 變更縣市資料 台北市->臺北市 台中市->臺中市 台南市->臺南市
@@ -380,7 +480,7 @@ namespace M10Winform
           {
             continue;
           }
-          
+
           string sSTID = dr["STID"].ToString();
           StationData NewStationData = StationDataList.Where(o => o.STID == sSTID).FirstOrDefault();
 
@@ -401,11 +501,11 @@ namespace M10Winform
         //清空runtime 資料表
         dbDapper.Execute("delete RunTimeRainData");
 
-       
+
         //寫入RuntimeRainData
         foreach (DataRow dr in dt.Rows)
         {
-          
+
           RunTimeRainData RuntimeData = new RunTimeRainData();
           RuntimeData.STID = dr["STID"].ToString();
           RuntimeData.STNAME = dr["STNAME"].ToString();
@@ -448,7 +548,7 @@ namespace M10Winform
         //資料寫入sql
         foreach (DataRow dr in dt.Rows)
         {
-          
+
           //刪除資料
           ssql = string.Format(" delete RainStation  where STID = '{0}' and RTime = '{1}' "
                 , dr["STID"].ToString()
@@ -496,7 +596,7 @@ namespace M10Winform
         }
       }
       catch (Exception ex)
-      { 
+      {
         logger.Error(ex, string.Format("Function:{0},{1}:XML轉檔錯誤。", System.Reflection.MethodBase.GetCurrentMethod().Name, sFileTime));
       }
     }
@@ -531,7 +631,7 @@ namespace M10Winform
 
         sResult = dResult.ToString();
       }
-      catch 
+      catch
       {
 
       }
@@ -559,7 +659,7 @@ namespace M10Winform
 
     private string CalLRTI(DataRow pDr, List<RainStation> RainStationListBy3hr)
     {
-      
+
       string sSTID = pDr["STID"].ToString().Trim();
       string sRTIME = pDr["RTime"].ToString();
       string sResult = string.Empty;
@@ -573,7 +673,7 @@ namespace M10Winform
       double dRain1 = 0;
       double dRain2 = 0;
       double dRain3 = 0;
-      double dRT = 0;    
+      double dRT = 0;
 
       //由傳進來的資料解析
       double.TryParse(pDr["RAIN"].ToString(), out dRain1);
@@ -594,7 +694,7 @@ namespace M10Winform
       if (rsTempList3.Count > 0)
       {
         double.TryParse(rsTempList3[0].RAIN, out dRain3);
-      }    
+      }
 
       //前三個小時平均 * RT值
       double dResult = (dRain1 + dRain2 + dRain3) / 3 * dRT;
@@ -612,15 +712,15 @@ namespace M10Winform
 
         int.Parse(ssss);
       }
-      catch (Exception ex) 
+      catch (Exception ex)
       {
         logger.Error(ex, "test error");
-        
+
       }
 
-      
 
-      
+
+
 
 
       string sSTID = "01U8801";
@@ -630,9 +730,9 @@ namespace M10Winform
       NewStationData = dbDapper.QuerySingleOrDefault<StationData>(ssql, new { STID = sSTID });
 
 
-      
+
       string sRTIME = "2017-03-21T10:10:00";
-     
+
 
       //轉換datetime
       DateTime dtRTime1 = Convert.ToDateTime(sRTIME);
@@ -734,5 +834,14 @@ namespace M10Winform
 
       rtb.ScrollToCaret();
     }
+  }
+
+
+  public class DataFileInfo
+  {
+    public string time { get; set; }
+
+    public string path { get; set; }
+
   }
 }
