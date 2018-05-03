@@ -20,11 +20,11 @@ namespace M10Winform
 {
   public partial class MainFormNew : BaseForm
   {
-    public ODAL oDal = new ODAL(Properties.Settings.Default.DBDefault);
+    //public ODAL oDal = new ODAL(Properties.Settings.Default.DBDefault);
 
-    string folderName = @"D:\m10\temp\";
-    string folderBack = @"D:\m10\back\";
-    string folderError = @"D:\m10\xmlerror\";
+    const string folderName = @"D:\m10\temp\";
+    const string folderBack = @"D:\m10\back\";
+    const string folderError = @"D:\m10\xmlerror\";
 
     //1040806 新的ftp主機
     string sIP = "140.116.38.196";
@@ -45,43 +45,6 @@ namespace M10Winform
         if (!Directory.Exists(folderBack)) Directory.CreateDirectory(folderBack);
         if (!Directory.Exists(folderName)) Directory.CreateDirectory(folderName);
         if (!Directory.Exists(folderError)) Directory.CreateDirectory(folderError);
-
-
-
-        string sFTPArrangePath = "/M10_System/M10/XML/";
-
-        string test = Path.Combine(sFTPArrangePath, "test","1","2");
-
-
-        string[] tttt = {"1","2","3" };
-
-
-        string stttt = Path.Combine(tttt);
-
-        test = "";
-        //ProcFilesByGoogleDrive();
-
-
-        //ssql = " select * from StationData ";
-        //List<StationData> StationDataList = dbDapper.Query<StationData>(ssql);
-
-        //StationData sd = StationDataList.Where(o => o.STID == "55").FirstOrDefault();
-
-
-        //string ssss = string.Empty;
-
-
-        //List<RainStation> RainStationListBy3hr = null;
-        //List<RainStation> rsTempList2 = RainStationListBy3hr
-        //                             .Where(o => o.STID == "" && o.RTime == "")
-        //                             .ToList<RainStation>();
-        //if (rsTempList2.Count > 0)
-        //{
-        //  //double.TryParse(rsTempList2[0].RAIN, out dRain2);
-        //}
-
-        //return;
-
       }
       catch (Exception ex)
       {
@@ -129,11 +92,12 @@ namespace M10Winform
         //  //FtpDownload();
         //  FtpDownloadNew();
         //}
+
         ProcFilesByGoogleDrive();
 
 
         // 取得資料夾內所有檔案
-        foreach (string fname in System.IO.Directory.GetFiles(folderName))
+        foreach (string fname in Directory.GetFiles(folderName))
         {
           //轉檔到DB
           TransToDB(fname);
@@ -144,13 +108,13 @@ namespace M10Winform
           FileTransLog(fi.Name);
 
           //自動歸檔
-
+          ArrangeTransFile(fi);
 
           //存至備份資料夾
           fi.CopyTo(folderBack + fi.Name, true);
           fi.Delete();
+         
         }
-
       }
       catch
       {
@@ -168,12 +132,14 @@ namespace M10Winform
       dbDapper.Insert(item);
     }
 
-
+    /// <summary>
+    /// 資料來源處理，使用Google Drive硬碟模式
+    /// </summary>
     private void ProcFilesByGoogleDrive()
     {
 
-      //string sGoogleDrivePath = @"H:\我的雲端硬碟\10M";
-      string sGoogleDrivePath = @"D:\m10\GoogleDrive";
+      string sGoogleDrivePath = @"H:\我的雲端硬碟\10M";
+      //string sGoogleDrivePath = @"D:\m10\GoogleDrive";
 
       try
       {
@@ -182,7 +148,8 @@ namespace M10Winform
         FileTransLog FileTransLogData = dbDapper.QuerySingleOrDefault<FileTransLog>(ssql);
 
         DateTime dtStart = DateTime.ParseExact(FileTransLogData.FileTransName.Split('.')[0], "yyyy_MM_dd_HH_mm", new CultureInfo(""));
-
+        //最後轉檔的下一個檔案
+        dtStart = dtStart.AddMinutes(10);
         //DateTime dtEnd = DateTime.ParseExact("201705211750", "yyyyMMddHHmm", new CultureInfo(""));
         DateTime dtEnd = DateTime.Now;
 
@@ -198,7 +165,10 @@ namespace M10Winform
           {
             //檔案存在，複製到轉檔路徑
             FileInfo fi = new FileInfo(sGoogleFilePath);
-            fi.CopyTo(Path.Combine(folderName, sTransFileName), true);
+            string sCopyToPath = Path.Combine(folderName, sTransFileName);
+            fi.CopyTo(sCopyToPath, true);
+
+            ShowMessageToFront(string.Format("{0} 檔案移動到 {1}", fi.FullName, sCopyToPath));
           }
         }
       }
@@ -213,13 +183,10 @@ namespace M10Winform
     }
 
     //
-    private void ArrangeTransFile(string FilePath) {
+    private void ArrangeTransFile(FileInfo fi) {
       //FluentFTP 起始路徑都是跟目錄開始，目錄結尾都是/
       string sFTPArrangePath = "/M10_System/M10/XML/";
-      string sFTPXmlPath = "/14_FCU_raindata/M10/";
-
-      FileInfo fi = new FileInfo(FilePath);
-      string sFileName = fi.Name.Replace(fi.Extension, "");
+      
       FtpClient client = new FtpClient();
       try
       {
@@ -230,24 +197,17 @@ namespace M10Winform
 
         //FTP檔案整理
         //==1060406 自動化歸檔-建立歸屬資料夾
-        //List<string> slist = sFileName.Split('_').ToList<string>();
-        //string sSaveFolder = string.Format(@"{0}{1}/{2}/{3}/", sFTPArrangePath, slist[0], slist[1], slist[2]);
-
-        string sSaveFolder = sFTPArrangePath + "test/";
-
-        sSaveFolder = sFTPArrangePath + "test/";
-        //建立資料夾
-        //client.CreateDirectory(sSaveFolder);
-
-        //ShowMessageToFront(string.Format("Ftp[{0}]檔案移動到{0}", sFileName, sSaveFolder + sFileName));
-        //移動檔案至歸屬資料夾
-        //client.Rename(string.Format(@"{0}{1}", sFTPXmlPath, sFileName), string.Format(@"{0}{1}", sSaveFolder, sFileName));
-        //client.MoveFile(string.Format(@"{0}{1}", sFTPXmlPath, sFileName), string.Format(@"{0}{1}", sSaveFolder, sFileName));
+        string sFileName = fi.Name.Replace(fi.Extension, "");
+        List<string> slist = sFileName.Split('_').ToList<string>();
+        string sSavePath = string.Format(@"{0}{1}/{2}/{3}/{4}", sFTPArrangePath, slist[0], slist[1], slist[2], fi.Name);
 
         //設定嘗試次數
         client.RetryAttempts = 3;
-        client.UploadFile(FilePath, string.Format(@"{0}{1}", sSaveFolder, sFileName), FtpExists.Overwrite, true, FtpVerify.Retry);
-      
+        if (client.UploadFile(fi.FullName, sSavePath, FtpExists.Overwrite, true, FtpVerify.Retry) == false)
+        {
+          //上傳失敗
+          logger.Error(string.Format("FTP上傳失敗：{0}", fi.FullName));       
+        }
 
       }
       catch (Exception ex)
@@ -258,8 +218,6 @@ namespace M10Winform
       {
         client.Disconnect();        
       }
-
-
     }
 
 
@@ -443,18 +401,22 @@ namespace M10Winform
         DateTime dtRTime1 = Convert.ToDateTime(sFileTime);
         DateTime dtRTime2 = dtRTime1.AddHours(-1);
         DateTime dtRTime3 = dtRTime1.AddHours(-2);
-        List<RainStation> RainStationList = new List<RainStation>();
-        ssql = "select  * from RainStation where rtime in ( '{0}','{1}','{2}') ";
-        ssql = string.Format(ssql, dtRTime1.ToString("s"), dtRTime2.ToString("s"), dtRTime3.ToString("s"));
-        RainStationList = dbDapper.Query<RainStation>(ssql);
+       
 
         //計算LRTI 與 WLRTI
         foreach (DataRow dr in dt.Rows)
         {
+          List<RainStation> RainStationList = new List<RainStation>();
+          ssql = "select  * from RainStation where STID = '{3}' and rtime in ( '{0}','{1}','{2}') ";
+          ssql = string.Format(ssql, dtRTime1.ToString("s"), dtRTime2.ToString("s")
+                                   , dtRTime3.ToString("s"), dr["STID"].ToString().Trim());
+          RainStationList = dbDapper.Query<RainStation>(ssql);
+
 
           string sLRTI = "0";
           //string sWLRTI = "0";
 
+          ShowMessageToFront("CalLRTI：" + dr["STID"].ToString().Trim());
           sLRTI = CalLRTI(dr, RainStationList);
           dr["LRTI"] = sLRTI;
         }
@@ -519,10 +481,11 @@ namespace M10Winform
         dbDapper.Execute("delete RunTimeRainData");
 
 
+        ShowMessageToFront(sFilePath + "狀態：寫入RuntimeRainData");
         //寫入RuntimeRainData
         foreach (DataRow dr in dt.Rows)
         {
-
+          ShowMessageToFront(string.Format("{0} {1} 狀態：寫入RuntimeRainData", FiTrans.Name, dr["STID"].ToString()));
           RunTimeRainData RuntimeData = new RunTimeRainData();
           RuntimeData.STID = dr["STID"].ToString();
           RuntimeData.STNAME = dr["STNAME"].ToString();
@@ -562,9 +525,12 @@ namespace M10Winform
           dbDapper.Insert(RuntimeData);
         }
 
+
+        ShowMessageToFront(sFilePath + "狀態：寫入RainStation");
         //資料寫入sql
         foreach (DataRow dr in dt.Rows)
-        {
+        { 
+          ShowMessageToFront(string.Format("{0} {1} 狀態：寫入RainStation", FiTrans.Name, dr["STID"].ToString()));
 
           //刪除資料
           ssql = string.Format(" delete RainStation  where STID = '{0}' and RTime = '{1}' "
@@ -667,61 +633,86 @@ namespace M10Winform
     private void btnStart_Click(object sender, EventArgs e)
     {
       //測試帳號密碼
-      sIP = "192.168.1.100";
-      sUser = "m10sys";
-      sPassword = "m10sys";
+      //sIP = "192.168.1.100";
+      //sUser = "m10sys";
+      //sPassword = "m10sys";
 
-      ProceStart();
+      //ProceStart();
     }
 
     private string CalLRTI(DataRow pDr, List<RainStation> RainStationListBy3hr)
     {
 
-      string sSTID = pDr["STID"].ToString().Trim();
-      string sRTIME = pDr["RTime"].ToString();
-      string sResult = string.Empty;
-
-      //轉換datetime
-      DateTime dtRTime1 = Convert.ToDateTime(sRTIME);
-      DateTime dtRTime2 = dtRTime1.AddHours(-1);
-      DateTime dtRTime3 = dtRTime1.AddHours(-2);
-
-      //取得這三個小時的雨量資料
-      double dRain1 = 0;
-      double dRain2 = 0;
-      double dRain3 = 0;
-      double dRT = 0;
-
-      //由傳進來的資料解析
-      double.TryParse(pDr["RAIN"].ToString(), out dRain1);
-      double.TryParse(pDr["RT"].ToString(), out dRT);
-
-
-      //1070214 Linq SQL修改為 Linq Lamda 寫法並加入防呆
-      List<RainStation> rsTempList2 = RainStationListBy3hr
-                                      .Where(o => o.STID == sSTID && o.RTime == dtRTime2.ToString("s"))
-                                      .ToList<RainStation>();
-      if (rsTempList2.Count > 0)
+      try
       {
-        double.TryParse(rsTempList2[0].RAIN, out dRain2);
+        string sSTID = pDr["STID"].ToString().Trim();
+        string sRTIME = pDr["RTime"].ToString();
+        string sResult = string.Empty;
+
+        //轉換datetime
+        DateTime dtRTime1 = Convert.ToDateTime(sRTIME);
+        DateTime dtRTime2 = dtRTime1.AddHours(-1);
+        DateTime dtRTime3 = dtRTime1.AddHours(-2);
+
+        //取得這三個小時的雨量資料
+        double dRain1 = 0;
+        double dRain2 = 0;
+        double dRain3 = 0;
+        double dRT = 0;
+
+        //由傳進來的資料解析
+        double.TryParse(pDr["RAIN"].ToString(), out dRain1);
+        double.TryParse(pDr["RT"].ToString(), out dRT);
+
+
+        //1070214 Linq SQL修改為 Linq Lamda 寫法並加入防呆
+        List<RainStation> rsTempList2 = RainStationListBy3hr
+                                        .Where(o => o.STID == sSTID && o.RTime == dtRTime2.ToString("s"))
+                                        .ToList<RainStation>();
+        if (rsTempList2.Count > 0)
+        {
+          double.TryParse(rsTempList2[0].RAIN, out dRain2);
+        }
+        List<RainStation> rsTempList3 = RainStationListBy3hr
+                                        .Where(o => o.STID == sSTID && o.RTime == dtRTime3.ToString("s"))
+                                        .ToList<RainStation>();
+        if (rsTempList3.Count > 0)
+        {
+          double.TryParse(rsTempList3[0].RAIN, out dRain3);
+        }
+
+        //前三個小時平均 * RT值
+        double dResult = (dRain1 + dRain2 + dRain3) / 3 * dRT;
+        sResult = Math.Round(dResult, 2).ToString();
+
+
+        return sResult;
       }
-      List<RainStation> rsTempList3 = RainStationListBy3hr
-                                      .Where(o => o.STID == sSTID && o.RTime == dtRTime3.ToString("s"))
-                                      .ToList<RainStation>();
-      if (rsTempList3.Count > 0)
+      catch (Exception)
       {
-        double.TryParse(rsTempList3[0].RAIN, out dRain3);
+
+        throw;
       }
+     
 
-      //前三個小時平均 * RT值
-      double dResult = (dRain1 + dRain2 + dRain3) / 3 * dRT;
-      sResult = Math.Round(dResult, 2).ToString();
-
-      return sResult;
+     
     }
 
     private void button1_Click(object sender, EventArgs e)
     {
+
+
+
+      ProcFilesByGoogleDrive();
+
+
+      return;
+
+
+
+
+
+
       try
       {
 
@@ -854,11 +845,5 @@ namespace M10Winform
   }
 
 
-  public class DataFileInfo
-  {
-    public string time { get; set; }
-
-    public string path { get; set; }
-
-  }
+  
 }
