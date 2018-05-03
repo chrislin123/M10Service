@@ -46,8 +46,21 @@ namespace M10Winform
         if (!Directory.Exists(folderName)) Directory.CreateDirectory(folderName);
         if (!Directory.Exists(folderError)) Directory.CreateDirectory(folderError);
 
-        ProcFilesByGoogleDrive();
-        
+
+
+        string sFTPArrangePath = "/M10_System/M10/XML/";
+
+        string test = Path.Combine(sFTPArrangePath, "test","1","2");
+
+
+        string[] tttt = {"1","2","3" };
+
+
+        string stttt = Path.Combine(tttt);
+
+        test = "";
+        //ProcFilesByGoogleDrive();
+
 
         //ssql = " select * from StationData ";
         //List<StationData> StationDataList = dbDapper.Query<StationData>(ssql);
@@ -217,19 +230,23 @@ namespace M10Winform
 
         //FTP檔案整理
         //==1060406 自動化歸檔-建立歸屬資料夾
-        List<string> slist = sFileName.Split('_').ToList<string>();
-        string sSaveFolder = string.Format(@"{0}{1}/{2}/{3}/", sFTPArrangePath, slist[0], slist[1], slist[2]);
+        //List<string> slist = sFileName.Split('_').ToList<string>();
+        //string sSaveFolder = string.Format(@"{0}{1}/{2}/{3}/", sFTPArrangePath, slist[0], slist[1], slist[2]);
 
+        string sSaveFolder = sFTPArrangePath + "test/";
+
+        sSaveFolder = sFTPArrangePath + "test/";
         //建立資料夾
-        client.CreateDirectory(sSaveFolder);
+        //client.CreateDirectory(sSaveFolder);
 
-        ShowMessageToFront(string.Format("Ftp[{0}]檔案移動到{0}", sFileName, sSaveFolder + sFileName));
+        //ShowMessageToFront(string.Format("Ftp[{0}]檔案移動到{0}", sFileName, sSaveFolder + sFileName));
         //移動檔案至歸屬資料夾
         //client.Rename(string.Format(@"{0}{1}", sFTPXmlPath, sFileName), string.Format(@"{0}{1}", sSaveFolder, sFileName));
-        client.MoveFile(string.Format(@"{0}{1}", sFTPXmlPath, sFileName), string.Format(@"{0}{1}", sSaveFolder, sFileName));
+        //client.MoveFile(string.Format(@"{0}{1}", sFTPXmlPath, sFileName), string.Format(@"{0}{1}", sSaveFolder, sFileName));
 
-        
-     
+        //設定嘗試次數
+        client.RetryAttempts = 3;
+        client.UploadFile(FilePath, string.Format(@"{0}{1}", sSaveFolder, sFileName), FtpExists.Overwrite, true, FtpVerify.Retry);
       
 
       }
@@ -239,7 +256,7 @@ namespace M10Winform
       }
       finally
       {
-        client.Disconnect();
+        client.Disconnect();        
       }
 
 
