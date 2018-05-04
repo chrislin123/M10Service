@@ -18,6 +18,10 @@ namespace M10.lib
     public static string StockInfoOtc = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=4";
     public static string StockInfoOtc1 = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=5";
 
+    public static string StockB4UTse = "http://www.twse.com.tw/exchangeReport/TWTB4U?response=csv&date=20180503&selectType=All";
+    public static string StockB4UOtc = "http://www.twse.com.tw/exchangeReport/TWTB4U?response=csv&date=20180503&selectType=All";
+
+
 
     public static class AlertStatus
     {
@@ -51,9 +55,10 @@ namespace M10.lib
       public const string StockInfoOtc = "StockInfoOtc";
       public const string StockInfoOtc1 = "StockInfoOtc1";
       public const string StockBrokerBSTse = "StockBrokerBSTse";
-      public const string StockBrokerBSOtc = "StockBrokerBSOtc";
+      public const string StockBrokerBSOtc = "StockBrokerBSOtc";    //}
+      public const string StockB4UTseLog = "StockB4UTseLog";
+      public const string StockB4UOtcLog = "StockB4UOtcLog";
     }
-
     public enum StockRuntimeStatus:int
     {
       /// <summary>
