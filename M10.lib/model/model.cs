@@ -789,5 +789,34 @@ namespace M10.lib.model
 
   }
 
+  [Table("StockAfterRush")]
+  public class StockAfterRush
+  {
+    //設定key
+    [Key]
+    public int no { get; set; }
+
+    public string stockdate { get; set; }
+
+    public string stockcode { get; set; }
+
+    public string type { get; set; }
+
+    public string stoprush { get; set; }
+
+    public long? rushdealnum { get; set; }
+
+    public long? rushmoneybuy { get; set; }
+
+    public long? rushmoneysell { get; set; }
+
+    public string updatetime { get; set; }
+
+  }
+
+
+
+
+
 
 }

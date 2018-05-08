@@ -520,6 +520,222 @@ namespace M10.lib
       return true;
     }
 
+    public bool GetStockAfterRushTse(DateTime GetDatetime)
+    {
+      //bool bResult = false;
+      string sLineTrans = "";
+      try
+      {
+        string sDate = Utils.getDateString(GetDatetime, M10Const.DateStringType.ADT1);
+        string sUrl = string.Format(M10Const.StockAfterRushTse, sDate);
+
+
+        using (WebClient wc = getNewWebClient())
+        {
+          wc.Encoding = Encoding.GetEncoding(950);
+          string text = wc.DownloadString(sUrl);
+
+
+          List<string> StringList = text.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<string>();
+
+          foreach (string LoopItem in StringList)
+          {
+            string Line = LoopItem;
+            Line = Line.Replace(" ", "");
+            Line = Line.Replace("\",\"", "|");
+            Line = Line.Replace("\"", "");
+            Line = Line.Replace(",", "");
+            Line = Line.Replace("=", "");
+            sLineTrans = Line;
+            string[] aCol = Line.Split('|');
+
+            if (aCol.Length == 6)
+            {
+              //檢核資料
+              Decimal iCheck = -1;
+
+              if (Decimal.TryParse(aCol[1], out iCheck) == true)
+              {
+                continue;
+              }
+
+              if (Decimal.TryParse(aCol[3], out iCheck) == false)
+              {
+                continue;
+              }
+
+              string StockCode = aCol[0];
+              string StopRush = aCol[2];
+
+              ssql = " select * from stockafterrush  where stockdate = '{0}' and stockcode = '{1}'  ";
+              StockAfterRush sa = dbDapper.QuerySingleOrDefault<StockAfterRush>(string.Format(ssql, sDate, StockCode));
+
+              decimal dRushDealNum = 0;
+              decimal.TryParse(aCol[3], out dRushDealNum);
+
+              decimal dRushMoneyBuy = 0;
+              decimal.TryParse(aCol[4], out dRushMoneyBuy);
+
+              decimal dRushMoneySell = 0;
+              decimal.TryParse(aCol[5], out dRushMoneySell);
+
+              if (sa == null)
+              {
+                sa = new StockAfterRush();
+                sa.stockdate = sDate;
+                sa.type = M10Const.StockType.tse;
+                sa.stockcode = StockCode;
+                sa.stoprush = StopRush;
+                sa.rushdealnum = Convert.ToInt64(dRushDealNum);
+                sa.rushmoneybuy = Convert.ToInt64(dRushMoneyBuy);
+                sa.rushmoneysell = Convert.ToInt64(dRushMoneySell);
+                sa.updatetime = Utils.getDatatimeString();
+
+                dbDapper.Insert(sa);
+              }
+              else
+              {
+                sa.rushdealnum = Convert.ToInt64(dRushDealNum);
+                sa.rushmoneybuy = Convert.ToInt64(dRushMoneyBuy);
+                sa.rushmoneysell = Convert.ToInt64(dRushMoneySell);
+                sa.updatetime = Utils.getDatatimeString();               
+                
+                dbDapper.Update(sa);
+              }
+            }
+
+          }
+        }
+
+        StockLog sl = new StockLog();
+        sl.logdate = Utils.getDateString(DateTime.Now, M10Const.DateStringType.ADT1);
+        sl.logdatetime = Utils.getDatatimeString();
+        sl.logstatus = M10Const.StockLogStatus.s200;
+        sl.memo = "";
+        sl.logtype = M10Const.StockLogType.StockAfterRushTseLog;
+        dbDapper.Insert(sl);
+      }
+      catch (Exception ex)
+      {
+        logger.Error(ex, "StockAfterRushTse:" + sLineTrans);
+        //System.Threading.Thread.Sleep(10000);
+        return false;
+      }
+
+      return true;
+    }
+
+    public bool GetStockAfterRushOtc(DateTime GetDatetime)
+    {
+      try
+      {
+        string sDate = Utils.getDateString(GetDatetime, M10Const.DateStringType.ChineseT2);
+        string sUrl = string.Format(M10Const.StockAfterRushOtc, sDate);
+        sDate = Utils.getDateString(GetDatetime, M10Const.DateStringType.ADT1);
+
+
+        using (WebClient wc = getNewWebClient())
+        {
+          wc.Encoding = Encoding.GetEncoding(950);
+          string text = wc.DownloadString(sUrl);
+
+
+          List<string> StringList = text.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<string>();
+
+          foreach (string LoopItem in StringList)
+          {
+            string Line = LoopItem;
+            Line = Line.Replace(" ", "");
+            Line = Line.Replace("\",\"", "|");
+            Line = Line.Replace("\"", "");
+            Line = Line.Replace(",", "");
+            Line = Line.Replace("=", "");
+
+            string[] aCol = Line.Split('|');
+
+
+
+            if (aCol.Length == 6)
+            {
+              //檢核資料
+              Decimal iCheck = -1;
+
+              if (Decimal.TryParse(aCol[1], out iCheck) == true)
+              {
+                continue;
+              }
+
+              if (Decimal.TryParse(aCol[3], out iCheck) == false)
+              {
+                continue;
+              }
+
+              string StockCode = aCol[0];
+              string StopRush = aCol[2] == "＊" ? "Y" : "";
+
+              ssql = " select * from stockafterrush  where stockdate = '{0}' and stockcode = '{1}' ";
+              StockAfterRush sa = dbDapper.QuerySingleOrDefault<StockAfterRush>(string.Format(ssql, sDate, StockCode));
+
+              decimal dRushDealNum = 0;
+              decimal.TryParse(aCol[3], out dRushDealNum);
+
+              decimal dRushMoneyBuy = 0;
+              decimal.TryParse(aCol[4], out dRushMoneyBuy);
+
+              decimal dRushMoneySell = 0;
+              decimal.TryParse(aCol[5], out dRushMoneySell);
+
+              if (sa == null)
+              {
+                sa = new StockAfterRush();
+                sa.stockdate = sDate;
+                sa.type = M10Const.StockType.otc;
+                sa.stockcode = StockCode;
+                sa.stoprush = StopRush;
+                sa.rushdealnum = Convert.ToInt64(dRushDealNum);
+                sa.rushmoneybuy = Convert.ToInt64(dRushMoneyBuy);
+                sa.rushmoneysell = Convert.ToInt64(dRushMoneySell);
+                sa.updatetime = Utils.getDatatimeString();
+
+                dbDapper.Insert(sa);
+              }
+              else
+              {
+                sa.rushdealnum = Convert.ToInt64(dRushDealNum);
+                sa.rushmoneybuy = Convert.ToInt64(dRushMoneyBuy);
+                sa.rushmoneysell = Convert.ToInt64(dRushMoneySell);
+                sa.updatetime = Utils.getDatatimeString();
+
+                dbDapper.Update(sa);
+              }
+            }
+
+
+          }
+
+        }
+
+        StockLog sl = new StockLog();
+        sl.logdate = Utils.getDateString(DateTime.Now, M10Const.DateStringType.ADT1);
+        sl.logdatetime = Utils.getDatatimeString();
+        sl.logstatus = M10Const.StockLogStatus.s200;
+        sl.memo = "";
+        sl.logtype = M10Const.StockLogType.StockAfterRushOtcLog;
+        dbDapper.Insert(sl);
+
+
+
+      }
+      catch (Exception ex)
+      {
+        logger.Error(ex);
+        System.Threading.Thread.Sleep(10000);
+        return false;
+      }
+
+      return true;
+    }
+
     public bool GetStockInfo()
     {
       try

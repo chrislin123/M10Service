@@ -80,14 +80,25 @@ namespace C10Mvc
                               .WithIdentity("triggerStockBrokerBS")
                               .Build();
 
-     
+      // 建立工作
+      IJobDetail jobStockAfterRush = JobBuilder.Create<StockAfterRushTask>()
+                          .WithIdentity("jobStockAfterRush")
+                          .Build();
+      // 建立觸發器
+      ITrigger triggerStockAfterRush = TriggerBuilder.Create()
+                              .WithCronSchedule("0 0/30 16-23 * * ?")  // 每天16-23時，每30分鐘 執行                                                                    
+                              .WithIdentity("triggerStockAfterRush")
+                              .Build();
+
+      
 
 
       // 把工作加入排程
       _Scheduler.ScheduleJob(jobStockInfo, triggerStockInfo);
       _Scheduler.ScheduleJob(jobStockThreeTrade, triggerStockThreeTrade);
       _Scheduler.ScheduleJob(jobStockAfter, triggerStockAfter);
-      _Scheduler.ScheduleJob(jobStockBrokerBS, triggerStockBrokerBS);     
+      _Scheduler.ScheduleJob(jobStockBrokerBS, triggerStockBrokerBS);
+      _Scheduler.ScheduleJob(jobStockAfterRush, triggerStockAfterRush);
 
       // 啟動排程器
       _Scheduler.Start();

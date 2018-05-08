@@ -406,7 +406,41 @@ namespace C10Mvc.Controllers
     }
   }
 
-  
+  /// <summary>
+  /// 
+  /// </summary>
+  //一次只執行一個體
+  [DisallowConcurrentExecutionAttribute]
+  public class StockAfterRushTask : BaseJob, IJob
+  {
+    public void DoStockAfterRush()
+    {
+
+      logger.Info("START DoStockAfterRush()");
+      DateTime dt = DateTime.Now;
+
+      Stockhelper.GetStockAfterRushTse(dt);
+
+      Stockhelper.GetStockAfterRushOtc(dt);
+
+      logger.Info("END DoStockAfterRush()");
+    }
+
+
+
+    public void Execute(IJobExecutionContext context)
+    {
+      try
+      {
+        //盤後當沖資料
+        DoStockAfterRush();
+      }
+      catch (Exception ex)
+      {
+        logger.Log(NLog.LogLevel.Error, ex.Message);
+      }
+    }
+  }
 
 
 

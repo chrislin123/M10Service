@@ -31,7 +31,7 @@ namespace M10Tools
       //載入BaseForm資料
       base.InitForm();
 
-      
+
     }
 
     private void btnImpErrLRTI_Click(object sender, EventArgs e)
@@ -747,7 +747,7 @@ namespace M10Tools
         //  sr.c = si.stockcode;
         //}
       }
-      catch 
+      catch
       {
         //logger.Error(ex);
         //throw ex;
@@ -790,16 +790,16 @@ namespace M10Tools
              , item.stockcode, sRunDate, idex.ToString(), iListTotal.ToString());
         Application.DoEvents();
 
-        Stockhelper.GetHugeTurnover(item.stockcode,sRunDate);
+        Stockhelper.GetHugeTurnover(item.stockcode, sRunDate);
 
       }
 
       toolStripStatusLabel1.Text += "轉檔完畢";
       Application.DoEvents();
 
-      
 
-      
+
+
     }
 
 
@@ -897,7 +897,7 @@ namespace M10Tools
         foreach (Stockafter LoopItem in SaList)
         {
 
-          toolStripStatusLabel1.Text = string.Format("[{0}]{1}",LoopItem.stockdate,LoopItem.stockcode);
+          toolStripStatusLabel1.Text = string.Format("[{0}]{1}", LoopItem.stockdate, LoopItem.stockcode);
           Application.DoEvents();
 
           Decimal dPriceYesterday = Stockhelper.CalcPriceYesterday(LoopItem.pricelast.ToString(), LoopItem.updown, LoopItem.pricediff);
@@ -914,7 +914,7 @@ namespace M10Tools
 
     }
 
-   
+
 
 
     private void button10_Click(object sender, EventArgs e)
@@ -927,7 +927,7 @@ namespace M10Tools
     }
 
 
-    
+
 
     private void button11_Click(object sender, EventArgs e)
     {
@@ -957,8 +957,8 @@ namespace M10Tools
 
         }
       }
-   
-    
+
+
 
       string ssss = "";
 
@@ -1008,5 +1008,75 @@ namespace M10Tools
         button11_Click(sender, new EventArgs());
       }
     }
+
+    private void StockAfterRushTseButton_Click(object sender, EventArgs e)
+    {
+
+
+
+
+
+      //開始日期
+      DateTime dt = new DateTime(2018, 5, 3);
+      //結束日期
+      DateTime dtEnd = new DateTime(2017, 9, 12);
+
+
+      Stockhelper.GetStockAfterRushTse(dt);
+
+      toolStripStatusLabel1.Text = "完成";
+
+
+      return;
+
+
+      //for (DateTime date = checkBgn; date <= checkEnd; date = date.AddDays(1))
+      for (DateTime LoopDatetime = dt; LoopDatetime <= dtEnd; LoopDatetime = LoopDatetime.AddDays(1))
+      {
+        string sLineTrans = "";
+        try
+        {
+          toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
+          Application.DoEvents();
+
+          if (Stockhelper.GetStockAfterTse(LoopDatetime) == false)
+          {
+            System.Threading.Thread.Sleep(3000);
+            continue;
+          }
+
+          toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.tse, "完成");
+          Application.DoEvents();
+        }
+        catch (Exception ex)
+        {
+          logger.Error(ex, "stock after:" + sLineTrans);
+          System.Threading.Thread.Sleep(10000);
+        }
+      }
+      toolStripStatusLabel1.Text = "完成";
+    }
+
+    private void StockAfterRushOtcButton_Click(object sender, EventArgs e)
+    {
+      //開始日期
+      DateTime dt = new DateTime(2018, 5, 3);
+      //結束日期
+      DateTime dtEnd = new DateTime(2017, 9, 12);
+
+
+      Stockhelper.GetStockAfterRushOtc(dt);
+
+      toolStripStatusLabel1.Text = "完成";
+    }
+
+
+    private void StatusShow(string sMsg)
+    {
+      toolStripStatusLabel1.Text = sMsg;
+      Application.DoEvents();
+    }
+
+
   }
 }
