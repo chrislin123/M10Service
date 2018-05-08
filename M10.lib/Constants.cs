@@ -18,8 +18,8 @@ namespace M10.lib
     public static string StockInfoOtc = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=4";
     public static string StockInfoOtc1 = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=5";
 
-    public static string StockAfterRushTse = "http://www.twse.com.tw/exchangeReport/TWTB4U?response=csv&date=20180503&selectType=All";
-    public static string StockAfterRushOtc = "http://www.tpex.org.tw/web/stock/trading/intraday_stat/intraday_trading_stat_result.php?l=zh-tw&d=107/05/04&s=0,asc,0&o=csv";
+    public static string StockAfterRushTse = "http://www.twse.com.tw/exchangeReport/TWTB4U?response=csv&date={0}&selectType=All";
+    public static string StockAfterRushOtc = "http://www.tpex.org.tw/web/stock/trading/intraday_stat/intraday_trading_stat_result.php?l=zh-tw&d={0}&s=0,asc,0&o=csv";
     
 
 

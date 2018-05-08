@@ -1017,7 +1017,7 @@ namespace M10Tools
 
 
       //開始日期
-      DateTime dt = new DateTime(2018, 5, 3);
+      DateTime dt = new DateTime(2018, 5, 7);
       //結束日期
       DateTime dtEnd = new DateTime(2017, 9, 12);
 
@@ -1060,7 +1060,7 @@ namespace M10Tools
     private void StockAfterRushOtcButton_Click(object sender, EventArgs e)
     {
       //開始日期
-      DateTime dt = new DateTime(2018, 5, 3);
+      DateTime dt = new DateTime(2018, 5, 7);
       //結束日期
       DateTime dtEnd = new DateTime(2017, 9, 12);
 
