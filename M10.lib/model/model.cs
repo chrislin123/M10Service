@@ -810,9 +810,39 @@ namespace M10.lib.model
 
     public long? rushmoneysell { get; set; }
 
+    public string createdatetime { get; set; }
+
+    public string updatetime { get; set; }
+
+
+  }
+
+  [Table("StockTransRec")]
+  public class StockTransRec
+  {
+    //設定key
+    [Key]
+    public int no { get; set; }
+
+    public string stockdate { get; set; }
+
+    public string stockcode { get; set; }
+
+    public string type { get; set; }
+
+    public string status { get; set; }
+
+    public string finish { get; set; }
+
+    public string finishtime { get; set; }
+
     public string updatetime { get; set; }
 
   }
+
+
+
+
 
 
 

@@ -1011,20 +1011,22 @@ namespace M10Tools
 
     private void StockAfterRushTseButton_Click(object sender, EventArgs e)
     {
-
-
-
-
-
+      
       //開始日期
-      DateTime dt = new DateTime(2018, 5, 7);
+      DateTime dt = new DateTime(2018, 5, 4);
       //結束日期
       DateTime dtEnd = new DateTime(2017, 9, 12);
 
 
       Stockhelper.GetStockAfterRushTse(dt);
+      Stockhelper.GetStockAfterRushOtc(dt);
+        
 
-      toolStripStatusLabel1.Text = "完成";
+
+      ShowStatus("完成");
+
+      
+      
 
 
       return;
@@ -1057,21 +1059,10 @@ namespace M10Tools
       toolStripStatusLabel1.Text = "完成";
     }
 
-    private void StockAfterRushOtcButton_Click(object sender, EventArgs e)
-    {
-      //開始日期
-      DateTime dt = new DateTime(2018, 5, 7);
-      //結束日期
-      DateTime dtEnd = new DateTime(2017, 9, 12);
+ 
 
 
-      Stockhelper.GetStockAfterRushOtc(dt);
-
-      toolStripStatusLabel1.Text = "完成";
-    }
-
-
-    private void StatusShow(string sMsg)
+    private void ShowStatus(string sMsg)
     {
       toolStripStatusLabel1.Text = sMsg;
       Application.DoEvents();

@@ -119,6 +119,21 @@ namespace M10.lib
       ADDT2,
 
     }
+
+    //public static class StockTransRecType
+    //{
+    //  public const string StockAfterRush = "StockAfterRush";
+      
+    //}
+
+
+    public enum StockTransRecType 
+    {
+      StockAfterRush,
+      Histroy ,
+    }
+
+
   }
 
   public static class DhoeConst

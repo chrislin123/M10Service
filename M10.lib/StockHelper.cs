@@ -567,8 +567,11 @@ namespace M10.lib
               string StockCode = aCol[0];
               string StopRush = aCol[2];
 
-              ssql = " select * from stockafterrush  where stockdate = '{0}' and stockcode = '{1}'  ";
-              StockAfterRush sa = dbDapper.QuerySingleOrDefault<StockAfterRush>(string.Format(ssql, sDate, StockCode));
+              ssql = " select * from stockafterrush  where stockdate = @stockdate and stockcode = @stockcode ";
+              var p = dbDapper.GetNewDynamicParameters();
+              p.Add("@stockdate", sDate);
+              p.Add("@stockcode", StockCode);
+              StockAfterRush sa = dbDapper.QuerySingleOrDefault<StockAfterRush>(ssql, p);            
 
               decimal dRushDealNum = 0;
               decimal.TryParse(aCol[3], out dRushDealNum);
@@ -589,6 +592,7 @@ namespace M10.lib
                 sa.rushdealnum = Convert.ToInt64(dRushDealNum);
                 sa.rushmoneybuy = Convert.ToInt64(dRushMoneyBuy);
                 sa.rushmoneysell = Convert.ToInt64(dRushMoneySell);
+                sa.createdatetime = Utils.getDatatimeString();
                 sa.updatetime = Utils.getDatatimeString();
 
                 dbDapper.Insert(sa);
@@ -598,8 +602,8 @@ namespace M10.lib
                 sa.rushdealnum = Convert.ToInt64(dRushDealNum);
                 sa.rushmoneybuy = Convert.ToInt64(dRushMoneyBuy);
                 sa.rushmoneysell = Convert.ToInt64(dRushMoneySell);
-                sa.updatetime = Utils.getDatatimeString();               
-                
+                sa.updatetime = Utils.getDatatimeString();
+
                 dbDapper.Update(sa);
               }
             }
@@ -673,8 +677,11 @@ namespace M10.lib
               string StockCode = aCol[0];
               string StopRush = aCol[2] == "＊" ? "Y" : "";
 
-              ssql = " select * from stockafterrush  where stockdate = '{0}' and stockcode = '{1}' ";
-              StockAfterRush sa = dbDapper.QuerySingleOrDefault<StockAfterRush>(string.Format(ssql, sDate, StockCode));
+              ssql = " select * from stockafterrush  where stockdate = @stockdate and stockcode = @stockcode ";
+              var p = dbDapper.GetNewDynamicParameters();
+              p.Add("@stockdate", sDate);
+              p.Add("@stockcode", StockCode);
+              StockAfterRush sa = dbDapper.QuerySingleOrDefault<StockAfterRush>(ssql, p);
 
               decimal dRushDealNum = 0;
               decimal.TryParse(aCol[3], out dRushDealNum);
@@ -695,6 +702,7 @@ namespace M10.lib
                 sa.rushdealnum = Convert.ToInt64(dRushDealNum);
                 sa.rushmoneybuy = Convert.ToInt64(dRushMoneyBuy);
                 sa.rushmoneysell = Convert.ToInt64(dRushMoneySell);
+                sa.createdatetime = Utils.getDatatimeString();
                 sa.updatetime = Utils.getDatatimeString();
 
                 dbDapper.Insert(sa);
@@ -722,9 +730,6 @@ namespace M10.lib
         sl.memo = "";
         sl.logtype = M10Const.StockLogType.StockAfterRushOtcLog;
         dbDapper.Insert(sl);
-
-
-
       }
       catch (Exception ex)
       {
@@ -1540,7 +1545,7 @@ namespace M10.lib
       ssql = @" select StockGet.stockcode,stockinfo.stockname from StockGet 
                 inner join stockinfo on StockGet.stockcode = stockinfo.stockcode
                 where stockdate = '{0}' order by StockGet.stockcode ";
-      StockGetList = dbDapper.Query<dynamic>(string.Format(ssql, StockDate));   
+      StockGetList = dbDapper.Query<dynamic>(string.Format(ssql, StockDate));
 
       return StockGetList;
     }
@@ -1560,7 +1565,7 @@ namespace M10.lib
 
         //判斷盤後資料是否存在
         ssql = " select * from StockAfter where stockcode  = '{0}' and stockdate = '{1}'  ";
-        ssql = string.Format(ssql, sStockCode,sRunDate);
+        ssql = string.Format(ssql, sStockCode, sRunDate);
         int iTotal = dbDapper.QueryTotalCount(ssql);
         if (iTotal == 0)
         {
@@ -1761,6 +1766,43 @@ namespace M10.lib
     }
 
 
+    /// <summary>
+    /// [暫緩]轉檔紀錄
+    /// </summary>
+    /// <param name="TransDateTime"></param>
+    /// <param name="pType"></param>
+    /// <param name="FinishDateTime"></param>
+    public void LogStockTransRec(DateTime TransDateTime, M10Const.StockTransRecType pType, DateTime FinishDateTime )
+    {
+      string sTransDate = Utils.getDateString(TransDateTime, M10Const.DateStringType.ADT1);
+      ssql = " select * from StockTransRec  where stockdate = @stockdate and type = @type ";
+      var p = dbDapper.GetNewDynamicParameters();
+      p.Add("@stockdate", sTransDate);
+      p.Add("@type", pType.ToString());
+      StockTransRec str = dbDapper.QuerySingleOrDefault<StockTransRec>(ssql, p);
+
+      if (str == null)
+      {
+        str = new StockTransRec();
+        str.stockdate = sTransDate;
+        str.type = pType.ToString();
+        str.stockcode = "";
+        str.status = "";
+        str.finish = "Y";
+        str.finishtime = Utils.getDatatimeString();
+        str.updatetime = Utils.getDatatimeString();
+
+        dbDapper.Insert(str);
+      }
+      else
+      {
+        str.finish = "Y";
+        str.finishtime = Utils.getDatatimeString();
+        str.updatetime = Utils.getDatatimeString();
+
+        dbDapper.Update(str);
+      }
+    }
 
 
   }

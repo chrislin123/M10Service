@@ -47,8 +47,7 @@
       this.button11 = new System.Windows.Forms.Button();
       this.StockCodeTextBox = new System.Windows.Forms.TextBox();
       this.label1 = new System.Windows.Forms.Label();
-      this.StockAfterRushTseButton = new System.Windows.Forms.Button();
-      this.StockAfterRushOtcButton = new System.Windows.Forms.Button();
+      this.StockAfterRushButton = new System.Windows.Forms.Button();
       this.statusStrip1.SuspendLayout();
       this.SuspendLayout();
       // 
@@ -235,33 +234,22 @@
       this.label1.TabIndex = 24;
       this.label1.Text = "label1";
       // 
-      // StockAfterRushTseButton
+      // StockAfterRushButton
       // 
-      this.StockAfterRushTseButton.Location = new System.Drawing.Point(144, 244);
-      this.StockAfterRushTseButton.Name = "StockAfterRushTseButton";
-      this.StockAfterRushTseButton.Size = new System.Drawing.Size(126, 23);
-      this.StockAfterRushTseButton.TabIndex = 25;
-      this.StockAfterRushTseButton.Text = "StockAfterRushTse";
-      this.StockAfterRushTseButton.UseVisualStyleBackColor = true;
-      this.StockAfterRushTseButton.Click += new System.EventHandler(this.StockAfterRushTseButton_Click);
-      // 
-      // StockAfterRushOtcButton
-      // 
-      this.StockAfterRushOtcButton.Location = new System.Drawing.Point(144, 273);
-      this.StockAfterRushOtcButton.Name = "StockAfterRushOtcButton";
-      this.StockAfterRushOtcButton.Size = new System.Drawing.Size(126, 23);
-      this.StockAfterRushOtcButton.TabIndex = 26;
-      this.StockAfterRushOtcButton.Text = "StockAfterRushOtc";
-      this.StockAfterRushOtcButton.UseVisualStyleBackColor = true;
-      this.StockAfterRushOtcButton.Click += new System.EventHandler(this.StockAfterRushOtcButton_Click);
+      this.StockAfterRushButton.Location = new System.Drawing.Point(144, 244);
+      this.StockAfterRushButton.Name = "StockAfterRushButton";
+      this.StockAfterRushButton.Size = new System.Drawing.Size(126, 23);
+      this.StockAfterRushButton.TabIndex = 25;
+      this.StockAfterRushButton.Text = "StockAfterRush";
+      this.StockAfterRushButton.UseVisualStyleBackColor = true;
+      this.StockAfterRushButton.Click += new System.EventHandler(this.StockAfterRushTseButton_Click);
       // 
       // MainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(440, 333);
-      this.Controls.Add(this.StockAfterRushOtcButton);
-      this.Controls.Add(this.StockAfterRushTseButton);
+      this.Controls.Add(this.StockAfterRushButton);
       this.Controls.Add(this.label1);
       this.Controls.Add(this.StockCodeTextBox);
       this.Controls.Add(this.button11);
@@ -310,8 +298,7 @@
     private System.Windows.Forms.Button button11;
     private System.Windows.Forms.TextBox StockCodeTextBox;
     private System.Windows.Forms.Label label1;
-    private System.Windows.Forms.Button StockAfterRushTseButton;
-    private System.Windows.Forms.Button StockAfterRushOtcButton;
+    private System.Windows.Forms.Button StockAfterRushButton;
   }
 }
 

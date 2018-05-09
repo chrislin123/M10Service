@@ -300,6 +300,14 @@ namespace M10.lib
     //    return cn.Query(sql + limit).ToList();
     //  }
     //}
+
+
+    public DynamicParameters GetNewDynamicParameters()
+    {
+      DynamicParameters dp = new DynamicParameters();
+
+      return dp;
+    }
   }
 
 
