@@ -138,7 +138,7 @@ namespace M10Winform
     private void ProcFilesByGoogleDrive()
     {
 
-      string sGoogleDrivePath = @"G:\我的雲端硬碟\10M";
+      string sGoogleDrivePath = @"H:\我的雲端硬碟\10M";
       //string sGoogleDrivePath = @"D:\m10\GoogleDrive";
 
       try
