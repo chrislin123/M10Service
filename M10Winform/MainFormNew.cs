@@ -141,6 +141,18 @@ namespace M10Winform
       string sGoogleDrivePath = @"H:\我的雲端硬碟\10M";
       //string sGoogleDrivePath = @"D:\m10\GoogleDrive";
 
+      //1070522 判斷雲端硬碟資料夾槽位
+      string sGoogleDrivePathH = @"H:\我的雲端硬碟\10M";
+      string sGoogleDrivePathG = @"G:\我的雲端硬碟\10M";      
+      if (Directory.Exists(sGoogleDrivePathH) == true)
+      {
+        sGoogleDrivePath = sGoogleDrivePathH;
+      }
+      if (Directory.Exists(sGoogleDrivePathG) == true)
+      {
+        sGoogleDrivePath = sGoogleDrivePathG;
+      }
+
       try
       {
         //取得最後轉檔資料
