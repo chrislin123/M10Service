@@ -18,6 +18,13 @@ namespace M10.lib
     public static string StockInfoOtc = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=4";
     public static string StockInfoOtc1 = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=5";
 
+    //***盤後資料，每日當沖資訊
+    //這是櫃買中心公告網址
+    //要晚上才會更新今天的 http://www.tpex.org.tw/web/stock/trading/intraday_stat/intraday_trading_stat.php?l=zh-tw
+    //這是交易所的(上市)
+    //要自己選擇日期，類別
+    //今天的一樣晚上才會更新
+    //http://www.twse.com.tw/zh/page/trading/exchange/TWTB4U.html
     public static string StockAfterRushTse = "http://www.twse.com.tw/exchangeReport/TWTB4U?response=csv&date={0}&selectType=All";
     public static string StockAfterRushOtc = "http://www.tpex.org.tw/web/stock/trading/intraday_stat/intraday_trading_stat_result.php?l=zh-tw&d={0}&s=0,asc,0&o=csv";
     
