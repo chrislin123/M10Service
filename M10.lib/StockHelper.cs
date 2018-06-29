@@ -9,7 +9,7 @@ using M10.lib.model;
 using HtmlAgilityPack;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
-
+using System.Collections.Specialized;
 
 namespace M10.lib
 {
@@ -1460,6 +1460,176 @@ namespace M10.lib
           sl.logtype = M10Const.StockLogType.StockBrokerBSOtc;
           dbDapper.Insert(sl);
         }
+
+      }
+      catch (Exception ex)
+      {
+        logger.Error(ex);
+        return false;
+      }
+
+      return true;
+    }
+
+
+
+    //public Stream GetWebData(string Url, string PostData)
+    //{
+    //  byte[] myData = Encoding.Default.GetBytes(PostData);
+
+    //  HttpWebRequest myRequest = (HttpWebRequest)HttpWebRequest.Create(Url);
+    //  myRequest.Method = "POST";
+    //  myRequest.Accept = "*/*";
+    //  myRequest.ContentType = "application/x-www-form-urlencoded";
+    //  myRequest.ContentLength = myData.Length;
+
+    //  Stream myStream = myRequest.GetRequestStream();
+    //  myStream.Write(myData, 0, myData.Length);
+    //  myStream.Close();
+
+    //  HttpWebResponse myResponse;
+    //  try { myResponse = (HttpWebResponse)myRequest.GetResponse(); }
+    //  catch (Exception) { return null; }
+
+    //  ResponseStream = myResponse.GetResponseStream();
+
+    //  return ResponseStream;
+    //}
+
+    public bool GetStockBrokerBStest()
+    {
+      try
+      {
+
+        string sUrl = "http://www.tpex.org.tw/web/stock/aftertrading/broker_trading/download_ALLCSV.php";
+
+
+        string PostURL = sUrl;
+
+        using (WebClient wc = Utils.getNewWebClient())
+        {
+          wc.Proxy = null;
+          wc.Encoding = Encoding.UTF8;
+          //wc.Encoding = Encoding.GetEncoding.getencoding(950);
+
+          //wc.Headers.Add("Content-Type", "application/x-www-form-urlencoded");
+
+          NameValueCollection nc = new NameValueCollection();
+          nc["stk_code"] = "6180";
+          //nc["charset"] = "UTF-8";
+          //string sResult = wc.UploadString(PostURL, "POST", "stk_code=6180");
+
+
+          byte[] bResult = wc.UploadValues(PostURL, "POST", nc);
+
+          //wc.DownloadString()
+          //string text = wc.DownloadString(surl1);
+
+          string resultXML = Encoding.UTF8.GetString(bResult);
+        }
+
+        //return true;
+
+        //string targetUrl = "http://localhost:13772/TWebRequest/TargetHandler.ashx";
+        //string parame = "stk_code=6180&charset=UTF-8";
+        //byte[] postData = Encoding.UTF8.GetBytes(parame);
+
+        //HttpWebRequest request1 = HttpWebRequest.Create(sUrl) as HttpWebRequest;
+        //request1.Method = "POST";
+        //request1.ContentType = "application/x-www-form-urlencoded";
+        //request1.Timeout = 30000;
+        //request1.ContentLength = postData.Length;
+        //// 寫入 Post Body Message 資料流
+        //using (Stream st = request1.GetRequestStream())
+        //{
+        //  st.Write(postData, 0, postData.Length);
+        //}
+
+        //string result = "";
+        //// 取得回應資料
+        //using (HttpWebResponse response = request1.GetResponse() as HttpWebResponse)
+        //{
+        //  using (StreamReader sr = new StreamReader(response.GetResponseStream()))
+        //  {
+        //    result = sr.ReadToEnd();
+        //  }
+        //}
+
+
+
+
+
+        List<string> PageList = new List<string>();
+        
+        StringBuilder sbPostData = new StringBuilder();
+        
+        AppendParameter(sbPostData, "stk_code", "6180");
+        //AppendParameter(sbPostData, "charset", "UTF-8");
+
+        byte[] byteArray = Encoding.UTF8.GetBytes(sbPostData.ToString());
+
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(sUrl);
+        request.Proxy = null;
+        request.Method = WebRequestMethods.Http.Post;
+        request.ContentType = "application/x-www-form-urlencoded";
+
+        // 寫入 Post Body Message 資料流
+        using (Stream requestStream = request.GetRequestStream())
+        {
+          requestStream.Write(byteArray, 0, byteArray.Length);
+        }
+
+
+        //string postData = "stk_code=6180";
+        //request.ContentLength = postData.Length;
+        ////request.ContentType = "application/x-www-form-urlencoded";
+        //// Write the post data to the HTTP request
+        //StreamWriter requestWriter = new StreamWriter(
+        //    request.GetRequestStream(),
+        //    System.Text.Encoding.ASCII);
+        //requestWriter.Write(postData);
+        //requestWriter.Close();
+
+
+
+        using (HttpWebResponse response = request.GetResponse() as HttpWebResponse)
+        {
+          using (StreamReader sr = new StreamReader(response.GetResponseStream(), Encoding.UTF8)) {
+            string results = sr.ReadToEnd();
+          }
+            
+          
+          //sr.Close();
+
+
+          //HtmlDocument HtmlDoc = new HtmlDocument();
+          //HtmlDoc.Load(response.GetResponseStream(), Encoding.UTF8);
+          //HtmlNodeCollection nodes1 = HtmlDoc.DocumentNode.SelectNodes("//form[@name='brokerBS2']");
+
+          //if (nodes1 != null)
+          //{
+          //  foreach (HtmlNode node in nodes1)
+          //  {
+          //    //取得共有幾頁
+          //    HtmlNodeCollection tdnodes = node.SelectNodes("a");
+
+          //    foreach (HtmlNode item in tdnodes)
+          //    {
+          //      PageList.Add(item.InnerText);
+          //    }
+          //  }
+          //}
+        }
+
+
+  
+
+
+        //網頁瀏覽停滯時間
+        int iSec = 2;
+
+      
+     
 
       }
       catch (Exception ex)

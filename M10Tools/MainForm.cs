@@ -19,6 +19,7 @@ using System.Reflection;
 using System.Collections;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RestSharp;
 
 namespace M10Tools
 {
@@ -920,10 +921,51 @@ namespace M10Tools
     private void button10_Click(object sender, EventArgs e)
     {
 
+      ////Creates the client
+      //var client = new RestClient("http://example.com");
+      //client.CookieContainer = new System.Net.CookieContainer();
+      ////client.Authenticator = new SimpleAuthenticator("username", "xxx", "password", "xxx");
+
+      ////Creates the request
+      //var request = new RestRequest("/login", Method.POST);
+
+      ////Executes the login request
+      //var response = client.Execute(request);
+
+      ////This executes a seperate request, hence creating a new requestion
+      //client.DownloadData(new RestRequest("/file", Method.GET)).SaveAs("example.csv");
+
+      //Console.WriteLine(response.Content);
+      //Stockhelper.GetStockBrokerBS();
+
+      var client = new RestClient("http://www.tpex.org.tw/web/stock/aftertrading/broker_trading/download_ALLCSV.php");
+      var request = new RestRequest(Method.POST);
+      request.AddHeader("postman-token", "331fb74b-2e3d-bfe6-fcc3-eeb3eb21df64");
+      request.AddHeader("cache-control", "no-cache");
+      request.AddHeader("content-type", "application/x-www-form-urlencoded");
+      request.AddHeader("Origin", "http://www.tpex.org.tw");
+      request.AddHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
+      request.AddHeader("Referer", "http://www.tpex.org.tw/web/stock/aftertrading/broker_trading/brokerBS.php?l=zh-tw");
+      request.AddHeader("Accept-Language", "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7");
+      request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36");
+      
+      request.AddParameter("application/x-www-form-urlencoded", "stk_code=6180", ParameterType.RequestBody);
 
 
 
-      Stockhelper.GetStockBrokerBSTSE();
+      //byte[] byteArray = client.DownloadData(request);
+
+
+
+      //string result = System.Text.Encoding.UTF8.GetString(byteArray);
+
+      IRestResponse response = client.Execute(request);
+
+      string aaaa = response.Content;
+
+
+      //Stockhelper.GetStockBrokerBStest();
+      //Stockhelper.GetStockBrokerBSTSE();
     }
 
 
