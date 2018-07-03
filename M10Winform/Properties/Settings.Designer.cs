@@ -25,7 +25,7 @@ namespace M10Winform.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("DBConnectionString")]
+        [global::System.Configuration.DefaultSettingValueAttribute("DbHome")]
         public string DBConnectionString {
             get {
                 return ((string)(this["DBConnectionString"]));
@@ -34,10 +34,28 @@ namespace M10Winform.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("DBDefault")]
+        [global::System.Configuration.DefaultSettingValueAttribute("DbHome")]
         public string DBDefault {
             get {
                 return ((string)(this["DBDefault"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("test2")]
+        public string test {
+            get {
+                return ((string)(this["test"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Google 雲端硬碟_Eswcrc\\10M")]
+        public string GoogleDrivePath {
+            get {
+                return ((string)(this["GoogleDrivePath"]));
             }
         }
     }

@@ -3,10 +3,16 @@
   <Profiles />
   <Settings>
     <Setting Name="DBConnectionString" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">DBConnectionString</Value>
+      <Value Profile="(Default)">DbHome</Value>
     </Setting>
     <Setting Name="DBDefault" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">DBDefault</Value>
+      <Value Profile="(Default)">DbHome</Value>
+    </Setting>
+    <Setting Name="test" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">test2</Value>
+    </Setting>
+    <Setting Name="GoogleDrivePath" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">D:\Google 雲端硬碟_Eswcrc\10M</Value>
     </Setting>
   </Settings>
 </SettingsFile>

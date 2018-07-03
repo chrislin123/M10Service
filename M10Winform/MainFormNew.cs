@@ -39,6 +39,14 @@ namespace M10Winform
 
     private void MainForm_Load(object sender, EventArgs e)
     {
+
+
+      //FileInfo fi = new FileInfo(@"c:\fix.css1");
+      //FileInfo fi = new FileInfo(@"c:\fix.css");
+      //fi.CopyTo(@"c:\test.css", true);
+      //return;
+
+      //MessageBox.Show(Properties.Settings.Default.test);
       try
       {
         //相關建立資料夾
@@ -107,7 +115,7 @@ namespace M10Winform
           //記錄轉檔資料
           FileTransLog(fi.Name);
 
-          //自動歸檔
+          //自動歸檔到NAS(FTP)
           ArrangeTransFile(fi);
 
           //存至備份資料夾
@@ -116,8 +124,11 @@ namespace M10Winform
          
         }
       }
-      catch
+      catch (Exception ex)
       {
+        
+        //throw ex;
+        //ShowMessageToFront(ex.ToString());
 
       }
     }
@@ -137,8 +148,8 @@ namespace M10Winform
     /// </summary>
     private void ProcFilesByGoogleDrive()
     {
-
-      string sGoogleDrivePath = @"H:\我的雲端硬碟\10M";
+      
+      string sGoogleDrivePath = string.Empty;
       //string sGoogleDrivePath = @"D:\m10\GoogleDrive";
 
       //1070522 判斷雲端硬碟資料夾槽位
@@ -151,6 +162,11 @@ namespace M10Winform
       if (Directory.Exists(sGoogleDrivePathG) == true)
       {
         sGoogleDrivePath = sGoogleDrivePathG;
+      }
+
+      if (sGoogleDrivePath == string.Empty)
+      {
+        sGoogleDrivePath = Properties.Settings.Default.GoogleDrivePath;
       }
 
       try
@@ -178,7 +194,11 @@ namespace M10Winform
             //檔案存在，複製到轉檔路徑
             FileInfo fi = new FileInfo(sGoogleFilePath);
             string sCopyToPath = Path.Combine(folderName, sTransFileName);
+         
             fi.CopyTo(sCopyToPath, true);
+
+            //設定非唯讀
+            new FileInfo(sCopyToPath).Attributes = FileAttributes.Normal;            
 
             ShowMessageToFront(string.Format("{0} 檔案移動到 {1}", fi.FullName, sCopyToPath));
           }
@@ -194,7 +214,10 @@ namespace M10Winform
       System.Threading.Thread.Sleep(5000);
     }
 
-    //
+    /// <summary>
+    /// 歸檔到NAS(FTP)
+    /// </summary>
+    /// <param name="fi"></param>
     private void ArrangeTransFile(FileInfo fi) {
       //FluentFTP 起始路徑都是跟目錄開始，目錄結尾都是/
       string sFTPArrangePath = "/M10_System/M10/XML/";

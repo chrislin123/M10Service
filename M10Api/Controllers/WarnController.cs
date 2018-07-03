@@ -145,6 +145,8 @@ namespace M10Api.Controllers
       dt.Columns.Add("LRTI");
       dt.Columns.Add("ELRTI");
       dt.Columns.Add("RT");
+      dt.Columns.Add("STID");
+      dt.Columns.Add("STNAME");
 
       foreach (var item in data)
       {
@@ -160,6 +162,8 @@ namespace M10Api.Controllers
         NewRow["LRTI"] = item.LRTI;
         NewRow["ELRTI"] = item.ELRTI;
         NewRow["RT"] = item.RT;
+        NewRow["STID"] = item.STID;
+        NewRow["STNAME"] = item.STNAME;
 
         dt.Rows.Add(NewRow);
       }
@@ -252,9 +256,11 @@ namespace M10Api.Controllers
 
       string sStartDate = dtStart.ToString("yyyy-MM-ddTHH:mm:ss");
       string sEndDate = dtEnd.ToString("yyyy-MM-ddTHH:mm:ss");
-      string ssql = @" select * from LRTIAlertHis where 1=1
-                      and RecTime between '{0}' and '{1}'
-                      order by RecTime,country,town  ";
+      string ssql = @"  select LRTIAlertHis.*,StationData.STNAME from LRTIAlertHis
+                        left join StationData on LRTIAlertHis.STID = StationData.STID
+                        where 1=1
+                        and RecTime between '{0}' and '{1}'
+                        order by RecTime,country,town  ";
 
       var data = dbDapper.Query(string.Format(ssql, sStartDate, sEndDate));
       ResultList.AddRange(data);
