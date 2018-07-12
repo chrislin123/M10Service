@@ -431,6 +431,18 @@ namespace M10Winform
         dt.Columns.Add("LRTI");
         dt.Columns.Add("WLRTI");
 
+        //1070712 調整"RAIN"欄位資料，異常資料修正為0
+        foreach (DataRow dr in dt.Rows)
+        {
+          dr["RAIN"] = RainDataValid(dr["RAIN"].ToString());
+          dr["MIN10"] = RainDataValid(dr["MIN10"].ToString());
+          dr["HOUR3"] = RainDataValid(dr["HOUR3"].ToString());
+          dr["HOUR6"] = RainDataValid(dr["HOUR6"].ToString());
+          dr["HOUR12"] = RainDataValid(dr["HOUR12"].ToString());
+          dr["HOUR24"] = RainDataValid(dr["HOUR24"].ToString());
+          dr["NOW"] = RainDataValid(dr["NOW"].ToString());
+          dr["Hour2"] = RainDataValid(dr["Hour2"].ToString());
+        }
 
         //sFileTime = "2017-03-02T01:10:00";
         DateTime dtRTime1 = Convert.ToDateTime(sFileTime);
@@ -511,6 +523,9 @@ namespace M10Winform
             dbDapper.Insert(NewStationData);
           }
         }
+
+        //1070712 預防轉檔沒資料，造成網頁查詢即時資訊異常
+        if (dt.Rows.Count == 0) return;
 
         //清空runtime 資料表
         dbDapper.Execute("delete RunTimeRainData");
@@ -611,7 +626,7 @@ namespace M10Winform
           NewData.WGS84_lat = dr["WGS84_lat"].ToString().Trim();
 
           dbDapper.Insert<RainStation>(NewData);
-        }
+        }       
       }
       catch (Exception ex)
       {
