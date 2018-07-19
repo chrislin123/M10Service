@@ -27,8 +27,14 @@ namespace M10Api.Controllers
     public ActionResult warnlist()
     {
 
+     
+
+
       try
       {
+        string sss = "xxx";
+        Convert.ToInt16(sss);
+
         var AlertUpdateTm = dbDapper.ExecuteScale(@" select value from LRTIAlertMail where type = 'altm' ");
         ViewBag.forecastdate = AlertUpdateTm == null ? "" : AlertUpdateTm.ToString();
 
