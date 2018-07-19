@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using System.Configuration;
 using M10.lib;
 using M10Api.Models;
+using NLog;
 
 namespace M10Api.Class
 {
@@ -15,7 +16,7 @@ namespace M10Api.Class
     public string ssql = string.Empty;
     private DALDapper _dbDapper;
     private string _ConnectionString;
-
+    public Logger _logger;
 
     public DALDapper dbDapper
     {
@@ -41,6 +42,19 @@ namespace M10Api.Class
 
         return _ConnectionString;
       }
+    }
+
+    public Logger Logger
+    {
+      get
+      {
+        if (_logger == null)
+        {
+          _logger = NLog.LogManager.GetCurrentClassLogger();
+        }
+        return _logger;
+      }
+
     }
 
   }
