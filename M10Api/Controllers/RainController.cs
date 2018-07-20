@@ -28,12 +28,11 @@ namespace M10Api.Controllers
     public ActionResult QueryRain(string cityId)
     {
 
-      try
-      {
-        //string cityid1 = Request.QueryString["cityId"];
-        ViewBag.SelectCountry = "全部";
 
-        ssql = @"   select CONVERT(float, MIN10) as MIN10
+      //string cityid1 = Request.QueryString["cityId"];
+      ViewBag.SelectCountry = "全部";
+
+      ssql = @"   select CONVERT(float, MIN10) as MIN10
                         ,CONVERT(float, RAIN) as RAIN
                         ,CONVERT(float, HOUR3) as HOUR3
                         ,CONVERT(float, HOUR6) as HOUR6
@@ -47,65 +46,61 @@ namespace M10Api.Controllers
                         left join StationErrLRTI b on a.STID = b.STID 
                     ";
 
-        if (string.IsNullOrEmpty(cityId) == false)
-        {
-          ViewBag.SelectCountry = cityId;
-
-          if (cityId != "全部")
-          {
-            ssql += "where COUNTY = @cityId ";
-          }
-        }
-
-        List<dynamic> data = dbDapper.Query(ssql, new { cityId = cityId });
-        foreach (var LoopItem in data)
-        {
-          LoopItem.LStatus = "";
-
-          if (LoopItem.STATUS == "-99")
-          {
-            LoopItem.MIN10 = "0";
-            LoopItem.RAIN = "0";
-            LoopItem.HOUR3 = "0";
-            LoopItem.HOUR6 = "0";
-            LoopItem.HOUR12 = "0";
-            LoopItem.HOUR24 = "0";
-            LoopItem.NOW = "0";
-            LoopItem.RT = "0";
-            LoopItem.LRTI = "0";
-
-            LoopItem.STATUS = "異常";
-            //設定顏色
-            LoopItem.LStatus = "LightGray";
-          }
-
-          double dLRTI = 0;
-          double dELRTI = 0;
-          double.TryParse(Convert.ToString(LoopItem.LRTI), out dLRTI);
-          double.TryParse(Convert.ToString(LoopItem.ELRTI), out dELRTI);
-
-
-          if (dLRTI > dELRTI && LoopItem.ELRTI != null)
-          {
-            LoopItem.LStatus = "Red";
-          }
-        }
-
-        //取得更新最新時間
-        ssql = " select MAX(RTime) as RTime from RunTimeRainData ";
-        ViewBag.forecastdate = dbDapper.ExecuteScale(ssql).ToString();
-
-        //資料筆數
-        ViewBag.count = data.Count;
-        ViewData["RunTimeRainData"] = data;
-      }
-      catch (Exception ex)
+      if (string.IsNullOrEmpty(cityId) == false)
       {
-        Logger.Log(NLog.LogLevel.Error, ex.Message);
-      }
-      
+        ViewBag.SelectCountry = cityId;
 
-     
+        if (cityId != "全部")
+        {
+          ssql += "where COUNTY = @cityId ";
+        }
+      }
+
+      List<dynamic> data = dbDapper.Query(ssql, new { cityId = cityId });
+      foreach (var LoopItem in data)
+      {
+        LoopItem.LStatus = "";
+
+        if (LoopItem.STATUS == "-99")
+        {
+          LoopItem.MIN10 = "0";
+          LoopItem.RAIN = "0";
+          LoopItem.HOUR3 = "0";
+          LoopItem.HOUR6 = "0";
+          LoopItem.HOUR12 = "0";
+          LoopItem.HOUR24 = "0";
+          LoopItem.NOW = "0";
+          LoopItem.RT = "0";
+          LoopItem.LRTI = "0";
+
+          LoopItem.STATUS = "異常";
+          //設定顏色
+          LoopItem.LStatus = "LightGray";
+        }
+
+        double dLRTI = 0;
+        double dELRTI = 0;
+        double.TryParse(Convert.ToString(LoopItem.LRTI), out dLRTI);
+        double.TryParse(Convert.ToString(LoopItem.ELRTI), out dELRTI);
+
+
+        if (dLRTI > dELRTI && LoopItem.ELRTI != null)
+        {
+          LoopItem.LStatus = "Red";
+        }
+      }
+
+      //取得更新最新時間
+      ssql = " select MAX(RTime) as RTime from RunTimeRainData ";
+      ViewBag.forecastdate = dbDapper.ExecuteScale(ssql).ToString();
+
+      //資料筆數
+      ViewBag.count = data.Count;
+      ViewData["RunTimeRainData"] = data;
+
+
+
+
 
       return View();
     }
@@ -114,30 +109,24 @@ namespace M10Api.Controllers
     {
       List<SelectListItem> items = new List<SelectListItem>();
 
-      try
+
+      var Countrys = dbDapper.Query(" select distinct COUNTY from StationData order by COUNTY ");
+
+      foreach (var item in Countrys)
       {
-        var Countrys = dbDapper.Query(" select distinct COUNTY from StationData order by COUNTY ");
-
-        foreach (var item in Countrys)
+        items.Add(new SelectListItem()
         {
-          items.Add(new SelectListItem()
-          {
-            Text = item.COUNTY,
-            Value = item.COUNTY
-          });
-        }
-
-        if (Countrys.Count != 0)
-        {
-          items.Insert(0, new SelectListItem() { Text = "全部", Value = "全部" });
-        }
-
+          Text = item.COUNTY,
+          Value = item.COUNTY
+        });
       }
-      catch (Exception ex)
+
+      if (Countrys.Count != 0)
       {
-        Logger.Log(NLog.LogLevel.Error, ex.Message);
+        items.Insert(0, new SelectListItem() { Text = "全部", Value = "全部" });
       }
-    
+
+
       return this.Json(items, JsonRequestBehavior.AllowGet);
     }
 
@@ -145,28 +134,23 @@ namespace M10Api.Controllers
     {
       List<SelectListItem> items = new List<SelectListItem>();
 
-      try
+
+      ssql = @" select * from StationData ";
+      if (string.IsNullOrEmpty(STID) == false) ssql += " where STID like @STID ";
+      ssql += " order by STID ";
+
+      var Stations = dbDapper.Query(ssql, new { STID = "%" + STID + "%" });
+
+      foreach (var item in Stations)
       {
-        ssql = @" select * from StationData ";
-        if (string.IsNullOrEmpty(STID) == false) ssql += " where STID like @STID ";
-        ssql += " order by STID ";
-
-        var Stations = dbDapper.Query(ssql, new { STID = "%" + STID + "%" });
-
-        foreach (var item in Stations)
+        items.Add(new SelectListItem()
         {
-          items.Add(new SelectListItem()
-          {
-            Text = string.Format("{0}[{1}-{2}]", Convert.ToString(item.STID).ToUpper(), item.COUNTY, item.STNAME),
-            Value = item.STID
-          });
-        }
+          Text = string.Format("{0}[{1}-{2}]", Convert.ToString(item.STID).ToUpper(), item.COUNTY, item.STNAME),
+          Value = item.STID
+        });
       }
-      catch (Exception ex)
-      {
-        Logger.Log(NLog.LogLevel.Error, ex.Message);
-      }
-    
+
+
 
       //if (Stations.Count != 0)
       //{
@@ -181,33 +165,28 @@ namespace M10Api.Controllers
     {
       dynamic result = new ExpandoObject();
 
-      try
-      {
-        ssql = " select * from LRTIAlertMail where type = 'isal' ";
-        LRTIAlertMail inst = dbDapper.QuerySingleOrDefault<LRTIAlertMail>(ssql);
 
-        if (inst.value == "Y")
-        {
-          inst.value = "N";
-        }
-        else
-        {
-          inst.value = "Y";
-        }
+      ssql = " select * from LRTIAlertMail where type = 'isal' ";
+      LRTIAlertMail inst = dbDapper.QuerySingleOrDefault<LRTIAlertMail>(ssql);
 
-        //更新成功才回傳
-        if (dbDapper.Update(inst))
-        {
-          result.result = "OK";
-          result.AlertSet = inst.value;
-        }
-      }
-      catch (Exception ex)
+      if (inst.value == "Y")
       {
-        Logger.Log(NLog.LogLevel.Error, ex.Message);
+        inst.value = "N";
       }
-    
-      
+      else
+      {
+        inst.value = "Y";
+      }
+
+      //更新成功才回傳
+      if (dbDapper.Update(inst))
+      {
+        result.result = "OK";
+        result.AlertSet = inst.value;
+      }
+
+
+
       return Content(JsonConvert.SerializeObject(result), "application/json");
       //return Json(JsonConvert.SerializeObject(result), "application/json", JsonRequestBehavior.AllowGet);
 
@@ -222,7 +201,7 @@ namespace M10Api.Controllers
 
       ssql = " select * from LRTIAlertMail where type = 'isal' ";
       LRTIAlertMail inst = dbDapper.QuerySingleOrDefault<LRTIAlertMail>(ssql);
-      
+
       result.AlertSet = inst.value;
 
       return Content(JsonConvert.SerializeObject(result), "application/json");
@@ -236,7 +215,7 @@ namespace M10Api.Controllers
       ssql = " select * from LRTIAlertMail where type = 'usps' and value = @value ";
       int iCount = dbDapper.QueryTotalCount(ssql, new { value = pass.ToUpper() });
 
-      if (iCount>0)
+      if (iCount > 0)
       {
         result.pass = "Y";
       }
@@ -251,7 +230,7 @@ namespace M10Api.Controllers
     }
 
     public ActionResult QueryRTI(string type)
-    { 
+    {
       ViewBag.type = "0";
       if (string.IsNullOrEmpty(type) == false) ViewBag.type = type;
 
@@ -289,7 +268,7 @@ namespace M10Api.Controllers
 
 
 
-    public ActionResult DownRainCountry(string sd,string ed,string country)
+    public ActionResult DownRainCountry(string sd, string ed, string country)
     {
       DateTime dtStart;
       DateTime dtEnd;
@@ -323,16 +302,16 @@ namespace M10Api.Controllers
 
       List<RainStation> DataList = new List<RainStation>();
       DataList = dbDapper.Query<RainStation>(ssql, new { COUNTY = country, sd = sStartDate, ed = sEndDate });
-     
+
       //產生檔案路徑
       string sTempPath = Path.Combine(Server.MapPath("~/temp/"), DateTime.Now.ToString("yyyyMMdd"));
       //建立資料夾
-      Directory.CreateDirectory(sTempPath);      
+      Directory.CreateDirectory(sTempPath);
       string sSaveFilePath = Path.Combine(sTempPath, "RainDataByCountry_" + Guid.NewGuid().ToString() + ".csv");
 
       DataTable dt = Utils.ConvertToDataTable<RainStation>(DataList);
 
-      
+
       DataExport de = new DataExport();
       Boolean bSuccess = de.ExportBigDataToCsv(sSaveFilePath, dt);
 
@@ -351,7 +330,7 @@ namespace M10Api.Controllers
         context.Response.AddHeader("Content-Disposition", string.Format("attachment;filename={0}", filename));
         Response.End();
       }
-      
+
       return null;
     }
 
@@ -385,7 +364,7 @@ namespace M10Api.Controllers
                       and RTime between @sd and @ed
                       and datepart(mi,RTime) = 0 and datepart(ss,RTime) = 0
                        order by RTime   ";
-      
+
       List<RainStation> DataList = new List<RainStation>();
       DataList = dbDapper.Query<RainStation>(ssql, new { STID = Station, sd = sStartDate, ed = sEndDate });
 
@@ -513,12 +492,12 @@ namespace M10Api.Controllers
     }
 
     public bool xDownload(string xFile, string out_file)
-    { 
+    {
       if (System.IO.File.Exists(xFile))
       {
         try
         {
-          FileInfo xpath_file = new FileInfo(xFile);  
+          FileInfo xpath_file = new FileInfo(xFile);
           System.Web.HttpContext.Current.Response.Clear(); //清除buffer
           System.Web.HttpContext.Current.Response.ClearHeaders(); //清除 buffer 表頭
           System.Web.HttpContext.Current.Response.Buffer = false;

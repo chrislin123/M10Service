@@ -22,5 +22,20 @@ namespace M10Api
       //資料回覆為Json格式
       GlobalConfiguration.Configuration.Formatters.XmlFormatter.SupportedMediaTypes.Clear();
     }
+
+    void ErrorMail_Mailing(object sender, Elmah.ErrorMailEventArgs e)
+    {
+      string machineName = Request.ServerVariables["HTTP_HOST"];
+      string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+      // 取得 Elamh ErrorMail 的主旨
+      // "$MachineName$ at $ErrorTime$ : {0}"
+      string elmahSubject = e.Mail.Subject;
+      //替換 ErrorMail 的主旨內容
+      string emailSubject = elmahSubject
+              .Replace("$MachineName$", machineName)
+              .Replace("$ErrorTime$", currentDateTime)
+      ;
+      e.Mail.Subject = emailSubject;
+    }
   }
 }
