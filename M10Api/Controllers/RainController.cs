@@ -91,8 +91,14 @@ namespace M10Api.Controllers
       }
 
       //取得更新最新時間
+      ViewBag.forecastdate = "";
       ssql = " select MAX(RTime) as RTime from RunTimeRainData ";
-      ViewBag.forecastdate = dbDapper.ExecuteScale(ssql).ToString();
+      object oforecastdate = dbDapper.ExecuteScale(ssql);
+      if (oforecastdate!= null)
+      {
+        ViewBag.forecastdate = dbDapper.ExecuteScale(ssql).ToString();
+      }
+      
 
       //資料筆數
       ViewBag.count = data.Count;
