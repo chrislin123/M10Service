@@ -1112,25 +1112,22 @@ namespace M10Tools
 
         private void btnTransToPrice_Click(object sender, EventArgs e)
         {
-
+            //取得所有日期清單
             ssql = " select distinct stockdate from StockAfter order by stockdate ";
             List<dynamic> DateList = dbDapper.Query(ssql);
 
             foreach (var item in DateList)
             {
-                ssql = " select * from Price1 where  date = '{0}' ";
-                ssql = string.Format(ssql, item.stockdate);
-                if (dbDapper.QueryTotalCount(ssql) != 0) continue;
-
-                ssql = " select * from stockafter where stockdate = '{0}' ";
+                //依照日期取得StockAfter資料
+                ssql = " select * from stockafter where stockdate = '{0}' and updYN <> 'Y' ";
                 ssql = string.Format(ssql, Convert.ToString(item.stockdate));
                 List<Stockafter> StockAfterList = dbDapper.Query<Stockafter>(ssql);
 
                 foreach (Stockafter StockAferItem in StockAfterList)
                 {
-
-                    ssql = " select * from stockafter where stockcode = '{0}' and stockdate = '{1}' ";
-                    ssql = string.Format(ssql, StockAferItem.stockcode, StockAferItem.stockdate);
+                    //判斷資料是否存在
+                    ssql = " select * from Price1 where date = '{0}' and StockID = '{1}' ";
+                    ssql = string.Format(ssql, StockAferItem.stockdate, StockAferItem.stockcode);
                     if (dbDapper.QueryTotalCount(ssql) != 0) continue;
 
                     Price1 oPrice1 = new Price1();
@@ -1152,28 +1149,11 @@ namespace M10Tools
 
                     ShowStatus(string.Format("{0}-{1}", item.stockdate, StockAferItem.stockcode));
 
+                    //註記已轉檔
+                    StockAferItem.updYN = "Y";
+                    dbDapper.Update<Stockafter>(StockAferItem);
                 }
-
             }
-
-
-
-
-
-
-
-            //if (dbDapper.QueryTotalCount(ssql) == 0)
-            //{
-            //    toolStripStatusLabel1.Text = string.Format("完成");
-            //    Application.DoEvents();
-
-            //    return;
-            //}
-
-
-
-
-
 
         }
     }

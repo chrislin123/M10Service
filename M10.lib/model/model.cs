@@ -694,6 +694,8 @@ namespace M10.lib.model
 
         public decimal? priceyesterday { get; set; }
 
+        public string updYN { get; set; }
+
     }
 
     [Table("StockGet")]
