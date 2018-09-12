@@ -1,195 +1,171 @@
 ﻿
 @{
-  ViewBag.Title = "雨量查詢";
-  Layout = "~/Views/Shared/_WarnLayout.cshtml";
+    ViewBag.Title = "雨量查詢";
+    Layout = "~/Views/Shared/_WarnLayout.cshtml";
 }
 
 
 <div class="row">
-  <div class="col-md-9">
-    <h1 class="page-header">
-      雨量查詢 <small>資料時間：@ViewBag.forecastdate</small>
-    </h1>
-  </div>
-  <div class="col-md-3">
-    <h1 class="page-header">
-      <Button ID="btnSetAlert" onclick="SetAlert();" class=""></Button>
-    </h1>
-</div>
+    <div class="col-md-9">
+        <h1 class="page-header">
+            雨量查詢 <small>資料時間：@ViewBag.forecastdate</small>
+        </h1>
+    </div>
+    <div class="col-md-3">
+        <h1 class="page-header">
+            <Button ID="btnSetAlert" onclick="SetAlert();" class=""></Button>
+        </h1>
+    </div>
 </div>
 
 <div class="panel panel-info">
-  <div class="panel-heading">查詢</div>
-  <div class="panel-body">
-    <div class="col-md-12">
-      <div class="form-group col-md-12">
+    <div class="panel-heading">查詢</div>
+    <div class="panel-body">
+        <div class="col-md-12">
+            @*<div class="form-group col-md-12">*@
 
-        @*@using (Html.BeginForm("QueryRain", "Rain"))
-          {
-            <label for="keyWord">起始時間：</label>
-            <input type="text" id="StartDate" name="StartDate" value="@ViewBag.StartDate" />
-            <label for="keyWord">結束時間：</label>
-            <input type="text" id="EndDate" name="EndDate" value="@ViewBag.EndDate" />
-            <button type="submit" class="btn btn-default" id="btnSearch" >查詢</button>
-            <button type="button" class="btn btn-default" id="btnSearch" onclick="go();">匯出</button>
-          }*@
+                @*@using (Html.BeginForm("QueryRain", "Rain"))
+                    {
+                      <label for="keyWord">起始時間：</label>
+                      <input type="text" id="StartDate" name="StartDate" value="@ViewBag.StartDate" />
+                      <label for="keyWord">結束時間：</label>
+                      <input type="text" id="EndDate" name="EndDate" value="@ViewBag.EndDate" />
+                      <button type="submit" class="btn btn-default" id="btnSearch" >查詢</button>
+                      <button type="button" class="btn btn-default" id="btnSearch" onclick="go();">匯出</button>
+                    }*@
 
-        <div class="form-inline">
-          <select id="Product" name="county" class="form-control"></select>
-          <button class="btn btn-default" id="btnSearch" onclick="Query();">查詢</button>
-          
+                <div class="form-inline">
+                    <select id="Product" name="county" class="form-control"></select>
+                    <button class="btn btn-default" id="btnSearch" onclick="Query();">查詢</button>
+                </div>
+            @*</div>*@
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
 <div class="panel panel-success">
-  <div class="panel-heading">查詢結果 - 共 @ViewBag.count 筆</div>
-  <div class="panel-body">
+    <div class="panel-heading">查詢結果 - 共 @ViewBag.count 筆</div>
+    <div class="panel-body">
 
 
-    <div class="col-md-12">
-      <div class="row">
+        <div class="col-md-12">
+            <div class="row">
 
-        <table class="table table-striped table-condensed">
-          <thead>
-            <tr>
-              <th style="min-width: 80px;">名稱</th>
-              <th style="min-width: 80px;">站號</th>
-              <th style="min-width: 80px;">縣市</th>
-              <th style="min-width: 80px;">鄉鎮</th>
-              <th style="min-width: 40px;">10分鐘</th>
-              <th style="min-width: 40px;">1小時</th>
-              <th style="min-width: 40px;">3小時</th>
-              <th style="min-width: 40px;">6小時</th>
-              <th style="min-width: 40px;">12小時</th>
-              <th style="min-width: 40px;">24小時</th>
-              <th style="min-width: 40px;">本日</th>
-              <th style="min-width: 40px;">RT</th>
-              <th style="min-width: 40px;">LRTI</th>
-              <th style="min-width: 40px;">警戒LRTI</th>
-              <th style="min-width: 40px;">屬性</th>
-              <th style="min-width: 40px;">狀態</th>
-            </tr>
-          </thead>
-          <tbody>
-            @foreach (var item in ViewData["RunTimeRainData"] as List<dynamic>)
-            {
+                @*<table class="table table-striped table-condensed">*@
+                <table class="table table-striped table-condensed" data-toggle="table" data-sort-name="stargazers_count" data-sort-order="desc">
+                    <thead>
+                        <tr>
+                            <th style="min-width: 80px;" data-sortable="true">
+                                名稱
+                            </th>
+                            <th style="min-width: 80px;" data-sortable="true">站號</th>
+                            <th style="min-width: 80px;" data-sortable="true">縣市</th>
+                            <th style="min-width: 80px;" data-sortable="true">鄉鎮</th>
+                            <th style="min-width: 40px;" data-sortable="true">10分鐘</th>
+                            <th style="min-width: 40px;" data-sortable="true">1小時</th>
+                            <th style="min-width: 40px;" data-sortable="true">3小時</th>
+                            <th style="min-width: 40px;" data-sortable="true">6小時</th>
+                            <th style="min-width: 40px;" data-sortable="true">12小時</th>
+                            <th style="min-width: 40px;" data-sortable="true">24小時</th>
+                            <th style="min-width: 40px;" data-sortable="true">本日</th>
+                            <th style="min-width: 40px;" data-sortable="true">RT</th>
+                            <th style="min-width: 40px;" data-sortable="true">LRTI</th>
+                            <th style="min-width: 40px;" data-sortable="true">警戒LRTI</th>
+                            <th style="min-width: 40px;" data-sortable="true">屬性</th>
+                            <th style="min-width: 40px;" data-sortable="true">狀態</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in ViewData["RunTimeRainData"] as List<dynamic>)
+                        {
 
 
-              <tr @(item.LStatus == "" ? string.Empty : "style=color:" + item.LStatus + ";")>
-                <td>@item.STNAME</td>
-                <td>@item.STID</td>
-                <td>@item.COUNTY</td>
-                <td>@item.TOWN</td>
-                <td>@item.MIN10</td>
-                <td>@item.RAIN</td>
-                <td>@item.HOUR3</td>
-                <td>@item.HOUR6</td>
-                <td>@item.HOUR12</td>
-                <td>@item.HOUR24</td>
-                <td>@item.NOW</td>
-                <td>@item.RT</td>
-                <td>@item.LRTI</td>
-                <td>@item.ELRTI</td>
-                <td>@item.ATTRIBUTE</td>
-                <td>@item.STATUS</td>
-              </tr>
-            }
+                            <tr @(item.LStatus == "" ? string.Empty : "style=color:" + item.LStatus + ";")>
+                                <td>@item.STNAME</td>
+                                <td>@item.STID</td>
+                                <td>@item.COUNTY</td>
+                                <td>@item.TOWN</td>
+                                <td>@item.MIN10</td>
+                                <td>@item.RAIN</td>
+                                <td>@item.HOUR3</td>
+                                <td>@item.HOUR6</td>
+                                <td>@item.HOUR12</td>
+                                <td>@item.HOUR24</td>
+                                <td>@item.NOW</td>
+                                <td>@item.RT</td>
+                                <td>@item.LRTI</td>
+                                <td>@item.ELRTI</td>
+                                <td>@item.ATTRIBUTE</td>
+                                <td>@item.STATUS</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="text-center">
+                    <uib-pagination data-total-items="totalItems" ng-model="currentPage"
+                                    data-max-size="NumberOfPageButtons" class=" pagination-sm"
+                                    data-boundary-links="true" data-rotate="false"
+                                    ng-change="pageChanged()" data-items-per-page="recordsPerPage"></uib-pagination>
 
-            @*@foreach (var item in Model)
-              {
-                <tr>
-                  <td>@item.STID</td>
-                  <td>@item.TOWN</td>
-                  <td>@item.STNAME</td>
-                  <td>@item.LAT</td>
-                  <td>@item.LON</td>
-                  <td><a ng-click="editUser(user.id)" class="btn btn-small btn-primary" title="修改"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
-                  <td><a ng-click="deleteUser(user.id)" class="btn btn-small btn-danger" title="刪除"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
-                </tr>
-
-              }*@
-
-            @*<tr ng-repeat="user in data.items">
-                <td>{{ user.id }}</td>
-                <td>{{ user.name }}</td>
-                <td>{{ user.social_id }}</td>
-                <td>{{ user.nickname }}</td>
-                <td>{{ user.phone }}</td>
-                <td><a ng-click="editUser(user.id)" class="btn btn-small btn-primary" title="修改"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
-                <td><a ng-click="deleteUser(user.id)" class="btn btn-small btn-danger" title="刪除"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>
-              </tr>*@
-          </tbody>
-        </table>
-        <div class="text-center">
-          <uib-pagination data-total-items="totalItems" ng-model="currentPage"
-                          data-max-size="NumberOfPageButtons" class=" pagination-sm"
-                          data-boundary-links="true" data-rotate="false"
-                          ng-change="pageChanged()" data-items-per-page="recordsPerPage"></uib-pagination>
+                </div>
+            </div>
 
         </div>
-      </div>
-
     </div>
-  </div>
 </div>
-
-
 
 <script>
 
-  $(document).ready(function () {
-    $.getJSON('@Url.Action("GetCountyDDL")', { cityId: "test" }, function (data) {
-      $('#Product').empty();
-      $.each(data, function (i, item) {
-        $('#Product').append($('<option></option>').val(item.Value).text(item.Text));
-      });
+    $(document).ready(function () {
+        $.getJSON('@Url.Action("GetCountyDDL")', { cityId: "test" }, function (data) {
+            $('#Product').empty();
+            $.each(data, function (i, item) {
+                $('#Product').append($('<option></option>').val(item.Value).text(item.Text));
+            });
 
-      //設定原本選擇的項目
-      $('#Product').val("@ViewBag.SelectCountry");
+            //設定原本選擇的項目
+            $('#Product').val("@ViewBag.SelectCountry");
+        });
+
+        $.getJSON('@Url.Action("getAlertSet")', null, function (data) {
+            if (data.AlertSet == "Y") {
+                $("#btnSetAlert").attr('class', 'btn btn-warning');
+                $("#btnSetAlert").text("崩塌警戒發報-已啟動");
+            } else {
+                $("#btnSetAlert").attr('class', 'btn btn-success');
+                $("#btnSetAlert").text("崩塌警戒發報-已關閉");
+            }
+        });
+
+        //指定60秒刷新一次
+        setInterval(function () {
+            if ($("#Product").val() != null) {
+                Query();
+            }
+        }, 60000);
+
     });
 
-    $.getJSON('@Url.Action("getAlertSet")', null, function (data) {
-      if (data.AlertSet == "Y") {
-        $("#btnSetAlert").attr('class', 'btn btn-warning');
-        $("#btnSetAlert").text("崩塌警戒發報-已啟動");
-      } else {
-        $("#btnSetAlert").attr('class', 'btn btn-success');
-        $("#btnSetAlert").text("崩塌警戒發報-已關閉");
-      }
-    });
+    function Query() {
+        location.href = '@Url.Action("QueryRain")' + '?cityId=' + $("#Product").val();
+    }
 
-    //指定60秒刷新一次
-    setInterval(function () {
-      if ($("#Product").val() != null) {
-        Query();
-      } 
-    }, 60000);
-
-  });
-
-  function Query() {
-    location.href = '@Url.Action("QueryRain")' + '?cityId=' + $("#Product").val();
-  }
-
-  function SetAlert() {
-    $.getJSON('@Url.Action("postAlertSet")', null, function (data) {
-      if (data.result == "OK") {
-        if (data.AlertSet == "Y") {
-          $("#btnSetAlert").attr('class', 'btn btn-warning');
-          $("#btnSetAlert").text("崩塌警戒發報-已啟動");
-        } else {
-          $("#btnSetAlert").attr('class', 'btn btn-success');
-          $("#btnSetAlert").text("崩塌警戒發報-已關閉");
-        }
-      }
-    });
-  }
+    function SetAlert() {
+        $.getJSON('@Url.Action("postAlertSet")', null, function (data) {
+            if (data.result == "OK") {
+                if (data.AlertSet == "Y") {
+                    $("#btnSetAlert").attr('class', 'btn btn-warning');
+                    $("#btnSetAlert").text("崩塌警戒發報-已啟動");
+                } else {
+                    $("#btnSetAlert").attr('class', 'btn btn-success');
+                    $("#btnSetAlert").text("崩塌警戒發報-已關閉");
+                }
+            }
+        });
+    }
 
 
-  
+
 
 
 

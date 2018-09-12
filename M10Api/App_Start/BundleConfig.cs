@@ -17,12 +17,16 @@ namespace M10Api
                   "~/Scripts/modernizr-*"));
 
       bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
-                "~/Scripts/bootstrap.js",
-                "~/Scripts/respond.js"));
+                  "~/Scripts/bootstrap.js"
+                , "~/Scripts/respond.js"
+                , "~/Scripts/bootstrap-table.min.js"
+                ));
 
       bundles.Add(new StyleBundle("~/Content/css").Include(
-                "~/Content/bootstrap.css",
-                "~/Content/site.css"));
+                  "~/Content/bootstrap.css"
+                , "~/Content/site.css"
+                , "~/Content/bootstrap-table.min.css"
+                ));
     }
   }
 }
