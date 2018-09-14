@@ -1156,5 +1156,151 @@ namespace M10Tools
             }
 
         }
+
+        private void btnImpWeatherData_Click(object sender, EventArgs e)
+        {
+            FileInfo[] fiList = new DirectoryInfo(@"C:\temp\Weather").GetFiles("*.txt", SearchOption.AllDirectories);
+
+
+            foreach (FileInfo item in fiList)
+            {
+
+                string readText = File.ReadAllText(item.FullName,Encoding.Default);
+
+                List<string> StringList = readText.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<string>();
+
+
+                for (int i = StringList.Count-1; i >= 0; i--)
+                {
+                    string sText = StringList[i];
+
+                    if (sText == "") 
+                    {
+                        StringList.RemoveAt(i);
+                        continue;
+                    }
+
+                    if (sText.Substring(0,1) == "*")
+                    {
+                        StringList.RemoveAt(i);
+                    }
+
+                    sText.Replace("#", "");
+                }
+
+
+
+                foreach (string LoopItem in StringList)
+                {
+
+
+
+
+
+                }
+
+
+            }
+
+
+
+
+
+
+            //List<string> StringList = text.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<string>();
+
+            //foreach (string LoopItem in StringList)
+            //{
+            //    string Line = LoopItem;
+            //    Line = Line.Replace(" ", "");
+            //    Line = Line.Replace("\",\"", "|");
+            //    Line = Line.Replace("\"", "");
+            //    Line = Line.Replace(",", "");
+            //    Line = Line.Replace("=", "");
+            //    sLineTrans = Line;
+            //    string[] aCol = Line.Split('|');
+
+            //    if (aCol.Length == 16)
+            //    {
+            //        //檢核資料
+            //        Decimal iCheck = -1;
+
+            //        if (Decimal.TryParse(aCol[8], out iCheck) == false)
+            //        {
+            //            continue;
+            //        }
+
+            //        ssql = " select * from stockafter  where stockdate = '{0}' and stockcode = '{1}'  ";
+            //        Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(string.Format(ssql, sDate, aCol[0]));
+
+            //        decimal dpricelastbuy = 0;
+            //        decimal.TryParse(aCol[11], out dpricelastbuy);
+
+            //        decimal dpricelastsell = 0;
+            //        decimal.TryParse(aCol[13], out dpricelastsell);
+
+            //        if (aCol[9] == "") aCol[9] = "X";
+
+            //        //計算昨收
+            //        Decimal dPriceYesterday = CalcPriceYesterday(aCol[8], aCol[9], aCol[10]);
+
+            //        if (sa == null)
+            //        {
+            //            sa = new Stockafter();
+            //            sa.stockdate = sDate;
+            //            sa.stocktype = M10Const.StockType.tse;
+            //            sa.stockcode = aCol[0];
+            //            sa.pricelast = Convert.ToDecimal(aCol[8]);
+            //            sa.updown = aCol[9];
+            //            sa.pricediff = aCol[10];
+            //            sa.priceopen = Convert.ToDecimal(aCol[5]);
+            //            sa.pricetop = Convert.ToDecimal(aCol[6]);
+            //            sa.pricelow = Convert.ToDecimal(aCol[7]);
+            //            sa.priceavg = 0;
+            //            sa.dealnum = Convert.ToInt64(aCol[2]);
+            //            sa.dealmoney = Convert.ToInt64(aCol[4]);
+            //            sa.dealamount = Convert.ToInt64(aCol[3]);
+            //            sa.pricelastbuy = dpricelastbuy;
+            //            sa.pricelastsell = dpricelastsell;
+            //            sa.publicnum = 0;
+            //            sa.pricenextday = Convert.ToDecimal(aCol[8]);
+            //            sa.pricenextlimittop = 0;
+            //            sa.pricenextlimitlow = 0;
+            //            sa.priceyesterday = dPriceYesterday;
+            //            sa.updatetime = Utils.getDatatimeString();
+
+            //            dbDapper.Insert(sa);
+            //        }
+            //        else
+            //        {
+            //            sa.stocktype = M10Const.StockType.tse;
+            //            sa.pricelast = Convert.ToDecimal(aCol[8]);
+            //            sa.updown = aCol[9];
+            //            sa.pricediff = aCol[10];
+            //            sa.priceopen = Convert.ToDecimal(aCol[5]);
+            //            sa.pricetop = Convert.ToDecimal(aCol[6]);
+            //            sa.pricelow = Convert.ToDecimal(aCol[7]);
+            //            sa.priceavg = 0;
+            //            sa.dealnum = Convert.ToInt64(aCol[2]);
+            //            sa.dealmoney = Convert.ToInt64(aCol[4]);
+            //            sa.dealamount = Convert.ToInt64(aCol[3]);
+            //            sa.pricelastbuy = dpricelastbuy;
+            //            sa.pricelastsell = dpricelastsell;
+            //            sa.publicnum = 0;
+            //            sa.pricenextday = Convert.ToDecimal(aCol[8]);
+            //            sa.pricenextlimittop = 0;
+            //            sa.pricenextlimitlow = 0;
+            //            sa.updatetime = Utils.getDatatimeString();
+            //            sa.priceyesterday = dPriceYesterday;
+            //            dbDapper.Update(sa);
+            //        }
+            //    }
+
+            //}
+
+
+
+
+        }
     }
 }
