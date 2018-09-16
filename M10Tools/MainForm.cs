@@ -1159,52 +1159,77 @@ namespace M10Tools
 
         private void btnImpWeatherData_Click(object sender, EventArgs e)
         {
-            FileInfo[] fiList = new DirectoryInfo(@"C:\temp\Weather").GetFiles("*.txt", SearchOption.AllDirectories);
+            FileInfo[] fiList = new DirectoryInfo(@"C:\temp\Weather").GetFiles("*.txt", SearchOption.TopDirectoryOnly);
 
-
+            //try
+            //{
             foreach (FileInfo item in fiList)
             {
-
-                string readText = File.ReadAllText(item.FullName,Encoding.Default);
-
-                List<string> StringList = readText.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<string>();
+                ShowStatus(item.FullName);
+                string readText = File.ReadAllText(item.FullName, Encoding.Default);
 
 
-                for (int i = StringList.Count-1; i >= 0; i--)
+                List<string> StringList = readText.Split(new string[] { "\n" }, StringSplitOptions.None).ToList<string>();
+
+                for (int i = 0; i < StringList.Count - 1; i++)
                 {
-                    string sText = StringList[i];
-
-                    if (sText == "") 
-                    {
-                        StringList.RemoveAt(i);
-                        continue;
-                    }
-
-                    if (sText.Substring(0,1) == "*")
-                    {
-                        StringList.RemoveAt(i);
-                    }
-
-                    sText.Replace("#", "");
+                    StringList[i] = StringList[i].Replace("\r", "");
                 }
 
+                DataTable dt = new DataTable();
 
+                string sCols = StringList.Where(x => x.Contains("# ")).ToList<string>()[0];
+                List<string> ColsList = sCols.Split(' ').Where(x => x != "" && x != "#").ToList<string>();
 
-                foreach (string LoopItem in StringList)
+                foreach (string ColsItem in ColsList)
                 {
+                    dt.Columns.Add(ColsItem);
+                }
+
+                //選擇非必要資料
+                List<string> temp = StringList.Where(x => x != "").Where(y => y.Substring(0, 1) != "*" && y.Substring(0, 1) != "#").ToList<string>();
 
 
+                foreach (string RowItem in temp)
+                {
+                    List<string> CellList = RowItem.Split(' ').Where(x => x != "" && x != "#").ToList<string>();
 
-
+                    DataRow dr = dt.NewRow();
+                    for (int i = 0; i < CellList.Count; i++)
+                    {
+                        dr[i] = CellList[i];
+                    }
+                    dt.Rows.Add(dr);
 
                 }
 
+                foreach (DataRow dr in dt.Rows)
+                {
+                    WeatherData wd = new WeatherData();
+                    wd.STID = dr["stno"].ToString();
+                    wd.time = dr["yyyymmddhh"].ToString();
+                    wd.PP01 = dr["PP01"].ToString();
+
+                    dbDapper.Insert(wd);
+                }
+
+                string sNewFullName = Path.Combine(item.DirectoryName, "OK", item.Name);
+
+                item.MoveTo(sNewFullName);
 
             }
+            //}
+            //catch (Exception ex)
+            //{
+            //    string sss = ex.ToString();
+            //}
 
 
 
 
+
+
+            string ss = "";
 
 
             //List<string> StringList = text.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<string>();

@@ -535,6 +535,22 @@ namespace M10.lib.model
 
     }
 
+    [Table("WeatherData")]
+    public class WeatherData
+    {
+        //設定key
+        [Key]
+        public long no { get; set; }
+
+        public string STID { get; set; }
+
+        public string time { get; set; }
+
+        public string PP01 { get; set; }
+
+    }
+
+
     [Table("StockInfo")]
     public class StockInfo
     {
