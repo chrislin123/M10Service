@@ -547,7 +547,7 @@ namespace M10.lib.model
 
         public string time { get; set; }
 
-        public decimal? PP01 { get; set; }
+        public decimal PP01 { get; set; }
 
     }
 

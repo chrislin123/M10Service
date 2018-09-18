@@ -50,6 +50,7 @@
             this.StockAfterRushButton = new System.Windows.Forms.Button();
             this.btnTransToPrice = new System.Windows.Forms.Button();
             this.btnImpWeatherData = new System.Windows.Forms.Button();
+            this.btnTransWeaRainStatic = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -279,7 +280,7 @@
             // 
             // btnImpWeatherData
             // 
-            this.btnImpWeatherData.Location = new System.Drawing.Point(16, 124);
+            this.btnImpWeatherData.Location = new System.Drawing.Point(16, 159);
             this.btnImpWeatherData.Margin = new System.Windows.Forms.Padding(4);
             this.btnImpWeatherData.Name = "btnImpWeatherData";
             this.btnImpWeatherData.Size = new System.Drawing.Size(168, 29);
@@ -288,11 +289,23 @@
             this.btnImpWeatherData.UseVisualStyleBackColor = true;
             this.btnImpWeatherData.Click += new System.EventHandler(this.btnImpWeatherData_Click);
             // 
+            // btnTransWeaRainStatic
+            // 
+            this.btnTransWeaRainStatic.Location = new System.Drawing.Point(13, 196);
+            this.btnTransWeaRainStatic.Margin = new System.Windows.Forms.Padding(4);
+            this.btnTransWeaRainStatic.Name = "btnTransWeaRainStatic";
+            this.btnTransWeaRainStatic.Size = new System.Drawing.Size(168, 29);
+            this.btnTransWeaRainStatic.TabIndex = 28;
+            this.btnTransWeaRainStatic.Text = "氣象雨量資料統計";
+            this.btnTransWeaRainStatic.UseVisualStyleBackColor = true;
+            this.btnTransWeaRainStatic.Click += new System.EventHandler(this.btnTransWeaRainStatic_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(587, 416);
+            this.Controls.Add(this.btnTransWeaRainStatic);
             this.Controls.Add(this.btnImpWeatherData);
             this.Controls.Add(this.btnTransToPrice);
             this.Controls.Add(this.StockAfterRushButton);
@@ -348,6 +361,7 @@
     private System.Windows.Forms.Button StockAfterRushButton;
         private System.Windows.Forms.Button btnTransToPrice;
         private System.Windows.Forms.Button btnImpWeatherData;
+        private System.Windows.Forms.Button btnTransWeaRainStatic;
     }
 }
 
