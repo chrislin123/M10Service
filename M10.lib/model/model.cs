@@ -535,8 +535,9 @@ namespace M10.lib.model
 
     }
 
+   
     [Table("WeatherData")]
-    public class WeatherData
+    public class WeaRainData
     {
         //設定key
         [Key]
@@ -546,9 +547,68 @@ namespace M10.lib.model
 
         public string time { get; set; }
 
-        public string PP01 { get; set; }
+        public decimal? PP01 { get; set; }
 
     }
+
+    [Table("WeaRainStatistics")]
+    public class WeaRainStatistics
+    {
+        //設定key
+        [Key]
+        public long no { get; set; }
+
+        public string stid { get; set; }
+
+        public string year { get; set; }
+
+        public decimal? m01 { get; set; }
+
+        public decimal? m02 { get; set; }
+
+        public decimal? m03 { get; set; }
+
+        public decimal? m04 { get; set; }
+
+        public decimal? m05 { get; set; }
+
+        public decimal? m06 { get; set; }
+
+        public decimal? m07 { get; set; }
+
+        public decimal? m08 { get; set; }
+
+        public decimal? m09 { get; set; }
+
+        public decimal? m10 { get; set; }
+
+        public decimal? m11 { get; set; }
+
+        public decimal? m12 { get; set; }
+
+        public decimal? mavg { get; set; }
+
+        public decimal? yearsum { get; set; }
+
+        public decimal? max1 { get; set; }
+
+        public string max1date { get; set; }
+
+        public decimal? max2 { get; set; }
+
+        public string max2date { get; set; }
+
+        public decimal? max3 { get; set; }
+
+        public string max3date { get; set; }
+
+        public int? raindatecount { get; set; }
+
+    }
+
+
+
+
 
 
     [Table("StockInfo")]
