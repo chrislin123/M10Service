@@ -534,8 +534,28 @@ namespace M10.lib.model
         public string villageid { get; set; }
 
     }
+    [Table("DataStaticLog")]
+    public class DataStaticLog
+    {
+        //設定key
+        [Key]
+        public long no { get; set; }
 
-   
+        public string type { get; set; }
+
+        public string key1 { get; set; }
+
+        public string key2 { get; set; }
+
+        public string key3 { get; set; }
+
+        public string status { get; set; }
+
+        public DateTime logtime { get; set; }
+
+    }
+
+
     [Table("WeatherData")]
     public class WeaRainData
     {
