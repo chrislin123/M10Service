@@ -39,7 +39,7 @@
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">雨量資料<b class="caret"></b></a>
             <ul class="dropdown-menu">
               <li>@Html.ActionLink("雨量查詢", "QueryRain", "Rain", new { area = "" }, null)</li>
-              @*<li>@Html.ActionLink("匯出", "ExportRain", "Rain", new { area = "" }, null)</li>*@
+              <li>@Html.ActionLink("統計資料查詢", "QueryRainStatistics", "Rain", new { area = "" }, null)</li>
               <li>@Html.ActionLink("土石流警戒基準值(RTI)", "QueryRTI", "Rain", new { area = "" }, null)</li>
               <li>@Html.ActionLink("崩塌警戒基準值(RTI3)", "QueryRTI3", "Rain", new { area = "" }, null)</li>
             </ul>

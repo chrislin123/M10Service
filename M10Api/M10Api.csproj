@@ -452,6 +452,7 @@
     <Content Include="Views\Rain\ExpRainCountry.cshtml" />
     <Content Include="Views\Rain\ExpRainStation.cshtml" />
     <Content Include="Views\Rain\ExpStationCoord.cshtml" />
+    <Content Include="Views\Rain\QueryRainStatistics.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
