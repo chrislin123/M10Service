@@ -634,18 +634,28 @@ namespace M10Api.Controllers
             }
 
             //取得更新最新時間
-            ViewBag.forecastdate = "";
-            ssql = " select MAX(RTime) as RTime from RunTimeRainData ";
-            object oforecastdate = dbDapper.ExecuteScale(ssql);
-            if (oforecastdate != null)
-            {
-                ViewBag.forecastdate = dbDapper.ExecuteScale(ssql).ToString();
-            }
+            //ViewBag.forecastdate = "";
+            //ssql = " select MAX(RTime) as RTime from RunTimeRainData ";
+            //object oforecastdate = dbDapper.ExecuteScale(ssql);
+            //if (oforecastdate != null)
+            //{
+            //    ViewBag.forecastdate = dbDapper.ExecuteScale(ssql).ToString();
+            //}
+
+            //
+            List<dynamic> DataAvg = new List<dynamic>();
+            dynamic test = new WeaRainStatistics();
+            test.m01 = Convert.ToDecimal( "30");
+            DataAvg.Add(test);
+
+            
+
 
 
             //資料筆數
             ViewBag.count = data.Count;
-            ViewData["RunTimeRainData"] = data;
+            ViewData["RainData"] = data;
+            ViewData["DataAvg"] = DataAvg;
 
 
 
