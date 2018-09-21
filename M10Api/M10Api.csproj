@@ -232,6 +232,7 @@
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
     <Compile Include="Class\BaseController.cs" />
     <Compile Include="Class\BaseApiController.cs" />
+    <Compile Include="Class\RainControlUtil.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HighRailController.cs" />
     <Compile Include="Controllers\HomeController.cs" />

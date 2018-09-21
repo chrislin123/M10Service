@@ -582,33 +582,33 @@ namespace M10.lib.model
 
         public string year { get; set; }
 
-        public decimal? m01 { get; set; }
+        public decimal m01 { get; set; }
 
-        public decimal? m02 { get; set; }
+        public decimal m02 { get; set; }
 
-        public decimal? m03 { get; set; }
+        public decimal m03 { get; set; }
 
-        public decimal? m04 { get; set; }
+        public decimal m04 { get; set; }
 
-        public decimal? m05 { get; set; }
+        public decimal m05 { get; set; }
 
-        public decimal? m06 { get; set; }
+        public decimal m06 { get; set; }
 
-        public decimal? m07 { get; set; }
+        public decimal m07 { get; set; }
 
-        public decimal? m08 { get; set; }
+        public decimal m08 { get; set; }
 
-        public decimal? m09 { get; set; }
+        public decimal m09 { get; set; }
 
-        public decimal? m10 { get; set; }
+        public decimal m10 { get; set; }
 
-        public decimal? m11 { get; set; }
+        public decimal m11 { get; set; }
 
-        public decimal? m12 { get; set; }
+        public decimal m12 { get; set; }
 
-        public decimal? mavg { get; set; }
+        public decimal mavg { get; set; }
 
-        public decimal? yearsum { get; set; }
+        public decimal yearsum { get; set; }
 
         public decimal? max1 { get; set; }
 
