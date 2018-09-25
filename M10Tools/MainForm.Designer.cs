@@ -51,6 +51,7 @@
             this.btnTransToPrice = new System.Windows.Forms.Button();
             this.btnImpWeatherData = new System.Windows.Forms.Button();
             this.btnTransWeaRainStatic = new System.Windows.Forms.Button();
+            this.btnRainAreaSplit = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -300,11 +301,23 @@
             this.btnTransWeaRainStatic.UseVisualStyleBackColor = true;
             this.btnTransWeaRainStatic.Click += new System.EventHandler(this.btnTransWeaRainStatic_Click);
             // 
+            // btnRainAreaSplit
+            // 
+            this.btnRainAreaSplit.Location = new System.Drawing.Point(13, 232);
+            this.btnRainAreaSplit.Margin = new System.Windows.Forms.Padding(4);
+            this.btnRainAreaSplit.Name = "btnRainAreaSplit";
+            this.btnRainAreaSplit.Size = new System.Drawing.Size(168, 29);
+            this.btnRainAreaSplit.TabIndex = 29;
+            this.btnRainAreaSplit.Text = "雨場分割";
+            this.btnRainAreaSplit.UseVisualStyleBackColor = true;
+            this.btnRainAreaSplit.Click += new System.EventHandler(this.btnRainAreaSplit_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(587, 416);
+            this.Controls.Add(this.btnRainAreaSplit);
             this.Controls.Add(this.btnTransWeaRainStatic);
             this.Controls.Add(this.btnImpWeatherData);
             this.Controls.Add(this.btnTransToPrice);
@@ -362,6 +375,7 @@
         private System.Windows.Forms.Button btnTransToPrice;
         private System.Windows.Forms.Button btnImpWeatherData;
         private System.Windows.Forms.Button btnTransWeaRainStatic;
+        private System.Windows.Forms.Button btnRainAreaSplit;
     }
 }
 

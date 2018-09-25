@@ -627,6 +627,48 @@ namespace M10.lib.model
     }
 
 
+    [Table("WeaRainArea")]
+    public class WeaRainArea
+    {
+        //設定key
+        [Key]
+        public long no { get; set; }
+
+        public string stid { get; set; }
+
+        public string TimeStart { get; set; }
+
+        public string TimeEnd { get; set; }
+
+        public int RainHour { get; set; }
+
+        public decimal TotalRain { get; set; }
+
+        public decimal MaxRain { get; set; }
+
+        public string MaxRainTime { get; set; }
+
+        public decimal Max3Sum { get; set; }
+
+        public decimal Max6Sum { get; set; }
+
+        public decimal Max12Sum { get; set; }
+
+        public decimal Max24Sum { get; set; }
+
+        public decimal Max48Sum { get; set; }
+
+        public decimal Pre7DayRain { get; set; }
+
+        public decimal CumRain { get; set; }
+
+        public decimal RT { get; set; }
+
+    }
+
+
+
+
 
 
 
