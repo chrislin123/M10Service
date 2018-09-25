@@ -1685,7 +1685,7 @@ namespace M10Tools
             int iDataYear = 1987;
 
             DateTime dtStart = DateTime.ParseExact("1987010100", "yyyyMMddHH", null);
-            //dtStart = DateTime.ParseExact("1987032500", "yyyyMMddHH", null);
+            dtStart = DateTime.ParseExact("1987032323", "yyyyMMddHH", null);
             //DateTime dtFinish = DateTime.ParseExact("2017123123", "yyyyMMddHH", null);
             //DateTime dtFinish = DateTime.ParseExact("1987123123", "yyyyMMddHH", null);
             DateTime dtFinish = DateTime.ParseExact("1987063023", "yyyyMMddHH", null);
@@ -1761,13 +1761,57 @@ namespace M10Tools
                         wraTemp.stid = sStid;
                         wraTemp.TimeStart = sRainAreaS;
                         wraTemp.TimeEnd = sRainAreaE;
+                        wraTemp.RainHour = 0;
+                        wraTemp.TotalRain = 0;
+                        wraTemp.MaxRain = 0;
+                        wraTemp.MaxRainTime = "";
+                        wraTemp.Max3Sum = 0;
+                        wraTemp.Max6Sum = 0;
+                        wraTemp.Max12Sum = 0;
+                        wraTemp.Max24Sum = 0;
+                        wraTemp.Max48Sum = 0;
+                        wraTemp.Pre7DayRain = 0;
+                        wraTemp.CumRain = 0;
+                        wraTemp.RT = 0;
+
+
+                        List<WeaRainData> RainAreaList = RainList.Where(s => Convert.ToInt32(s.time) >= Convert.ToInt32(sRainAreaS) && Convert.ToInt32(s.time) <= Convert.ToInt32(sRainAreaE)).ToList<WeaRainData>();
 
                         //D：降雨延時，開始至結束時間(單位：小時)
-                        List<WeaRainData> RainAreaList = RainList.Where(s => Convert.ToInt32(s.time) >= Convert.ToInt32(sRainAreaS) && Convert.ToInt32(s.time) <= Convert.ToInt32(sRainAreaE)).ToList<WeaRainData>();
                         wraTemp.RainHour = RainAreaList.Count;
 
                         //E：該雨場總降雨量，本次雨場的總降雨量
+                        decimal dTotalRain = RainAreaList.Sum(s => s.PP01);
+                        wraTemp.TotalRain = dTotalRain;
+                        
+                        //G：最大時雨量，本次雨場的最大時雨量
+                        decimal dMaxRain = RainAreaList.Max(s => s.PP01);
+                        wraTemp.MaxRain = dMaxRain;
 
+                        //F：最大時雨量發生時間，格式2012/1/5 18:00，24小時制
+                        string sMaxRainTime = RainAreaList.Where(s => s.PP01 == dMaxRain).Select(s => s.time).ToList<string>()[0];
+
+                        wraTemp.MaxRainTime = sMaxRainTime;
+
+
+                        //H：最大3，雨場範圍內，最大連續3小時累積雨量
+
+                        //I：最大6，雨場範圍內，最大連續6小時累積雨量
+
+                        //J：最大12，雨場範圍內，最大連續12小時累積雨量
+
+                        //K：最大24，雨場範圍內，最大連續24小時累積雨量
+
+                        //L：最大48，雨場範圍內，最大連續48小時累積雨量
+
+                        //M：七天前期雨量，前頁P的計算
+
+                        //N：尖零_尖峰，最大時雨量發生的時間至本次雨場開始日期0點間的累積雨量(下圖示意)
+
+                        //O：R td ，即(R t )，欄位M+欄位N
+
+                        //P：時雨量，此場降雨的每小時降雨分布情形，例如：若此次雨場降雨延時為6小時，由P欄位開始往
+                        //右邊欄位延續共6格，P、Q、R、S、T、U。
 
 
 
@@ -1777,30 +1821,26 @@ namespace M10Tools
                         WeaRainArea wra = dbDapper.QuerySingleOrDefault<WeaRainArea>(ssql);
                         if (wra == null)
                         {
-                            wra = new WeaRainArea();
-                            wra.stid = sStid;
-                            wra.TimeStart = sRainAreaS;
-                            wra.TimeEnd = sRainAreaE;
-                            wra.RainHour = 0;
-                            wra.TotalRain = 0;
-                            wra.MaxRain = 0;
-                            wra.MaxRainTime = "";
-                            wra.Max3Sum = 0;
-                            wra.Max6Sum = 0;
-                            wra.Max12Sum = 0;
-                            wra.Max24Sum = 0;
-                            wra.Max48Sum = 0;
-                            wra.Pre7DayRain = 0;
-                            wra.CumRain = 0;
-                            wra.RT = 0;
-
+                            wra = wraTemp;
 
                             dbDapper.Insert(wra);
                         }
                         else
                         {   
-                            wra.TimeStart = sRainAreaS;
-                            wra.TimeEnd = sRainAreaE;
+                            wra.TimeStart = wraTemp.TimeStart;
+                            wra.TimeEnd = wraTemp.TimeEnd;
+                            wra.RainHour = wraTemp.RainHour;
+                            wra.TotalRain = wraTemp.TotalRain;
+                            wra.MaxRain = wraTemp.MaxRain;
+                            wra.MaxRainTime = wraTemp.MaxRainTime;
+                            wra.Max3Sum = wraTemp.Max3Sum;
+                            wra.Max6Sum = wraTemp.Max6Sum;
+                            wra.Max12Sum = wraTemp.Max12Sum;
+                            wra.Max24Sum = wraTemp.Max24Sum;
+                            wra.Max48Sum = wraTemp.Max48Sum;
+                            wra.Pre7DayRain = wraTemp.Pre7DayRain;
+                            wra.CumRain = wraTemp.CumRain;
+                            wra.RT = wra.RT;
                             dbDapper.Update(wra);
                         }
 
