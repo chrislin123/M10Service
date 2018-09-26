@@ -556,7 +556,7 @@ namespace M10.lib.model
     }
 
 
-    [Table("WeatherData")]
+    [Table("WeaRainData")]
     public class WeaRainData
     {
         //設定key
@@ -568,6 +568,9 @@ namespace M10.lib.model
         public string time { get; set; }
 
         public decimal PP01 { get; set; }
+
+        public decimal PP01old { get; set; }
+
 
     }
 
@@ -658,11 +661,19 @@ namespace M10.lib.model
 
         public decimal Max48Sum { get; set; }
 
-        public decimal Pre7DayRain { get; set; }
+        public decimal Pre7DayRain6 { get; set; }
 
+        public decimal Pre7DayRain7 { get; set; }
+
+        public decimal Pre7DayRain8 { get; set; }
+        
         public decimal CumRain { get; set; }
 
-        public decimal RT { get; set; }
+        public decimal RT6 { get; set; }
+
+        public decimal RT7 { get; set; }
+
+        public decimal RT8 { get; set; }
 
     }
 
