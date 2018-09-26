@@ -1,0 +1,99 @@
+﻿
+@{
+    ViewBag.Title = "ExpRainStation";
+    Layout = "~/Views/Shared/_WarnLayout.cshtml";
+}
+
+
+@section scripts {
+    <script type="text/javascript" src="~/scripts/moment.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="~/Scripts/bootstrap-datepicker/bootstrap-datetimepicker.zh-tw.js"></script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/Content/bootstrap-datetimepicker.css" />
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="page-header">
+            單站雨量站逐時雨量
+        </h1>
+    </div>
+</div>
+
+
+<div class="panel panel-info">
+    <div class="panel-heading">匯出</div>
+    <div class="panel-body">
+        <div class="col-md-12">
+            <div class="form-inline">
+                <label for="keyWord">雨量站：</label>
+                <select id="Station" name="Station" class="form-control"></select>
+                @*<label for="keyWord">搜尋(雨量站代碼)：</label>
+                    <input type="text" id="txtSTID" value="" />
+                    <button class="btn btn-default" id="btnSearchSTID" onclick="SearchSTID();">搜尋雨量站</button>
+                    <br />
+                    <label for="keyWord">起始時間：</label>
+                    <input type="text" id="StartDate" name="StartDate" value="" />
+                    <label for="keyWord">結束時間：</label>
+                    <input type="text" id="EndDate" name="EndDate" value="" />*@
+                <label for="keyWord">密碼：</label>
+                <input type="text" id="txtpass" name="txtpass" value="" />
+                <button class="btn btn-default" id="btnExport" onclick="Export();">資料匯出</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+
+        $.getJSON('@Url.Action("QueryRainStatisticsGetStidDDL")', null, function (data) {
+            $('#Station').empty();
+            $.each(data, function (i, item) {
+                $('#Station').append($('<option></option>').val(item.Value).text(item.Text));
+            });
+        });
+
+    });
+
+    function SearchSTID() {
+        $.getJSON('@Url.Action("GetStationDDL")', { STID: $("#txtSTID").val() }, function (data) {
+            $('#Station').empty();
+            $.each(data, function (i, item) {
+                $('#Station').append($('<option></option>').val(item.Value).text(item.Text));
+            });
+        });
+
+    }
+
+    function Export() {
+
+
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("checkPass")',
+            data: { pass: $("#txtpass").val() },
+            dataType: 'JSON',
+            success: function (response) {
+                if (response.pass == "N") {
+                    alert("密碼不符。");
+                    return;
+                }
+
+                //var sStartDate = $("#StartDate").val();
+                //var sEndDate = $("#EndDate").val();
+                //var sStation = $("#Station").val();
+
+                location.href = '@Url.Action("DownRainArea")' + '?stid=' + $("#Station").val();
+                //location.href = '@Url.Action("DownRainStation")' + '?sd=' + sStartDate + '&ed=' + sEndDate + '&Station=' + sStation;
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+            },
+        });
+
+    }
+</script>
