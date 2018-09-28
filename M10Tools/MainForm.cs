@@ -1222,6 +1222,11 @@ namespace M10Tools
 
         }
 
+        /// <summary>
+        /// 氣象雨量資料統計
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnTransWeaRainStatic_Click(object sender, EventArgs e)
         {
             ssql = " select distinct stid from WeaRainData order by STID ";
@@ -1241,8 +1246,8 @@ namespace M10Tools
                     //統計年度
                     int iDataYear = y;
 
-                    sStid = "466920";
-                    iDataYear = 1992;
+                    //sStid = "466920";
+                    //iDataYear = 1997;
                     ShowStatus(string.Format("[{2}/{3}]{0}-{1}", sStid, iDataYear, iIndex, StidList.Count));
 
 
@@ -1333,6 +1338,56 @@ namespace M10Tools
                     if (wrdList.Where(s => s.time.Substring(4, 2) == "12").Count() > 0)
                     {
                         dM12Sum = (Decimal)wrdList.Where(s => s.time.Substring(4, 2) == "12").Sum(t => t.PP01);
+                    }
+
+                    //1070928 黃亭茵 判斷 當月缺24筆以上(不用連續)當做資料異常 月平均、年平均都不列入
+                    if (wrdList.Where(s => s.time.Substring(4, 2) == "01" && s.PP01old < 0).Count() > 24)
+                    {
+                        dM01Sum = -99;
+                    }
+                    if (wrdList.Where(s => s.time.Substring(4, 2) == "02" && s.PP01old < 0).Count() > 24)
+                    {
+                        dM02Sum = -99;
+                    }
+                    if (wrdList.Where(s => s.time.Substring(4, 2) == "03" && s.PP01old < 0).Count() > 24)
+                    {
+                        dM03Sum = -99;
+                    }
+                    if (wrdList.Where(s => s.time.Substring(4, 2) == "04" && s.PP01old < 0).Count() > 24)
+                    {
+                        dM04Sum = -99;
+                    }
+                    if (wrdList.Where(s => s.time.Substring(4, 2) == "05" && s.PP01old < 0).Count() > 24)
+                    {
+                        dM05Sum = -99;
+                    }
+                    if (wrdList.Where(s => s.time.Substring(4, 2) == "06" && s.PP01old < 0).Count() > 24)
+                    {
+                        dM06Sum = -99;
+                    }
+                    if (wrdList.Where(s => s.time.Substring(4, 2) == "07" && s.PP01old < 0).Count() > 24)
+                    {
+                        dM07Sum = -99;
+                    }
+                    if (wrdList.Where(s => s.time.Substring(4, 2) == "08" && s.PP01old < 0).Count() > 24)
+                    {
+                        dM08Sum = -99;
+                    }
+                    if (wrdList.Where(s => s.time.Substring(4, 2) == "09" && s.PP01old < 0).Count() > 24)
+                    {
+                        dM09Sum = -99;
+                    }
+                    if (wrdList.Where(s => s.time.Substring(4, 2) == "10" && s.PP01old < 0).Count() > 24)
+                    {
+                        dM10Sum = -99;
+                    }
+                    if (wrdList.Where(s => s.time.Substring(4, 2) == "11" && s.PP01old < 0).Count() > 24)
+                    {
+                        dM11Sum = -99;
+                    }
+                    if (wrdList.Where(s => s.time.Substring(4, 2) == "12" && s.PP01old < 0).Count() > 24)
+                    {
+                        dM12Sum = -99;
                     }
 
                     wrs.m01 = dM01Sum;
@@ -1536,6 +1591,7 @@ namespace M10Tools
                         Temp.max3 = wrs.max3;
                         Temp.max3date = wrs.max3date;
                         Temp.raindatecount = wrs.raindatecount;
+                        dbDapper.Update(Temp);
                     }
 
                     #endregion
