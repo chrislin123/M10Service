@@ -1627,214 +1627,262 @@ namespace M10Tools
             {
                 //雨量站
                 string sStid = StidItem.stid;
-                sStid = "466900";
-               
-                ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}' and key2 = '{2}' ";
-                ssql = string.Format(ssql, sDataStaticLogType, sStid, "");
-                //已轉過
-                if (dbDapper.QueryTotalCount(ssql) > 0) continue;
+                //sStid = "466900";
+                //sStid = "466880";
+                
 
-                DateTime dtStart = DateTime.ParseExact("1987010100", "yyyyMMddHH", null);
-                //dtStart = DateTime.ParseExact("1987032323", "yyyyMMddHH", null);
-                DateTime dtFinish = DateTime.ParseExact("2017123123", "yyyyMMddHH", null);
-                //dtFinish = DateTime.ParseExact("1987063023", "yyyyMMddHH", null);
-
-
-                //取得該雨量站所有資料
-                ssql = " select * from WeaRainData where stid = '{0}' ";
-                ssql = string.Format(ssql, sStid);
-                List<WeaRainData> RainList = dbDapper.Query<WeaRainData>(ssql);
-
-                string sRainAreaS = "";
-                string sRainAreaE = "";
-                DateTime temp = DateTime.Now;
-                for (DateTime i = dtStart; i <= dtFinish; i = i.AddHours(1))
+                try
                 {
-                    int iTime = Convert.ToInt32(i.ToString("yyyyMMddHH")) + 1;
-
-                    WeaRainData wrd = RainList.SingleOrDefault(s => s.time == iTime.ToString());
-
-                    if (wrd == null)
+                    ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}' ";
+                    ssql = string.Format(ssql, sDataStaticLogType, sStid);
+                    
+                    //已經有轉檔紀錄
+                    if (dbDapper.QueryTotalCount(ssql) > 0)
                     {
-                        wrd.time = iTime.ToString();
-                        wrd.PP01 = 0;
-                    }
-
-
-                    ShowStatus(string.Format("{0}-{1}", sStid, i.ToString("yyyyMMddHH")));
-
-
-                    //非雨場且時雨量>4，則開始記錄雨場起始
-                    if (wrd.PP01 > 4 && sRainAreaS == "")
-                    {
-                        sRainAreaS = wrd.time;
-
                         continue;
                     }
-
-                    //在雨場中且時雨量<=4，則準備記錄雨場結束(持續6小時<=4)
-                    if (wrd.PP01 <= 4 && sRainAreaS != "")
+                    else //如果沒有轉檔紀錄，則新增一筆執行中
                     {
-
-                        int iTime2 = Convert.ToInt32(i.AddHours(1).ToString("yyyyMMddHH")) + 1;
-                        int iTime3 = Convert.ToInt32(i.AddHours(2).ToString("yyyyMMddHH")) + 1;
-                        int iTime4 = Convert.ToInt32(i.AddHours(3).ToString("yyyyMMddHH")) + 1;
-                        int iTime5 = Convert.ToInt32(i.AddHours(4).ToString("yyyyMMddHH")) + 1;
-                        int iTime6 = Convert.ToInt32(i.AddHours(5).ToString("yyyyMMddHH")) + 1;
-                        WeaRainData wrd2 = RainList.SingleOrDefault(s => s.time == iTime2.ToString());
-                        WeaRainData wrd3 = RainList.SingleOrDefault(s => s.time == iTime3.ToString());
-                        WeaRainData wrd4 = RainList.SingleOrDefault(s => s.time == iTime4.ToString());
-                        WeaRainData wrd5 = RainList.SingleOrDefault(s => s.time == iTime5.ToString());
-                        WeaRainData wrd6 = RainList.SingleOrDefault(s => s.time == iTime6.ToString());
-
-                        //沒資料則，時雨量則補上０
-                        if (wrd2 == null) wrd2.PP01 = 0;
-                        if (wrd3 == null) wrd3.PP01 = 0;
-                        if (wrd4 == null) wrd4.PP01 = 0;
-                        if (wrd5 == null) wrd5.PP01 = 0;
-                        if (wrd6 == null) wrd6.PP01 = 0;
+                        //寫入統計LOG
+                        DataStaticLog dsl_new = new DataStaticLog();
+                        dsl_new.type = sDataStaticLogType;
+                        dsl_new.key1 = sStid;
+                        dsl_new.status = "10";
+                        dsl_new.logtime = DateTime.Now;
+                        dbDapper.Insert(dsl_new);
+                    }
+                    
+                    DateTime dtStart = DateTime.ParseExact("1987010100", "yyyyMMddHH", null);
+                    //dtStart = DateTime.ParseExact("1987032323", "yyyyMMddHH", null);
+                    DateTime dtFinish = DateTime.ParseExact("2017123123", "yyyyMMddHH", null);
+                    //dtFinish = DateTime.ParseExact("1987063023", "yyyyMMddHH", null);
 
 
-                        //記錄雨場結束(持續6小時 <= 4)
-                        if (wrd2.PP01 <= 4 && wrd3.PP01 <= 4 && wrd4.PP01 <= 4 && wrd5.PP01 <= 4 && wrd6.PP01 <= 4)
+                    //取得該雨量站所有資料
+                    ssql = " select * from WeaRainData where stid = '{0}' ";
+                    ssql = string.Format(ssql, sStid);
+                    List<WeaRainData> RainList = dbDapper.Query<WeaRainData>(ssql);
+
+                    string sRainAreaS = "";
+                    string sRainAreaE = "";
+                    DateTime temp = DateTime.Now;
+                    for (DateTime i = dtStart; i <= dtFinish; i = i.AddHours(1))
+                    {
+                        int iTime = Convert.ToInt32(i.ToString("yyyyMMddHH")) + 1;
+
+                        WeaRainData wrd = RainList.SingleOrDefault(s => s.time == iTime.ToString());
+
+                        if (wrd == null)
                         {
-                            sRainAreaE = wrd.time;
+                            wrd = new WeaRainData();
+                            wrd.time = iTime.ToString();
+                            wrd.PP01 = 0;
+                        }
 
 
-                            WeaRainArea wraTemp = new WeaRainArea();
-                            wraTemp.stid = sStid;
-                            wraTemp.TimeStart = sRainAreaS;
-                            wraTemp.TimeEnd = sRainAreaE;
-                            wraTemp.RainHour = 0;
-                            wraTemp.TotalRain = 0;
-                            wraTemp.MaxRain = 0;
-                            wraTemp.MaxRainTime = "";
-                            wraTemp.Max3Sum = 0;
-                            wraTemp.Max6Sum = 0;
-                            wraTemp.Max12Sum = 0;
-                            wraTemp.Max24Sum = 0;
-                            wraTemp.Max48Sum = 0;
-                            wraTemp.Pre7DayRain6 = 0;
-                            wraTemp.Pre7DayRain7 = 0;
-                            wraTemp.Pre7DayRain8 = 0;
-                            wraTemp.CumRain = 0;
-                            wraTemp.RT6 = 0;
-                            wraTemp.RT7 = 0;
-                            wraTemp.RT8 = 0;
+                        ShowStatus(string.Format("{0}-{1}", sStid, i.ToString("yyyyMMddHH")));
 
 
-                            List<WeaRainData> RainAreaList = RainList.Where(s => Convert.ToInt32(s.time) >= Convert.ToInt32(sRainAreaS) && Convert.ToInt32(s.time) <= Convert.ToInt32(sRainAreaE)).ToList<WeaRainData>();
+                        //非雨場且時雨量>4，則開始記錄雨場起始
+                        if (wrd.PP01 > 4 && sRainAreaS == "")
+                        {
+                            sRainAreaS = wrd.time;
 
-                            //D：降雨延時，開始至結束時間(單位：小時)
-                            wraTemp.RainHour = RainAreaList.Count;
+                            continue;
+                        }
 
-                            //E：該雨場總降雨量，本次雨場的總降雨量
-                            decimal dTotalRain = RainAreaList.Sum(s => s.PP01);
-                            wraTemp.TotalRain = dTotalRain;
+                        //在雨場中且時雨量<=4，則準備記錄雨場結束(持續6小時<=4)
+                        if (wrd.PP01 <= 4 && sRainAreaS != "")
+                        {
 
-                            //G：最大時雨量，本次雨場的最大時雨量
-                            decimal dMaxRain = RainAreaList.Max(s => s.PP01);
-                            wraTemp.MaxRain = dMaxRain;
+                            int iTime2 = Convert.ToInt32(i.AddHours(1).ToString("yyyyMMddHH")) + 1;
+                            int iTime3 = Convert.ToInt32(i.AddHours(2).ToString("yyyyMMddHH")) + 1;
+                            int iTime4 = Convert.ToInt32(i.AddHours(3).ToString("yyyyMMddHH")) + 1;
+                            int iTime5 = Convert.ToInt32(i.AddHours(4).ToString("yyyyMMddHH")) + 1;
+                            int iTime6 = Convert.ToInt32(i.AddHours(5).ToString("yyyyMMddHH")) + 1;
+                            WeaRainData wrd2 = RainList.SingleOrDefault(s => s.time == iTime2.ToString());
+                            WeaRainData wrd3 = RainList.SingleOrDefault(s => s.time == iTime3.ToString());
+                            WeaRainData wrd4 = RainList.SingleOrDefault(s => s.time == iTime4.ToString());
+                            WeaRainData wrd5 = RainList.SingleOrDefault(s => s.time == iTime5.ToString());
+                            WeaRainData wrd6 = RainList.SingleOrDefault(s => s.time == iTime6.ToString());
 
-                            //F：最大時雨量發生時間，格式2012/1/5 18:00，24小時制
-                            //如果多筆，抓第一筆發生的時間
-                            string sMaxRainTime = RainAreaList.Where(s => s.PP01 == dMaxRain).Select(s => s.time).ToList<string>()[0];
-                            wraTemp.MaxRainTime = sMaxRainTime;
-
-                            //H：最大3，雨場範圍內，最大連續3小時累積雨量
-                            wraTemp.Max3Sum = CalcRainMax(RainAreaList, 3);
-
-                            //I：最大6，雨場範圍內，最大連續6小時累積雨量
-                            wraTemp.Max6Sum = CalcRainMax(RainAreaList, 6);
-
-                            //J：最大12，雨場範圍內，最大連續12小時累積雨量
-                            wraTemp.Max12Sum = CalcRainMax(RainAreaList, 12);
-
-
-                            //K：最大24，雨場範圍內，最大連續24小時累積雨量
-                            wraTemp.Max24Sum = CalcRainMax(RainAreaList, 24);
-
-                            //L：最大48，雨場範圍內，最大連續48小時累積雨量
-                            wraTemp.Max48Sum = CalcRainMax(RainAreaList, 48);
-
-                            //M：七天前期雨量，前頁P的計算
-                            //α=0.6 
-                            wraTemp.Pre7DayRain6 = CalcValueP(RainList, wraTemp, 0.6);
-
-                            //α=0.7
-                            wraTemp.Pre7DayRain7 = CalcValueP(RainList, wraTemp, 0.7);
-
-                            //α=0.8
-                            wraTemp.Pre7DayRain8 = CalcValueP(RainList, wraTemp, 0.8);
-
-                            //N：尖零_尖峰，最大時雨量發生的時間至本次雨場開始日期0點間的累積雨量(下圖示意)
-                            decimal dStart0ToSpike = 0;
-                            string sStart0 = wraTemp.TimeStart.Substring(0, 8) + "00";
-                            List<WeaRainData> Start0ToSpikeList = RainList.Where(s => Convert.ToInt32(s.time) >= Convert.ToInt32(sStart0) && Convert.ToInt32(s.time) <= Convert.ToInt32(wraTemp.MaxRainTime)).ToList<WeaRainData>();
-                            dStart0ToSpike = Start0ToSpikeList.Sum(s => s.PP01);
-                            wraTemp.CumRain = dStart0ToSpike;
-
-                            //O：R td ，即(R t )，欄位M+欄位N
-                            wraTemp.RT6 = wraTemp.Pre7DayRain6 + wraTemp.CumRain;
-                            wraTemp.RT7 = wraTemp.Pre7DayRain7 + wraTemp.CumRain;
-                            wraTemp.RT8 = wraTemp.Pre7DayRain8 + wraTemp.CumRain;
-
-                            //P：時雨量，此場降雨的每小時降雨分布情形，例如：若此次雨場降雨延時為6小時，由P欄位開始往
-                            //右邊欄位延續共6格，P、Q、R、S、T、U。
+                            //沒資料則，時雨量則補上０
+                            if (wrd2 == null) wrd2.PP01 = 0;
+                            if (wrd3 == null) wrd3.PP01 = 0;
+                            if (wrd4 == null) wrd4.PP01 = 0;
+                            if (wrd5 == null) wrd5.PP01 = 0;
+                            if (wrd6 == null) wrd6.PP01 = 0;
 
 
-
-                            //紀錄雨場
-                            ssql = " select * from wearainarea where stid = '{0}' and TimeStart = '{1}' ";
-                            ssql = string.Format(ssql, sStid, sRainAreaS);
-                            WeaRainArea wra = dbDapper.QuerySingleOrDefault<WeaRainArea>(ssql);
-                            if (wra == null)
+                            //記錄雨場結束(持續6小時 <= 4)
+                            if (wrd2.PP01 <= 4 && wrd3.PP01 <= 4 && wrd4.PP01 <= 4 && wrd5.PP01 <= 4 && wrd6.PP01 <= 4)
                             {
-                                wra = wraTemp;
+                                sRainAreaE = wrd.time;
 
-                                dbDapper.Insert(wra);
+
+                                WeaRainArea wraTemp = new WeaRainArea();
+                                wraTemp.stid = sStid;
+                                wraTemp.TimeStart = sRainAreaS;
+                                wraTemp.TimeEnd = sRainAreaE;
+                                wraTemp.RainHour = 0;
+                                wraTemp.TotalRain = 0;
+                                wraTemp.MaxRain = 0;
+                                wraTemp.MaxRainTime = "";
+                                wraTemp.Max3Sum = 0;
+                                wraTemp.Max6Sum = 0;
+                                wraTemp.Max12Sum = 0;
+                                wraTemp.Max24Sum = 0;
+                                wraTemp.Max48Sum = 0;
+                                wraTemp.Pre7DayRain6 = 0;
+                                wraTemp.Pre7DayRain7 = 0;
+                                wraTemp.Pre7DayRain8 = 0;
+                                wraTemp.CumRain = 0;
+                                wraTemp.RT6 = 0;
+                                wraTemp.RT7 = 0;
+                                wraTemp.RT8 = 0;
+
+
+                                List<WeaRainData> RainAreaList = RainList.Where(s => Convert.ToInt32(s.time) >= Convert.ToInt32(sRainAreaS) && Convert.ToInt32(s.time) <= Convert.ToInt32(sRainAreaE)).ToList<WeaRainData>();
+
+                                //D：降雨延時，開始至結束時間(單位：小時)
+                                wraTemp.RainHour = RainAreaList.Count;
+
+                                //E：該雨場總降雨量，本次雨場的總降雨量
+                                decimal dTotalRain = RainAreaList.Sum(s => s.PP01);
+                                wraTemp.TotalRain = dTotalRain;
+
+                                //G：最大時雨量，本次雨場的最大時雨量
+                                decimal dMaxRain = RainAreaList.Max(s => s.PP01);
+                                wraTemp.MaxRain = dMaxRain;
+
+                                //F：最大時雨量發生時間，格式2012/1/5 18:00，24小時制
+                                //如果多筆，抓第一筆發生的時間
+                                string sMaxRainTime = RainAreaList.Where(s => s.PP01 == dMaxRain).Select(s => s.time).ToList<string>()[0];
+                                wraTemp.MaxRainTime = sMaxRainTime;
+
+                                //H：最大3，雨場範圍內，最大連續3小時累積雨量
+                                wraTemp.Max3Sum = CalcRainMax(RainAreaList, 3);
+
+                                //I：最大6，雨場範圍內，最大連續6小時累積雨量
+                                wraTemp.Max6Sum = CalcRainMax(RainAreaList, 6);
+
+                                //J：最大12，雨場範圍內，最大連續12小時累積雨量
+                                wraTemp.Max12Sum = CalcRainMax(RainAreaList, 12);
+
+
+                                //K：最大24，雨場範圍內，最大連續24小時累積雨量
+                                wraTemp.Max24Sum = CalcRainMax(RainAreaList, 24);
+
+                                //L：最大48，雨場範圍內，最大連續48小時累積雨量
+                                wraTemp.Max48Sum = CalcRainMax(RainAreaList, 48);
+
+                                //M：七天前期雨量，前頁P的計算
+                                //α=0.6 
+                                wraTemp.Pre7DayRain6 = CalcValueP(RainList, wraTemp, 0.6);
+
+                                //α=0.7
+                                wraTemp.Pre7DayRain7 = CalcValueP(RainList, wraTemp, 0.7);
+
+                                //α=0.8
+                                wraTemp.Pre7DayRain8 = CalcValueP(RainList, wraTemp, 0.8);
+
+                                //N：尖零_尖峰，最大時雨量發生的時間至本次雨場開始日期0點間的累積雨量(下圖示意)
+                                decimal dStart0ToSpike = 0;
+                                string sStart0 = wraTemp.TimeStart.Substring(0, 8) + "00";
+                                List<WeaRainData> Start0ToSpikeList = RainList.Where(s => Convert.ToInt32(s.time) >= Convert.ToInt32(sStart0) && Convert.ToInt32(s.time) <= Convert.ToInt32(wraTemp.MaxRainTime)).ToList<WeaRainData>();
+                                dStart0ToSpike = Start0ToSpikeList.Sum(s => s.PP01);
+                                wraTemp.CumRain = dStart0ToSpike;
+
+                                //O：R td ，即(R t )，欄位M+欄位N
+                                wraTemp.RT6 = wraTemp.Pre7DayRain6 + wraTemp.CumRain;
+                                wraTemp.RT7 = wraTemp.Pre7DayRain7 + wraTemp.CumRain;
+                                wraTemp.RT8 = wraTemp.Pre7DayRain8 + wraTemp.CumRain;
+
+                                //P：時雨量，此場降雨的每小時降雨分布情形，例如：若此次雨場降雨延時為6小時，由P欄位開始往
+                                //右邊欄位延續共6格，P、Q、R、S、T、U。
+
+
+
+                                //紀錄雨場
+                                ssql = " select * from wearainarea where stid = '{0}' and TimeStart = '{1}' ";
+                                ssql = string.Format(ssql, sStid, sRainAreaS);
+                                WeaRainArea wra = dbDapper.QuerySingleOrDefault<WeaRainArea>(ssql);
+                                if (wra == null)
+                                {
+                                    wra = wraTemp;
+
+                                    dbDapper.Insert(wra);
+                                }
+                                else
+                                {
+                                    wra.TimeStart = wraTemp.TimeStart;
+                                    wra.TimeEnd = wraTemp.TimeEnd;
+                                    wra.RainHour = wraTemp.RainHour;
+                                    wra.TotalRain = wraTemp.TotalRain;
+                                    wra.MaxRain = wraTemp.MaxRain;
+                                    wra.MaxRainTime = wraTemp.MaxRainTime;
+                                    wra.Max3Sum = wraTemp.Max3Sum;
+                                    wra.Max6Sum = wraTemp.Max6Sum;
+                                    wra.Max12Sum = wraTemp.Max12Sum;
+                                    wra.Max24Sum = wraTemp.Max24Sum;
+                                    wra.Max48Sum = wraTemp.Max48Sum;
+                                    wra.Pre7DayRain6 = wraTemp.Pre7DayRain6;
+                                    wra.Pre7DayRain7 = wraTemp.Pre7DayRain7;
+                                    wra.Pre7DayRain8 = wraTemp.Pre7DayRain8;
+                                    wra.CumRain = wraTemp.CumRain;
+                                    wra.RT6 = wraTemp.RT6;
+                                    wra.RT7 = wraTemp.RT7;
+                                    wra.RT8 = wraTemp.RT8;
+                                    dbDapper.Update(wra);
+                                }
+
+                                //記錄之後清空狀態
+                                sRainAreaS = "";
+                                sRainAreaE = "";
                             }
                             else
                             {
-                                wra.TimeStart = wraTemp.TimeStart;
-                                wra.TimeEnd = wraTemp.TimeEnd;
-                                wra.RainHour = wraTemp.RainHour;
-                                wra.TotalRain = wraTemp.TotalRain;
-                                wra.MaxRain = wraTemp.MaxRain;
-                                wra.MaxRainTime = wraTemp.MaxRainTime;
-                                wra.Max3Sum = wraTemp.Max3Sum;
-                                wra.Max6Sum = wraTemp.Max6Sum;
-                                wra.Max12Sum = wraTemp.Max12Sum;
-                                wra.Max24Sum = wraTemp.Max24Sum;
-                                wra.Max48Sum = wraTemp.Max48Sum;
-                                wra.Pre7DayRain6 = wraTemp.Pre7DayRain6;
-                                wra.Pre7DayRain7 = wraTemp.Pre7DayRain7;
-                                wra.Pre7DayRain8 = wraTemp.Pre7DayRain8;
-                                wra.CumRain = wraTemp.CumRain;
-                                wra.RT6 = wra.RT6;
-                                wra.RT7 = wra.RT7;
-                                wra.RT8 = wra.RT8;
-                                dbDapper.Update(wra);
+                                continue;
                             }
-
-                            //記錄之後清空狀態
-                            sRainAreaS = "";
-                            sRainAreaE = "";
-                        }
-                        else
-                        {
-                            continue;
                         }
                     }
-                }
 
-                //寫入統計LOG
-                DataStaticLog dsl = new DataStaticLog();
-                dsl.type = sDataStaticLogType;
-                dsl.key1 = sStid;
-                dsl.key2 = "";
-                dsl.logtime = DateTime.Now;
-                dbDapper.Insert(dsl);
+
+                    //註記已經轉檔完成
+                    ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}'  ";
+                    ssql = string.Format(ssql, sDataStaticLogType, sStid );
+
+                    DataStaticLog dslu = dbDapper.QuerySingleOrDefault<DataStaticLog>(ssql);
+                    if (dslu != null)
+                    {
+                        dslu.status = "60";
+                        dbDapper.Update(dslu);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "");
+
+                    //註記轉檔失敗
+                    ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}'  ";
+                    ssql = string.Format(ssql, sDataStaticLogType, sStid);
+
+                    DataStaticLog dslu = dbDapper.QuerySingleOrDefault<DataStaticLog>(ssql);
+                    if (dslu != null)
+                    {
+                        dslu.status = "90";
+                        dbDapper.Update(dslu);
+                    }
+
+
+                    continue;
+                }
+                
+               
+                
+
+              
 
 
             }
