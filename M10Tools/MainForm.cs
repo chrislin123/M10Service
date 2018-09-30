@@ -1627,9 +1627,9 @@ namespace M10Tools
             {
                 //雨量站
                 string sStid = StidItem.stid;
-                //sStid = "466900";
+                sStid = "C0A530";
                 //sStid = "466880";
-                
+
 
                 try
                 {
@@ -1760,21 +1760,54 @@ namespace M10Tools
                                 string sMaxRainTime = RainAreaList.Where(s => s.PP01 == dMaxRain).Select(s => s.time).ToList<string>()[0];
                                 wraTemp.MaxRainTime = sMaxRainTime;
 
+                                decimal dTempSum = 0;
                                 //H：最大3，雨場範圍內，最大連續3小時累積雨量
                                 wraTemp.Max3Sum = CalcRainMax(RainAreaList, 3);
+                                if (wraTemp.Max3Sum != 0) dTempSum = wraTemp.Max3Sum;
 
-                                //I：最大6，雨場範圍內，最大連續6小時累積雨量
+                                //I：最大6，雨場範圍內，最大連續6小時累積雨量(如果最大6、12、24、48沒有雨的話，要填入最大的3小時)
                                 wraTemp.Max6Sum = CalcRainMax(RainAreaList, 6);
+                                if (wraTemp.Max6Sum == 0)
+                                {
+                                    wraTemp.Max6Sum = dTempSum;
+                                }
+                                else
+                                {
+                                    dTempSum = wraTemp.Max6Sum;
+                                }                                    
 
-                                //J：最大12，雨場範圍內，最大連續12小時累積雨量
+                                //J：最大12，雨場範圍內，最大連續12小時累積雨量(如果最大6、12、24、48沒有雨的話，要填入最大的3小時)
                                 wraTemp.Max12Sum = CalcRainMax(RainAreaList, 12);
+                                if (wraTemp.Max12Sum == 0)
+                                {
+                                    wraTemp.Max12Sum = dTempSum;
+                                }
+                                else
+                                {
+                                    dTempSum = wraTemp.Max12Sum;
+                                }
 
-
-                                //K：最大24，雨場範圍內，最大連續24小時累積雨量
+                                //K：最大24，雨場範圍內，最大連續24小時累積雨量(如果最大6、12、24、48沒有雨的話，要填入最大的3小時)
                                 wraTemp.Max24Sum = CalcRainMax(RainAreaList, 24);
+                                if (wraTemp.Max24Sum == 0)
+                                {
+                                    wraTemp.Max24Sum = dTempSum;
+                                }
+                                else
+                                {
+                                    dTempSum = wraTemp.Max24Sum;
+                                }
 
-                                //L：最大48，雨場範圍內，最大連續48小時累積雨量
+                                //L：最大48，雨場範圍內，最大連續48小時累積雨量(如果最大6、12、24、48沒有雨的話，要填入最大的3小時)
                                 wraTemp.Max48Sum = CalcRainMax(RainAreaList, 48);
+                                if (wraTemp.Max48Sum == 0)
+                                {
+                                    wraTemp.Max48Sum = dTempSum;
+                                }
+                                else
+                                {
+                                    dTempSum = wraTemp.Max48Sum;
+                                }
 
                                 //M：七天前期雨量，前頁P的計算
                                 //α=0.6 
