@@ -1275,7 +1275,18 @@ namespace M10Tools
                     List<WeaRainData> wrdList = dbDapper.Query<WeaRainData>(ssql);
 
                     //沒資料
-                    if (wrdList.Count == 0) continue;
+                    if (wrdList.Count == 0) {
+
+                        //寫入統計LOG
+                        DataStaticLog dslTemp = new DataStaticLog();
+                        dslTemp.type = sDataStaticLogType;
+                        dslTemp.key1 = sStid;
+                        dslTemp.key2 = iDataYear.ToString();
+                        dslTemp.logtime = DateTime.Now;
+                        dbDapper.Insert(dslTemp);
+
+                        continue;
+                    }
 
                     //月雨量
                     Decimal dM01Sum = -99;
@@ -1340,55 +1351,121 @@ namespace M10Tools
                         dM12Sum = (Decimal)wrdList.Where(s => s.time.Substring(4, 2) == "12").Sum(t => t.PP01);
                     }
 
-                    //1070928 黃亭茵 判斷 當月缺24筆以上(不用連續)當做資料異常 月平均、年平均都不列入
-                    if (wrdList.Where(s => s.time.Substring(4, 2) == "01" && s.PP01old < 0).Count() > 24)
+                    //1070928 黃亭茵 判斷 當月連續超過24筆當做資料異常 月平均、年平均都不列入
+                    List<WeaRainData> wrdTempList = new List<WeaRainData>();
+
+                    wrdTempList = wrdList.Where(s => s.time.Substring(4, 2) == "01").ToList<WeaRainData>();
+                    if (CalcRainDataError(wrdTempList, 24))
                     {
                         dM01Sum = -99;
                     }
-                    if (wrdList.Where(s => s.time.Substring(4, 2) == "02" && s.PP01old < 0).Count() > 24)
+                    wrdTempList = wrdList.Where(s => s.time.Substring(4, 2) == "02").ToList<WeaRainData>();
+                    if (CalcRainDataError(wrdTempList, 24))
                     {
                         dM02Sum = -99;
                     }
-                    if (wrdList.Where(s => s.time.Substring(4, 2) == "03" && s.PP01old < 0).Count() > 24)
+                    wrdTempList = wrdList.Where(s => s.time.Substring(4, 2) == "03").ToList<WeaRainData>();
+                    if (CalcRainDataError(wrdTempList, 24))
                     {
                         dM03Sum = -99;
                     }
-                    if (wrdList.Where(s => s.time.Substring(4, 2) == "04" && s.PP01old < 0).Count() > 24)
+                    wrdTempList = wrdList.Where(s => s.time.Substring(4, 2) == "04").ToList<WeaRainData>();
+                    if (CalcRainDataError(wrdTempList, 24))
                     {
                         dM04Sum = -99;
                     }
-                    if (wrdList.Where(s => s.time.Substring(4, 2) == "05" && s.PP01old < 0).Count() > 24)
+                    wrdTempList = wrdList.Where(s => s.time.Substring(4, 2) == "05").ToList<WeaRainData>();
+                    if (CalcRainDataError(wrdTempList, 24))
                     {
                         dM05Sum = -99;
                     }
-                    if (wrdList.Where(s => s.time.Substring(4, 2) == "06" && s.PP01old < 0).Count() > 24)
+                    wrdTempList = wrdList.Where(s => s.time.Substring(4, 2) == "06").ToList<WeaRainData>();
+                    if (CalcRainDataError(wrdTempList, 24))
                     {
                         dM06Sum = -99;
                     }
-                    if (wrdList.Where(s => s.time.Substring(4, 2) == "07" && s.PP01old < 0).Count() > 24)
+                    wrdTempList = wrdList.Where(s => s.time.Substring(4, 2) == "07").ToList<WeaRainData>();
+                    if (CalcRainDataError(wrdTempList, 24))
                     {
                         dM07Sum = -99;
                     }
-                    if (wrdList.Where(s => s.time.Substring(4, 2) == "08" && s.PP01old < 0).Count() > 24)
+                    wrdTempList = wrdList.Where(s => s.time.Substring(4, 2) == "08").ToList<WeaRainData>();
+                    if (CalcRainDataError(wrdTempList, 24))
                     {
                         dM08Sum = -99;
                     }
-                    if (wrdList.Where(s => s.time.Substring(4, 2) == "09" && s.PP01old < 0).Count() > 24)
+                    wrdTempList = wrdList.Where(s => s.time.Substring(4, 2) == "09").ToList<WeaRainData>();
+                    if (CalcRainDataError(wrdTempList, 24))
                     {
                         dM09Sum = -99;
                     }
-                    if (wrdList.Where(s => s.time.Substring(4, 2) == "10" && s.PP01old < 0).Count() > 24)
+                    wrdTempList = wrdList.Where(s => s.time.Substring(4, 2) == "10").ToList<WeaRainData>();
+                    if (CalcRainDataError(wrdTempList, 24))
                     {
                         dM10Sum = -99;
                     }
-                    if (wrdList.Where(s => s.time.Substring(4, 2) == "11" && s.PP01old < 0).Count() > 24)
+                    wrdTempList = wrdList.Where(s => s.time.Substring(4, 2) == "11").ToList<WeaRainData>();
+                    if (CalcRainDataError(wrdTempList, 24))
                     {
                         dM11Sum = -99;
                     }
-                    if (wrdList.Where(s => s.time.Substring(4, 2) == "12" && s.PP01old < 0).Count() > 24)
+                    wrdTempList = wrdList.Where(s => s.time.Substring(4, 2) == "12").ToList<WeaRainData>();
+                    if (CalcRainDataError(wrdTempList, 24))
                     {
                         dM12Sum = -99;
                     }
+
+
+
+
+                    //if (wrdList.Where(s => s.time.Substring(4, 2) == "01" && s.PP01old < 0).Count() > 24)
+                    //{
+                    //    dM01Sum = -99;
+                    //}
+                    //if (wrdList.Where(s => s.time.Substring(4, 2) == "02" && s.PP01old < 0).Count() > 24)
+                    //{
+                    //    dM02Sum = -99;
+                    //}
+                    //if (wrdList.Where(s => s.time.Substring(4, 2) == "03" && s.PP01old < 0).Count() > 24)
+                    //{
+                    //    dM03Sum = -99;
+                    //}
+                    //if (wrdList.Where(s => s.time.Substring(4, 2) == "04" && s.PP01old < 0).Count() > 24)
+                    //{
+                    //    dM04Sum = -99;
+                    //}
+                    //if (wrdList.Where(s => s.time.Substring(4, 2) == "05" && s.PP01old < 0).Count() > 24)
+                    //{
+                    //    dM05Sum = -99;
+                    //}
+                    //if (wrdList.Where(s => s.time.Substring(4, 2) == "06" && s.PP01old < 0).Count() > 24)
+                    //{
+                    //    dM06Sum = -99;
+                    //}
+                    //if (wrdList.Where(s => s.time.Substring(4, 2) == "07" && s.PP01old < 0).Count() > 24)
+                    //{
+                    //    dM07Sum = -99;
+                    //}
+                    //if (wrdList.Where(s => s.time.Substring(4, 2) == "08" && s.PP01old < 0).Count() > 24)
+                    //{
+                    //    dM08Sum = -99;
+                    //}
+                    //if (wrdList.Where(s => s.time.Substring(4, 2) == "09" && s.PP01old < 0).Count() > 24)
+                    //{
+                    //    dM09Sum = -99;
+                    //}
+                    //if (wrdList.Where(s => s.time.Substring(4, 2) == "10" && s.PP01old < 0).Count() > 24)
+                    //{
+                    //    dM10Sum = -99;
+                    //}
+                    //if (wrdList.Where(s => s.time.Substring(4, 2) == "11" && s.PP01old < 0).Count() > 24)
+                    //{
+                    //    dM11Sum = -99;
+                    //}
+                    //if (wrdList.Where(s => s.time.Substring(4, 2) == "12" && s.PP01old < 0).Count() > 24)
+                    //{
+                    //    dM12Sum = -99;
+                    //}
 
                     wrs.m01 = dM01Sum;
                     wrs.m02 = dM02Sum;
@@ -1653,9 +1730,9 @@ namespace M10Tools
                     }
                     
                     DateTime dtStart = DateTime.ParseExact("1987010100", "yyyyMMddHH", null);
-                    //dtStart = DateTime.ParseExact("1987032323", "yyyyMMddHH", null);
+                    dtStart = DateTime.ParseExact("2009010100", "yyyyMMddHH", null);
                     DateTime dtFinish = DateTime.ParseExact("2017123123", "yyyyMMddHH", null);
-                    //dtFinish = DateTime.ParseExact("1987063023", "yyyyMMddHH", null);
+                    dtFinish = DateTime.ParseExact("2009123123", "yyyyMMddHH", null);
 
 
                     //取得該雨量站所有資料
@@ -1719,6 +1796,9 @@ namespace M10Tools
                             {
                                 sRainAreaE = wrd.time;
 
+                                sRainAreaE = Convert.ToString(Convert.ToInt32(i.AddHours(-1).ToString("yyyyMMddHH")) + 1);
+
+
 
                                 WeaRainArea wraTemp = new WeaRainArea();
                                 wraTemp.stid = sStid;
@@ -1747,23 +1827,33 @@ namespace M10Tools
                                 //D：降雨延時，開始至結束時間(單位：小時)
                                 wraTemp.RainHour = RainAreaList.Count;
 
+                                decimal dTempSum = 0;
                                 //E：該雨場總降雨量，本次雨場的總降雨量
                                 decimal dTotalRain = RainAreaList.Sum(s => s.PP01);
                                 wraTemp.TotalRain = dTotalRain;
+                                dTempSum = dTotalRain;
 
                                 //G：最大時雨量，本次雨場的最大時雨量
                                 decimal dMaxRain = RainAreaList.Max(s => s.PP01);
                                 wraTemp.MaxRain = dMaxRain;
+                                
 
                                 //F：最大時雨量發生時間，格式2012/1/5 18:00，24小時制
                                 //如果多筆，抓第一筆發生的時間
                                 string sMaxRainTime = RainAreaList.Where(s => s.PP01 == dMaxRain).Select(s => s.time).ToList<string>()[0];
                                 wraTemp.MaxRainTime = sMaxRainTime;
-
-                                decimal dTempSum = 0;
+                                
                                 //H：最大3，雨場範圍內，最大連續3小時累積雨量
                                 wraTemp.Max3Sum = CalcRainMax(RainAreaList, 3);
-                                if (wraTemp.Max3Sum != 0) dTempSum = wraTemp.Max3Sum;
+                                if (wraTemp.Max3Sum == 0)
+                                {
+                                    wraTemp.Max3Sum = dTempSum;
+                                }
+                                else
+                                {
+                                    //dTempSum = wraTemp.Max3Sum;
+                                }
+                                //if (wraTemp.Max3Sum != 0) dTempSum = wraTemp.Max3Sum;
 
                                 //I：最大6，雨場範圍內，最大連續6小時累積雨量(如果最大6、12、24、48沒有雨的話，要填入最大的3小時)
                                 wraTemp.Max6Sum = CalcRainMax(RainAreaList, 6);
@@ -1773,7 +1863,7 @@ namespace M10Tools
                                 }
                                 else
                                 {
-                                    dTempSum = wraTemp.Max6Sum;
+                                    //dTempSum = wraTemp.Max6Sum;
                                 }                                    
 
                                 //J：最大12，雨場範圍內，最大連續12小時累積雨量(如果最大6、12、24、48沒有雨的話，要填入最大的3小時)
@@ -1784,7 +1874,7 @@ namespace M10Tools
                                 }
                                 else
                                 {
-                                    dTempSum = wraTemp.Max12Sum;
+                                    //dTempSum = wraTemp.Max12Sum;
                                 }
 
                                 //K：最大24，雨場範圍內，最大連續24小時累積雨量(如果最大6、12、24、48沒有雨的話，要填入最大的3小時)
@@ -1795,7 +1885,7 @@ namespace M10Tools
                                 }
                                 else
                                 {
-                                    dTempSum = wraTemp.Max24Sum;
+                                    //dTempSum = wraTemp.Max24Sum;
                                 }
 
                                 //L：最大48，雨場範圍內，最大連續48小時累積雨量(如果最大6、12、24、48沒有雨的話，要填入最大的3小時)
@@ -1806,18 +1896,22 @@ namespace M10Tools
                                 }
                                 else
                                 {
-                                    dTempSum = wraTemp.Max48Sum;
+                                   //dTempSum = wraTemp.Max48Sum;
                                 }
 
                                 //M：七天前期雨量，前頁P的計算
                                 //α=0.6 
                                 wraTemp.Pre7DayRain6 = CalcValueP(RainList, wraTemp, 0.6);
-
+                                //四捨五入
+                                wraTemp.Pre7DayRain6 = Math.Round(wraTemp.Pre7DayRain6, 1, MidpointRounding.AwayFromZero);
                                 //α=0.7
                                 wraTemp.Pre7DayRain7 = CalcValueP(RainList, wraTemp, 0.7);
-
+                                //四捨五入
+                                wraTemp.Pre7DayRain7 = Math.Round(wraTemp.Pre7DayRain7, 1, MidpointRounding.AwayFromZero);
                                 //α=0.8
                                 wraTemp.Pre7DayRain8 = CalcValueP(RainList, wraTemp, 0.8);
+                                //四捨五入
+                                wraTemp.Pre7DayRain8 = Math.Round(wraTemp.Pre7DayRain8, 1, MidpointRounding.AwayFromZero);
 
                                 //N：尖零_尖峰，最大時雨量發生的時間至本次雨場開始日期0點間的累積雨量(下圖示意)
                                 decimal dStart0ToSpike = 0;
@@ -1833,8 +1927,6 @@ namespace M10Tools
 
                                 //P：時雨量，此場降雨的每小時降雨分布情形，例如：若此次雨場降雨延時為6小時，由P欄位開始往
                                 //右邊欄位延續共6格，P、Q、R、S、T、U。
-
-
 
                                 //紀錄雨場
                                 ssql = " select * from wearainarea where stid = '{0}' and TimeStart = '{1}' ";
@@ -1977,9 +2069,12 @@ namespace M10Tools
             //α=0.6
             //decimal dEffDate = Convert.ToDecimal(0.6);
             //起始到尖峰累積雨量
-            List<WeaRainData> StartToSpikeList = wrdList.Where(s => Convert.ToInt32(s.time) >= Convert.ToInt32(wra.TimeStart) && Convert.ToInt32(s.time) <= Convert.ToInt32(wra.MaxRainTime)).ToList<WeaRainData>();
+            //List<WeaRainData> StartToSpikeList = wrdList.Where(s => Convert.ToInt32(s.time) >= Convert.ToInt32(wra.TimeStart) && Convert.ToInt32(s.time) <= Convert.ToInt32(wra.MaxRainTime)).ToList<WeaRainData>();
 
-            decimal StartToSpikeSum = StartToSpikeList.Sum(s => s.PP01);
+            //decimal StartToSpikeSum = StartToSpikeList.Sum(s => s.PP01);
+            
+            //1071005 前期雨量，不包含尖零尖峰
+            decimal StartToSpikeSum = 0;
 
             //取得起始日期
             DateTime dtPStart = DateTime.ParseExact(wra.TimeStart.Substring(0, 8), "yyyyMMdd", null);
@@ -2000,6 +2095,53 @@ namespace M10Tools
 
             return dResult;
         }
+
+        /// <summary>
+        /// 雨量資料，判斷月資料是否異常(超過連續24筆異常)
+        /// </summary>
+        /// <param name="wrdList">雨量資料來源</param>
+        /// <param name="iCon">連續幾筆資料異常</param>
+        /// <returns></returns>
+        private bool CalcRainDataError(List<WeaRainData> wrdList, int iCon)
+        {
+            bool bResult = false;
+            decimal dResult = 0;
+
+            //如果筆數不足，則預設為0
+            if (wrdList.Count() < iCon)
+            {
+                return bResult;
+            }
+
+            for (int j = 0; j < wrdList.Count - 1; j++)
+            {
+                //累積資料不超過所有資料的筆數
+                if (j + iCon <= wrdList.Count)
+                {
+                    //判斷是否連續24筆ERROR
+                    bool bAllError = true;
+                    for (int i = j; i < j + iCon; i++)
+                    {
+                        //有正常資料
+                        if (wrdList[i].PP01old >= 0)
+                        {
+                            bAllError = false;
+                            break;
+                        } 
+                    }
+
+                    //有連續
+                    if (bAllError == true)
+                    {
+                        return true;
+                    }
+                    
+                }
+            }
+
+            return bResult;
+        }
+
 
     }
 }
