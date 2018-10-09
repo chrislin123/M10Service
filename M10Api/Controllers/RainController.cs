@@ -854,14 +854,32 @@ namespace M10Api.Controllers
             List<string[]> datas = new List<string[]>();
             foreach (WeaRainArea item in wrs)
             {
-               
+
+                int iTimeStart = Convert.ToInt32(item.TimeStart);
+                int iTimeEnd = Convert.ToInt32(item.TimeEnd);
+
+
                 //雨量站(1-24)時間格式與C#(0-23)不同
-                int iTimeStart = Convert.ToInt32(item.TimeStart) - 1;
-                item.TimeStart = DateTime.ParseExact(iTimeStart.ToString(), "yyyyMMddHH", null).ToString("yyyy/MM/dd HH:00");
-                int iTimeEnd = Convert.ToInt32(item.TimeEnd) - 1;
-                item.TimeEnd = DateTime.ParseExact(iTimeEnd.ToString(), "yyyyMMddHH", null).ToString("yyyy/MM/dd HH:00");
-                int iMaxRainTime = Convert.ToInt32(item.MaxRainTime) - 1;
-                item.MaxRainTime = DateTime.ParseExact(iMaxRainTime.ToString(), "yyyyMMddHH", null).ToString("yyyy/MM/dd HH:00");
+                item.TimeStart = string.Format("{0}/{1}/{2} {3}:00"
+                    , item.TimeStart.Substring(0,4)
+                    , item.TimeStart.Substring(4, 2)
+                    , item.TimeStart.Substring(6, 2)
+                    , item.TimeStart.Substring(8, 2)
+                    );
+                item.TimeEnd = string.Format("{0}/{1}/{2} {3}:00"
+                    , item.TimeEnd.Substring(0, 4)
+                    , item.TimeEnd.Substring(4, 2)
+                    , item.TimeEnd.Substring(6, 2)
+                    , item.TimeEnd.Substring(8, 2)
+                    );
+                item.MaxRainTime = string.Format("{0}/{1}/{2} {3}:00"
+                    , item.MaxRainTime.Substring(0, 4)
+                    , item.MaxRainTime.Substring(4, 2)
+                    , item.MaxRainTime.Substring(6, 2)
+                    , item.MaxRainTime.Substring(8, 2)
+                    );
+
+                
 
                 List<string> cols = new List<string>();
                 cols.Add(item.stid);                
@@ -885,7 +903,7 @@ namespace M10Api.Controllers
                 cols.Add(item.RT8.ToString());
 
                 //加入時雨量資料
-                List<WeaRainData> RainDataList = wrdList.Where(s => Convert.ToInt32(s.time) >= iTimeStart+1 && Convert.ToInt32(s.time) <= iTimeEnd+1).ToList<WeaRainData>();
+                List<WeaRainData> RainDataList = wrdList.Where(s => Convert.ToInt32(s.time) >= iTimeStart && Convert.ToInt32(s.time) <= iTimeEnd).ToList<WeaRainData>();
 
                 foreach (WeaRainData subItem in RainDataList)
                 {
