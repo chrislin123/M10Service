@@ -1001,39 +1001,7 @@ namespace M10Tools
             }
 
 
-
-            string ssss = "";
-
-
-
-            //StockInfo st = new StockInfo();
-
-
-
-            //Boolean bResult = false;
-
-
-            //StockRuntime sr = Stockhelper.getStockRealtimeYahooApi(StockCodeTextBox.Text);
-
-            ////u = up 
-            ////w = down
-
-            //Decimal dup =  Stockhelper.getPriceLimitUpOrDown("up", sr.y);
-            //Decimal ddown = Stockhelper.getPriceLimitUpOrDown("down", sr.y);
-
-
-            //string ssss = string.Empty;
-
-            //if (sr.u == dup.ToString() && sr.w == ddown.ToString())
-            //{
-            //  bResult = true;
-            //}
-
-
-
-            //label1.Text = string.Format("{0}={1}", StockCodeTextBox.Text, bResult.ToString());
-
-            //StockCodeTextBox.Text = "";
+            
 
         }
 
@@ -1071,34 +1039,34 @@ namespace M10Tools
 
 
 
-            return;
+            //return;
 
 
-            //for (DateTime date = checkBgn; date <= checkEnd; date = date.AddDays(1))
-            for (DateTime LoopDatetime = dt; LoopDatetime <= dtEnd; LoopDatetime = LoopDatetime.AddDays(1))
-            {
-                string sLineTrans = "";
-                try
-                {
-                    toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
-                    Application.DoEvents();
+            ////for (DateTime date = checkBgn; date <= checkEnd; date = date.AddDays(1))
+            //for (DateTime LoopDatetime = dt; LoopDatetime <= dtEnd; LoopDatetime = LoopDatetime.AddDays(1))
+            //{
+            //    string sLineTrans = "";
+            //    try
+            //    {
+            //        toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
+            //        Application.DoEvents();
 
-                    if (Stockhelper.GetStockAfterTse(LoopDatetime) == false)
-                    {
-                        System.Threading.Thread.Sleep(3000);
-                        continue;
-                    }
+            //        if (Stockhelper.GetStockAfterTse(LoopDatetime) == false)
+            //        {
+            //            System.Threading.Thread.Sleep(3000);
+            //            continue;
+            //        }
 
-                    toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.tse, "完成");
-                    Application.DoEvents();
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex, "stock after:" + sLineTrans);
-                    System.Threading.Thread.Sleep(10000);
-                }
-            }
-            toolStripStatusLabel1.Text = "完成";
+            //        toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.tse, "完成");
+            //        Application.DoEvents();
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        logger.Error(ex, "stock after:" + sLineTrans);
+            //        System.Threading.Thread.Sleep(10000);
+            //    }
+            //}
+            //toolStripStatusLabel1.Text = "完成";
         }
 
 
@@ -1704,7 +1672,7 @@ namespace M10Tools
             {
                 //雨量站
                 string sStid = StidItem.stid;
-                sStid = "C0A530";
+                //sStid = "C0A530";
                 //sStid = "466880";
 
 
@@ -1730,9 +1698,9 @@ namespace M10Tools
                     }
                     
                     DateTime dtStart = DateTime.ParseExact("1987010100", "yyyyMMddHH", null);
-                    dtStart = DateTime.ParseExact("2009010100", "yyyyMMddHH", null);
+                    //dtStart = DateTime.ParseExact("2009070000", "yyyyMMddHH", null);
                     DateTime dtFinish = DateTime.ParseExact("2017123123", "yyyyMMddHH", null);
-                    dtFinish = DateTime.ParseExact("2009123123", "yyyyMMddHH", null);
+                    //dtFinish = DateTime.ParseExact("2009080000", "yyyyMMddHH", null);
 
 
                     //取得該雨量站所有資料
@@ -2105,7 +2073,7 @@ namespace M10Tools
         private bool CalcRainDataError(List<WeaRainData> wrdList, int iCon)
         {
             bool bResult = false;
-            decimal dResult = 0;
+            //decimal dResult = 0;
 
             //如果筆數不足，則預設為0
             if (wrdList.Count() < iCon)
