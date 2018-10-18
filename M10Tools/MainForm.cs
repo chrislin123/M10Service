@@ -1001,7 +1001,7 @@ namespace M10Tools
             }
 
 
-            
+
 
         }
 
@@ -1243,7 +1243,8 @@ namespace M10Tools
                     List<WeaRainData> wrdList = dbDapper.Query<WeaRainData>(ssql);
 
                     //沒資料
-                    if (wrdList.Count == 0) {
+                    if (wrdList.Count == 0)
+                    {
 
                         //寫入統計LOG
                         DataStaticLog dslTemp = new DataStaticLog();
@@ -1667,38 +1668,51 @@ namespace M10Tools
 
             ssql = " select distinct stid from WeaRainData order by STID ";
             List<dynamic> StidList = dbDapper.Query(ssql);
-            
+
+            DateTime dttest = DateTime.Now;
             foreach (var StidItem in StidList)
             {
                 //雨量站
                 string sStid = StidItem.stid;
                 //sStid = "C0A530";
-                //sStid = "466880";
+                //sStid = "C0A680";
 
 
                 try
                 {
-                    ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}' ";
+                    //10:執行中 60:已完成
+                    ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}'  ";
                     ssql = string.Format(ssql, sDataStaticLogType, sStid);
-                    
+
+                    DataStaticLog dsl_new = dbDapper.QuerySingleOrDefault<DataStaticLog>(ssql);
+
                     //已經有轉檔紀錄
-                    if (dbDapper.QueryTotalCount(ssql) > 0)
+                    if (dsl_new == null) 
                     {
-                        continue;
-                    }
-                    else //如果沒有轉檔紀錄，則新增一筆執行中
-                    {
+                        //如果沒有轉檔紀錄，則新增一筆執行中
                         //寫入統計LOG
-                        DataStaticLog dsl_new = new DataStaticLog();
+                        dsl_new = new DataStaticLog();
                         dsl_new.type = sDataStaticLogType;
                         dsl_new.key1 = sStid;
                         dsl_new.status = "10";
                         dsl_new.logtime = DateTime.Now;
                         dbDapper.Insert(dsl_new);
+                        
                     }
-                    
+                    else
+                    {
+                        if (dsl_new.status == "10" || dsl_new.status == "60") //10:執行中 60:已完成
+                        {
+                            continue;
+                        }
+
+                        //重新更新為執行中
+                        dsl_new.status = "10";
+                        dbDapper.Update(dsl_new);
+                    }
+
                     DateTime dtStart = DateTime.ParseExact("1987010100", "yyyyMMddHH", null);
-                    //dtStart = DateTime.ParseExact("2009070000", "yyyyMMddHH", null);
+                    //dtStart = DateTime.ParseExact("2017060200", "yyyyMMddHH", null);
                     DateTime dtFinish = DateTime.ParseExact("2017123123", "yyyyMMddHH", null);
                     //dtFinish = DateTime.ParseExact("2009080000", "yyyyMMddHH", null);
 
@@ -1713,6 +1727,7 @@ namespace M10Tools
                     DateTime temp = DateTime.Now;
                     for (DateTime i = dtStart; i <= dtFinish; i = i.AddHours(1))
                     {
+                        dttest = i;
                         int iTime = Convert.ToInt32(i.ToString("yyyyMMddHH")) + 1;
 
                         WeaRainData wrd = RainList.SingleOrDefault(s => s.time == iTime.ToString());
@@ -1752,12 +1767,42 @@ namespace M10Tools
                             WeaRainData wrd6 = RainList.SingleOrDefault(s => s.time == iTime6.ToString());
 
                             //沒資料則，時雨量則補上０
-                            if (wrd2 == null) wrd2.PP01 = 0;
-                            if (wrd3 == null) wrd3.PP01 = 0;
-                            if (wrd4 == null) wrd4.PP01 = 0;
-                            if (wrd5 == null) wrd5.PP01 = 0;
-                            if (wrd6 == null) wrd6.PP01 = 0;
-
+                            //1071018 雨場不列入計算
+                            //if (wrd2 == null) wrd2.PP01 = 0;
+                            //if (wrd3 == null) wrd3.PP01 = 0;
+                            //if (wrd4 == null) wrd4.PP01 = 0;
+                            //if (wrd5 == null) wrd5.PP01 = 0;
+                            //if (wrd6 == null) wrd6.PP01 = 0;
+                            if (wrd2 == null)
+                            {
+                                sRainAreaS = "";
+                                sRainAreaE = "";
+                                continue;
+                            }
+                            if (wrd3 == null)
+                            {
+                                sRainAreaS = "";
+                                sRainAreaE = "";
+                                continue;
+                            }
+                            if (wrd4 == null)
+                            {
+                                sRainAreaS = "";
+                                sRainAreaE = "";
+                                continue;
+                            }
+                            if (wrd5 == null)
+                            {
+                                sRainAreaS = "";
+                                sRainAreaE = "";
+                                continue;
+                            }
+                            if (wrd6 == null)
+                            {
+                                sRainAreaS = "";
+                                sRainAreaE = "";
+                                continue;
+                            }
 
                             //記錄雨場結束(持續6小時 <= 4)
                             if (wrd2.PP01 <= 4 && wrd3.PP01 <= 4 && wrd4.PP01 <= 4 && wrd5.PP01 <= 4 && wrd6.PP01 <= 4)
@@ -1804,13 +1849,13 @@ namespace M10Tools
                                 //G：最大時雨量，本次雨場的最大時雨量
                                 decimal dMaxRain = RainAreaList.Max(s => s.PP01);
                                 wraTemp.MaxRain = dMaxRain;
-                                
+
 
                                 //F：最大時雨量發生時間，格式2012/1/5 18:00，24小時制
                                 //如果多筆，抓第一筆發生的時間
                                 string sMaxRainTime = RainAreaList.Where(s => s.PP01 == dMaxRain).Select(s => s.time).ToList<string>()[0];
                                 wraTemp.MaxRainTime = sMaxRainTime;
-                                
+
                                 //H：最大3，雨場範圍內，最大連續3小時累積雨量
                                 wraTemp.Max3Sum = CalcRainMax(RainAreaList, 3);
                                 if (wraTemp.Max3Sum == 0)
@@ -1832,7 +1877,7 @@ namespace M10Tools
                                 else
                                 {
                                     //dTempSum = wraTemp.Max6Sum;
-                                }                                    
+                                }
 
                                 //J：最大12，雨場範圍內，最大連續12小時累積雨量(如果最大6、12、24、48沒有雨的話，要填入最大的3小時)
                                 wraTemp.Max12Sum = CalcRainMax(RainAreaList, 12);
@@ -1864,7 +1909,7 @@ namespace M10Tools
                                 }
                                 else
                                 {
-                                   //dTempSum = wraTemp.Max48Sum;
+                                    //dTempSum = wraTemp.Max48Sum;
                                 }
 
                                 //M：七天前期雨量，前頁P的計算
@@ -1943,7 +1988,7 @@ namespace M10Tools
 
                     //註記已經轉檔完成
                     ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}'  ";
-                    ssql = string.Format(ssql, sDataStaticLogType, sStid );
+                    ssql = string.Format(ssql, sDataStaticLogType, sStid);
 
                     DataStaticLog dslu = dbDapper.QuerySingleOrDefault<DataStaticLog>(ssql);
                     if (dslu != null)
@@ -1955,7 +2000,7 @@ namespace M10Tools
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(ex, "");
+                    logger.Error(ex, dttest.ToString("yyyyMMddHH"));
 
                     //註記轉檔失敗
                     ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}'  ";
@@ -1971,11 +2016,11 @@ namespace M10Tools
 
                     continue;
                 }
-                
-               
-                
 
-              
+
+
+
+
 
 
             }
@@ -2040,7 +2085,7 @@ namespace M10Tools
             //List<WeaRainData> StartToSpikeList = wrdList.Where(s => Convert.ToInt32(s.time) >= Convert.ToInt32(wra.TimeStart) && Convert.ToInt32(s.time) <= Convert.ToInt32(wra.MaxRainTime)).ToList<WeaRainData>();
 
             //decimal StartToSpikeSum = StartToSpikeList.Sum(s => s.PP01);
-            
+
             //1071005 前期雨量，不包含尖零尖峰
             decimal StartToSpikeSum = 0;
 
@@ -2095,7 +2140,7 @@ namespace M10Tools
                         {
                             bAllError = false;
                             break;
-                        } 
+                        }
                     }
 
                     //有連續
@@ -2103,7 +2148,7 @@ namespace M10Tools
                     {
                         return true;
                     }
-                    
+
                 }
             }
 
