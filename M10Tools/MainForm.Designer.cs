@@ -53,6 +53,8 @@
             this.btnTransWeaRainStatic = new System.Windows.Forms.Button();
             this.btnRainAreaSplit = new System.Windows.Forms.Button();
             this.button12 = new System.Windows.Forms.Button();
+            this.button13 = new System.Windows.Forms.Button();
+            this.button14 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -300,11 +302,33 @@
             this.button12.UseVisualStyleBackColor = true;
             this.button12.Click += new System.EventHandler(this.button12_Click);
             // 
+            // button13
+            // 
+            this.button13.Location = new System.Drawing.Point(10, 244);
+            this.button13.Name = "button13";
+            this.button13.Size = new System.Drawing.Size(126, 23);
+            this.button13.TabIndex = 31;
+            this.button13.Text = "測試Excel";
+            this.button13.UseVisualStyleBackColor = true;
+            this.button13.Click += new System.EventHandler(this.button13_Click);
+            // 
+            // button14
+            // 
+            this.button14.Location = new System.Drawing.Point(12, 273);
+            this.button14.Name = "button14";
+            this.button14.Size = new System.Drawing.Size(126, 23);
+            this.button14.TabIndex = 32;
+            this.button14.Text = "測試Excel";
+            this.button14.UseVisualStyleBackColor = true;
+            this.button14.Click += new System.EventHandler(this.button14_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(440, 333);
+            this.Controls.Add(this.button14);
+            this.Controls.Add(this.button13);
             this.Controls.Add(this.button12);
             this.Controls.Add(this.btnRainAreaSplit);
             this.Controls.Add(this.btnTransWeaRainStatic);
@@ -365,6 +389,8 @@
         private System.Windows.Forms.Button btnTransWeaRainStatic;
         private System.Windows.Forms.Button btnRainAreaSplit;
         private System.Windows.Forms.Button button12;
+        private System.Windows.Forms.Button button13;
+        private System.Windows.Forms.Button button14;
     }
 }
 

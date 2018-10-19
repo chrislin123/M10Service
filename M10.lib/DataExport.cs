@@ -388,7 +388,7 @@ namespace M10.lib
                         Id = spreadsheetDocument.WorkbookPart.
                             GetIdOfPart(worksheetPart),
                         SheetId = 123,
-                        Name = "Sheet" 
+                        Name = "Sheet"
                     };
 
                     //var sheet = new Sheet();
@@ -408,6 +408,171 @@ namespace M10.lib
                     //    headerRow.AppendChild(cell);
                     //}
                     sheetData.AppendChild(headerRow);
+
+                    foreach (string[] row in ListData)
+                    {
+                        var newRow = new Row();
+                        foreach (string col in row)
+                        {
+                            //預設為文字欄位
+                            var cell = new Cell
+                            {
+                                DataType = CellValues.String,
+                                CellValue = new CellValue(col)
+                            };
+
+                            //判斷是否為數值欄位
+                            if (IsNumeric(col))
+                            {
+                                cell.DataType = CellValues.Number;
+                            }
+
+
+                            newRow.AppendChild(cell);
+                        }
+
+                        sheetData.AppendChild(newRow);
+                    }
+                    workbookpart.Workbook.Save();
+
+                    //spreadsheetDocument.Close();
+                }
+            }
+            catch (Exception ex)/**/
+            {
+                bSuccess = false;
+            }
+
+            return bSuccess;
+        }
+
+        public Boolean AppendListToExcel(string SaveFilePath, List<string[]> ListData)
+        {
+            Boolean bSuccess = true;
+
+            try
+            {
+                using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(SaveFilePath, true))
+                {
+                    WorksheetPart worksheetPart = (WorksheetPart)spreadsheetDocument.WorkbookPart.GetPartById(
+                      spreadsheetDocument.WorkbookPart.Workbook.Descendants<Sheet>().First().Id);
+
+                    Worksheet sheet = worksheetPart.Worksheet;
+
+
+                    
+
+                    SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
+                    //Row lastRow = sheetData.Elements<Row>().LastOrDefault();
+
+                    //if (lastRow != null)
+                    //{
+                    //    sheetData.InsertAfter(new Row() { RowIndex = (lastRow.RowIndex + 1) }, lastRow);
+                    //}
+                    //else
+                    //{
+                    //    sheetData.Insert(new Row() { RowIndex = 0 });
+                    //}
+                    // Add a WorkbookPart to the document.
+                    //WorkbookPart workbookpart = spreadsheetDocument.AddWorkbookPart();
+                    //workbookpart.Workbook = new Workbook();
+
+                    // Add a WorksheetPart to the WorkbookPart.
+                    //var worksheetPart = workbookpart.AddNewPart<WorksheetPart>();
+                    //var sheetData = new SheetData();
+                    //worksheetPart.Worksheet = new Worksheet(sheetData);
+
+
+                    var bold1 = new Bold();
+                    CellFormat cf = new CellFormat();
+
+                    // Add Sheets to the Workbook.
+                    //Sheets sheets;
+                    //sheets = spreadsheetDocument.WorkbookPart.Workbook.
+                    //    AppendChild<Sheets>(new Sheets());
+
+                    // Append a new worksheet and associate it with the workbook.
+                    //var sheet = new Sheet()
+                    //{
+                    //    Id = spreadsheetDocument.WorkbookPart.
+                    //        GetIdOfPart(worksheetPart),
+                    //    SheetId = 123,
+                    //    Name = "Sheet"
+                    //};
+
+                    //var sheet = new Sheet();
+                    //sheets.Append(sheet);
+
+                    //Add Header Row.
+                    //var headerRow = new Row();
+                    //foreach (string HeaderCol in ListHead)
+                    //{
+                    //    var cell = new Cell { DataType = CellValues.String, CellValue = new CellValue(HeaderCol) };
+                    //    headerRow.AppendChild(cell);
+                    //}
+
+                    ////foreach (DataColumn column in ResultsData.Columns)
+                    ////{
+                    ////    var cell = new Cell { DataType = CellValues.String, CellValue = new CellValue(column.ColumnName) };
+                    ////    headerRow.AppendChild(cell);
+                    ////}
+                    //sheetData.AppendChild(headerRow);
+
+                    foreach (string[] row in ListData)
+                    {
+                        var newRow = new Row();
+                        foreach (string col in row)
+                        {
+                            //預設為文字欄位
+                            var cell = new Cell
+                            {
+                                DataType = CellValues.String,
+                                CellValue = new CellValue(col)
+                            };
+
+                            //判斷是否為數值欄位
+                            if (IsNumeric(col))
+                            {
+                                cell.DataType = CellValues.Number;
+                            }
+
+
+                            newRow.AppendChild(cell);
+                        }
+
+                        sheetData.AppendChild(newRow);
+                    }
+
+                    spreadsheetDocument.Save();
+                    //workbookpart.Workbook.Save();
+
+                    //spreadsheetDocument.Close();
+                }
+            }
+            catch (Exception ex)/**/
+            {
+                bSuccess = false;
+            }
+
+            return bSuccess;
+        }
+
+        public static void OpenAndAddToSpreadsheetStream(Stream stream, List<string[]> ListData)
+        {
+            try
+            {
+                using (SpreadsheetDocument spreadsheetDocument = SpreadsheetDocument.Open(stream, true))
+                {
+                    WorksheetPart worksheetPart = (WorksheetPart)spreadsheetDocument.WorkbookPart.GetPartById(
+                      spreadsheetDocument.WorkbookPart.Workbook.Descendants<Sheet>().First().Id);
+
+                    Worksheet sheet = worksheetPart.Worksheet;
+
+                    SheetData sheetData = worksheetPart.Worksheet.GetFirstChild<SheetData>();
+
+
+                    var bold1 = new Bold();
+                    CellFormat cf = new CellFormat();
                     
                     foreach (string[] row in ListData)
                     {
@@ -426,24 +591,75 @@ namespace M10.lib
                             {
                                 cell.DataType = CellValues.Number;
                             }
-                          
-                            
+
+
                             newRow.AppendChild(cell);
                         }
 
                         sheetData.AppendChild(newRow);
                     }
-                    workbookpart.Workbook.Save();
 
-                    //spreadsheetDocument.Close();
+                    spreadsheetDocument.Save();
                 }
             }
-            catch /*(Exception ex)*/
+            catch (Exception ex)/**/
             {
-                bSuccess = false;
+                
+            }           
+        }
+
+
+        public List<string[]> ReadExcelToList(string SaveFilePath)
+        {
+            List<string[]> TempList = new List<string[]>();
+            try
+            {
+                using (SpreadsheetDocument doc = SpreadsheetDocument.Open(SaveFilePath, false))
+                {
+
+                    WorksheetPart worksheetPart = (WorksheetPart)doc.WorkbookPart.GetPartById(
+                      doc.WorkbookPart.Workbook.Descendants<Sheet>().First().Id);
+
+                    Worksheet sheet = worksheetPart.Worksheet;
+
+                    foreach (Row row in sheet.Descendants<Row>())
+                    {
+                        List<string> rowTemp = new List<string>();
+                       
+                        foreach (Cell cell in row.Descendants<Cell>())
+                        {
+                            rowTemp.Add(cell.CellValue.Text);
+
+                            //string sss = cell.CellValue == null ? "&nbsp;" :
+                            //     cell.CellValue.Text;
+                        }
+
+                        TempList.Add(rowTemp.ToArray());
+                    }
+
+
+                    
+                }
+            }
+            catch (Exception ex)/**/
+            {
+
             }
 
-            return bSuccess;
+            return TempList;
+        }
+
+
+
+        private string GetCellText(Cell cell, SharedStringTable strTable)
+        {
+            if (cell.ChildElements.Count == 0)
+                return null;
+            string val = cell.CellValue.InnerText;
+            //若為共享字串時的處理邏輯
+            if (cell.DataType != null && cell.DataType == CellValues.SharedString)
+                val = strTable.ChildElements[int.Parse(val)].InnerText;
+            return val;
         }
     }
 }

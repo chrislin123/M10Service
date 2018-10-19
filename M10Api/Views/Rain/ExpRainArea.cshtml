@@ -18,7 +18,7 @@
 <div class="row">
     <div class="col-md-12">
         <h1 class="page-header">
-            雨量分割資料下載
+            雨場分割資料下載
         </h1>
     </div>
 </div>
@@ -42,6 +42,7 @@
                 <label for="keyWord">密碼：</label>
                 <input type="text" id="txtpass" name="txtpass" value="" />
                 <button class="btn btn-default" id="btnExport" onclick="Export();">資料匯出</button>
+                <button class="btn btn-default" id="btnExportAll" onclick="ExportAll();">全部匯出</button>
             </div>
         </div>
     </div>
@@ -70,8 +71,6 @@
     }
 
     function Export() {
-
-
         $.ajax({
             type: 'GET',
             url: '@Url.Action("checkPass")',
@@ -83,17 +82,31 @@
                     return;
                 }
 
-                //var sStartDate = $("#StartDate").val();
-                //var sEndDate = $("#EndDate").val();
-                //var sStation = $("#Station").val();
-
                 location.href = '@Url.Action("DownRainArea")' + '?stid=' + $("#Station").val();
-                //location.href = '@Url.Action("DownRainStation")' + '?sd=' + sStartDate + '&ed=' + sEndDate + '&Station=' + sStation;
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 alert(errorThrown);
             },
         });
+    }
 
+    function ExportAll() {
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("checkPass")',
+            data: { pass: $("#txtpass").val() },
+            dataType: 'JSON',
+            success: function (response) {
+                if (response.pass == "N") {
+                    alert("密碼不符。");
+                    return;
+                }
+
+                location.href = '@Url.Action("DownRainAreaAll")';
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+            },
+        });
     }
 </script>

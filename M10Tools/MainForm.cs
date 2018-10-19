@@ -2360,5 +2360,179 @@ namespace M10Tools
             //    Response.End();
             //}
         }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            string sTempPath = @"c:\temp\WeaRainArea\";
+            //建立資料夾
+            Directory.CreateDirectory(sTempPath);
+
+            string sFileName = "all.xlsx";
+            string sSaveFilePath = Path.Combine(sTempPath, sFileName);
+            sSaveFilePath = @"c:\" + sFileName;
+            FileInfo[] fiList = new DirectoryInfo(sTempPath).GetFiles("*.xlsx", SearchOption.AllDirectories);
+            DataExport de = new DataExport();
+
+            //建立表頭
+            List<string> head = new List<string>();
+            head.Add("雨量站編號");
+            head.Add("開始降雨時間");
+            head.Add("結束降雨時間");
+            head.Add("降雨延時");
+            head.Add("總降雨量");
+            head.Add("最大時雨量發生時間");
+            head.Add("最大時雨量");
+            head.Add("最大3時累積雨量");
+            head.Add("最大6時累積雨量");
+            head.Add("最大12時累積雨量");
+            head.Add("最大24時累積雨量");
+            head.Add("最大48時累積雨量");
+            head.Add("七天前期雨量(0.6)");
+            head.Add("七天前期雨量(0.7)");
+            head.Add("七天前期雨量(0.8)");
+            head.Add("尖零_尖峰");
+            head.Add("Rt(0.6)");
+            head.Add("Rt(0.7)");
+            head.Add("Rt(0.8)");
+            head.Add("時雨量");
+
+            List<string[]> datas = new List<string[]>();
+
+            Boolean bSuccess = de.ExportListToExcel(sSaveFilePath, head, datas);
+
+
+            int i = 0;
+            foreach (FileInfo item in fiList)
+            {
+                i++;
+                ShowStatus(string.Format("({0}/{1}){2}", i.ToString(), fiList.Count().ToString(), item.Name));
+                List<string[]> temp = de.ReadExcelToList(item.FullName);
+                //datas.AddRange(temp);
+
+                temp.RemoveAt(0);
+
+                de.AppendListToExcel(sSaveFilePath, temp);
+
+
+            }
+
+
+            //Boolean bSuccess = de.ExportListToExcel(sSaveFilePath, head, datas);
+
+            ShowStatus("完成");
+            //if (File.Exists(sSaveFilePath)) File.Delete(sSaveFilePath);
+
+
+            //List<string> head = new List<string>();
+            //head.Add("test");
+            //List<string[]> datas = new List<string[]>();
+
+
+            //for (int i = 0; i < 500000; i++)
+            //{
+            //    ShowStatus(i.ToString());
+            //    List<string> temp = new List<string>();
+            //    temp.Add(i.ToString());
+
+            //    datas.Add(temp.ToArray());
+            //}
+
+
+
+
+            //Boolean bSuccess = de.ExportBigDataToCsv(sSaveFilePath, dt);
+            //Boolean bSuccess = de.ExportListToExcel(sSaveFilePath, head, datas);
+
+
+
+
+
+
+
+
+
+            ssql = "";
+        }
+
+        
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+
+
+            
+
+
+            string sTempPath = @"c:\temp\WeaRainArea\";
+            //建立資料夾
+            Directory.CreateDirectory(sTempPath);
+
+            string sFileName = "all.xlsx";
+            string sSaveFilePath = Path.Combine(sTempPath, sFileName);
+            sSaveFilePath = @"c:\" + sFileName;
+            FileInfo[] fiList = new DirectoryInfo(sTempPath).GetFiles("*.xlsx", SearchOption.AllDirectories);
+            DataExport de = new DataExport();
+
+            //建立表頭
+            List<string> head = new List<string>();
+            head.Add("雨量站編號");
+            head.Add("開始降雨時間");
+            head.Add("結束降雨時間");
+            head.Add("降雨延時");
+            head.Add("總降雨量");
+            head.Add("最大時雨量發生時間");
+            head.Add("最大時雨量");
+            head.Add("最大3時累積雨量");
+            head.Add("最大6時累積雨量");
+            head.Add("最大12時累積雨量");
+            head.Add("最大24時累積雨量");
+            head.Add("最大48時累積雨量");
+            head.Add("七天前期雨量(0.6)");
+            head.Add("七天前期雨量(0.7)");
+            head.Add("七天前期雨量(0.8)");
+            head.Add("尖零_尖峰");
+            head.Add("Rt(0.6)");
+            head.Add("Rt(0.7)");
+            head.Add("Rt(0.8)");
+            head.Add("時雨量");
+
+            List<string[]> datas = new List<string[]>();
+
+            Boolean bSuccess = de.ExportListToExcel(sSaveFilePath, head, datas);
+
+
+
+            //string strDoc = @"C:\Users\Public\Documents\Sheet11.xlsx";
+            //;
+            //Stream stream = File.Open(strDoc, FileMode.Open);
+            //OpenAndAddToSpreadsheetStream(stream);
+            //stream.Close();
+
+
+            using (Stream stream = File.Open(sSaveFilePath, FileMode.Open))
+            {
+                int i = 0;
+                foreach (FileInfo item in fiList)
+                {
+                    i++;
+                    ShowStatus(string.Format("({0}/{1}){2}", i.ToString(), fiList.Count().ToString(), item.Name));
+                    List<string[]> temp = de.ReadExcelToList(item.FullName);
+                    //datas.AddRange(temp);
+
+                    temp.RemoveAt(0);
+
+                    DataExport.OpenAndAddToSpreadsheetStream(stream, temp);
+
+
+                    //de.AppendListToExcel(sSaveFilePath, temp);
+                }
+
+            }
+
+            ShowStatus("完成");
+        }
+
+
+
     }
 }

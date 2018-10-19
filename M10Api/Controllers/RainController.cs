@@ -857,5 +857,35 @@ namespace M10Api.Controllers
             return null;
         }
 
+        public ActionResult DownRainAreaAll()
+        {
+            try
+            {
+                //產生檔案路徑
+                string sTempPath = Server.MapPath("~/doc/WeaRainArea/");
+                //建立資料夾
+                Directory.CreateDirectory(sTempPath);
+
+                string sFileName = "all.xlsx";
+                string sSaveFilePath = Path.Combine(sTempPath, sFileName);
+
+                //***** 下載檔案過大，使用特殊方法 *****
+                HttpContext context = System.Web.HttpContext.Current;
+                context.Response.TransmitFile(sSaveFilePath);
+                //context.Response.ContentType = "application/zip";
+                context.Response.ContentType = "application/vnd.ms-excel";
+                context.Response.AddHeader("Content-Disposition", string.Format("attachment;filename={0}", sFileName));
+                Response.End();
+
+            }
+            catch (Exception)
+            {
+
+            }
+
+
+            return null;
+        }
+
     }
 }
