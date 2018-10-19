@@ -1687,7 +1687,7 @@ namespace M10Tools
                     DataStaticLog dsl_new = dbDapper.QuerySingleOrDefault<DataStaticLog>(ssql);
 
                     //已經有轉檔紀錄
-                    if (dsl_new == null) 
+                    if (dsl_new == null)
                     {
                         //如果沒有轉檔紀錄，則新增一筆執行中
                         //寫入統計LOG
@@ -1697,7 +1697,7 @@ namespace M10Tools
                         dsl_new.status = "10";
                         dsl_new.logtime = DateTime.Now;
                         dbDapper.Insert(dsl_new);
-                        
+
                     }
                     else
                     {
@@ -2155,6 +2155,210 @@ namespace M10Tools
             return bResult;
         }
 
+        private void button12_Click(object sender, EventArgs e)
+        {
+            string sDataStaticLogType = M10Const.DataStaticLogType.RainAreaToExcel;
 
+
+
+
+            ssql = " select distinct stid from WeaRainData order by STID ";
+            List<dynamic> StidList = dbDapper.Query(ssql);
+
+            DateTime dttest = DateTime.Now;
+            foreach (var StidItem in StidList)
+            {
+                //雨量站
+                string sStid = StidItem.stid;
+
+                try
+                {
+                    //10:執行中 60:已完成
+                    ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}'  ";
+                    ssql = string.Format(ssql, sDataStaticLogType, sStid);
+
+                    DataStaticLog dsl_new = dbDapper.QuerySingleOrDefault<DataStaticLog>(ssql);
+
+                    //已經有轉檔紀錄
+                    if (dsl_new == null)
+                    {
+                        //如果沒有轉檔紀錄，則新增一筆執行中
+                        //寫入統計LOG
+                        dsl_new = new DataStaticLog();
+                        dsl_new.type = sDataStaticLogType;
+                        dsl_new.key1 = sStid;
+                        dsl_new.status = "10";
+                        dsl_new.logtime = DateTime.Now;
+                        dbDapper.Insert(dsl_new);
+
+                    }
+                    else
+                    {
+                        if (dsl_new.status == "10" || dsl_new.status == "60") //10:執行中 60:已完成
+                        {
+                            continue;
+                        }
+
+                        //重新更新為執行中
+                        dsl_new.status = "10";
+                        dbDapper.Update(dsl_new);
+                    }
+
+
+                    //取得雨量站歷年雨量資料
+                    ssql = @" select * from WeaRainData where stid = @stid  ";
+                    List<WeaRainData> wrdList = dbDapper.Query<WeaRainData>(ssql, new { stid = sStid });
+
+                    ssql = @" select * from WeaRainArea where stid = @stid order by TimeStart ";
+                    List<WeaRainArea> wrs = dbDapper.Query<WeaRainArea>(ssql, new { stid = sStid });
+
+                    //建立表頭
+                    List<string> head = new List<string>();
+                    head.Add("雨量站編號");
+                    head.Add("開始降雨時間");
+                    head.Add("結束降雨時間");
+                    head.Add("降雨延時");
+                    head.Add("總降雨量");
+                    head.Add("最大時雨量發生時間");
+                    head.Add("最大時雨量");
+                    head.Add("最大3時累積雨量");
+                    head.Add("最大6時累積雨量");
+                    head.Add("最大12時累積雨量");
+                    head.Add("最大24時累積雨量");
+                    head.Add("最大48時累積雨量");
+                    head.Add("七天前期雨量(0.6)");
+                    head.Add("七天前期雨量(0.7)");
+                    head.Add("七天前期雨量(0.8)");
+                    head.Add("尖零_尖峰");
+                    head.Add("Rt(0.6)");
+                    head.Add("Rt(0.7)");
+                    head.Add("Rt(0.8)");
+                    head.Add("時雨量");
+                    List<string[]> datas = new List<string[]>();
+                    foreach (WeaRainArea item in wrs)
+                    {
+                        ShowStatus(string.Format("{0}-{1}", sStid, item.TimeStart));
+
+                        int iTimeStart = Convert.ToInt32(item.TimeStart);
+                        int iTimeEnd = Convert.ToInt32(item.TimeEnd);
+
+
+                        //雨量站(1-24)時間格式與C#(0-23)不同
+                        item.TimeStart = string.Format("{0}/{1}/{2} {3}:00"
+                            , item.TimeStart.Substring(0, 4)
+                            , item.TimeStart.Substring(4, 2)
+                            , item.TimeStart.Substring(6, 2)
+                            , item.TimeStart.Substring(8, 2)
+                            );
+                        item.TimeEnd = string.Format("{0}/{1}/{2} {3}:00"
+                            , item.TimeEnd.Substring(0, 4)
+                            , item.TimeEnd.Substring(4, 2)
+                            , item.TimeEnd.Substring(6, 2)
+                            , item.TimeEnd.Substring(8, 2)
+                            );
+                        item.MaxRainTime = string.Format("{0}/{1}/{2} {3}:00"
+                            , item.MaxRainTime.Substring(0, 4)
+                            , item.MaxRainTime.Substring(4, 2)
+                            , item.MaxRainTime.Substring(6, 2)
+                            , item.MaxRainTime.Substring(8, 2)
+                            );
+
+
+
+                        List<string> cols = new List<string>();
+                        cols.Add(item.stid);
+                        cols.Add(item.TimeStart);
+                        cols.Add(item.TimeEnd);
+                        cols.Add(item.RainHour.ToString());
+                        cols.Add(item.TotalRain.ToString());
+                        cols.Add(item.MaxRainTime);
+                        cols.Add(item.MaxRain.ToString());
+                        cols.Add(item.Max3Sum.ToString());
+                        cols.Add(item.Max6Sum.ToString());
+                        cols.Add(item.Max12Sum.ToString());
+                        cols.Add(item.Max24Sum.ToString());
+                        cols.Add(item.Max48Sum.ToString());
+                        cols.Add(item.Pre7DayRain6.ToString());
+                        cols.Add(item.Pre7DayRain7.ToString());
+                        cols.Add(item.Pre7DayRain8.ToString());
+                        cols.Add(item.CumRain.ToString());
+                        cols.Add(item.RT6.ToString());
+                        cols.Add(item.RT7.ToString());
+                        cols.Add(item.RT8.ToString());
+
+                        //加入時雨量資料
+                        List<WeaRainData> RainDataList = wrdList.Where(s => Convert.ToInt32(s.time) >= iTimeStart && Convert.ToInt32(s.time) <= iTimeEnd).ToList<WeaRainData>();
+
+                        foreach (WeaRainData subItem in RainDataList)
+                        {
+                            cols.Add(subItem.PP01.ToString());
+                        }
+
+                        datas.Add(cols.ToArray());
+                    }
+
+
+
+
+                    //產生檔案路徑
+                    //string sTempPath = Path.Combine(Server.MapPath("~/temp/"), DateTime.Now.ToString("yyyyMMdd"));
+                    string sTempPath = @"c:\temp\WeaRainArea\";
+                    //建立資料夾
+                    Directory.CreateDirectory(sTempPath);
+
+                    string sFileName = string.Format("{0}.xlsx", sStid);
+                    string sSaveFilePath = Path.Combine(sTempPath, sFileName);
+
+                    if (File.Exists(sSaveFilePath)) File.Delete(sSaveFilePath);
+
+                    DataExport de = new DataExport();
+                    //Boolean bSuccess = de.ExportBigDataToCsv(sSaveFilePath, dt);
+                    Boolean bSuccess = de.ExportListToExcel(sSaveFilePath, head, datas);
+
+
+
+                    Random rnd = new Random();
+                    int month = rnd.Next(1, 2000);
+
+                    System.Threading.Thread.Sleep(month);
+                }
+                catch (Exception)
+                {
+
+                    //註記轉檔失敗
+                    ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}'  ";
+                    ssql = string.Format(ssql, sDataStaticLogType, sStid);
+
+                    DataStaticLog dslu = dbDapper.QuerySingleOrDefault<DataStaticLog>(ssql);
+                    if (dslu != null)
+                    {
+                        dslu.status = "90";
+                        dbDapper.Update(dslu);
+                    }
+
+
+                    continue;
+                }
+            }
+
+
+
+
+            //if (bSuccess)
+            //{
+            //    string filename = string.Format("WeaRainArea_{0}_{1}.xlsx", stid, DateTime.Now.ToString("yyyyMMddHH"));
+
+            //    //ASP.NET 回應大型檔案的注意事項
+            //    //http://blog.miniasp.com/post/2008/03/11/Caution-about-ASPNET-Response-a-Large-File.aspx
+
+
+            //    //***** 下載檔案過大，使用特殊方法 *****
+            //    HttpContext context = System.Web.HttpContext.Current;
+            //    context.Response.TransmitFile(sSaveFilePath);
+            //    context.Response.ContentType = "application/vnd.ms-excel";
+            //    context.Response.AddHeader("Content-Disposition", string.Format("attachment;filename={0}", filename));
+            //    Response.End();
+            //}
+        }
     }
 }

@@ -697,7 +697,7 @@ namespace M10Api.Controllers
             List<decimal> yearsumList = wrs.Select(c => c.yearsum).ToList<decimal>();
 
             //平均雨量統計
-           
+
             WeaRainStatistics test = new WeaRainStatistics();
             test.year = "平均雨量";
             test.m01 = RainControlUtil.CalcRainAvg(m01List);
@@ -770,12 +770,12 @@ namespace M10Api.Controllers
                 cols.Add(item.max3date);
                 cols.Add(item.raindatecount.ToString());
 
-         
+
 
                 datas.Add(cols.ToArray());
             }
 
-            
+
 
 
             //產生檔案路徑
@@ -821,119 +821,19 @@ namespace M10Api.Controllers
 
         public ActionResult DownRainArea(string stid)
         {
-
-            //取得雨量站歷年雨量資料
-            string ssql = @" select * from WeaRainData where stid = @stid ";
-            List<WeaRainData> wrdList = dbDapper.Query<WeaRainData>(ssql, new { stid = stid });
-
-            ssql = @" select * from WeaRainArea where stid = @stid ";
-            List<WeaRainArea> wrs = dbDapper.Query<WeaRainArea>(ssql, new { stid = stid });
-
-            //建立表頭
-            List<string> head = new List<string>();
-            head.Add("雨量站編號");
-            head.Add("開始降雨時間");
-            head.Add("結束降雨時間");
-            head.Add("降雨延時");
-            head.Add("總降雨量");
-            head.Add("最大時雨量發生時間");
-            head.Add("最大時雨量");
-            head.Add("最大3時累積雨量");
-            head.Add("最大6時累積雨量");
-            head.Add("最大12時累積雨量");
-            head.Add("最大24時累積雨量");
-            head.Add("最大48時累積雨量");
-            head.Add("七天前期雨量(0.6)");
-            head.Add("七天前期雨量(0.7)");
-            head.Add("七天前期雨量(0.8)");
-            head.Add("尖零_尖峰");
-            head.Add("Rt(0.6)");
-            head.Add("Rt(0.7)");
-            head.Add("Rt(0.8)");
-            head.Add("時雨量");            
-            List<string[]> datas = new List<string[]>();
-            foreach (WeaRainArea item in wrs)
+            try
             {
+                //產生檔案路徑
+                string sTempPath = Server.MapPath("~/doc/WeaRainArea/");
+                //建立資料夾
+                Directory.CreateDirectory(sTempPath);
 
-                int iTimeStart = Convert.ToInt32(item.TimeStart);
-                int iTimeEnd = Convert.ToInt32(item.TimeEnd);
-
-
-                //雨量站(1-24)時間格式與C#(0-23)不同
-                item.TimeStart = string.Format("{0}/{1}/{2} {3}:00"
-                    , item.TimeStart.Substring(0,4)
-                    , item.TimeStart.Substring(4, 2)
-                    , item.TimeStart.Substring(6, 2)
-                    , item.TimeStart.Substring(8, 2)
-                    );
-                item.TimeEnd = string.Format("{0}/{1}/{2} {3}:00"
-                    , item.TimeEnd.Substring(0, 4)
-                    , item.TimeEnd.Substring(4, 2)
-                    , item.TimeEnd.Substring(6, 2)
-                    , item.TimeEnd.Substring(8, 2)
-                    );
-                item.MaxRainTime = string.Format("{0}/{1}/{2} {3}:00"
-                    , item.MaxRainTime.Substring(0, 4)
-                    , item.MaxRainTime.Substring(4, 2)
-                    , item.MaxRainTime.Substring(6, 2)
-                    , item.MaxRainTime.Substring(8, 2)
-                    );
-
-                
-
-                List<string> cols = new List<string>();
-                cols.Add(item.stid);                
-                cols.Add(item.TimeStart);
-                cols.Add(item.TimeEnd);
-                cols.Add(item.RainHour.ToString());
-                cols.Add(item.TotalRain.ToString());
-                cols.Add(item.MaxRainTime);
-                cols.Add(item.MaxRain.ToString());                
-                cols.Add(item.Max3Sum.ToString());
-                cols.Add(item.Max6Sum.ToString());
-                cols.Add(item.Max12Sum.ToString());
-                cols.Add(item.Max24Sum.ToString());
-                cols.Add(item.Max48Sum.ToString());
-                cols.Add(item.Pre7DayRain6.ToString());
-                cols.Add(item.Pre7DayRain7.ToString());
-                cols.Add(item.Pre7DayRain8.ToString());
-                cols.Add(item.CumRain.ToString());
-                cols.Add(item.RT6.ToString());
-                cols.Add(item.RT7.ToString());
-                cols.Add(item.RT8.ToString());
-
-                //加入時雨量資料
-                List<WeaRainData> RainDataList = wrdList.Where(s => Convert.ToInt32(s.time) >= iTimeStart && Convert.ToInt32(s.time) <= iTimeEnd).ToList<WeaRainData>();
-
-                foreach (WeaRainData subItem in RainDataList)
-                {
-                    cols.Add(subItem.PP01.ToString());
-                }
-
-                datas.Add(cols.ToArray());
-            }
+                string sFileName = stid + ".xlsx";
+                string sSaveFilePath = Path.Combine(sTempPath, sFileName);
 
 
 
 
-            //產生檔案路徑
-            string sTempPath = Path.Combine(Server.MapPath("~/temp/"), DateTime.Now.ToString("yyyyMMdd"));
-            //建立資料夾
-            Directory.CreateDirectory(sTempPath);
-
-            string sFileName = "WeaRainArea_" + Guid.NewGuid().ToString() + ".xlsx";
-            string sSaveFilePath = Path.Combine(sTempPath, "WeaRainArea_" + Guid.NewGuid().ToString() + ".xlsx");
-
-            //DataTable dt = Utils.ConvertToDataTable<RainStation>(wrs);
-            DataTable dt = new DataTable();
-
-
-            DataExport de = new DataExport();
-            //Boolean bSuccess = de.ExportBigDataToCsv(sSaveFilePath, dt);
-            Boolean bSuccess = de.ExportListToExcel(sSaveFilePath, head, datas);
-
-            if (bSuccess)
-            {
                 string filename = string.Format("WeaRainArea_{0}_{1}.xlsx", stid, DateTime.Now.ToString("yyyyMMddHH"));
 
                 //ASP.NET 回應大型檔案的注意事項
@@ -946,7 +846,13 @@ namespace M10Api.Controllers
                 context.Response.ContentType = "application/vnd.ms-excel";
                 context.Response.AddHeader("Content-Disposition", string.Format("attachment;filename={0}", filename));
                 Response.End();
+
             }
+            catch (Exception)
+            {
+                   
+            }
+            
 
             return null;
         }

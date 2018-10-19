@@ -52,15 +52,15 @@
             this.btnImpWeatherData = new System.Windows.Forms.Button();
             this.btnTransWeaRainStatic = new System.Windows.Forms.Button();
             this.btnRainAreaSplit = new System.Windows.Forms.Button();
+            this.button12 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnImpErrLRTI
             // 
-            this.btnImpErrLRTI.Location = new System.Drawing.Point(16, 15);
-            this.btnImpErrLRTI.Margin = new System.Windows.Forms.Padding(4);
+            this.btnImpErrLRTI.Location = new System.Drawing.Point(12, 12);
             this.btnImpErrLRTI.Name = "btnImpErrLRTI";
-            this.btnImpErrLRTI.Size = new System.Drawing.Size(168, 29);
+            this.btnImpErrLRTI.Size = new System.Drawing.Size(126, 23);
             this.btnImpErrLRTI.TabIndex = 0;
             this.btnImpErrLRTI.Text = "匯入警戒值(ErrLRTI)";
             this.btnImpErrLRTI.UseVisualStyleBackColor = true;
@@ -68,10 +68,9 @@
             // 
             // btnKML
             // 
-            this.btnKML.Location = new System.Drawing.Point(16, 51);
-            this.btnKML.Margin = new System.Windows.Forms.Padding(4);
+            this.btnKML.Location = new System.Drawing.Point(12, 41);
             this.btnKML.Name = "btnKML";
-            this.btnKML.Size = new System.Drawing.Size(168, 29);
+            this.btnKML.Size = new System.Drawing.Size(126, 23);
             this.btnKML.TabIndex = 1;
             this.btnKML.Text = "KML轉檔";
             this.btnKML.UseVisualStyleBackColor = true;
@@ -79,10 +78,9 @@
             // 
             // btnStockTrans
             // 
-            this.btnStockTrans.Location = new System.Drawing.Point(192, 232);
-            this.btnStockTrans.Margin = new System.Windows.Forms.Padding(4);
+            this.btnStockTrans.Location = new System.Drawing.Point(144, 186);
             this.btnStockTrans.Name = "btnStockTrans";
-            this.btnStockTrans.Size = new System.Drawing.Size(168, 29);
+            this.btnStockTrans.Size = new System.Drawing.Size(126, 23);
             this.btnStockTrans.TabIndex = 2;
             this.btnStockTrans.Text = "Stock轉檔";
             this.btnStockTrans.UseVisualStyleBackColor = true;
@@ -93,25 +91,23 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 392);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 311);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 19, 0);
-            this.statusStrip1.Size = new System.Drawing.Size(587, 24);
+            this.statusStrip1.Size = new System.Drawing.Size(440, 22);
             this.statusStrip1.TabIndex = 7;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(158, 19);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(128, 17);
             this.toolStripStatusLabel1.Text = "toolStripStatusLabel1";
             // 
             // btnBuildFolder
             // 
-            this.btnBuildFolder.Location = new System.Drawing.Point(368, 51);
-            this.btnBuildFolder.Margin = new System.Windows.Forms.Padding(4);
+            this.btnBuildFolder.Location = new System.Drawing.Point(276, 41);
             this.btnBuildFolder.Name = "btnBuildFolder";
-            this.btnBuildFolder.Size = new System.Drawing.Size(168, 29);
+            this.btnBuildFolder.Size = new System.Drawing.Size(126, 23);
             this.btnBuildFolder.TabIndex = 9;
             this.btnBuildFolder.Text = "建立救援資料夾";
             this.btnBuildFolder.UseVisualStyleBackColor = true;
@@ -119,10 +115,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(368, 15);
-            this.button1.Margin = new System.Windows.Forms.Padding(4);
+            this.button1.Location = new System.Drawing.Point(276, 12);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(168, 29);
+            this.button1.Size = new System.Drawing.Size(126, 23);
             this.button1.TabIndex = 10;
             this.button1.Text = "test";
             this.button1.UseVisualStyleBackColor = true;
@@ -130,10 +125,9 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(192, 15);
-            this.button3.Margin = new System.Windows.Forms.Padding(4);
+            this.button3.Location = new System.Drawing.Point(144, 12);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(168, 29);
+            this.button3.Size = new System.Drawing.Size(126, 23);
             this.button3.TabIndex = 12;
             this.button3.Text = "InvTradeHis_Tse";
             this.button3.UseVisualStyleBackColor = true;
@@ -141,10 +135,9 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(192, 51);
-            this.button4.Margin = new System.Windows.Forms.Padding(4);
+            this.button4.Location = new System.Drawing.Point(144, 41);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(168, 29);
+            this.button4.Size = new System.Drawing.Size(126, 23);
             this.button4.TabIndex = 13;
             this.button4.Text = "InvTradeHis_Otc";
             this.button4.UseVisualStyleBackColor = true;
@@ -152,10 +145,9 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(192, 88);
-            this.button5.Margin = new System.Windows.Forms.Padding(4);
+            this.button5.Location = new System.Drawing.Point(144, 70);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(168, 29);
+            this.button5.Size = new System.Drawing.Size(126, 23);
             this.button5.TabIndex = 14;
             this.button5.Text = "StockAfter_Tse";
             this.button5.UseVisualStyleBackColor = true;
@@ -163,10 +155,9 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(192, 124);
-            this.button6.Margin = new System.Windows.Forms.Padding(4);
+            this.button6.Location = new System.Drawing.Point(144, 99);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(168, 29);
+            this.button6.Size = new System.Drawing.Size(126, 23);
             this.button6.TabIndex = 15;
             this.button6.Text = "StockAfter_Otc";
             this.button6.UseVisualStyleBackColor = true;
@@ -174,10 +165,9 @@
             // 
             // button8
             // 
-            this.button8.Location = new System.Drawing.Point(192, 196);
-            this.button8.Margin = new System.Windows.Forms.Padding(4);
+            this.button8.Location = new System.Drawing.Point(144, 157);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(168, 29);
+            this.button8.Size = new System.Drawing.Size(126, 23);
             this.button8.TabIndex = 17;
             this.button8.Text = "巨量換手搜尋";
             this.button8.UseVisualStyleBackColor = true;
@@ -185,10 +175,9 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(192, 160);
-            this.button2.Margin = new System.Windows.Forms.Padding(4);
+            this.button2.Location = new System.Drawing.Point(144, 128);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(168, 29);
+            this.button2.Size = new System.Drawing.Size(126, 23);
             this.button2.TabIndex = 18;
             this.button2.Text = "StockInfo";
             this.button2.UseVisualStyleBackColor = true;
@@ -196,10 +185,9 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(16, 88);
-            this.button7.Margin = new System.Windows.Forms.Padding(4);
+            this.button7.Location = new System.Drawing.Point(12, 70);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(168, 29);
+            this.button7.Size = new System.Drawing.Size(126, 23);
             this.button7.TabIndex = 19;
             this.button7.Text = "匯入警戒值(LrtiBasic)";
             this.button7.UseVisualStyleBackColor = true;
@@ -207,10 +195,9 @@
             // 
             // button9
             // 
-            this.button9.Location = new System.Drawing.Point(192, 269);
-            this.button9.Margin = new System.Windows.Forms.Padding(4);
+            this.button9.Location = new System.Drawing.Point(144, 215);
             this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(168, 29);
+            this.button9.Size = new System.Drawing.Size(126, 23);
             this.button9.TabIndex = 20;
             this.button9.Text = "昨收轉檔";
             this.button9.UseVisualStyleBackColor = true;
@@ -218,10 +205,9 @@
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(368, 88);
-            this.button10.Margin = new System.Windows.Forms.Padding(4);
+            this.button10.Location = new System.Drawing.Point(276, 70);
             this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(168, 29);
+            this.button10.Size = new System.Drawing.Size(126, 23);
             this.button10.TabIndex = 21;
             this.button10.Text = "testBrokeBS";
             this.button10.UseVisualStyleBackColor = true;
@@ -229,10 +215,9 @@
             // 
             // button11
             // 
-            this.button11.Location = new System.Drawing.Point(368, 124);
-            this.button11.Margin = new System.Windows.Forms.Padding(4);
+            this.button11.Location = new System.Drawing.Point(276, 99);
             this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(168, 29);
+            this.button11.Size = new System.Drawing.Size(126, 23);
             this.button11.TabIndex = 22;
             this.button11.Text = "test updown limit";
             this.button11.UseVisualStyleBackColor = true;
@@ -240,29 +225,26 @@
             // 
             // StockCodeTextBox
             // 
-            this.StockCodeTextBox.Location = new System.Drawing.Point(397, 191);
-            this.StockCodeTextBox.Margin = new System.Windows.Forms.Padding(4);
+            this.StockCodeTextBox.Location = new System.Drawing.Point(298, 153);
             this.StockCodeTextBox.Name = "StockCodeTextBox";
-            this.StockCodeTextBox.Size = new System.Drawing.Size(132, 25);
+            this.StockCodeTextBox.Size = new System.Drawing.Size(100, 22);
             this.StockCodeTextBox.TabIndex = 23;
             this.StockCodeTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.StockCodeTextBox_KeyDown);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(407, 239);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(305, 191);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(41, 15);
+            this.label1.Size = new System.Drawing.Size(33, 12);
             this.label1.TabIndex = 24;
             this.label1.Text = "label1";
             // 
             // StockAfterRushButton
             // 
-            this.StockAfterRushButton.Location = new System.Drawing.Point(192, 305);
-            this.StockAfterRushButton.Margin = new System.Windows.Forms.Padding(4);
+            this.StockAfterRushButton.Location = new System.Drawing.Point(144, 244);
             this.StockAfterRushButton.Name = "StockAfterRushButton";
-            this.StockAfterRushButton.Size = new System.Drawing.Size(168, 29);
+            this.StockAfterRushButton.Size = new System.Drawing.Size(126, 23);
             this.StockAfterRushButton.TabIndex = 25;
             this.StockAfterRushButton.Text = "StockAfterRush";
             this.StockAfterRushButton.UseVisualStyleBackColor = true;
@@ -270,10 +252,9 @@
             // 
             // btnTransToPrice
             // 
-            this.btnTransToPrice.Location = new System.Drawing.Point(368, 269);
-            this.btnTransToPrice.Margin = new System.Windows.Forms.Padding(4);
+            this.btnTransToPrice.Location = new System.Drawing.Point(276, 215);
             this.btnTransToPrice.Name = "btnTransToPrice";
-            this.btnTransToPrice.Size = new System.Drawing.Size(168, 29);
+            this.btnTransToPrice.Size = new System.Drawing.Size(126, 23);
             this.btnTransToPrice.TabIndex = 26;
             this.btnTransToPrice.Text = "轉檔到長志資料表";
             this.btnTransToPrice.UseVisualStyleBackColor = true;
@@ -281,10 +262,9 @@
             // 
             // btnImpWeatherData
             // 
-            this.btnImpWeatherData.Location = new System.Drawing.Point(16, 159);
-            this.btnImpWeatherData.Margin = new System.Windows.Forms.Padding(4);
+            this.btnImpWeatherData.Location = new System.Drawing.Point(12, 127);
             this.btnImpWeatherData.Name = "btnImpWeatherData";
-            this.btnImpWeatherData.Size = new System.Drawing.Size(168, 29);
+            this.btnImpWeatherData.Size = new System.Drawing.Size(126, 23);
             this.btnImpWeatherData.TabIndex = 27;
             this.btnImpWeatherData.Text = "匯入雨量資料(氣象站)";
             this.btnImpWeatherData.UseVisualStyleBackColor = true;
@@ -292,10 +272,9 @@
             // 
             // btnTransWeaRainStatic
             // 
-            this.btnTransWeaRainStatic.Location = new System.Drawing.Point(13, 196);
-            this.btnTransWeaRainStatic.Margin = new System.Windows.Forms.Padding(4);
+            this.btnTransWeaRainStatic.Location = new System.Drawing.Point(10, 157);
             this.btnTransWeaRainStatic.Name = "btnTransWeaRainStatic";
-            this.btnTransWeaRainStatic.Size = new System.Drawing.Size(168, 29);
+            this.btnTransWeaRainStatic.Size = new System.Drawing.Size(126, 23);
             this.btnTransWeaRainStatic.TabIndex = 28;
             this.btnTransWeaRainStatic.Text = "氣象雨量資料統計";
             this.btnTransWeaRainStatic.UseVisualStyleBackColor = true;
@@ -303,20 +282,30 @@
             // 
             // btnRainAreaSplit
             // 
-            this.btnRainAreaSplit.Location = new System.Drawing.Point(13, 232);
-            this.btnRainAreaSplit.Margin = new System.Windows.Forms.Padding(4);
+            this.btnRainAreaSplit.Location = new System.Drawing.Point(10, 186);
             this.btnRainAreaSplit.Name = "btnRainAreaSplit";
-            this.btnRainAreaSplit.Size = new System.Drawing.Size(168, 29);
+            this.btnRainAreaSplit.Size = new System.Drawing.Size(126, 23);
             this.btnRainAreaSplit.TabIndex = 29;
             this.btnRainAreaSplit.Text = "雨場分割";
             this.btnRainAreaSplit.UseVisualStyleBackColor = true;
             this.btnRainAreaSplit.Click += new System.EventHandler(this.btnRainAreaSplit_Click);
             // 
+            // button12
+            // 
+            this.button12.Location = new System.Drawing.Point(10, 215);
+            this.button12.Name = "button12";
+            this.button12.Size = new System.Drawing.Size(126, 23);
+            this.button12.TabIndex = 30;
+            this.button12.Text = "雨場分割轉Excel";
+            this.button12.UseVisualStyleBackColor = true;
+            this.button12.Click += new System.EventHandler(this.button12_Click);
+            // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(587, 416);
+            this.ClientSize = new System.Drawing.Size(440, 333);
+            this.Controls.Add(this.button12);
             this.Controls.Add(this.btnRainAreaSplit);
             this.Controls.Add(this.btnTransWeaRainStatic);
             this.Controls.Add(this.btnImpWeatherData);
@@ -340,7 +329,6 @@
             this.Controls.Add(this.btnStockTrans);
             this.Controls.Add(this.btnKML);
             this.Controls.Add(this.btnImpErrLRTI);
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MainForm";
             this.Text = "MainForm";
             this.statusStrip1.ResumeLayout(false);
@@ -376,6 +364,7 @@
         private System.Windows.Forms.Button btnImpWeatherData;
         private System.Windows.Forms.Button btnTransWeaRainStatic;
         private System.Windows.Forms.Button btnRainAreaSplit;
+        private System.Windows.Forms.Button button12;
     }
 }
 
