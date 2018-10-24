@@ -292,6 +292,10 @@ namespace M10.lib.model
 
         public string delaytime { get; set; }
 
+        public string coefficient { get; set; }
+
+        public string version { get; set; }
+
         public int? totalcount { get; set; }
 
         public string startdate { get; set; }

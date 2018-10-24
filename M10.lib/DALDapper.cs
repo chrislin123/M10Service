@@ -287,6 +287,11 @@ namespace M10.lib
             return oo;
         }
 
+        /// <summary>
+        /// ExecuteScalar 執行一個SQL命令返回結果集的第一列的第一行。
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <returns></returns>
         public object ExecuteScale(string sql)
         {
             object oo = null;
