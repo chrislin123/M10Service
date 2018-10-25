@@ -2534,7 +2534,7 @@ namespace M10Tools
 
         private void button15_Click(object sender, EventArgs e)
         {
-
+            List<RtiDetail> rdList = new List<RtiDetail>();
 
             ssql = " select distinct stid from WeaRainArea order by STID ";
             List<dynamic> StidList = dbDapper.Query(ssql);
@@ -2542,33 +2542,48 @@ namespace M10Tools
             DateTime dttest = DateTime.Now;
             foreach (var StidItem in StidList)
             {
-                string sStid = StidItem;
+                string sStid = StidItem.stid;
+                
+                //todo 延時及係數迴圈
+                RtiDetail rd = new RtiDetail();
+                rd = RtiCal(sStid, "1", "0.7");
 
-
-
-
-
-
-
-
+                rdList.Add(rd);
             }
 
             ShowStatus("完成");
         }
 
 
-        public void RtiCal(string sStid,string sdelaytime)
+        public RtiDetail RtiCal(string sStid,string sDelaytime,string sCoefficient)
         {
+            RtiDetail rd = new RtiDetail();
             try
             {
+                rd.station = sStid;
+                rd.delaytime = sDelaytime;
+                rd.coefficient = sCoefficient;
+
                 DataTable dt = new DataTable();
 
-                //取得總筆數                
-                ssql = @" select count(*) as total from WeaRainArea  
+                             
+                ssql = @" select * from WeaRainArea  
                             where STID = '{0}' 
-                            and raindelay > {1} ";
-                ssql = string.Format(ssql, sStid, sdelaytime);
-                string sTotalcount = dbDapper.ExecuteScale(ssql).ToString();
+                            and RainHour > {1} ";
+                ssql = string.Format(ssql, sStid, sDelaytime);
+                List<WeaRainArea> wraList = dbDapper.Query<WeaRainArea>(ssql);
+
+                //取得總筆數   
+                rd.totalcount = wraList.Count();
+
+                //取得開始時間
+                rd.startdate = wraList.Min(s => s.TimeStart);
+                //取得結束時間
+                rd.enddate = wraList.Max(s => s.TimeEnd);
+
+                Application.DoEvents();
+
+
 
 
                 //取得所有站號
@@ -2577,9 +2592,9 @@ namespace M10Tools
                      + " and ver = '" + sver + "' "
                      ;
 
-                if (sdelaytime != "0")
+                if (sDelaytime != "0")
                 {
-                    ssql += " and raindelay > " + sdelaytime + " ";
+                    ssql += " and raindelay > " + sDelaytime + " ";
                 }
 
                 if (stype == "RTI") ssql += " order by rti  ";
@@ -2733,23 +2748,25 @@ namespace M10Tools
 
                 throw;
             }
+
+            return rd;
         }
 
 
 
-        private void buildtableRTI()
-        {
-            dt_rti.Columns.Add("index");
-            dt_rti.Columns.Add("station");
-            dt_rti.Columns.Add("rti");
-            dt_rti.Columns.Add("totalcount");
-            dt_rti.Columns.Add("pas");
+        //private void buildtableRTI()
+        //{
+        //    dt_rti.Columns.Add("index");
+        //    dt_rti.Columns.Add("station");
+        //    dt_rti.Columns.Add("rti");
+        //    dt_rti.Columns.Add("totalcount");
+        //    dt_rti.Columns.Add("pas");
 
-            dt_rti90.Columns.Add("index");
-            dt_rti90.Columns.Add("station");
-            dt_rti90.Columns.Add("rti");
-            dt_rti90.Columns.Add("totalcount");
-            dt_rti90.Columns.Add("pas");
-        }
+        //    dt_rti90.Columns.Add("index");
+        //    dt_rti90.Columns.Add("station");
+        //    dt_rti90.Columns.Add("rti");
+        //    dt_rti90.Columns.Add("totalcount");
+        //    dt_rti90.Columns.Add("pas");
+        //}
     }
 }
