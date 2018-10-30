@@ -266,7 +266,7 @@ namespace M10Api.Controllers
             ViewBag.type = "0";
             if (string.IsNullOrEmpty(type) == false) ViewBag.type = type;
 
-            ssql = " select * from RtiDetail where delaytime = @type  order by station ";
+            ssql = " select * from RtiDetail where delaytime = @type and version = 'new' order by station ";
 
             List<dynamic> data = dbDapper.Query(ssql, new { type = ViewBag.type });
 
@@ -283,7 +283,7 @@ namespace M10Api.Controllers
             ViewBag.type = "0";
             if (string.IsNullOrEmpty(type) == false) ViewBag.type = type;
 
-            ssql = " select * from Rti3Detail where delaytime = @type order by station ";
+            ssql = " select * from Rti3Detail where delaytime = @type and version = 'new' order by station ";
             List<dynamic> data = dbDapper.Query(ssql, new { type = ViewBag.type });
 
             //資料筆數

@@ -146,6 +146,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CLDataAccessLayer\DAL.csproj">
+      <Project>{f4ca59ed-2026-4af8-a343-456399d87676}</Project>
+      <Name>DAL</Name>
+    </ProjectReference>
     <ProjectReference Include="..\M10.lib\M10.lib.csproj">
       <Project>{255ce420-3148-456c-8492-461027afe9f8}</Project>
       <Name>M10.lib</Name>

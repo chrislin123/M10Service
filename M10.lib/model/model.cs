@@ -209,6 +209,10 @@ namespace M10.lib.model
 
         public int? totalcount { get; set; }
 
+        public string coefficient { get; set; }
+
+        public string version { get; set; }
+
         public string startdate { get; set; }
 
         public string enddate { get; set; }
@@ -224,6 +228,10 @@ namespace M10.lib.model
         public double? rti90 { get; set; }
 
     }
+
+
+
+    
 
     [Table("RtiData")]
     public class RtiData
@@ -1029,7 +1037,48 @@ namespace M10.lib.model
     }
 
 
+    [Table("Price1")]
+    public class RtiData2
+    {
+        //設定key
+        [Key]
+        public long no { get; set; }
 
+        public string ver { get; set; }
+
+        public string station { get; set; }
+
+        public double? raindelay { get; set; }
+
+        public double? maxraintime { get; set; }
+
+        public double? Rtd { get; set; }
+
+        public double? Rti { get; set; }
+
+        public double? Rti3 { get; set; }
+
+        public double? Rtd6 { get; set; }
+
+        public double? Rtd7 { get; set; }
+
+        public double? Rtd8 { get; set; }
+
+        public double? Rti6 { get; set; }
+
+        public double? Rti7 { get; set; }
+
+        public double? Rti8 { get; set; }
+
+        public double? Rti36 { get; set; }
+
+        public double? Rti37 { get; set; }
+
+        public double? Rti38 { get; set; }
+
+        public string date { get; set; }
+
+    }
 
 
 
