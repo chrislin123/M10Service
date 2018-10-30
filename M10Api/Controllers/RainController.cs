@@ -261,14 +261,20 @@ namespace M10Api.Controllers
             return View();
         }
 
-        public ActionResult QueryRTI(string type)
+        public ActionResult QueryRTI(string delaytime, string coefficient)
         {
-            ViewBag.type = "0";
-            if (string.IsNullOrEmpty(type) == false) ViewBag.type = type;
+            ViewBag.delaytime = "0";
+            ViewBag.coefficient = "7";
+            if (string.IsNullOrEmpty(delaytime) == false) ViewBag.delaytime = delaytime;
+            if (string.IsNullOrEmpty(coefficient) == false) ViewBag.coefficient = coefficient;
 
-            ssql = " select * from RtiDetail where delaytime = @type and version = 'new' order by station ";
+            ssql = @" select * from RtiDetail where 1=1 
+                        and delaytime = @delaytime 
+                        and coefficient = @coefficient 
+                        and version = 'temp' 
+                        order by station ";
 
-            List<dynamic> data = dbDapper.Query(ssql, new { type = ViewBag.type });
+            List<dynamic> data = dbDapper.Query(ssql, new { delaytime = ViewBag.delaytime, coefficient = ViewBag.coefficient });
 
             //資料筆數
             ViewBag.count = data.Count;
@@ -278,13 +284,19 @@ namespace M10Api.Controllers
             return View();
         }
 
-        public ActionResult QueryRTI3(string type)
+        public ActionResult QueryRTI3(string delaytime, string coefficient)
         {
-            ViewBag.type = "0";
-            if (string.IsNullOrEmpty(type) == false) ViewBag.type = type;
+            ViewBag.delaytime = "0";
+            ViewBag.coefficient = "7";
+            if (string.IsNullOrEmpty(delaytime) == false) ViewBag.delaytime = delaytime;
+            if (string.IsNullOrEmpty(coefficient) == false) ViewBag.coefficient = coefficient;
 
-            ssql = " select * from Rti3Detail where delaytime = @type and version = 'new' order by station ";
-            List<dynamic> data = dbDapper.Query(ssql, new { type = ViewBag.type });
+            ssql = @" select * from Rti3Detail where 1=1 
+                        and delaytime = @delaytime 
+                        and coefficient = @coefficient 
+                        and version = 'temp' 
+                        order by station ";
+            List<dynamic> data = dbDapper.Query(ssql, new { delaytime = ViewBag.delaytime, coefficient = ViewBag.coefficient });
 
             //資料筆數
             ViewBag.count = data.Count;
