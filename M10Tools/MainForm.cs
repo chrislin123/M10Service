@@ -2535,7 +2535,7 @@ namespace M10Tools
 
         private void button15_Click(object sender, EventArgs e)
         {
-            string sVer = "20181026";
+            string sVer = "20181031";
             List<RtiDetail> rdList = new List<RtiDetail>();
 
             ssql = " select distinct stid from WeaRainArea order by STID ";
@@ -2552,57 +2552,57 @@ namespace M10Tools
                 string[] CoefficientList = { "6", "7", "8" };
 
 
-                foreach (string itemtype in typeList)
-                { }
-                foreach (string itemDelaytime in DelaytimeList)
-                {
-                    foreach (string itemCoefficient in CoefficientList)
-                    {
-                        ShowStatus(string.Format("[{0} {3}]Delaytime:{1} Coefficient:{2} ", sStid, itemDelaytime, itemCoefficient, "RTI"));
-                        //todo 延時及係數迴圈
-                        RtiDetail rd = new RtiDetail();
+                //foreach (string itemtype in typeList)
+                //{ }
+                //foreach (string itemDelaytime in DelaytimeList)
+                //{
+                //    foreach (string itemCoefficient in CoefficientList)
+                //    {
+                //        ShowStatus(string.Format("[{0} {3}]Delaytime:{1} Coefficient:{2} ", sStid, itemDelaytime, itemCoefficient, "RTI"));
+                //        //todo 延時及係數迴圈
+                //        RtiDetail rd = new RtiDetail();
 
-                        ssql = @" select * from RtiData2  
-                            where station = '{0}' 
-                            and ver = '{1}'
-                            ";
+                //        ssql = @" select * from RtiData2  
+                //            where station = '{0}' 
+                //            and ver = '{1}'
+                //            ";
 
-                        //延時判斷
-                        if (itemDelaytime != "0")
-                        {
-                            ssql += "and raindelay > " + itemDelaytime;
-                        }
-                        ssql = string.Format(ssql, sStid, sVer);
-                        List<RtiData2> wraList = dbDapper.Query<RtiData2>(ssql);
+                //        //延時判斷
+                //        if (itemDelaytime != "0")
+                //        {
+                //            ssql += "and raindelay > " + itemDelaytime;
+                //        }
+                //        ssql = string.Format(ssql, sStid, sVer);
+                //        List<RtiData2> wraList = dbDapper.Query<RtiData2>(ssql);
 
-                        //取得總筆數   
-                        rd.totalcount = wraList.Count();
+                //        //取得總筆數   
+                //        rd.totalcount = wraList.Count();
 
-                        //取得開始時間
-                        rd.startdate = wraList.Min(s => s.date);
-                        //取得結束時間
-                        rd.enddate = wraList.Max(s => s.date);
+                //        //取得開始時間
+                //        rd.startdate = wraList.Min(s => s.date);
+                //        //取得結束時間
+                //        rd.enddate = wraList.Max(s => s.date);
 
-                        RtiProc oRtiProc = new RtiProc(sVer, sStid, itemDelaytime, itemCoefficient, "RTI", sDALConnStr);
+                //        RtiProc oRtiProc = new RtiProc(sVer, sStid, itemDelaytime, itemCoefficient, "RTI", sDALConnStr);
 
-                        //進行計算
-                        oRtiProc.RtiCal();
+                //        //進行計算
+                //        oRtiProc.RtiCal();
 
-                        rd.station = sStid;
-                        rd.delaytime = itemDelaytime;
-                        rd.coefficient = itemCoefficient;
-                        rd.version = "temp";
+                //        rd.station = sStid;
+                //        rd.delaytime = itemDelaytime;
+                //        rd.coefficient = itemCoefficient;
+                //        rd.version = "temp";
 
-                        rd.rti10 = oRtiProc.dRTI10;
-                        rd.rti30 = oRtiProc.dRTI30;
-                        rd.rti50 = oRtiProc.dRTI50;
-                        rd.rti70 = oRtiProc.dRTI70;
-                        rd.rti90 = oRtiProc.dRTI90;
+                //        rd.rti10 = oRtiProc.dRTI10;
+                //        rd.rti30 = oRtiProc.dRTI30;
+                //        rd.rti50 = oRtiProc.dRTI50;
+                //        rd.rti70 = oRtiProc.dRTI70;
+                //        rd.rti90 = oRtiProc.dRTI90;
 
-                        dbDapper.Insert(rd);
+                //        dbDapper.Insert(rd);
 
-                    }
-                }
+                //    }
+                //}
 
                 foreach (string itemDelaytime in DelaytimeList)
                 {
@@ -2636,7 +2636,7 @@ namespace M10Tools
                         RtiProc oRtiProc = new RtiProc(sVer, sStid, itemDelaytime, itemCoefficient, "RTI3", sDALConnStr);
 
                         //進行計算
-                        oRtiProc.RtiCal();
+                        oRtiProc.Rti3Cal();
 
                         rd.station = sStid;
                         rd.delaytime = itemDelaytime;
@@ -2648,6 +2648,18 @@ namespace M10Tools
                         rd.rti50 = oRtiProc.dRTI50;
                         rd.rti70 = oRtiProc.dRTI70;
                         rd.rti90 = oRtiProc.dRTI90;
+
+                        rd.rt10 = oRtiProc.dRT10;
+                        rd.rt30 = oRtiProc.dRT30;
+                        rd.rt50 = oRtiProc.dRT50;
+                        rd.rt70 = oRtiProc.dRT70;
+                        rd.rt90 = oRtiProc.dRT90;
+
+                        rd.r310 = oRtiProc.dR310;
+                        rd.r330 = oRtiProc.dR330;
+                        rd.r350 = oRtiProc.dR350;
+                        rd.r370 = oRtiProc.dR370;
+                        rd.r390 = oRtiProc.dR390;
 
                         dbDapper.Insert(rd);
 
@@ -2918,6 +2930,18 @@ namespace M10Tools
         public double dRTI70 = 0;
         public double dRTI90 = 0;
 
+        public double dRT10 = 0;
+        public double dRT30 = 0;
+        public double dRT50 = 0;
+        public double dRT70 = 0;
+        public double dRT90 = 0;
+
+        public double dR310 = 0;
+        public double dR330 = 0;
+        public double dR350 = 0;
+        public double dR370 = 0;
+        public double dR390 = 0;
+
 
 
         public RtiProc(string ver, string station, string delaytime, string Coefficient, string type, string sConnString)
@@ -3131,6 +3155,532 @@ namespace M10Tools
                 dRTI30 = Math.Round(dRTI30, 2);
                 dRTI50 = Math.Round(dRTI50, 2);
                 dRTI70 = Math.Round(dRTI70, 2);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public void Rti3Cal()
+        {
+            try
+            {
+                DataTable dt = new DataTable();
+
+                //取得總筆數                
+                ssql = " select count(*) as total from RtiData2 "
+                     + " where station = '" + sstation + "' "
+                     + " and ver = '" + sver + "' "
+                     ;
+
+                if (sdelaytime != "0")
+                {
+                    ssql += " and raindelay > " + sdelaytime + " ";
+                }
+
+                oDal.CommandText = ssql;
+                string sTotalcount = oDal.Value().ToString().Trim();
+
+
+                //取得所有站號
+                ssql = " select * from RtiData2"
+                     + "  where station = '" + sstation + "'  "
+                     + " and ver = '" + sver + "' "
+                     ;
+
+                if (sdelaytime != "0")
+                {
+                    ssql += " and raindelay > " + sdelaytime + " ";
+                }
+                
+               
+                if (stype == "RTI3")
+                {
+                    if (sCoefficient == "6") ssql += " order by rti36 ";
+                    if (sCoefficient == "7") ssql += " order by rti37 ";
+                    if (sCoefficient == "8") ssql += " order by rti38 ";
+                }
+
+                oDal.CommandText = ssql;
+                dt.Clear();
+                dt = oDal.DataTable();
+                int iIndex = 1;
+                dt_rti.Clear();
+                foreach (DataRow dr in dt.Rows)
+                {
+                    DataRow newdr = dt_rti.NewRow();
+
+                    newdr["index"] = iIndex.ToString();
+                    newdr["station"] = dr["station"].ToString();                 
+                    if (stype == "RTI3")
+                    {
+                        if (sCoefficient == "6") newdr["rti"] = dr["rti36"].ToString();
+                        if (sCoefficient == "7") newdr["rti"] = dr["rti37"].ToString();
+                        if (sCoefficient == "8") newdr["rti"] = dr["rti38"].ToString();
+                    }
+                    newdr["totalcount"] = sTotalcount;
+                    dt_rti.Rows.Add(newdr);
+
+                    double dtotalcount = double.Parse(sTotalcount);
+                    double dIndex = double.Parse(iIndex.ToString());
+
+                    //前三個小時平均 * RT值
+                    double dResult = dIndex / (dtotalcount + 1) * 100;
+                    string sResult = Math.Round(dResult, 2).ToString();
+
+                    newdr["pas"] = sResult;
+
+                    iIndex++;
+                }
+
+
+                //找出最接近10%的數值
+                double dRTIA = 0;
+                double dRTIB = 0;
+                double dPASa = 0;
+                double dPASb = 0;
+
+
+                //bool bCopy = false;
+                foreach (DataRow dr in dt_rti.Rows)
+                {
+                    //暫存前一筆
+                    dPASa = dPASb;
+                    dRTIA = dRTIB;
+
+                    //取得目前這一筆
+                    dPASb = double.Parse(dr["pas"].ToString());
+                    dRTIB = double.Parse(dr["rti"].ToString());
+
+                    //數值剛好等於10，則該數值為rti10
+                    if (dPASb == 10)
+                    {
+                        dRTI10 = dRTIB;
+                    }
+                    else
+                    {
+                        //判斷兩組資料是否為10%中間
+                        if (dPASa < 10 && dPASb > 10)
+                        {
+                            //進行計算RTI10
+                            dRTI10 = ((dRTIB - dRTIA) / (dPASb - dPASa) * (10 - dPASa)) + dRTIA;
+                            dRTI10 = Math.Round(dRTI10, 2);
+                        }
+                    }
+
+                    //複製除了rti10之前的資料到dt_rti90
+                    if (dPASb > 10)
+                    {
+                        DataRow drn = dt_rti90.NewRow();
+                        drn["index"] = dr["index"];
+                        drn["station"] = dr["station"];
+                        drn["rti"] = dr["rti"];
+                        drn["totalcount"] = dr["totalcount"];
+                        drn["pas"] = dr["pas"];
+
+                        dt_rti90.Rows.Add(drn);
+                    }
+                }
+
+                //dt_rti90重整
+                int irti90 = 1;
+                foreach (DataRow dr in dt_rti90.Rows)
+                {
+                    double dtotalcount = double.Parse(dt_rti90.Rows.Count.ToString());
+                    double dIndex = double.Parse(irti90.ToString());
+
+                    //前三個小時平均 * RT值
+                    double dResult = dIndex / (dtotalcount + 1) * 100;
+                    string sResult = Math.Round(dResult, 2).ToString();
+
+                    dr["index"] = irti90.ToString();
+                    dr["pas"] = sResult;
+
+                    irti90++;
+                }
+
+                dRTIA = 0;
+                dRTIB = 0;
+                dPASa = 0;
+                dPASb = 0;
+
+                foreach (DataRow dr in dt_rti90.Rows)
+                {
+                    //暫存前一筆
+                    dPASa = dPASb;
+                    dRTIA = dRTIB;
+
+                    //取得目前這一筆
+                    dPASb = double.Parse(dr["pas"].ToString());
+                    dRTIB = double.Parse(dr["rti"].ToString());
+
+
+                    if (dPASb == 90)
+                    {
+                        dRTI90 = dRTIB;
+                    }
+                    else
+                    {
+                        //判斷兩組資料是否為90%中間
+                        if (dPASa < 90 && dPASb > 90)
+                        {
+                            //進行計算RTI90
+                            dRTI90 = ((dRTIB - dRTIA) / (dPASb - dPASa) * (90 - dPASa)) + dRTIA;
+                            dRTI90 = Math.Round(dRTI90, 2);
+                        }
+                    }
+
+
+
+                }
+
+
+                dRTI30 = ((dRTI90 - dRTI10) / 8 * 2) + dRTI10;
+                dRTI50 = ((dRTI90 - dRTI10) / 8 * 4) + dRTI10;
+                dRTI70 = ((dRTI90 - dRTI10) / 8 * 6) + dRTI10;
+
+                //小數點以下兩位進位
+                dRTI30 = Math.Round(dRTI30, 2);
+                dRTI50 = Math.Round(dRTI50, 2);
+                dRTI70 = Math.Round(dRTI70, 2);
+
+
+                //====================================================================================
+                //計算RT
+                dt.Clear();
+                dt_rti.Clear();
+                dt_rti90.Clear();
+                //取得所有站號
+                ssql = " select * from RtiData2"
+                     + "  where station = '" + sstation + "'  "
+                     + " and ver = '" + sver + "' "
+                     ;
+
+                if (sdelaytime != "0")
+                {
+                    ssql += " and raindelay > " + sdelaytime + " ";
+                }
+
+
+                if (stype == "RTI3")
+                {
+                    if (sCoefficient == "6") ssql += " order by rtd6 ";
+                    if (sCoefficient == "7") ssql += " order by rtd7 ";
+                    if (sCoefficient == "8") ssql += " order by rtd8 ";
+                }
+
+                oDal.CommandText = ssql;
+                dt.Clear();
+                dt = oDal.DataTable();
+                iIndex = 1;
+                dt_rti.Clear();
+                foreach (DataRow dr in dt.Rows)
+                {
+                    DataRow newdr = dt_rti.NewRow();
+
+                    newdr["index"] = iIndex.ToString();
+                    newdr["station"] = dr["station"].ToString();
+                    if (stype == "RTI3")
+                    {
+                        if (sCoefficient == "6") newdr["rti"] = dr["rtd6"].ToString();
+                        if (sCoefficient == "7") newdr["rti"] = dr["rtd7"].ToString();
+                        if (sCoefficient == "8") newdr["rti"] = dr["rtd8"].ToString();
+                    }
+                    newdr["totalcount"] = sTotalcount;
+                    dt_rti.Rows.Add(newdr);
+
+                    double dtotalcount = double.Parse(sTotalcount);
+                    double dIndex = double.Parse(iIndex.ToString());
+
+                    //前三個小時平均 * RT值
+                    double dResult = dIndex / (dtotalcount + 1) * 100;
+                    string sResult = Math.Round(dResult, 2).ToString();
+
+                    newdr["pas"] = sResult;
+
+                    iIndex++;
+                }
+
+
+                //找出最接近10%的數值
+                dRTIA = 0;
+                dRTIB = 0;
+                dPASa = 0;
+                dPASb = 0;
+
+
+                //bool bCopy = false;
+                foreach (DataRow dr in dt_rti.Rows)
+                {
+                    //暫存前一筆
+                    dPASa = dPASb;
+                    dRTIA = dRTIB;
+
+                    //取得目前這一筆
+                    dPASb = double.Parse(dr["pas"].ToString());
+                    dRTIB = double.Parse(dr["rti"].ToString());
+
+                    //數值剛好等於10，則該數值為rti10
+                    if (dPASb == 10)
+                    {
+                        dRT10 = dRTIB;
+                    }
+                    else
+                    {
+                        //判斷兩組資料是否為10%中間
+                        if (dPASa < 10 && dPASb > 10)
+                        {
+                            //進行計算RTI10
+                            dRT10 = ((dRTIB - dRTIA) / (dPASb - dPASa) * (10 - dPASa)) + dRTIA;
+                            dRT10 = Math.Round(dRT10, 2);
+                        }
+                    }
+
+                    //複製除了rti10之前的資料到dt_rti90
+                    if (dPASb > 10)
+                    {
+                        DataRow drn = dt_rti90.NewRow();
+                        drn["index"] = dr["index"];
+                        drn["station"] = dr["station"];
+                        drn["rti"] = dr["rti"];
+                        drn["totalcount"] = dr["totalcount"];
+                        drn["pas"] = dr["pas"];
+
+                        dt_rti90.Rows.Add(drn);
+                    }
+                }
+
+                //dt_rti90重整
+                irti90 = 1;
+                foreach (DataRow dr in dt_rti90.Rows)
+                {
+                    double dtotalcount = double.Parse(dt_rti90.Rows.Count.ToString());
+                    double dIndex = double.Parse(irti90.ToString());
+
+                    //前三個小時平均 * RT值
+                    double dResult = dIndex / (dtotalcount + 1) * 100;
+                    string sResult = Math.Round(dResult, 2).ToString();
+
+                    dr["index"] = irti90.ToString();
+                    dr["pas"] = sResult;
+
+                    irti90++;
+                }
+
+                dRTIA = 0;
+                dRTIB = 0;
+                dPASa = 0;
+                dPASb = 0;
+
+                foreach (DataRow dr in dt_rti90.Rows)
+                {
+                    //暫存前一筆
+                    dPASa = dPASb;
+                    dRTIA = dRTIB;
+
+                    //取得目前這一筆
+                    dPASb = double.Parse(dr["pas"].ToString());
+                    dRTIB = double.Parse(dr["rti"].ToString());
+
+
+                    if (dPASb == 90)
+                    {
+                        dRT90 = dRTIB;
+                    }
+                    else
+                    {
+                        //判斷兩組資料是否為90%中間
+                        if (dPASa < 90 && dPASb > 90)
+                        {
+                            //進行計算RTI90
+                            dRT90 = ((dRTIB - dRTIA) / (dPASb - dPASa) * (90 - dPASa)) + dRTIA;
+                            dRT90 = Math.Round(dRT90, 2);
+                        }
+                    }
+
+
+
+                }
+
+
+                dRT30 = ((dRT90 - dRT10) / 8 * 2) + dRT10;
+                dRT50 = ((dRT90 - dRT10) / 8 * 4) + dRT10;
+                dRT70 = ((dRT90 - dRT10) / 8 * 6) + dRT10;
+
+                //小數點以下兩位進位
+                dRT30 = Math.Round(dRT30, 2);
+                dRT50 = Math.Round(dRT50, 2);
+                dRT70 = Math.Round(dRT70, 2);
+
+                //====================================================================================
+                //計算R3
+                dt.Clear();
+                dt_rti.Clear();
+                dt_rti90.Clear();
+                //取得所有站號
+                ssql = " select * from RtiData2"
+                     + "  where station = '" + sstation + "'  "
+                     + " and ver = '" + sver + "' "
+                     ;
+
+                if (sdelaytime != "0")
+                {
+                    ssql += " and raindelay > " + sdelaytime + " ";
+                }
+
+
+                if (stype == "RTI3")
+                {
+                    if (sCoefficient == "6") ssql += " order by R3 ";
+                    if (sCoefficient == "7") ssql += " order by R3 ";
+                    if (sCoefficient == "8") ssql += " order by R3 ";
+                }
+
+                oDal.CommandText = ssql;
+                dt.Clear();
+                dt = oDal.DataTable();
+                iIndex = 1;
+                dt_rti.Clear();
+                foreach (DataRow dr in dt.Rows)
+                {
+                    DataRow newdr = dt_rti.NewRow();
+
+                    newdr["index"] = iIndex.ToString();
+                    newdr["station"] = dr["station"].ToString();
+                    if (stype == "RTI3")
+                    {
+                        if (sCoefficient == "6") newdr["rti"] = dr["R3"].ToString();
+                        if (sCoefficient == "7") newdr["rti"] = dr["R3"].ToString();
+                        if (sCoefficient == "8") newdr["rti"] = dr["R3"].ToString();
+                    }
+                    newdr["totalcount"] = sTotalcount;
+                    dt_rti.Rows.Add(newdr);
+
+                    double dtotalcount = double.Parse(sTotalcount);
+                    double dIndex = double.Parse(iIndex.ToString());
+
+                    //前三個小時平均 * RT值
+                    double dResult = dIndex / (dtotalcount + 1) * 100;
+                    string sResult = Math.Round(dResult, 2).ToString();
+
+                    newdr["pas"] = sResult;
+
+                    iIndex++;
+                }
+
+
+                //找出最接近10%的數值
+                dRTIA = 0;
+                dRTIB = 0;
+                dPASa = 0;
+                dPASb = 0;
+
+
+                //bool bCopy = false;
+                foreach (DataRow dr in dt_rti.Rows)
+                {
+                    //暫存前一筆
+                    dPASa = dPASb;
+                    dRTIA = dRTIB;
+
+                    //取得目前這一筆
+                    dPASb = double.Parse(dr["pas"].ToString());
+                    dRTIB = double.Parse(dr["rti"].ToString());
+
+                    //數值剛好等於10，則該數值為rti10
+                    if (dPASb == 10)
+                    {
+                        dR310 = dRTIB;
+                    }
+                    else
+                    {
+                        //判斷兩組資料是否為10%中間
+                        if (dPASa < 10 && dPASb > 10)
+                        {
+                            //進行計算RTI10
+                            dR310 = ((dRTIB - dRTIA) / (dPASb - dPASa) * (10 - dPASa)) + dRTIA;
+                            dR310 = Math.Round(dR310, 2);
+                        }
+                    }
+
+                    //複製除了rti10之前的資料到dt_rti90
+                    if (dPASb > 10)
+                    {
+                        DataRow drn = dt_rti90.NewRow();
+                        drn["index"] = dr["index"];
+                        drn["station"] = dr["station"];
+                        drn["rti"] = dr["rti"];
+                        drn["totalcount"] = dr["totalcount"];
+                        drn["pas"] = dr["pas"];
+
+                        dt_rti90.Rows.Add(drn);
+                    }
+                }
+
+                //dt_rti90重整
+                irti90 = 1;
+                foreach (DataRow dr in dt_rti90.Rows)
+                {
+                    double dtotalcount = double.Parse(dt_rti90.Rows.Count.ToString());
+                    double dIndex = double.Parse(irti90.ToString());
+
+                    //前三個小時平均 * RT值
+                    double dResult = dIndex / (dtotalcount + 1) * 100;
+                    string sResult = Math.Round(dResult, 2).ToString();
+
+                    dr["index"] = irti90.ToString();
+                    dr["pas"] = sResult;
+
+                    irti90++;
+                }
+
+                dRTIA = 0;
+                dRTIB = 0;
+                dPASa = 0;
+                dPASb = 0;
+
+                foreach (DataRow dr in dt_rti90.Rows)
+                {
+                    //暫存前一筆
+                    dPASa = dPASb;
+                    dRTIA = dRTIB;
+
+                    //取得目前這一筆
+                    dPASb = double.Parse(dr["pas"].ToString());
+                    dRTIB = double.Parse(dr["rti"].ToString());
+
+
+                    if (dPASb == 90)
+                    {
+                        dR390 = dRTIB;
+                    }
+                    else
+                    {
+                        //判斷兩組資料是否為90%中間
+                        if (dPASa < 90 && dPASb > 90)
+                        {
+                            //進行計算RTI90
+                            dR390 = ((dRTIB - dRTIA) / (dPASb - dPASa) * (90 - dPASa)) + dRTIA;
+                            dR390 = Math.Round(dR390, 2);
+                        }
+                    }
+
+
+
+                }
+
+
+                dR330 = ((dR390 - dR310) / 8 * 2) + dR310;
+                dR350 = ((dR390 - dR310) / 8 * 4) + dR310;
+                dR370 = ((dR390 - dR310) / 8 * 6) + dR310;
+
+                //小數點以下兩位進位
+                dR330 = Math.Round(dR330, 2);
+                dR350 = Math.Round(dR350, 2);
+                dR370 = Math.Round(dR370, 2);
 
             }
             catch (Exception)

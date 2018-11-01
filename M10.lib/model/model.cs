@@ -227,6 +227,26 @@ namespace M10.lib.model
 
         public double? rti90 { get; set; }
 
+        public double? rt10 { get; set; }
+
+        public double? rt30 { get; set; }
+
+        public double? rt50 { get; set; }
+
+        public double? rt70 { get; set; }
+
+        public double? rt90 { get; set; }
+
+        public double? r310 { get; set; }
+
+        public double? r330 { get; set; }
+
+        public double? r350 { get; set; }
+
+        public double? r370 { get; set; }
+
+        public double? r390 { get; set; }
+
     }
 
 
