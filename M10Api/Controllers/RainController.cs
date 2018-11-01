@@ -294,7 +294,7 @@ namespace M10Api.Controllers
             ssql = @" select * from Rti3Detail where 1=1 
                         and delaytime = @delaytime 
                         and coefficient = @coefficient 
-                        and version = 'new' 
+                        and version = 'temp' 
                         order by station ";
             List<dynamic> data = dbDapper.Query(ssql, new { delaytime = ViewBag.delaytime, coefficient = ViewBag.coefficient });
 
