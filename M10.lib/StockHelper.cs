@@ -983,7 +983,11 @@ namespace M10.lib
                     text = text.Replace(");", "");
                     text = text.Replace(",\"tick\":[]}", "");
                     text = text.Replace(text.Substring(0, text.IndexOf(",\"mem\":") + 7), "");
-                    text = text.Replace(text.Substring(text.IndexOf(",\"tick\":")), "");
+                    if (stockcode != "9999")
+                    {
+                        text = text.Replace(text.Substring(text.IndexOf(",\"tick\":")), "");
+                    }
+                    
 
                     if (text.Contains(",\"143\":"))
                     {

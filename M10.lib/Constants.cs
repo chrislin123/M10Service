@@ -9,6 +9,7 @@ namespace M10.lib
     public static class M10Const
     {
         public static string StockAfterTseUrl = "http://www.tse.com.tw/exchangeReport/MI_INDEX?response=csv&date={0}&type=ALLBUT0999";
+        
         public static string StockAfterOtcUrl = "http://www.tpex.org.tw/web/stock/aftertrading/daily_close_quotes/stk_quote_download.php?l=zh-tw&d={0}&s=0,asc,0";
 
         public static string StockThreeTradeTse = "http://www.tse.com.tw/fund/T86?response=csv&date={0}&selectType=ALLBUT0999";
