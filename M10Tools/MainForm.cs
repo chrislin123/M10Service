@@ -1079,52 +1079,6 @@ namespace M10Tools
             Application.DoEvents();
         }
 
-        private void btnTransToPrice_Click(object sender, EventArgs e)
-        {
-            //取得所有日期清單
-            ssql = " select distinct stockdate from StockAfter order by stockdate ";
-            List<dynamic> DateList = dbDapper.Query(ssql);
-
-            foreach (var item in DateList)
-            {
-                //依照日期取得StockAfter資料
-                ssql = " select * from stockafter where stockdate = '{0}' and updYN <> 'Y' ";
-                ssql = string.Format(ssql, Convert.ToString(item.stockdate));
-                List<Stockafter> StockAfterList = dbDapper.Query<Stockafter>(ssql);
-
-                foreach (Stockafter StockAferItem in StockAfterList)
-                {
-                    //判斷資料是否存在
-                    ssql = " select * from Price1 where date = '{0}' and StockID = '{1}' ";
-                    ssql = string.Format(ssql, StockAferItem.stockdate, StockAferItem.stockcode);
-                    if (dbDapper.QueryTotalCount(ssql) != 0) continue;
-
-                    Price1 oPrice1 = new Price1();
-                    oPrice1.UID = Guid.NewGuid().ToString().ToUpper();
-                    oPrice1.StockID = StockAferItem.stockcode;
-                    oPrice1.Date = DateTime.ParseExact(StockAferItem.stockdate, "yyyyMMdd", null);
-                    oPrice1.Open = StockAferItem.priceopen;
-                    oPrice1.Close = StockAferItem.pricelast;
-                    oPrice1.Low = StockAferItem.pricelow;
-                    oPrice1.High = StockAferItem.pricetop;
-                    oPrice1.Turnover = StockAferItem.dealmoney;
-                    oPrice1.Capacity = StockAferItem.dealnum;
-                    oPrice1.Transaction = StockAferItem.dealamount;
-                    string aaa = StockAferItem.updown == "X" ? "" : StockAferItem.updown;
-                    string sss = aaa + StockAferItem.pricediff;
-                    oPrice1.Change = Convert.ToDecimal(sss);
-
-                    dbDapper.Insert<Price1>(oPrice1);
-
-                    ShowStatus(string.Format("{0}-{1}", item.stockdate, StockAferItem.stockcode));
-
-                    //註記已轉檔
-                    StockAferItem.updYN = "Y";
-                    dbDapper.Update<Stockafter>(StockAferItem);
-                }
-            }
-
-        }
 
         private void btnImpWeatherData_Click(object sender, EventArgs e)
         {
@@ -1174,6 +1128,8 @@ namespace M10Tools
 
                 foreach (DataRow dr in dt.Rows)
                 {
+                    
+
                     WeaRainData wd = new WeaRainData();
                     wd.STID = dr["stno"].ToString();
                     wd.time = dr["yyyymmddhh"].ToString();
@@ -1181,12 +1137,13 @@ namespace M10Tools
                     wd.PP01old = Convert.ToDecimal(dr["PP01"].ToString());
 
                     dbDapper.Insert(wd);
+                    Application.DoEvents();
                 }
 
                 string sNewFullName = Path.Combine(item.DirectoryName, "OK", item.Name);
 
                 item.MoveTo(sNewFullName);
-
+                Application.DoEvents();
             }
 
         }
@@ -1205,11 +1162,13 @@ namespace M10Tools
             int iIndex = 0;
             foreach (var StidItem in StidList)
             {
+                Application.DoEvents();
                 iIndex++;
                 //每個STID都要跑1987-2017的資料
-                for (int y = 1987; y < 2018; y++)
+                //每個STID都要跑1987-2017的資料
+                for (int y = 2018; y <= 2018; y++)
                 {
-
+                    Application.DoEvents();
                     //雨量站
                     string sStid = StidItem.stid;
                     //統計年度

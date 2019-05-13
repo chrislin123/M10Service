@@ -13,112 +13,112 @@ using M10.lib;
 
 namespace C10Mvc.Controllers
 {
-  [RoutePrefix("StockApi")]
-  public class StockController : BaseApiController
-  {
-
-    [HttpGet]
-    [Route("getStockType")]
-    public StockInfo getStockType()
+    [RoutePrefix("StockApi")]
+    public class StockController : BaseApiController
     {
-      if (string.IsNullOrWhiteSpace(ActionContext.Request.RequestUri.Query) == true) return null;
 
-      NameValueCollection Params = M10.lib.Utils.ParseQueryString(ActionContext.Request.RequestUri.Query);
+        [HttpGet]
+        [Route("getStockType")]
+        public StockInfo getStockType()
+        {
+            if (string.IsNullOrWhiteSpace(ActionContext.Request.RequestUri.Query) == true) return null;
 
-
-      string ssql = " select * from stockinfo where 1=1 and status = 'Y' ";
-      if (Params["StockCode"] != null)
-      {
-        ssql += string.Format(" and stockcode = '{0}' ", Params["StockCode"]);
-      }
+            NameValueCollection Params = M10.lib.Utils.ParseQueryString(ActionContext.Request.RequestUri.Query);
 
 
-      StockInfo StockInfoItem = dbDapper.QuerySingleOrDefault<StockInfo>(ssql);
+            string ssql = " select * from stockinfo where 1=1 and status = 'Y' ";
+            if (Params["StockCode"] != null)
+            {
+                ssql += string.Format(" and stockcode = '{0}' ", Params["StockCode"]);
+            }
 
-      return StockInfoItem;
-    }
+
+            StockInfo StockInfoItem = dbDapper.QuerySingleOrDefault<StockInfo>(ssql);
+
+            return StockInfoItem;
+        }
 
 
-    [HttpGet]
-    [Route("getStockThreeTrade")]
-    public dynamic getStockThreeTrade()
-    {
-      //if (string.IsNullOrWhiteSpace(ActionContext.Request.RequestUri.Query) == true) return null;
+        [HttpGet]
+        [Route("getStockThreeTrade")]
+        public dynamic getStockThreeTrade()
+        {
+            //if (string.IsNullOrWhiteSpace(ActionContext.Request.RequestUri.Query) == true) return null;
 
-      //NameValueCollection Params = M10.lib.Utils.ParseQueryString(ActionContext.Request.RequestUri.Query);
+            //NameValueCollection Params = M10.lib.Utils.ParseQueryString(ActionContext.Request.RequestUri.Query);
 
-      string sMaxDate = "";
-      string ssql = " select max(date) from Stockthreetrade ";
+            string sMaxDate = "";
+            string ssql = " select max(date) from Stockthreetrade ";
 
-      var maxdate = dbDapper.ExecuteScale(ssql);
-      if (maxdate != null)
-      {
-        sMaxDate = maxdate.ToString();
-      }
+            var maxdate = dbDapper.ExecuteScale(ssql);
+            if (maxdate != null)
+            {
+                sMaxDate = maxdate.ToString();
+            }
 
-      ssql = @"select top 30 * from Stockthreetrade a
+            ssql = @"select top 30 * from Stockthreetrade a
                 left join stockinfo b on a.stockcode = b.stockcode
                 where threeinv > 0 
                 and date = '{0}'  
                 order by threeinv desc
                 ";
 
-      List<dynamic> ThreeTradeList = dbDapper.Query<dynamic>(string.Format(ssql, sMaxDate));
+            List<dynamic> ThreeTradeList = dbDapper.Query<dynamic>(string.Format(ssql, sMaxDate));
 
-      List<dynamic> ListB = ThreeTradeList
-                  .Select(t => new
-                  {
-                    stockcode = t.stockcode
-                    ,
-                    threeinv = t.threeinv
-                                    ,
-                    stockname = t.stockname
-                  })
-                  .ToList<dynamic>();
+            List<dynamic> ListB = ThreeTradeList
+                        .Select(t => new
+                        {
+                            stockcode = t.stockcode
+                          ,
+                            threeinv = t.threeinv
+                                          ,
+                            stockname = t.stockname
+                        })
+                        .ToList<dynamic>();
 
-      ssql = @"select top 30 * from Stockthreetrade a
+            ssql = @"select top 30 * from Stockthreetrade a
                 left join stockinfo b on a.stockcode = b.stockcode
                 where threeinv < 0
                 and date = '{0}'  
                 order by threeinv 
                 ";
 
-      ThreeTradeList = dbDapper.Query<dynamic>(string.Format(ssql, sMaxDate));
+            ThreeTradeList = dbDapper.Query<dynamic>(string.Format(ssql, sMaxDate));
 
-      List<dynamic> ListS = ThreeTradeList
-                  .Select(t => new
-                  {
-                    stockcode = t.stockcode
-                    ,
-                    threeinv = t.threeinv
-                                    ,
-                    stockname = t.stockname
-                  })
-                  .ToList<dynamic>();
+            List<dynamic> ListS = ThreeTradeList
+                        .Select(t => new
+                        {
+                            stockcode = t.stockcode
+                          ,
+                            threeinv = t.threeinv
+                                          ,
+                            stockname = t.stockname
+                        })
+                        .ToList<dynamic>();
 
-      dynamic dd = new { date = sMaxDate, s = ListS, b = ListB };
+            dynamic dd = new { date = sMaxDate, s = ListS, b = ListB };
 
-      return dd;
-    }
+            return dd;
+        }
 
-    [HttpGet]
-    [Route("getStockThreeTrade3d")]
-    public dynamic getStockThreeTrade3d()
-    {
-      ////if (string.IsNullOrWhiteSpace(ActionContext.Request.RequestUri.Query) == true) return null;
+        [HttpGet]
+        [Route("getStockThreeTrade3d")]
+        public dynamic getStockThreeTrade3d()
+        {
+            ////if (string.IsNullOrWhiteSpace(ActionContext.Request.RequestUri.Query) == true) return null;
 
-      ////NameValueCollection Params = M10.lib.Utils.ParseQueryString(ActionContext.Request.RequestUri.Query);
+            ////NameValueCollection Params = M10.lib.Utils.ParseQueryString(ActionContext.Request.RequestUri.Query);
 
-      string sMaxDate = "";
-      string ssql = " select max(date) from Stockthreetrade ";
+            string sMaxDate = "";
+            string ssql = " select max(date) from Stockthreetrade ";
 
-      var maxdate = dbDapper.ExecuteScale(ssql);
-      if (maxdate != null)
-      {
-        sMaxDate = maxdate.ToString();
-      }
+            var maxdate = dbDapper.ExecuteScale(ssql);
+            if (maxdate != null)
+            {
+                sMaxDate = maxdate.ToString();
+            }
 
-      ssql = @"
+            ssql = @"
             select top 30 * from (
               select stockcode,count(*) as tt , sum(threeinv) as threeinv  from (
                 select * from Stockthreetrade
@@ -133,20 +133,20 @@ namespace C10Mvc.Controllers
             where c.tt =3 order by threeinv desc
             ";
 
-      List<dynamic> ThreeTradeList = dbDapper.Query<dynamic>(ssql);
+            List<dynamic> ThreeTradeList = dbDapper.Query<dynamic>(ssql);
 
-      List<dynamic> ListB3d = ThreeTradeList
-                  .Select(t => new
-                  {
-                    stockcode = t.stockcode
-                    ,
-                    threeinv = t.threeinv
-                                    ,
-                    stockname = t.stockname
-                  })
-                  .ToList<dynamic>();
+            List<dynamic> ListB3d = ThreeTradeList
+                        .Select(t => new
+                        {
+                            stockcode = t.stockcode
+                          ,
+                            threeinv = t.threeinv
+                                          ,
+                            stockname = t.stockname
+                        })
+                        .ToList<dynamic>();
 
-      ssql = @"
+            ssql = @"
             select top 30 * from (
               select stockcode,count(*) as tt , sum(threeinv) as threeinv  from (
                 select * from Stockthreetrade
@@ -161,95 +161,117 @@ namespace C10Mvc.Controllers
             where c.tt =3 order by threeinv asc
                 ";
 
-      ThreeTradeList = dbDapper.Query<dynamic>(string.Format(ssql, sMaxDate));
+            ThreeTradeList = dbDapper.Query<dynamic>(string.Format(ssql, sMaxDate));
 
-      List<dynamic> ListS3d = ThreeTradeList
-                  .Select(t => new
-                  {
-                    stockcode = t.stockcode
-                    ,
-                    threeinv = t.threeinv
-                                    ,
-                    stockname = t.stockname
-                  })
-                  .ToList<dynamic>();
+            List<dynamic> ListS3d = ThreeTradeList
+                        .Select(t => new
+                        {
+                            stockcode = t.stockcode
+                          ,
+                            threeinv = t.threeinv
+                                          ,
+                            stockname = t.stockname
+                        })
+                        .ToList<dynamic>();
 
-      dynamic dd = new { date = sMaxDate, s = ListS3d, b = ListB3d };
+            dynamic dd = new { date = sMaxDate, s = ListS3d, b = ListB3d };
 
-      return dd;
+            return dd;
+        }
+
+
+
+        [HttpGet]
+        [Route("getStockRealtime")]
+        public dynamic getStockRealtime(string stockcode)
+        {
+            //get from yahoo web
+            //StockRuntime sr = oStockUtil.getStockRealtimeYahooWeb(stockcode);
+
+            //get from yahoo api
+            StockRuntime sr = stockhelper.getStockRealtimeYahooApi(stockcode);
+
+            //盤前沒資料改取得歷史資料
+            //if (sr.z == "")
+            //{
+            //  ssql = " select top 1 * from stockafter where stockcode = '{0}' order by stockdate desc ";
+            //  ssql = string.Format(ssql, stockcode);
+            //  Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(ssql);
+            //  if (sa != null)
+            //  {
+            //    sr.status = M10Const.StockRuntimeStatus.Histroy;
+            //    sr.z = sa.pricelast.ToString();
+            //    sr.y = sa.priceyesterday.ToString();
+            //  }
+            //}
+
+            return sr;
+        }
+
+        [HttpGet]
+        [Route("getStockDataLvstg")]
+        public dynamic getStockDataLvstg(string stockcode, string date)
+        {
+            //取得資料
+            List<dynamic> TempList = stockhelper.getStockDataLvstg(stockcode, date);
+
+
+
+
+
+
+
+            //盤前沒資料改取得歷史資料
+            //if (sr.z == "")
+            //{
+            //  ssql = " select top 1 * from stockafter where stockcode = '{0}' order by stockdate desc ";
+            //  ssql = string.Format(ssql, stockcode);
+            //  Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(ssql);
+            //  if (sa != null)
+            //  {
+            //    sr.status = M10Const.StockRuntimeStatus.Histroy;
+            //    sr.z = sa.pricelast.ToString();
+            //    sr.y = sa.priceyesterday.ToString();
+            //  }
+            //}
+
+            return TempList;
+        }
+
+
+
+        [HttpGet]
+        [Route("getStockHugeTurnover")]
+        public List<dynamic> getStockHugeTurnover(string date)
+        {
+            //取得資料
+            //List<StockGet> TempList = stockhelper.getStockGet(date);
+
+            List<dynamic> TempList = stockhelper.getStockGet(date);
+
+            return TempList;
+        }
+
+
+        [HttpPost]
+        [Route("PostTest")]
+        public List<dynamic> PostTest(Player palyer)
+        {
+            //取得資料
+            //List<StockGet> TempList = stockhelper.getStockGet(date);
+
+            //List<dynamic> TempList = stockhelper.getStockGet(date);
+            List<dynamic> TempList = new List<dynamic>();
+            return TempList;
+        }
+
+        //宣告Model類別承接前端傳入資料
+        public class Player
+        {
+            //public int Id;
+            public string Name;
+            //public DateTime RegDate;
+            //public int Score;
+        }
     }
-
-
-
-    [HttpGet]
-    [Route("getStockRealtime")]
-    public dynamic getStockRealtime(string stockcode)
-    {
-      //get from yahoo web
-      //StockRuntime sr = oStockUtil.getStockRealtimeYahooWeb(stockcode);
-     
-      //get from yahoo api
-      StockRuntime sr = stockhelper.getStockRealtimeYahooApi(stockcode);
-
-      //盤前沒資料改取得歷史資料
-      //if (sr.z == "")
-      //{
-      //  ssql = " select top 1 * from stockafter where stockcode = '{0}' order by stockdate desc ";
-      //  ssql = string.Format(ssql, stockcode);
-      //  Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(ssql);
-      //  if (sa != null)
-      //  {
-      //    sr.status = M10Const.StockRuntimeStatus.Histroy;
-      //    sr.z = sa.pricelast.ToString();
-      //    sr.y = sa.priceyesterday.ToString();
-      //  }
-      //}
-
-      return sr;
-    }
-
-    [HttpGet]
-    [Route("getStockDataLvstg")]
-    public dynamic getStockDataLvstg(string stockcode,string date)
-    {
-      //取得資料
-      List<dynamic> TempList = stockhelper.getStockDataLvstg(stockcode, date);
-
-
-
-
-
-
-
-      //盤前沒資料改取得歷史資料
-      //if (sr.z == "")
-      //{
-      //  ssql = " select top 1 * from stockafter where stockcode = '{0}' order by stockdate desc ";
-      //  ssql = string.Format(ssql, stockcode);
-      //  Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(ssql);
-      //  if (sa != null)
-      //  {
-      //    sr.status = M10Const.StockRuntimeStatus.Histroy;
-      //    sr.z = sa.pricelast.ToString();
-      //    sr.y = sa.priceyesterday.ToString();
-      //  }
-      //}
-
-      return TempList;
-    }
-
-
-
-    [HttpGet]
-    [Route("getStockHugeTurnover")]
-    public List<dynamic> getStockHugeTurnover(string date)
-    {
-      //取得資料
-      //List<StockGet> TempList = stockhelper.getStockGet(date);
-
-      List<dynamic> TempList = stockhelper.getStockGet(date);
-
-      return TempList;
-    }
-  }
 }

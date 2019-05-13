@@ -48,7 +48,6 @@
             this.StockCodeTextBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.StockAfterRushButton = new System.Windows.Forms.Button();
-            this.btnTransToPrice = new System.Windows.Forms.Button();
             this.btnImpWeatherData = new System.Windows.Forms.Button();
             this.btnTransWeaRainStatic = new System.Windows.Forms.Button();
             this.btnRainAreaSplit = new System.Windows.Forms.Button();
@@ -94,9 +93,9 @@
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 311);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 444);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(440, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(866, 22);
             this.statusStrip1.TabIndex = 7;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -253,16 +252,6 @@
             this.StockAfterRushButton.UseVisualStyleBackColor = true;
             this.StockAfterRushButton.Click += new System.EventHandler(this.StockAfterRushTseButton_Click);
             // 
-            // btnTransToPrice
-            // 
-            this.btnTransToPrice.Location = new System.Drawing.Point(276, 215);
-            this.btnTransToPrice.Name = "btnTransToPrice";
-            this.btnTransToPrice.Size = new System.Drawing.Size(126, 23);
-            this.btnTransToPrice.TabIndex = 26;
-            this.btnTransToPrice.Text = "轉檔到長志資料表";
-            this.btnTransToPrice.UseVisualStyleBackColor = true;
-            this.btnTransToPrice.Click += new System.EventHandler(this.btnTransToPrice_Click);
-            // 
             // btnImpWeatherData
             // 
             this.btnImpWeatherData.Location = new System.Drawing.Point(12, 127);
@@ -337,7 +326,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(440, 333);
+            this.ClientSize = new System.Drawing.Size(866, 466);
             this.Controls.Add(this.button15);
             this.Controls.Add(this.button14);
             this.Controls.Add(this.button13);
@@ -345,7 +334,6 @@
             this.Controls.Add(this.btnRainAreaSplit);
             this.Controls.Add(this.btnTransWeaRainStatic);
             this.Controls.Add(this.btnImpWeatherData);
-            this.Controls.Add(this.btnTransToPrice);
             this.Controls.Add(this.StockAfterRushButton);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.StockCodeTextBox);
@@ -396,7 +384,6 @@
     private System.Windows.Forms.TextBox StockCodeTextBox;
     private System.Windows.Forms.Label label1;
     private System.Windows.Forms.Button StockAfterRushButton;
-        private System.Windows.Forms.Button btnTransToPrice;
         private System.Windows.Forms.Button btnImpWeatherData;
         private System.Windows.Forms.Button btnTransWeaRainStatic;
         private System.Windows.Forms.Button btnRainAreaSplit;
