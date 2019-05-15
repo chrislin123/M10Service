@@ -2496,15 +2496,32 @@ namespace M10Tools
 
         private void button15_Click(object sender, EventArgs e)
         {
-            string sVer = "20181031";
+            /*    ====執行前請先將新版的雨場分割資料匯入RtiData2中====         
+             *    WeaRainArea直接匯入 RtiData2        
+             *    
+                INSERT INTO [dbo].[RtiData2]
+                ([station],[ver],[raindelay],[Rtd6],[Rtd7],[Rtd8],[Rti6],[Rti7]
+                ,[Rti8],[Rti36],[Rti37],[Rti38],[R3],[date])
+
+                select STID,'20190515' as ver,RainHour,rt6,rt7,RT8
+                ,RT6*MaxRain as rti6,RT7*MaxRain as rti7,RT8*MaxRain as rti8
+                ,RT6*Max3Sum/3 as rti36,RT7*Max3Sum/3 as rti37,RT8*Max3Sum/3 as rti38
+                ,max3sum,SUBSTRING(TimeStart,1,8) as date 
+                from WeaRainArea 
+            */
+
+
+            string sVer = "20190515";
             List<RtiDetail> rdList = new List<RtiDetail>();
 
             ssql = " select distinct stid from WeaRainArea order by STID ";
             List<dynamic> StidList = dbDapper.Query(ssql);
 
             DateTime dttest = DateTime.Now;
+            int iIndex = 0;
             foreach (var StidItem in StidList)
             {
+                iIndex++;
                 string sStid = StidItem.stid;
 
                 string sDALConnStr = "M10VPN";
@@ -2515,55 +2532,55 @@ namespace M10Tools
 
                 //foreach (string itemtype in typeList)
                 //{ }
-                //foreach (string itemDelaytime in DelaytimeList)
-                //{
-                //    foreach (string itemCoefficient in CoefficientList)
-                //    {
-                //        ShowStatus(string.Format("[{0} {3}]Delaytime:{1} Coefficient:{2} ", sStid, itemDelaytime, itemCoefficient, "RTI"));
-                //        //todo 延時及係數迴圈
-                //        RtiDetail rd = new RtiDetail();
+                foreach (string itemDelaytime in DelaytimeList)
+                {
+                    foreach (string itemCoefficient in CoefficientList)
+                    {
+                        ShowStatus(string.Format("[{4}/{5}][{0} {3}]Delaytime:{1} Coefficient:{2} ", sStid, itemDelaytime, itemCoefficient, "RTI", iIndex.ToString(), StidList.Count.ToString()));
+                        //todo 延時及係數迴圈
+                        RtiDetail rd = new RtiDetail();
 
-                //        ssql = @" select * from RtiData2  
-                //            where station = '{0}' 
-                //            and ver = '{1}'
-                //            ";
+                        ssql = @" select * from RtiData2  
+                            where station = '{0}' 
+                            and ver = '{1}'
+                            ";
 
-                //        //延時判斷
-                //        if (itemDelaytime != "0")
-                //        {
-                //            ssql += "and raindelay > " + itemDelaytime;
-                //        }
-                //        ssql = string.Format(ssql, sStid, sVer);
-                //        List<RtiData2> wraList = dbDapper.Query<RtiData2>(ssql);
+                        //延時判斷
+                        if (itemDelaytime != "0")
+                        {
+                            ssql += "and raindelay > " + itemDelaytime;
+                        }
+                        ssql = string.Format(ssql, sStid, sVer);
+                        List<RtiData2> wraList = dbDapper.Query<RtiData2>(ssql);
 
-                //        //取得總筆數   
-                //        rd.totalcount = wraList.Count();
+                        //取得總筆數   
+                        rd.totalcount = wraList.Count();
 
-                //        //取得開始時間
-                //        rd.startdate = wraList.Min(s => s.date);
-                //        //取得結束時間
-                //        rd.enddate = wraList.Max(s => s.date);
+                        //取得開始時間
+                        rd.startdate = wraList.Min(s => s.date);
+                        //取得結束時間
+                        rd.enddate = wraList.Max(s => s.date);
 
-                //        RtiProc oRtiProc = new RtiProc(sVer, sStid, itemDelaytime, itemCoefficient, "RTI", sDALConnStr);
+                        RtiProc oRtiProc = new RtiProc(sVer, sStid, itemDelaytime, itemCoefficient, "RTI", sDALConnStr);
 
-                //        //進行計算
-                //        oRtiProc.RtiCal();
+                        //進行計算
+                        oRtiProc.RtiCal();
 
-                //        rd.station = sStid;
-                //        rd.delaytime = itemDelaytime;
-                //        rd.coefficient = itemCoefficient;
-                //        rd.version = "temp";
+                        rd.station = sStid;
+                        rd.delaytime = itemDelaytime;
+                        rd.coefficient = itemCoefficient;
+                        rd.version = "temp";
 
-                //        rd.rti10 = oRtiProc.dRTI10;
-                //        rd.rti30 = oRtiProc.dRTI30;
-                //        rd.rti50 = oRtiProc.dRTI50;
-                //        rd.rti70 = oRtiProc.dRTI70;
-                //        rd.rti90 = oRtiProc.dRTI90;
+                        rd.rti10 = oRtiProc.dRTI10;
+                        rd.rti30 = oRtiProc.dRTI30;
+                        rd.rti50 = oRtiProc.dRTI50;
+                        rd.rti70 = oRtiProc.dRTI70;
+                        rd.rti90 = oRtiProc.dRTI90;
 
-                //        dbDapper.Insert(rd);
+                        dbDapper.Insert(rd);
 
-                //    }
-                //}
+                    }
+                }
 
                 foreach (string itemDelaytime in DelaytimeList)
                 {
@@ -2641,12 +2658,12 @@ namespace M10Tools
              *    WeaRainArea直接匯入 RtiData2        
                 INSERT INTO [dbo].[RtiData2]
                 ([station],[ver],[raindelay],[Rtd6],[Rtd7],[Rtd8],[Rti6],[Rti7]
-                ,[Rti8],[Rti36],[Rti37],[Rti38],[date])
+                ,[Rti8],[Rti36],[Rti37],[Rti38],[R3],[date])
 
-                select STID,'20181026' as ver,RainHour,rt6,rt7,RT8
+                select STID,'20181031' as ver,RainHour,rt6,rt7,RT8
                 ,RT6*MaxRain as rti6,RT7*MaxRain as rti7,RT8*MaxRain as rti8
                 ,RT6*Max3Sum/3 as rti36,RT7*Max3Sum/3 as rti37,RT8*Max3Sum/3 as rti38
-                ,SUBSTRING(TimeStart,1,8) as date 
+                ,max3sum,SUBSTRING(TimeStart,1,8) as date 
                 from WeaRainArea 
              
             */
