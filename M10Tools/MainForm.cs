@@ -1630,8 +1630,10 @@ namespace M10Tools
             List<dynamic> StidList = dbDapper.Query(ssql);
 
             DateTime dttest = DateTime.Now;
+            int iIndex = 0;
             foreach (var StidItem in StidList)
             {
+                iIndex++;
                 //雨量站
                 string sStid = StidItem.stid;
                 //sStid = "C0A530";
@@ -1671,9 +1673,9 @@ namespace M10Tools
                         dbDapper.Update(dsl_new);
                     }
 
-                    DateTime dtStart = DateTime.ParseExact("1987010100", "yyyyMMddHH", null);
+                    DateTime dtStart = DateTime.ParseExact("2018010100", "yyyyMMddHH", null);
                     //dtStart = DateTime.ParseExact("2017060200", "yyyyMMddHH", null);
-                    DateTime dtFinish = DateTime.ParseExact("2017123123", "yyyyMMddHH", null);
+                    DateTime dtFinish = DateTime.ParseExact("2018123123", "yyyyMMddHH", null);
                     //dtFinish = DateTime.ParseExact("2009080000", "yyyyMMddHH", null);
 
 
@@ -1700,7 +1702,7 @@ namespace M10Tools
                         }
 
 
-                        ShowStatus(string.Format("{0}-{1}", sStid, i.ToString("yyyyMMddHH")));
+                        ShowStatus(string.Format("[{2}/{3}]{0}-{1}", sStid, i.ToString("yyyyMMddHH"), iIndex.ToString(), StidList.Count.ToString()));
 
 
                         //非雨場且時雨量>4，則開始記錄雨場起始
