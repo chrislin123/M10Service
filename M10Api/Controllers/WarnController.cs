@@ -43,7 +43,16 @@ namespace M10Api.Controllers
             var AlertUpdateTm = dbDapper.ExecuteScale(@" select value from LRTIAlertMail where type = 'altm' ");
             ViewBag.forecastdate = AlertUpdateTm == null ? "" : AlertUpdateTm.ToString();
 
-            string ssql = @" select * from LRTIAlert where status = '{0}' order by country,town ";
+            string ssql = @" select LRTIAlert.*, 
+                LRTIAlertRefData.FlowWarning,
+                        LRTIAlertRefData.Rt_70,
+                        LRTIAlertRefData.R3_70,
+                        LRTIAlertRefData.Rt_50,
+                        LRTIAlertRefData.R3_50
+                from LRTIAlert 
+                left join LRTIAlertRefData on LRTIAlert.STID = LRTIAlertRefData.STID
+
+                where status = '{0}' order by country,town ";
             //新增
             var dataI = dbDapper.Query(string.Format(ssql, "I"));
             //持續
@@ -173,6 +182,12 @@ namespace M10Api.Controllers
             dt.Columns.Add("RT");
             dt.Columns.Add("STID");
             dt.Columns.Add("STNAME");
+            dt.Columns.Add("FlowWarning");
+            dt.Columns.Add("Rt_70");
+            dt.Columns.Add("R3_70");
+            dt.Columns.Add("Rt_50");
+            dt.Columns.Add("R3_50");
+
 
             foreach (var item in data)
             {
@@ -190,6 +205,11 @@ namespace M10Api.Controllers
                 NewRow["RT"] = item.RT;
                 NewRow["STID"] = item.STID;
                 NewRow["STNAME"] = item.STNAME;
+                NewRow["FlowWarning"] = item.FlowWarning;
+                NewRow["Rt_70"] = item.Rt_70;
+                NewRow["R3_70"] = item.R3_70;
+                NewRow["Rt_50"] = item.Rt_50;
+                NewRow["R3_50"] = item.R3_50;
 
                 dt.Rows.Add(NewRow);
             }
@@ -284,7 +304,7 @@ namespace M10Api.Controllers
 
             string sStartDate = dtStart.ToString("yyyy-MM-ddTHH:mm:ss");
             string sEndDate = dtEnd.ToString("yyyy-MM-ddTHH:mm:ss");
-            string ssql = @"  select LRTIAlertHis.*,StationData.STNAME
+            string ssql = @"  select LRTIAlertHis.*,StationData.STNAME,
                         LRTIAlertRefData.FlowWarning,
                         LRTIAlertRefData.Rt_70,
                         LRTIAlertRefData.R3_70,
@@ -297,7 +317,8 @@ namespace M10Api.Controllers
                         and RecTime between '{0}' and '{1}'
                         order by RecTime,country,town  ";
 
-            var data = dbDapper.Query(string.Format(ssql, sStartDate, sEndDate));
+            ssql = string.Format(ssql, sStartDate, sEndDate);
+            var data = dbDapper.Query(ssql);
             ResultList.AddRange(data);
 
             foreach (var item in ResultList)
