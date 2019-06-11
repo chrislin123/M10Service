@@ -1128,7 +1128,7 @@ namespace M10Tools
 
                 foreach (DataRow dr in dt.Rows)
                 {
-                    
+
 
                     WeaRainData wd = new WeaRainData();
                     wd.STID = dr["stno"].ToString();
@@ -2128,8 +2128,10 @@ namespace M10Tools
             List<dynamic> StidList = dbDapper.Query(ssql);
 
             DateTime dttest = DateTime.Now;
+            int iIndex = 0;
             foreach (var StidItem in StidList)
             {
+                iIndex++;
                 //雨量站
                 string sStid = StidItem.stid;
 
@@ -2199,7 +2201,7 @@ namespace M10Tools
                     List<string[]> datas = new List<string[]>();
                     foreach (WeaRainArea item in wrs)
                     {
-                        ShowStatus(string.Format("{0}-{1}", sStid, item.TimeStart));
+                        ShowStatus(string.Format("[{2}/{3}]{0}-{1}", sStid, item.TimeStart, iIndex.ToString(), StidList.Count.ToString()));
 
                         int iTimeStart = Convert.ToInt32(item.TimeStart);
                         int iTimeEnd = Convert.ToInt32(item.TimeEnd);
@@ -3173,8 +3175,8 @@ namespace M10Tools
                 {
                     ssql += " and raindelay > " + sdelaytime + " ";
                 }
-                
-               
+
+
                 if (stype == "RTI3")
                 {
                     if (sCoefficient == "6") ssql += " order by rti36 ";
@@ -3192,7 +3194,7 @@ namespace M10Tools
                     DataRow newdr = dt_rti.NewRow();
 
                     newdr["index"] = iIndex.ToString();
-                    newdr["station"] = dr["station"].ToString();                 
+                    newdr["station"] = dr["station"].ToString();
                     if (stype == "RTI3")
                     {
                         if (sCoefficient == "6") newdr["rti"] = dr["rti36"].ToString();
