@@ -50,7 +50,7 @@ namespace M10Api.Controllers
                         LRTIAlertRefData.Rt_50,
                         LRTIAlertRefData.R3_50
                 from LRTIAlert 
-                left join LRTIAlertRefData on LRTIAlert.STID = LRTIAlertRefData.STID
+                left join LRTIAlertRefData on LRTIAlert.STID = LRTIAlertRefData.STID and LRTIAlertRefData.ver = 'now'
 
                 where status = '{0}' order by country,town ";
             //新增
