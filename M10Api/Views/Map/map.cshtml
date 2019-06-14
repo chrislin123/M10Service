@@ -1,36 +1,36 @@
 ﻿@{
-  ViewBag.Title = "降雨已達崩塌警戒即時地圖資料";
-  Layout = "~/Views/Shared/_WarnLayout.cshtml";
+    ViewBag.Title = "降雨已達崩塌警戒即時地圖資料";
+    Layout = "~/Views/Shared/_WarnLayout.cshtml";
 }
 
 @section Styles {
-  <style type="text/css">
-      body, html {
-        height: 100%;
-        width: 100%;
-      }
+    <style type="text/css">
+        body, html {
+            height: 100%;
+            width: 100%;
+        }
 
-      #map {
-        height: 700px;
-        background: black;
-      }
-  </style>
+        #map {
+            height: 700px;
+            background: black;
+        }
+    </style>
 }
 
 <div class="row">
-  <div class="col-md-12">
-    <h1 class="page-header">
-      降雨已達崩塌警戒即時地圖資料 <small>預報時間：@ViewBag.forecastdate</small>
-    </h1>
-  </div>
+    <div class="col-md-12">
+        <h1 class="page-header">
+            降雨已達崩塌警戒即時地圖資料 <small>預報時間：@ViewBag.forecastdate</small>
+        </h1>
+    </div>
 </div>
 <div id="map" style="width:100%;" @*style="height:600px;"*@></div>
 <div class="container-fluid">
-  <div class="row">
-    <div class="col col-centered">
+    <div class="row">
+        <div class="col col-centered">
 
+        </div>
     </div>
-  </div>
 </div>
 
 <script type="text/javascript">
@@ -192,7 +192,7 @@
       });
     }
     catch (err) {
-      
+
     }
   }
 
@@ -214,9 +214,9 @@
           alert('error');
         },
       });
-      
+
       polyList.forEach(function (e, i) {
-        
+
         var points = e.points;
         //點位集合
         var triangleCoords = [];
@@ -240,7 +240,7 @@
 
     }
     catch (err) {
-      
+
     }
 
 
@@ -250,7 +250,7 @@
 
 
   function myrefresh() {
-    initMap();    
+    initMap();
   }
 
   $(function () {
