@@ -37,6 +37,13 @@ namespace M10.lib
             public const string C = "黃升紅";
             public const string O = "紅降黃";
             public const string D = "解除黃色";
+
+            public const string A1 = "黃色";
+            public const string A2 = "澄色";
+            public const string A3 = "紅色";
+            public const string AD = "解除";
+
+
         }
 
         public static class DataStaticLogType
