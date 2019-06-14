@@ -50,29 +50,32 @@ namespace M10Api.Controllers
                         LRTIAlertRefData.Rt_50,
                         LRTIAlertRefData.R3_50
                 from LRTIAlert 
-                left join LRTIAlertRefData on LRTIAlert.STID = LRTIAlertRefData.STID and LRTIAlertRefData.ver = 'now'
+                left join LRTIAlertRefData on LRTIAlert.villageID = LRTIAlertRefData.villageID and LRTIAlertRefData.ver = 'now'
 
                 where status = '{0}' order by country,town ";
-            //新增
-            var dataI = dbDapper.Query(string.Format(ssql, "I"));
-            //持續
-            var dataC = dbDapper.Query(string.Format(ssql, "C"));
+            //黃色
+            var dataA1 = dbDapper.Query(string.Format(ssql, "A1"));
+            //橙色
+            var dataA2 = dbDapper.Query(string.Format(ssql, "A2"));
+            //紅色
+            var dataA3 = dbDapper.Query(string.Format(ssql, "A3"));
             //解除
-            var dataD = dbDapper.Query(string.Format(ssql, "D"));
+            var dataAD = dbDapper.Query(string.Format(ssql, "AD"));
 
 
             List<dynamic> data = new List<dynamic>();
-            data.AddRange(dataI);
-            data.AddRange(dataC);
-            data.AddRange(dataD);
+            data.AddRange(dataA1);
+            data.AddRange(dataA2);
+            data.AddRange(dataA3);
+            data.AddRange(dataAD);
 
             foreach (var item in data)
             {
                 //處理狀態改中文顯示
-                if (item.status == "I") item.status = M10Const.AlertStatus.I;
-                if (item.status == "C") item.status = M10Const.AlertStatus.C;
-                if (item.status == "O") item.status = M10Const.AlertStatus.O;
-                if (item.status == "D") item.status = M10Const.AlertStatus.D;
+                if (item.status == "A1") item.status = M10Const.AlertStatus.A1;
+                if (item.status == "A2") item.status = M10Const.AlertStatus.A2;
+                if (item.status == "A3") item.status = M10Const.AlertStatus.A3;
+                if (item.status == "AD") item.status = M10Const.AlertStatus.AD;
 
                 //處理ELRTI取至小數第二位
                 decimal dELRTI = 0;
@@ -324,10 +327,10 @@ namespace M10Api.Controllers
             foreach (var item in ResultList)
             {
                 //處理狀態改中文顯示
-                if (item.status == "I") item.status = M10Const.AlertStatus.I;
-                if (item.status == "C") item.status = M10Const.AlertStatus.C;
-                if (item.status == "O") item.status = M10Const.AlertStatus.O;
-                if (item.status == "D") item.status = M10Const.AlertStatus.D;
+                if (item.status == "A1") item.status = M10Const.AlertStatus.A1;
+                if (item.status == "A2") item.status = M10Const.AlertStatus.A2;
+                if (item.status == "A3") item.status = M10Const.AlertStatus.A3;
+                if (item.status == "AD") item.status = M10Const.AlertStatus.AD;
 
 
                 //處理ELRTI取至小數第二位
