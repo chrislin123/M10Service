@@ -2380,40 +2380,7 @@ namespace M10Tools
 
             }
 
-
-            //Boolean bSuccess = de.ExportListToExcel(sSaveFilePath, head, datas);
-
             ShowStatus("完成");
-            //if (File.Exists(sSaveFilePath)) File.Delete(sSaveFilePath);
-
-
-            //List<string> head = new List<string>();
-            //head.Add("test");
-            //List<string[]> datas = new List<string[]>();
-
-
-            //for (int i = 0; i < 500000; i++)
-            //{
-            //    ShowStatus(i.ToString());
-            //    List<string> temp = new List<string>();
-            //    temp.Add(i.ToString());
-
-            //    datas.Add(temp.ToArray());
-            //}
-
-
-
-
-            //Boolean bSuccess = de.ExportBigDataToCsv(sSaveFilePath, dt);
-            //Boolean bSuccess = de.ExportListToExcel(sSaveFilePath, head, datas);
-
-
-
-
-
-
-
-
 
             ssql = "";
         }
@@ -2422,11 +2389,6 @@ namespace M10Tools
 
         private void button14_Click(object sender, EventArgs e)
         {
-
-
-
-
-
             string sTempPath = @"c:\temp\WeaRainArea\";
             //建立資料夾
             Directory.CreateDirectory(sTempPath);
