@@ -84,6 +84,8 @@ namespace M10AlertLRTI
             {
                 //DateTime dd = Convert.ToDateTime("2017-05-16T10:31:14");
 
+                UpdateLRTIAlertRainData("");
+
                 //紀錄資料更新時間(2017-05-16T10:31:14)
                 LRTIAlertUpdateTime();
 
@@ -923,31 +925,31 @@ namespace M10AlertLRTI
                 List<LRTIAlert> AlertList = dbDapper.Query<LRTIAlert>(ssql);
                 foreach (LRTIAlert AlertItem in AlertList)
                 {
-                    string sSTID = AlertItem.STID;
 
-                    ssql = " select * from RunTimeRainData where STID = '" + sSTID + "' ";
+                    //1080614 有狀態異動才改變數值
+                    //string sSTID = AlertItem.STID;
 
-
-                    RunTimeRainData RuntimeData = dbDapper.QuerySingleOrDefault<RunTimeRainData>(ssql);
-                    if (RuntimeData != null)
-                    {
-                        if (RuntimeData.STATUS == "-99")
-                        {
-                            AlertItem.HOUR1 = "異常";
-                            AlertItem.HOUR2 = "異常";
-                            AlertItem.HOUR3 = "異常";
-                            AlertItem.RT = "異常";
-                            AlertItem.LRTI = "異常";
-                        }
-                        else
-                        {
-                            AlertItem.HOUR1 = RuntimeData.RAIN;
-                            AlertItem.HOUR2 = RuntimeData.HOUR2;
-                            AlertItem.HOUR3 = RuntimeData.HOUR3;
-                            AlertItem.RT = RuntimeData.RT;
-                            AlertItem.LRTI = RuntimeData.LRTI;
-                        }
-                    }
+                    //ssql = " select * from RunTimeRainData where STID = '" + sSTID + "' ";
+                    //RunTimeRainData RuntimeData = dbDapper.QuerySingleOrDefault<RunTimeRainData>(ssql);
+                    //if (RuntimeData != null)
+                    //{
+                    //    if (RuntimeData.STATUS == "-99")
+                    //    {
+                    //        AlertItem.HOUR1 = "異常";
+                    //        AlertItem.HOUR2 = "異常";
+                    //        AlertItem.HOUR3 = "異常";
+                    //        AlertItem.RT = "異常";
+                    //        AlertItem.LRTI = "異常";
+                    //    }
+                    //    else
+                    //    {
+                    //        AlertItem.HOUR1 = RuntimeData.RAIN;
+                    //        AlertItem.HOUR2 = RuntimeData.HOUR2;
+                    //        AlertItem.HOUR3 = RuntimeData.HOUR3;
+                    //        AlertItem.RT = RuntimeData.RT;
+                    //        AlertItem.LRTI = RuntimeData.LRTI;
+                    //    }
+                    //}
 
 
                     //判斷註記解除及調升
@@ -964,12 +966,14 @@ namespace M10AlertLRTI
                         if (AlertItem.status == "A1" && sLRTIAlertStatus != "A1")
                         {
                             AlertItem.status = sLRTIAlertStatus;
+                            UpdateLRTIAlertRainData(AlertItem.villageid);
                         }
 
                         //判斷橙色(A2)調升為紅色(A3)
                         if (AlertItem.status == "A2" && sLRTIAlertStatus == "A3")
                         {
                             AlertItem.status = sLRTIAlertStatus;
+                            UpdateLRTIAlertRainData(AlertItem.villageid);
                         }
 
                         AlertItem.nowwarm = "Y";
@@ -1010,6 +1014,7 @@ namespace M10AlertLRTI
                         AlertItem.status = sStstus;
                         AlertItem.nowwarm = "N";
                         AlertItem.statustime = sDt;
+                        UpdateLRTIAlertRainData(AlertItem.villageid);
                     }
 
                     //更新
@@ -1044,6 +1049,7 @@ namespace M10AlertLRTI
                     {
                         AlertItem.status = sStstus;
                         AlertItem.statustime = sDt;
+                        UpdateLRTIAlertRainData(AlertItem.villageid);
                     }
 
                     //更新
@@ -1077,6 +1083,7 @@ namespace M10AlertLRTI
                     {
                         AlertItem.status = sStstus;
                         AlertItem.statustime = sDt;
+                        UpdateLRTIAlertRainData(AlertItem.villageid);
                     }
 
                     //更新
@@ -1141,6 +1148,54 @@ namespace M10AlertLRTI
             {
                 logger.Error(ex, "");
             }
+        }
+
+
+        /// <summary>
+        /// 更新警戒的雨量資料
+        /// </summary>
+        /// <param name="villageID"></param>
+        private void UpdateLRTIAlertRainData(string villageID)
+        {
+
+            ssql = @"
+                select * from  LRTIAlert where villageid = '{0}'           
+                ";
+            ssql = string.Format(ssql, villageID);
+            LRTIAlert AlertItem = dbDapper.QuerySingleOrDefault<LRTIAlert>(ssql);
+
+            if (AlertItem != null)
+            {
+                ssql = " select * from RunTimeRainData where STID = '{0}' ";
+                ssql = string.Format(ssql, AlertItem.STID);
+                RunTimeRainData RuntimeData = dbDapper.QuerySingleOrDefault<RunTimeRainData>(ssql);
+                if (RuntimeData != null)
+                {
+                    if (RuntimeData.STATUS == "-99")
+                    {
+                        AlertItem.HOUR1 = "異常";
+                        AlertItem.HOUR2 = "異常";
+                        AlertItem.HOUR3 = "異常";
+                        AlertItem.RT = "異常";
+                        AlertItem.LRTI = "異常";
+                    }
+                    else
+                    {
+                        AlertItem.HOUR1 = RuntimeData.RAIN;
+                        AlertItem.HOUR2 = RuntimeData.HOUR2;
+                        AlertItem.HOUR3 = RuntimeData.HOUR3;
+                        AlertItem.RT = RuntimeData.RT;
+                        AlertItem.LRTI = RuntimeData.LRTI;
+                    }
+                }
+
+                dbDapper.Update(AlertItem);
+
+            }
+
+
+
+
         }
 
         private string CheckLRTIAlertStatus_108(string villageID)
