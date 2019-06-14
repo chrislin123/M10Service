@@ -65,6 +65,7 @@ namespace M10.lib.model
 
         public string villageid { get; set; }
 
+        public string ReleaseRTime { get; set; }
     }
 
     [Table("LRTIAlertMail")]
@@ -117,6 +118,7 @@ namespace M10.lib.model
 
         public string villageid { get; set; }
 
+        public string ReleaseRTime { get; set; }
     }
 
     [Table("RainStation")]

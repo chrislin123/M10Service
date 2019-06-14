@@ -84,7 +84,7 @@ namespace M10AlertLRTI
             {
                 //DateTime dd = Convert.ToDateTime("2017-05-16T10:31:14");
 
-                UpdateLRTIAlertRainData("");
+                //UpdateLRTIAlertRainData("");
 
                 //紀錄資料更新時間(2017-05-16T10:31:14)
                 LRTIAlertUpdateTime();
@@ -191,6 +191,7 @@ namespace M10AlertLRTI
                         oHis.nowwarm = item.nowwarm;
                         oHis.statustime = item.statustime;
                         oHis.villageid = item.villageid;
+                        oHis.ReleaseRTime = item.ReleaseRTime;
 
                         HisData.Add(oHis);
                     }
@@ -926,6 +927,7 @@ namespace M10AlertLRTI
                 foreach (LRTIAlert AlertItem in AlertList)
                 {
 
+                    LRTIAlert LRTIAlertItem = AlertItem;
                     //1080614 有狀態異動才改變數值
                     //string sSTID = AlertItem.STID;
 
@@ -953,32 +955,32 @@ namespace M10AlertLRTI
 
 
                     //判斷註記解除及調升
-                    string sLRTIAlertStatus = CheckLRTIAlertStatus_108(AlertItem.villageid);
+                    string sLRTIAlertStatus = CheckLRTIAlertStatus_108(LRTIAlertItem.villageid);
                     if (sLRTIAlertStatus == "") //解除註記(還沒正式解除警戒)
                     {
-                        AlertItem.nowwarm = "Y";
+                        LRTIAlertItem.nowwarm = "Y";
                         //更新
-                        dbDapper.Update<LRTIAlert>(AlertItem);
+                        dbDapper.Update<LRTIAlert>(LRTIAlertItem);
                     }
                     else //持續警戒
                     {
                         //判斷黃色(A1)調升為橙色(A2)或紅色(A3)
-                        if (AlertItem.status == "A1" && sLRTIAlertStatus != "A1")
+                        if (LRTIAlertItem.status == "A1" && sLRTIAlertStatus != "A1")
                         {
-                            AlertItem.status = sLRTIAlertStatus;
-                            UpdateLRTIAlertRainData(AlertItem.villageid);
+                            LRTIAlertItem.status = sLRTIAlertStatus;
+                            UpdateLRTIAlertRainData(ref LRTIAlertItem);
                         }
 
                         //判斷橙色(A2)調升為紅色(A3)
-                        if (AlertItem.status == "A2" && sLRTIAlertStatus == "A3")
+                        if (LRTIAlertItem.status == "A2" && sLRTIAlertStatus == "A3")
                         {
-                            AlertItem.status = sLRTIAlertStatus;
-                            UpdateLRTIAlertRainData(AlertItem.villageid);
+                            LRTIAlertItem.status = sLRTIAlertStatus;
+                            UpdateLRTIAlertRainData(ref LRTIAlertItem);
                         }
 
-                        AlertItem.nowwarm = "Y";
+                        LRTIAlertItem.nowwarm = "Y";
                         //更新
-                        dbDapper.Update<LRTIAlert>(AlertItem);
+                        dbDapper.Update<LRTIAlert>(LRTIAlertItem);
                     }
                 }
 
@@ -991,34 +993,35 @@ namespace M10AlertLRTI
                 AlertList = dbDapper.Query<LRTIAlert>(string.Format(sqlQuery, "A1"));
                 foreach (LRTIAlert AlertItem in AlertList)
                 {
+                    LRTIAlert LRTIAlertItem = AlertItem;
                     string sStstus = "";
 
                     //同一狀態持續三個小時以上發布
-                    if (AlertItem.nowwarm == "Y")
+                    if (LRTIAlertItem.nowwarm == "Y")
                     {
                         //判斷歷史資料三小時(用3.5小時切)同一個狀態維持三個小時以上
-                        int iTemp = dbDapper.QueryTotalCount(string.Format(sqlCheck, AlertItem.villageid, sDtd35, "A1"));
+                        int iTemp = dbDapper.QueryTotalCount(string.Format(sqlCheck, LRTIAlertItem.villageid, sDtd35, "A1"));
                         if (iTemp >= 3)
                         {
                             //判斷是否符合調降規則，如果符合變更狀態(黃色(A1)=>解除警戒(AD))
-                            if (CheckLRTIAlertStatusDowngrade_108(AlertItem.villageid) == true)
+                            if (CheckLRTIAlertStatusDowngrade_108(LRTIAlertItem.villageid) == true)
                             {
                                 sStstus = "AD";
                             }
                         }
                     }
 
-                    AlertItem.statuscheck = "Y";
+                    LRTIAlertItem.statuscheck = "Y";
                     if (sStstus != "")
                     {
-                        AlertItem.status = sStstus;
-                        AlertItem.nowwarm = "N";
-                        AlertItem.statustime = sDt;
-                        UpdateLRTIAlertRainData(AlertItem.villageid);
+                        LRTIAlertItem.status = sStstus;
+                        LRTIAlertItem.nowwarm = "N";
+                        LRTIAlertItem.statustime = sDt;
+                        UpdateLRTIAlertRainData(ref LRTIAlertItem);
                     }
 
                     //更新
-                    dbDapper.Update<LRTIAlert>(AlertItem);
+                    dbDapper.Update<LRTIAlert>(LRTIAlertItem);
                 }
 
 
@@ -1027,33 +1030,34 @@ namespace M10AlertLRTI
                 AlertList = dbDapper.Query<LRTIAlert>(string.Format(sqlQuery, "A2"));
                 foreach (LRTIAlert AlertItem in AlertList)
                 {
+                    LRTIAlert LRTIAlertItem = AlertItem;
                     string sStstus = "";
 
                     //同一狀態持續三個小時以上發布
-                    if (AlertItem.nowwarm == "Y")
+                    if (LRTIAlertItem.nowwarm == "Y")
                     {
                         //判斷歷史資料三小時(用3.5小時切)同一個狀態維持三個小時以上
-                        int iTemp = dbDapper.QueryTotalCount(string.Format(sqlCheck, AlertItem.villageid, sDtd35, "A2"));
+                        int iTemp = dbDapper.QueryTotalCount(string.Format(sqlCheck, LRTIAlertItem.villageid, sDtd35, "A2"));
                         if (iTemp >= 3)
                         {
                             //判斷是否符合調降規則，如果符合變更狀態(澄色(A2)=>黃色(A1))
-                            if (CheckLRTIAlertStatusDowngrade_108(AlertItem.villageid) == true)
+                            if (CheckLRTIAlertStatusDowngrade_108(LRTIAlertItem.villageid) == true)
                             {
                                 sStstus = "A1";
                             }
                         }
                     }
 
-                    AlertItem.statuscheck = "Y";
+                    LRTIAlertItem.statuscheck = "Y";
                     if (sStstus != "")
                     {
-                        AlertItem.status = sStstus;
-                        AlertItem.statustime = sDt;
-                        UpdateLRTIAlertRainData(AlertItem.villageid);
+                        LRTIAlertItem.status = sStstus;
+                        LRTIAlertItem.statustime = sDt;
+                        UpdateLRTIAlertRainData(ref LRTIAlertItem);
                     }
 
                     //更新
-                    dbDapper.Update<LRTIAlert>(AlertItem);
+                    dbDapper.Update<LRTIAlert>(LRTIAlertItem);
                 }
 
                 //處理狀態紅色(A3)
@@ -1062,32 +1066,33 @@ namespace M10AlertLRTI
                 foreach (LRTIAlert AlertItem in AlertList)
                 {
                     string sStstus = "";
+                    LRTIAlert LRTIAlertItem = AlertItem;
 
                     //同一狀態持續三個小時以上發布
-                    if (AlertItem.nowwarm == "Y")
+                    if (LRTIAlertItem.nowwarm == "Y")
                     {
                         //判斷歷史資料三小時(用3.5小時切)同一個狀態維持三個小時以上
-                        int iTemp = dbDapper.QueryTotalCount(string.Format(sqlCheck, AlertItem.villageid, sDtd35, "A3"));
+                        int iTemp = dbDapper.QueryTotalCount(string.Format(sqlCheck, LRTIAlertItem.villageid, sDtd35, "A3"));
                         if (iTemp >= 3)
                         {
                             //判斷是否符合調降規則，如果符合變更狀態(紅色(A3)=>黃色(A1))
-                            if (CheckLRTIAlertStatusDowngrade_108(AlertItem.villageid) == true)
+                            if (CheckLRTIAlertStatusDowngrade_108(LRTIAlertItem.villageid) == true)
                             {
                                 sStstus = "A1";
                             }
                         }
                     }
 
-                    AlertItem.statuscheck = "Y";
+                    LRTIAlertItem.statuscheck = "Y";
                     if (sStstus != "")
                     {
-                        AlertItem.status = sStstus;
-                        AlertItem.statustime = sDt;
-                        UpdateLRTIAlertRainData(AlertItem.villageid);
+                        LRTIAlertItem.status = sStstus;
+                        LRTIAlertItem.statustime = sDt;
+                        UpdateLRTIAlertRainData(ref LRTIAlertItem);
                     }
 
                     //更新
-                    dbDapper.Update<LRTIAlert>(AlertItem);
+                    dbDapper.Update<LRTIAlert>(LRTIAlertItem);
                 }
 
                 //處理狀態(新案)
@@ -1138,6 +1143,7 @@ namespace M10AlertLRTI
                         AlertItem.statustime = sDt;
                         AlertItem.statuscheck = "Y";
                         AlertItem.villageid = RumtimeItem.villageID;
+                        AlertItem.ReleaseRTime = RumtimeItem.RTime;
 
                         dbDapper.Insert(AlertItem);
                     }
@@ -1155,13 +1161,13 @@ namespace M10AlertLRTI
         /// 更新警戒的雨量資料
         /// </summary>
         /// <param name="villageID"></param>
-        private void UpdateLRTIAlertRainData(string villageID)
+        private void UpdateLRTIAlertRainData(ref LRTIAlert LRTIAlertItem)
         {
-
+            
             ssql = @"
                 select * from  LRTIAlert where villageid = '{0}'           
                 ";
-            ssql = string.Format(ssql, villageID);
+            ssql = string.Format(ssql, LRTIAlertItem.villageid);
             LRTIAlert AlertItem = dbDapper.QuerySingleOrDefault<LRTIAlert>(ssql);
 
             if (AlertItem != null)
@@ -1173,27 +1179,26 @@ namespace M10AlertLRTI
                 {
                     if (RuntimeData.STATUS == "-99")
                     {
-                        AlertItem.HOUR1 = "異常";
-                        AlertItem.HOUR2 = "異常";
-                        AlertItem.HOUR3 = "異常";
-                        AlertItem.RT = "異常";
-                        AlertItem.LRTI = "異常";
+                        LRTIAlertItem.HOUR1 = "異常";
+                        LRTIAlertItem.HOUR2 = "異常";
+                        LRTIAlertItem.HOUR3 = "異常";
+                        LRTIAlertItem.RT = "異常";
+                        LRTIAlertItem.LRTI = "異常";
                     }
                     else
                     {
-                        AlertItem.HOUR1 = RuntimeData.RAIN;
-                        AlertItem.HOUR2 = RuntimeData.HOUR2;
-                        AlertItem.HOUR3 = RuntimeData.HOUR3;
-                        AlertItem.RT = RuntimeData.RT;
-                        AlertItem.LRTI = RuntimeData.LRTI;
+                        LRTIAlertItem.HOUR1 = RuntimeData.RAIN;
+                        LRTIAlertItem.HOUR2 = RuntimeData.HOUR2;
+                        LRTIAlertItem.HOUR3 = RuntimeData.HOUR3;
+                        LRTIAlertItem.RT = RuntimeData.RT;
+                        LRTIAlertItem.LRTI = RuntimeData.LRTI;
+                        LRTIAlertItem.ReleaseRTime = RuntimeData.RTime;
                     }
                 }
 
                 dbDapper.Update(AlertItem);
 
             }
-
-
 
 
         }
