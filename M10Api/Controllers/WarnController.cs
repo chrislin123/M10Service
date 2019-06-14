@@ -72,6 +72,12 @@ namespace M10Api.Controllers
             foreach (var item in data)
             {
                 //處理狀態改中文顯示
+                if (item.status == "I") item.status = M10Const.AlertStatus.I;
+                if (item.status == "C") item.status = M10Const.AlertStatus.C;
+                if (item.status == "O") item.status = M10Const.AlertStatus.O;
+                if (item.status == "D") item.status = M10Const.AlertStatus.D;
+
+                //108 年
                 if (item.status == "A1") item.status = M10Const.AlertStatus.A1;
                 if (item.status == "A2") item.status = M10Const.AlertStatus.A2;
                 if (item.status == "A3") item.status = M10Const.AlertStatus.A3;
@@ -307,15 +313,14 @@ namespace M10Api.Controllers
 
             string sStartDate = dtStart.ToString("yyyy-MM-ddTHH:mm:ss");
             string sEndDate = dtEnd.ToString("yyyy-MM-ddTHH:mm:ss");
-            string ssql = @"  select LRTIAlertHis.*,StationData.STNAME,
+            string ssql = @"  select LRTIAlertHis.*,
                         LRTIAlertRefData.FlowWarning,
                         LRTIAlertRefData.Rt_70,
                         LRTIAlertRefData.R3_70,
                         LRTIAlertRefData.Rt_50,
                         LRTIAlertRefData.R3_50
-                        from LRTIAlertHis
-                        left join StationData on LRTIAlertHis.STID = StationData.STID
-                        left join LRTIAlertRefData on LRTIAlertHis.STID = LRTIAlertRefData.STID
+                        from LRTIAlertHis                        
+                        left join LRTIAlertRefData on LRTIAlertHis.villageID = LRTIAlertRefData.villageID and LRTIAlertRefData.ver = 'now'
                         where 1=1
                         and RecTime between '{0}' and '{1}'
                         order by RecTime,country,town  ";
@@ -327,10 +332,17 @@ namespace M10Api.Controllers
             foreach (var item in ResultList)
             {
                 //處理狀態改中文顯示
+                if (item.status == "I") item.status = M10Const.AlertStatus.I;
+                if (item.status == "C") item.status = M10Const.AlertStatus.C;
+                if (item.status == "O") item.status = M10Const.AlertStatus.O;
+                if (item.status == "D") item.status = M10Const.AlertStatus.D;
+
+                //108 年
                 if (item.status == "A1") item.status = M10Const.AlertStatus.A1;
                 if (item.status == "A2") item.status = M10Const.AlertStatus.A2;
                 if (item.status == "A3") item.status = M10Const.AlertStatus.A3;
                 if (item.status == "AD") item.status = M10Const.AlertStatus.AD;
+
 
 
                 //處理ELRTI取至小數第二位
