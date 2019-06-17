@@ -929,29 +929,29 @@ namespace M10AlertLRTI
 
                     LRTIAlert LRTIAlertItem = AlertItem;
                     //1080614 有狀態異動才改變數值
-                    //string sSTID = AlertItem.STID;
+                    string sSTID = AlertItem.STID;
 
-                    //ssql = " select * from RunTimeRainData where STID = '" + sSTID + "' ";
-                    //RunTimeRainData RuntimeData = dbDapper.QuerySingleOrDefault<RunTimeRainData>(ssql);
-                    //if (RuntimeData != null)
-                    //{
-                    //    if (RuntimeData.STATUS == "-99")
-                    //    {
-                    //        AlertItem.HOUR1 = "異常";
-                    //        AlertItem.HOUR2 = "異常";
-                    //        AlertItem.HOUR3 = "異常";
-                    //        AlertItem.RT = "異常";
-                    //        AlertItem.LRTI = "異常";
-                    //    }
-                    //    else
-                    //    {
-                    //        AlertItem.HOUR1 = RuntimeData.RAIN;
-                    //        AlertItem.HOUR2 = RuntimeData.HOUR2;
-                    //        AlertItem.HOUR3 = RuntimeData.HOUR3;
-                    //        AlertItem.RT = RuntimeData.RT;
-                    //        AlertItem.LRTI = RuntimeData.LRTI;
-                    //    }
-                    //}
+                    ssql = " select * from RunTimeRainData where STID = '" + sSTID + "' ";
+                    RunTimeRainData RuntimeData = dbDapper.QuerySingleOrDefault<RunTimeRainData>(ssql);
+                    if (RuntimeData != null)
+                    {
+                        if (RuntimeData.STATUS == "-99")
+                        {
+                            AlertItem.HOUR1 = "異常";
+                            AlertItem.HOUR2 = "異常";
+                            AlertItem.HOUR3 = "異常";
+                            AlertItem.RT = "異常";
+                            AlertItem.LRTI = "異常";
+                        }
+                        else
+                        {
+                            AlertItem.HOUR1 = RuntimeData.RAIN;
+                            AlertItem.HOUR2 = RuntimeData.HOUR2;
+                            AlertItem.HOUR3 = RuntimeData.HOUR3;
+                            AlertItem.RT = RuntimeData.RT;
+                            AlertItem.LRTI = RuntimeData.LRTI;
+                        }
+                    }
 
 
                     //判斷註記解除及調升
@@ -968,14 +968,14 @@ namespace M10AlertLRTI
                         if (LRTIAlertItem.status == "A1" && sLRTIAlertStatus != "A1")
                         {
                             LRTIAlertItem.status = sLRTIAlertStatus;
-                            UpdateLRTIAlertRainData(ref LRTIAlertItem);
+                            //UpdateLRTIAlertRainData(ref LRTIAlertItem);
                         }
 
                         //判斷橙色(A2)調升為紅色(A3)
                         if (LRTIAlertItem.status == "A2" && sLRTIAlertStatus == "A3")
                         {
                             LRTIAlertItem.status = sLRTIAlertStatus;
-                            UpdateLRTIAlertRainData(ref LRTIAlertItem);
+                            //UpdateLRTIAlertRainData(ref LRTIAlertItem);
                         }
 
                         LRTIAlertItem.nowwarm = "Y";
@@ -1017,7 +1017,7 @@ namespace M10AlertLRTI
                         LRTIAlertItem.status = sStstus;
                         LRTIAlertItem.nowwarm = "N";
                         LRTIAlertItem.statustime = sDt;
-                        UpdateLRTIAlertRainData(ref LRTIAlertItem);
+                        //UpdateLRTIAlertRainData(ref LRTIAlertItem);
                     }
 
                     //更新
@@ -1053,7 +1053,7 @@ namespace M10AlertLRTI
                     {
                         LRTIAlertItem.status = sStstus;
                         LRTIAlertItem.statustime = sDt;
-                        UpdateLRTIAlertRainData(ref LRTIAlertItem);
+                        //UpdateLRTIAlertRainData(ref LRTIAlertItem);
                     }
 
                     //更新
@@ -1088,7 +1088,7 @@ namespace M10AlertLRTI
                     {
                         LRTIAlertItem.status = sStstus;
                         LRTIAlertItem.statustime = sDt;
-                        UpdateLRTIAlertRainData(ref LRTIAlertItem);
+                        //UpdateLRTIAlertRainData(ref LRTIAlertItem);
                     }
 
                     //更新
