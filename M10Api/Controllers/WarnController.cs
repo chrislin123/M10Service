@@ -186,8 +186,9 @@ namespace M10Api.Controllers
             dt.Columns.Add("HOUR1");
             dt.Columns.Add("HOUR2");
             dt.Columns.Add("HOUR3");
+            dt.Columns.Add("HOUR6");
             dt.Columns.Add("LRTI");
-            dt.Columns.Add("ELRTI");
+            //dt.Columns.Add("ELRTI");
             dt.Columns.Add("RT");
             dt.Columns.Add("STID");
             dt.Columns.Add("STNAME");
@@ -209,8 +210,9 @@ namespace M10Api.Controllers
                 NewRow["HOUR1"] = item.HOUR1;
                 NewRow["HOUR2"] = item.HOUR2;
                 NewRow["HOUR3"] = item.HOUR3;
+                NewRow["HOUR6"] = item.HOUR6;
                 NewRow["LRTI"] = item.LRTI;
-                NewRow["ELRTI"] = item.ELRTI;
+                //NewRow["ELRTI"] = item.ELRTI;
                 NewRow["RT"] = item.RT;
                 NewRow["STID"] = item.STID;
                 NewRow["STNAME"] = item.STNAME;
@@ -313,17 +315,23 @@ namespace M10Api.Controllers
 
             string sStartDate = dtStart.ToString("yyyy-MM-ddTHH:mm:ss");
             string sEndDate = dtEnd.ToString("yyyy-MM-ddTHH:mm:ss");
-            string ssql = @"  select LRTIAlertHis.*,
-                        LRTIAlertRefData.FlowWarning,
-                        LRTIAlertRefData.Rt_70,
-                        LRTIAlertRefData.R3_70,
-                        LRTIAlertRefData.Rt_50,
-                        LRTIAlertRefData.R3_50
-                        from LRTIAlertHis                        
-                        left join LRTIAlertRefData on LRTIAlertHis.villageID = LRTIAlertRefData.villageID and LRTIAlertRefData.ver = 'now'
-                        where 1=1
-                        and RecTime between '{0}' and '{1}'
-                        order by RecTime,country,town  ";
+            string ssql = @"  
+                select LRTIAlertHis.*,
+                LRTIAlertRefData.STNAME,
+                LRTIAlertRefData.FlowWarning,
+                LRTIAlertRefData.Rt_70,
+                LRTIAlertRefData.R3_70,
+                LRTIAlertRefData.Rt_50,
+                LRTIAlertRefData.R3_50,
+                RainStation.HOUR6,
+                ''
+                from LRTIAlertHis                        
+                left join LRTIAlertRefData on LRTIAlertHis.villageID = LRTIAlertRefData.villageID and LRTIAlertRefData.ver = 'now'
+                left join RainStation on RainStation.STID = LRTIAlertHis.STID and LRTIAlertHis.ReleaseRTime = RainStation.RTime
+                where 1=1
+                and RecTime between '{0}' and '{1}'
+                order by RecTime,country,town  
+            ";
 
             ssql = string.Format(ssql, sStartDate, sEndDate);
             var data = dbDapper.Query(ssql);
