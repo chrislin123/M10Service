@@ -987,7 +987,7 @@ namespace M10.lib
                     {
                         text = text.Replace(text.Substring(text.IndexOf(",\"tick\":")), "");
                     }
-                    
+
 
                     if (text.Contains(",\"143\":"))
                     {
@@ -1647,6 +1647,10 @@ namespace M10.lib
             return true;
         }
 
+
+
+
+
         protected DateTime getStockBrokerBSNow(string sStockCode)
         {
             DateTime dt = DateTime.MinValue;
@@ -1978,6 +1982,26 @@ namespace M10.lib
 
                 dbDapper.Update(str);
             }
+        }
+
+
+
+        public void getThreeFuturesDailyData(DateTime dtTarget)
+        {            
+            string sUrl = "https://www.taifex.com.tw/cht/3/futContractsDateView";
+
+            sUrl = "https://www.taifex.com.tw/cht/3/futContractsDateDown?commodityId=MXF&queryEndDate=2019/06/25&queryStartDate=2019/06/25";
+
+
+            using (WebClient wc = getNewWebClient())
+            {
+                wc.Encoding = Encoding.GetEncoding(950);
+                string text = wc.DownloadString(sUrl);
+            }
+
+
+
+            
         }
 
 

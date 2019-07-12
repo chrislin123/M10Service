@@ -15,432 +15,432 @@ using System.IO;
 
 namespace C10Mvc.Controllers
 {
-  public class JobController : ApiController
-  {
-  }
-
-  public class BaseJob
-  {
-    private NLog.Logger _logger;
-    protected string ssql = string.Empty;
-    private string _ConnectionString;
-    private DALDapper _dbDapper;
-    private StockHelper _stockhelper;
-
-    public StockHelper Stockhelper
+    public class JobController : ApiController
     {
-      get
-      {
-        if (_stockhelper == null)
-        {
-          _stockhelper = new StockHelper();
-        }
-        return _stockhelper;
-      }
-
     }
 
-
-    protected Logger logger
+    public class BaseJob
     {
-      get
-      {
-        if (_logger == null)
+        private NLog.Logger _logger;
+        protected string ssql = string.Empty;
+        private string _ConnectionString;
+        private DALDapper _dbDapper;
+        private StockHelper _stockhelper;
+
+        public StockHelper Stockhelper
         {
-          _logger = NLog.LogManager.GetCurrentClassLogger();
+            get
+            {
+                if (_stockhelper == null)
+                {
+                    _stockhelper = new StockHelper();
+                }
+                return _stockhelper;
+            }
+
         }
 
-        return _logger;
-      }
-    }
 
-    protected DALDapper dbDapper
-    {
-      get
-      {
-        if (_dbDapper == null)
+        protected Logger logger
         {
-          _dbDapper = new DALDapper(ConnectionString);
+            get
+            {
+                if (_logger == null)
+                {
+                    _logger = NLog.LogManager.GetCurrentClassLogger();
+                }
+
+                return _logger;
+            }
         }
 
-        return _dbDapper;
-      }
-    }
-
-    protected string ConnectionString
-    {
-      get
-      {
-        if (string.IsNullOrEmpty(_ConnectionString))
+        protected DALDapper dbDapper
         {
-          _ConnectionString = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]].ConnectionString;
+            get
+            {
+                if (_dbDapper == null)
+                {
+                    _dbDapper = new DALDapper(ConnectionString);
+                }
+
+                return _dbDapper;
+            }
         }
 
-        return _ConnectionString;
-      }
-    }
-  }
+        protected string ConnectionString
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_ConnectionString))
+                {
+                    _ConnectionString = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]].ConnectionString;
+                }
 
-  public class SendMailTask : BaseJob, IJob
-  {
-    private void Log(string msg)
+                return _ConnectionString;
+            }
+        }
+    }
+
+    public class SendMailTask : BaseJob, IJob
     {
-      System.IO.File.AppendAllText(@"C:\Temp\log.txt", msg + Environment.NewLine);
+        private void Log(string msg)
+        {
+            System.IO.File.AppendAllText(@"C:\Temp\log.txt", msg + Environment.NewLine);
+        }
+
+        public void DoSendMail()
+        {
+            Log("Entering DoSendMail() at " + DateTime.Now.ToString());
+
+            int.Parse("tt1");
+            // 發送 email。這裡只固定輸出一筆文字訊息至 log 檔案，方便觀察測試。
+            // 每發送一封 email 就檢查一次 IntervalTask.Current.SuttingDown 以配合外部的終止事件。
+            string msg = String.Format("DoSendMail() at {0:yyyy/MM/dd HH:mm:ss}", DateTime.Now);
+            Log(msg);
+            //Thread.Sleep(2000);
+
+        }
+
+        public void Execute(IJobExecutionContext context)
+        {
+            try
+            {
+                DoSendMail();
+            }
+            catch (Exception ex)
+            {
+                logger.Log(NLog.LogLevel.Error, ex.Message);
+            }
+        }
     }
 
-    public void DoSendMail()
+    //一次只執行一個體
+    [DisallowConcurrentExecutionAttribute]
+    public class StockInfoTask : BaseJob, IJob
     {
-      Log("Entering DoSendMail() at " + DateTime.Now.ToString());
+        public void DoStockTrans()
+        {
+            //Log("START DoStockTrans() at " + DateTime.Now.ToString());
+            logger.Info("START DoStockTrans()");
+            try
+            {
+                Stockhelper.GetStockInfo();
 
-      int.Parse("tt1");
-      // 發送 email。這裡只固定輸出一筆文字訊息至 log 檔案，方便觀察測試。
-      // 每發送一封 email 就檢查一次 IntervalTask.Current.SuttingDown 以配合外部的終止事件。
-      string msg = String.Format("DoSendMail() at {0:yyyy/MM/dd HH:mm:ss}", DateTime.Now);
-      Log(msg);
-      //Thread.Sleep(2000);
+                //List<string> TypeList = new List<string>();
+                //TypeList.Add("tse");
+                //TypeList.Add("otc");
+                //TypeList.Add("otc1");
 
+                //foreach (string sType in TypeList)
+                //{
+                //  string surl = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=2";
+
+                //  if (sType == "tse") surl = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=2";
+                //  if (sType == "otc") surl = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=4";
+                //  if (sType == "otc1") surl = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=5";
+
+                //  HtmlWeb webClient = new HtmlWeb();
+                //  //網頁特殊編碼
+                //  webClient.OverrideEncoding = Encoding.GetEncoding(950);
+
+                //  // 載入網頁資料 
+                //  HtmlAgilityPack.HtmlDocument doc = webClient.Load(surl);
+
+                //  // 裝載查詢結果 
+                //  HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//table[2]/tr");
+
+                //  if (nodes.Count > 0)
+                //  {
+                //    ssql = " update stockinfo set updstatus = 'N' where type = '{0}'  ";
+                //    dbDapper.Execute(string.Format(ssql, sType));
+                //  }
+                //  int idx = 1;
+                //  foreach (HtmlNode node in nodes)
+                //  {
+                //    string sCode = "";
+                //    string sName = "";
+                //    //string sStatus = "";
+                //    HtmlNodeCollection tdnodes = node.SelectNodes("td");
+
+                //    if (tdnodes.Count > 0)
+                //    {
+                //      HtmlNode tdnode = tdnodes[0];
+                //      string[] StockInfoSplit = tdnode.InnerText.Split('　');
+
+                //      if (StockInfoSplit.Length != 2) continue;
+
+                //      sCode = StockInfoSplit[0];
+                //      sName = StockInfoSplit[1];
+
+                //      //判斷代碼存在則更新，不存在新增
+                //      ssql = " select * from stockinfo where stockcode = '{0}' ";
+                //      StockInfo StockInfoItem = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, sCode));
+
+                //      if (StockInfoItem == null) //不存在新增
+                //      {
+                //        //sStatus = "新增";
+                //        StockInfoItem = new StockInfo();
+                //        StockInfoItem.stockcode = sCode;
+                //        StockInfoItem.stockname = sName;
+                //        StockInfoItem.type = sType;
+                //        StockInfoItem.updatetime = Utils.getDatatimeString();
+                //        StockInfoItem.updstatus = "Y";
+                //        StockInfoItem.status = "Y";
+                //        //StockInfoItem.updatetime =
+
+                //        dbDapper.Insert(StockInfoItem);
+                //      }
+                //      else
+                //      {
+                //        //sStatus = "更新";
+                //        StockInfoItem.type = sType;
+                //        StockInfoItem.updatetime = Utils.getDatatimeString();
+                //        StockInfoItem.updstatus = "Y";
+                //        StockInfoItem.status = "Y";
+                //        dbDapper.Update(StockInfoItem);
+
+                //      }
+                //    }
+
+                //    //Log(string.Format("{0}進度({1}/{2})=>[{3}]{4} 狀態：{5}"
+                //    //  , sType, idx, nodes.Count, sCode, sName, sStatus));
+
+
+                //    idx++;
+
+                //  }
+
+                //  ssql = "update stockinfo set status = 'N' where updstatus = 'N' ";
+                //  dbDapper.Execute(ssql);
+
+                //  //興櫃轉上櫃
+                //  ssql = "update stockinfo set type = 'otc' where type = 'otc1' ";
+                //  dbDapper.Execute(ssql);
+
+                //}
+
+            }
+            catch (Exception)
+            {
+
+
+            }
+
+
+            logger.Info("END DoStockTrans()");
+            //MessageBox.Show("Finish");
+
+
+
+            // 發送 email。這裡只固定輸出一筆文字訊息至 log 檔案，方便觀察測試。
+            // 每發送一封 email 就檢查一次 IntervalTask.Current.SuttingDown 以配合外部的終止事件。
+            //Log("Finish DoStockTrans() at " + DateTime.Now.ToString());
+
+            //Thread.Sleep(2000);
+
+        }
+
+        public void Execute(IJobExecutionContext context)
+        {
+            try
+            {
+                DoStockTrans();
+            }
+            catch (Exception ex)
+            {
+                logger.Log(NLog.LogLevel.Error, ex.Message);
+
+            }
+        }
     }
 
-    public void Execute(IJobExecutionContext context)
+
+    /// <summary>
+    ///
+    /// </summary>
+    //一次只執行一個體
+    [DisallowConcurrentExecutionAttribute]
+    public class StockThreeTradeTask : BaseJob, IJob
     {
-      try
-      {
-        DoSendMail();
-      }
-      catch (Exception ex)
-      {
-        logger.Log(NLog.LogLevel.Error, ex.Message);
-      }
-    }
-  }
+        public void DoStockThreeTrade()
+        {
 
-  //一次只執行一個體
-  [DisallowConcurrentExecutionAttribute]
-  public class StockInfoTask : BaseJob, IJob
-  { 
-    public void DoStockTrans()
+            logger.Info("START DoStockThreeTrade()");
+
+            DateTime dt = DateTime.Now;
+
+            for (DateTime dtTemp = dt; dtTemp >= dt.AddDays(-3); dtTemp = dtTemp.AddDays(-1))
+            {
+                logger.Info(string.Format("{0}=={1}", "DoStockThreeTrade()", Utils.getDatatimeString(dtTemp)));
+
+                #region tse-threeTrade
+                Stockhelper.GetStockThreeTradeTse(dtTemp);
+                #endregion
+
+                #region otc-threeTrade
+                Stockhelper.GetStockThreeTradeOtc(dtTemp);
+                #endregion
+            }
+
+            logger.Info("END DoStockThreeTrade()");
+        }
+
+        public void Execute(IJobExecutionContext context)
+        {
+            try
+            {
+                DoStockThreeTrade();
+            }
+            catch (Exception ex)
+            {
+                logger.Log(NLog.LogLevel.Error, ex.Message);
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    //一次只執行一個體
+    [DisallowConcurrentExecutionAttribute]
+    public class StockAfterTask : BaseJob, IJob
     {
-      //Log("START DoStockTrans() at " + DateTime.Now.ToString());
-      logger.Info("START DoStockTrans()");
-      try
-      {
-        Stockhelper.GetStockInfo();
+        public void DoStockAfter()
+        {
 
-        //List<string> TypeList = new List<string>();
-        //TypeList.Add("tse");
-        //TypeList.Add("otc");
-        //TypeList.Add("otc1");
+            logger.Info("START DoStockAfter()");
+            DateTime dt = DateTime.Now;
 
-        //foreach (string sType in TypeList)
-        //{
-        //  string surl = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=2";
+            for (DateTime dtTemp = dt; dtTemp >= dt.AddDays(-3); dtTemp = dtTemp.AddDays(-1))
+            {
+                logger.Info(string.Format("{0}=={1}", "DoStockAfter()", Utils.getDatatimeString(dtTemp)));
+                #region tse-StockAfter
+                Stockhelper.GetStockAfterTse(dtTemp);
+                #endregion
 
-        //  if (sType == "tse") surl = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=2";
-        //  if (sType == "otc") surl = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=4";
-        //  if (sType == "otc1") surl = "http://isin.twse.com.tw/isin/C_public.jsp?strMode=5";
-
-        //  HtmlWeb webClient = new HtmlWeb();
-        //  //網頁特殊編碼
-        //  webClient.OverrideEncoding = Encoding.GetEncoding(950);
-
-        //  // 載入網頁資料 
-        //  HtmlAgilityPack.HtmlDocument doc = webClient.Load(surl);
-
-        //  // 裝載查詢結果 
-        //  HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//table[2]/tr");
-
-        //  if (nodes.Count > 0)
-        //  {
-        //    ssql = " update stockinfo set updstatus = 'N' where type = '{0}'  ";
-        //    dbDapper.Execute(string.Format(ssql, sType));
-        //  }
-        //  int idx = 1;
-        //  foreach (HtmlNode node in nodes)
-        //  {
-        //    string sCode = "";
-        //    string sName = "";
-        //    //string sStatus = "";
-        //    HtmlNodeCollection tdnodes = node.SelectNodes("td");
-
-        //    if (tdnodes.Count > 0)
-        //    {
-        //      HtmlNode tdnode = tdnodes[0];
-        //      string[] StockInfoSplit = tdnode.InnerText.Split('　');
-
-        //      if (StockInfoSplit.Length != 2) continue;
-
-        //      sCode = StockInfoSplit[0];
-        //      sName = StockInfoSplit[1];
-
-        //      //判斷代碼存在則更新，不存在新增
-        //      ssql = " select * from stockinfo where stockcode = '{0}' ";
-        //      StockInfo StockInfoItem = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, sCode));
-
-        //      if (StockInfoItem == null) //不存在新增
-        //      {
-        //        //sStatus = "新增";
-        //        StockInfoItem = new StockInfo();
-        //        StockInfoItem.stockcode = sCode;
-        //        StockInfoItem.stockname = sName;
-        //        StockInfoItem.type = sType;
-        //        StockInfoItem.updatetime = Utils.getDatatimeString();
-        //        StockInfoItem.updstatus = "Y";
-        //        StockInfoItem.status = "Y";
-        //        //StockInfoItem.updatetime =
-
-        //        dbDapper.Insert(StockInfoItem);
-        //      }
-        //      else
-        //      {
-        //        //sStatus = "更新";
-        //        StockInfoItem.type = sType;
-        //        StockInfoItem.updatetime = Utils.getDatatimeString();
-        //        StockInfoItem.updstatus = "Y";
-        //        StockInfoItem.status = "Y";
-        //        dbDapper.Update(StockInfoItem);
-
-        //      }
-        //    }
-
-        //    //Log(string.Format("{0}進度({1}/{2})=>[{3}]{4} 狀態：{5}"
-        //    //  , sType, idx, nodes.Count, sCode, sName, sStatus));
+                #region otc-StockAfter
+                Stockhelper.GetStockAfterOtc(dtTemp);
+                #endregion
+            }
 
 
-        //    idx++;
+            logger.Info("END DoStockAfter()");
+        }
 
-        //  }
+        public void DoStockHugeTurnover()
+        {
 
-        //  ssql = "update stockinfo set status = 'N' where updstatus = 'N' ";
-        //  dbDapper.Execute(ssql);
-
-        //  //興櫃轉上櫃
-        //  ssql = "update stockinfo set type = 'otc' where type = 'otc1' ";
-        //  dbDapper.Execute(ssql);
-
-        //}
-
-      }
-      catch (Exception)
-      {
+            logger.Info("START DoStockHugeTurnover()");
 
 
-      }
+            //預設今天資料
+            string sRunDate = DateTime.Now.ToString("yyyyMMdd");
+
+            //轉最新資料
+            ssql = " select Max(stockdate) from stockafter where stockcode = '2330' ";
+            object oMax = dbDapper.ExecuteScale(ssql);
+            if (oMax != null)
+            {
+                sRunDate = Convert.ToString(Convert.ToInt32(oMax.ToString()));
+            }
+
+            List<StockInfo> siList = new List<StockInfo>();
+            ssql = " select * from stockinfo where status = 'Y' and LEN(stockcode) = 4 order by stockcode ";
+            siList = dbDapper.Query<StockInfo>(ssql);
+
+            foreach (StockInfo item in siList)
+            {
+                Stockhelper.GetHugeTurnover(item.stockcode, sRunDate);
+            }
+
+            logger.Info("END DoStockHugeTurnover()");
+        }
 
 
-      logger.Info("END DoStockTrans()");
-      //MessageBox.Show("Finish");
+        public void Execute(IJobExecutionContext context)
+        {
+            try
+            {
+                //盤後資料
+                DoStockAfter();
 
-
-
-      // 發送 email。這裡只固定輸出一筆文字訊息至 log 檔案，方便觀察測試。
-      // 每發送一封 email 就檢查一次 IntervalTask.Current.SuttingDown 以配合外部的終止事件。
-      //Log("Finish DoStockTrans() at " + DateTime.Now.ToString());
-
-      //Thread.Sleep(2000);
-
+                //搜尋巨量換手
+                DoStockHugeTurnover();
+            }
+            catch (Exception ex)
+            {
+                logger.Log(NLog.LogLevel.Error, ex.Message);
+            }
+        }
     }
 
-    public void Execute(IJobExecutionContext context)
+    /// <summary>
+    /// 
+    /// </summary>
+    //一次只執行一個體
+    [DisallowConcurrentExecutionAttribute]
+    public class StockBrokerBSTask : BaseJob, IJob
     {
-      try
-      {
-        DoStockTrans();
-      }
-      catch (Exception ex)
-      {
-        logger.Log(NLog.LogLevel.Error, ex.Message);
+        public void DoStockBrokerBS()
+        {
 
-      }
+            logger.Info("START DoStockBrokerBS()");
+
+            Stockhelper.GetStockBrokerBS();
+
+            logger.Info("END DoStockBrokerBS()");
+        }
+
+
+        public void Execute(IJobExecutionContext context)
+        {
+            try
+            {
+                DoStockBrokerBS();
+            }
+            catch (Exception ex)
+            {
+                logger.Log(NLog.LogLevel.Error, ex.Message);
+            }
+        }
     }
-  }
 
-
-  /// <summary>
-  ///
-  /// </summary>
-  //一次只執行一個體
-  [DisallowConcurrentExecutionAttribute]
-  public class StockThreeTradeTask : BaseJob, IJob
-  { 
-    public void DoStockThreeTrade()
+    /// <summary>
+    /// 
+    /// </summary>
+    //一次只執行一個體
+    [DisallowConcurrentExecutionAttribute]
+    public class StockAfterRushTask : BaseJob, IJob
     {
-     
-      logger.Info("START DoStockThreeTrade()");
+        public void DoStockAfterRush()
+        {
 
-      DateTime dt = DateTime.Now;
+            logger.Info("START DoStockAfterRush()");
+            DateTime dt = DateTime.Now;
 
-      for (DateTime dtTemp = dt; dtTemp >= dt.AddDays(-3); dtTemp = dtTemp.AddDays(-1))
-      {
-        logger.Info(string.Format("{0}=={1}", "DoStockThreeTrade()", Utils.getDatatimeString(dtTemp)));
+            Stockhelper.GetStockAfterRushTse(dt);
 
-        #region tse-threeTrade
-        Stockhelper.GetStockThreeTradeTse(dtTemp);
-        #endregion
+            Stockhelper.GetStockAfterRushOtc(dt);
 
-        #region otc-threeTrade
-        Stockhelper.GetStockThreeTradeOtc(dtTemp);
-        #endregion
-      }
+            logger.Info("END DoStockAfterRush()");
+        }
 
-      logger.Info("END DoStockThreeTrade()");
+
+
+        public void Execute(IJobExecutionContext context)
+        {
+            try
+            {
+                //盤後當沖資料
+                DoStockAfterRush();
+            }
+            catch (Exception ex)
+            {
+                logger.Log(NLog.LogLevel.Error, ex.Message);
+            }
+        }
     }
-
-    public void Execute(IJobExecutionContext context)
-    {
-      try
-      {
-        DoStockThreeTrade();
-      }
-      catch (Exception ex)
-      {
-        logger.Log(NLog.LogLevel.Error, ex.Message);
-      }
-    }
-  }
-
-
-  /// <summary>
-  /// 
-  /// </summary>
-  //一次只執行一個體
-  [DisallowConcurrentExecutionAttribute]
-  public class StockAfterTask : BaseJob, IJob
-  {
-    public void DoStockAfter()
-    {
-
-      logger.Info("START DoStockAfter()");
-      DateTime dt = DateTime.Now;
-      
-      for (DateTime dtTemp = dt; dtTemp >= dt.AddDays(-3); dtTemp = dtTemp.AddDays(-1))
-      {
-        logger.Info(string.Format("{0}=={1}", "DoStockAfter()", Utils.getDatatimeString(dtTemp)));
-        #region tse-StockAfter
-        Stockhelper.GetStockAfterTse(dtTemp);
-        #endregion
-
-        #region otc-StockAfter
-        Stockhelper.GetStockAfterOtc(dtTemp);
-        #endregion
-      }
-
-
-      logger.Info("END DoStockAfter()");
-    }
-
-    public void DoStockHugeTurnover()
-    {
-
-      logger.Info("START DoStockHugeTurnover()");
-
-
-      //預設今天資料
-      string sRunDate = DateTime.Now.ToString("yyyyMMdd");
-
-      //轉最新資料
-      ssql = " select Max(stockdate) from stockafter where stockcode = '2330' ";
-      object oMax = dbDapper.ExecuteScale(ssql);
-      if (oMax != null)
-      {
-        sRunDate = Convert.ToString(Convert.ToInt32(oMax.ToString()));
-      }
-
-      List<StockInfo> siList = new List<StockInfo>();
-      ssql = " select * from stockinfo where status = 'Y' and LEN(stockcode) = 4 order by stockcode ";
-      siList = dbDapper.Query<StockInfo>(ssql);
-
-      foreach (StockInfo item in siList)
-      {
-        Stockhelper.GetHugeTurnover(item.stockcode, sRunDate);
-      }
-
-      logger.Info("END DoStockHugeTurnover()");
-    }
-
-
-    public void Execute(IJobExecutionContext context)
-    {
-      try
-      { 
-        //盤後資料
-        DoStockAfter();
-
-        //搜尋巨量換手
-        DoStockHugeTurnover();
-      }
-      catch (Exception ex)
-      {
-        logger.Log(NLog.LogLevel.Error, ex.Message);
-      }
-    }
-  }
-
-  /// <summary>
-  /// 
-  /// </summary>
-  //一次只執行一個體
-  [DisallowConcurrentExecutionAttribute]
-  public class StockBrokerBSTask : BaseJob, IJob
-  {
-    public void DoStockBrokerBS()
-    {
-
-      logger.Info("START DoStockBrokerBS()");
-
-      Stockhelper.GetStockBrokerBS();
-
-      logger.Info("END DoStockBrokerBS()");
-    }
-
-
-    public void Execute(IJobExecutionContext context)
-    {
-      try
-      {
-        DoStockBrokerBS();
-      }
-      catch (Exception ex)
-      {
-        logger.Log(NLog.LogLevel.Error, ex.Message);
-      }
-    }
-  }
-
-  /// <summary>
-  /// 
-  /// </summary>
-  //一次只執行一個體
-  [DisallowConcurrentExecutionAttribute]
-  public class StockAfterRushTask : BaseJob, IJob
-  {
-    public void DoStockAfterRush()
-    {
-
-      logger.Info("START DoStockAfterRush()");
-      DateTime dt = DateTime.Now;
-
-      Stockhelper.GetStockAfterRushTse(dt);
-
-      Stockhelper.GetStockAfterRushOtc(dt);
-
-      logger.Info("END DoStockAfterRush()");
-    }
-
-
-
-    public void Execute(IJobExecutionContext context)
-    {
-      try
-      {
-        //盤後當沖資料
-        DoStockAfterRush();
-      }
-      catch (Exception ex)
-      {
-        logger.Log(NLog.LogLevel.Error, ex.Message);
-      }
-    }
-  }
 
 
 

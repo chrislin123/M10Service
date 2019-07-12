@@ -181,6 +181,7 @@ namespace M10AlertLRTI
                         oHis.HOUR1 = item.HOUR1;
                         oHis.HOUR2 = item.HOUR2;
                         oHis.HOUR3 = item.HOUR3;
+                        oHis.HOUR6 = item.HOUR6;
                         oHis.LRTI = item.LRTI;
                         oHis.RT = item.RT;
                         oHis.status = item.status;
@@ -940,6 +941,7 @@ namespace M10AlertLRTI
                             AlertItem.HOUR1 = "異常";
                             AlertItem.HOUR2 = "異常";
                             AlertItem.HOUR3 = "異常";
+                            AlertItem.HOUR6 = "異常";
                             AlertItem.RT = "異常";
                             AlertItem.LRTI = "異常";
                         }
@@ -948,6 +950,7 @@ namespace M10AlertLRTI
                             AlertItem.HOUR1 = RuntimeData.RAIN;
                             AlertItem.HOUR2 = RuntimeData.HOUR2;
                             AlertItem.HOUR3 = RuntimeData.HOUR3;
+                            AlertItem.HOUR6 = RuntimeData.HOUR6;
                             AlertItem.RT = RuntimeData.RT;
                             AlertItem.LRTI = RuntimeData.LRTI;
                         }
@@ -1136,6 +1139,7 @@ namespace M10AlertLRTI
                         AlertItem.HOUR1 = RumtimeItem.RAIN;
                         AlertItem.HOUR2 = RumtimeItem.Hour2;
                         AlertItem.HOUR3 = RumtimeItem.HOUR3;
+                        AlertItem.HOUR6 = RumtimeItem.HOUR6;
                         AlertItem.RT = RumtimeItem.RT;
                         AlertItem.LRTI = RumtimeItem.LRTI;
                         AlertItem.ELRTI = ""; //確認是否需要存在                        
@@ -1182,6 +1186,7 @@ namespace M10AlertLRTI
                         LRTIAlertItem.HOUR1 = "異常";
                         LRTIAlertItem.HOUR2 = "異常";
                         LRTIAlertItem.HOUR3 = "異常";
+                        LRTIAlertItem.HOUR6 = "異常";
                         LRTIAlertItem.RT = "異常";
                         LRTIAlertItem.LRTI = "異常";
                     }
@@ -1190,6 +1195,7 @@ namespace M10AlertLRTI
                         LRTIAlertItem.HOUR1 = RuntimeData.RAIN;
                         LRTIAlertItem.HOUR2 = RuntimeData.HOUR2;
                         LRTIAlertItem.HOUR3 = RuntimeData.HOUR3;
+                        LRTIAlertItem.HOUR6 = RuntimeData.HOUR6;
                         LRTIAlertItem.RT = RuntimeData.RT;
                         LRTIAlertItem.LRTI = RuntimeData.LRTI;
                         LRTIAlertItem.ReleaseRTime = RuntimeData.RTime;

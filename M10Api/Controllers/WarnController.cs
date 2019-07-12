@@ -323,7 +323,6 @@ namespace M10Api.Controllers
                 LRTIAlertRefData.R3_70,
                 LRTIAlertRefData.Rt_50,
                 LRTIAlertRefData.R3_50,
-                RainStation.HOUR6,
                 ''
                 from LRTIAlertHis                        
                 left join LRTIAlertRefData on LRTIAlertHis.villageID = LRTIAlertRefData.villageID and LRTIAlertRefData.ver = 'now'

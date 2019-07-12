@@ -55,6 +55,7 @@
             this.button13 = new System.Windows.Forms.Button();
             this.button14 = new System.Windows.Forms.Button();
             this.button15 = new System.Windows.Forms.Button();
+            this.btnGetThreeDailyData = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -322,11 +323,22 @@
             this.button15.UseVisualStyleBackColor = true;
             this.button15.Click += new System.EventHandler(this.button15_Click);
             // 
+            // btnGetThreeDailyData
+            // 
+            this.btnGetThreeDailyData.Location = new System.Drawing.Point(408, 273);
+            this.btnGetThreeDailyData.Name = "btnGetThreeDailyData";
+            this.btnGetThreeDailyData.Size = new System.Drawing.Size(126, 36);
+            this.btnGetThreeDailyData.TabIndex = 34;
+            this.btnGetThreeDailyData.Text = "取得三大法人每日期貨交易數據";
+            this.btnGetThreeDailyData.UseVisualStyleBackColor = true;
+            this.btnGetThreeDailyData.Click += new System.EventHandler(this.BtnGetThreeDailyData_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(866, 466);
+            this.Controls.Add(this.btnGetThreeDailyData);
             this.Controls.Add(this.button15);
             this.Controls.Add(this.button14);
             this.Controls.Add(this.button13);
@@ -391,6 +403,7 @@
         private System.Windows.Forms.Button button13;
         private System.Windows.Forms.Button button14;
         private System.Windows.Forms.Button button15;
+        private System.Windows.Forms.Button btnGetThreeDailyData;
     }
 }
 

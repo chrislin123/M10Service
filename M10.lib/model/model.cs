@@ -59,6 +59,8 @@ namespace M10.lib.model
 
         public string HOUR1 { get; set; }
 
+        public string HOUR6 { get; set; }
+
         public string nowwarm { get; set; }
 
         public string statustime { get; set; }
@@ -109,6 +111,8 @@ namespace M10.lib.model
         public string HOUR2 { get; set; }
 
         public string HOUR1 { get; set; }
+
+        public string HOUR6 { get; set; }
 
         public string nowwarm { get; set; }
 
@@ -253,7 +257,7 @@ namespace M10.lib.model
 
 
 
-    
+
 
     [Table("RtiData")]
     public class RtiData
@@ -700,7 +704,7 @@ namespace M10.lib.model
         public decimal Pre7DayRain7 { get; set; }
 
         public decimal Pre7DayRain8 { get; set; }
-        
+
         public decimal CumRain { get; set; }
 
         public decimal RT6 { get; set; }

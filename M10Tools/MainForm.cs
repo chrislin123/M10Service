@@ -2834,6 +2834,43 @@ namespace M10Tools
             return rd;
         }
 
+        private void BtnGetThreeDailyData_Click(object sender, EventArgs e)
+        {
+
+
+            Stockhelper.getThreeFuturesDailyData(DateTime.Now);
+            ////開始日期
+            //DateTime dt = new DateTime(2019, 6, 26);
+            ////結束日期
+            //DateTime dtEnd = new DateTime(2019, 6, 26);
+
+            //for (DateTime LoopDatetime = dt; LoopDatetime <= dtEnd; LoopDatetime = LoopDatetime.AddDays(1))
+            //{
+            //    string sLineTrans = "";
+            //    try
+            //    {
+            //        toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
+            //        Application.DoEvents();
+
+            //        if (Stockhelper.GetStockThreeTradeTse(LoopDatetime) == false)
+            //        {
+            //            System.Threading.Thread.Sleep(3000);
+            //            continue;
+            //        }
+
+            //        toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.tse, "完成");
+            //        Application.DoEvents();
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        logger.Error(ex, "stock after:" + sLineTrans);
+            //        System.Threading.Thread.Sleep(10000);
+            //    }
+            //}
+
+            //toolStripStatusLabel1.Text = "完成";
+        }
+
 
 
         //private void buildtableRTI()
