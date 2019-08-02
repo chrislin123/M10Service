@@ -235,6 +235,9 @@ namespace M10Tools
         }
         private void button1_Click(object sender, EventArgs e)
         {
+             DateTime dt  =  Utils.getStringToDateTime("20190802");
+
+            return;
             string Url = "http://{0}/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw%7cotc_o00.tw%7ctse_FRMSA.tw&json=1&delay=0&_={1}";
             double dd = ConvertToUnixTimestamp(DateTime.Now.AddMilliseconds(60000));
 
@@ -548,9 +551,10 @@ namespace M10Tools
         private void button5_Click(object sender, EventArgs e)
         {
             //開始日期
-            DateTime dt = new DateTime(2019, 3, 15);
+            DateTime dt = new DateTime(2007, 1, 2);
+            //DateTime dt = new DateTime(2019, 8, 2);
             //結束日期
-            DateTime dtEnd = new DateTime(2019, 4, 17);
+            DateTime dtEnd = new DateTime(2019, 8, 2);
 
             ////取得資料庫最後一天
             //ssql = " select  distinct stockdate  from stockafter where stocktype = '{0}' order by stockdate asc ";
@@ -570,7 +574,17 @@ namespace M10Tools
                 string sLineTrans = "";
                 try
                 {
-                    toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
+                    //判斷是否已經轉檔成功
+                    ssql = @" select * from stocklog where logtype = '{0}' and logdate = '{1}' and logstatus = 'success' ";
+                    ssql = string.Format(ssql, M10Const.StockLogType.StockAfterTse, Utils.getDateString(LoopDatetime, M10Const.DateStringType.ADT1));
+                    StockLog sl = dbDapper.QuerySingleOrDefault<StockLog>(ssql);
+                    if (sl != null)
+                    {
+                        System.Threading.Thread.Sleep(3000);
+                        continue;
+                    }
+
+                    toolStripStatusLabel1.Text = string.Format("盤後資料轉檔(TSE){0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
                     Application.DoEvents();
 
                     if (Stockhelper.GetStockAfterTse(LoopDatetime) == false)
@@ -579,7 +593,7 @@ namespace M10Tools
                         continue;
                     }
 
-                    toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.tse, "完成");
+                    toolStripStatusLabel1.Text = string.Format("盤後資料轉檔(TSE){0}-{1}", M10Const.StockType.tse, "完成");
                     Application.DoEvents();
                 }
                 catch (Exception ex)
@@ -588,7 +602,7 @@ namespace M10Tools
                     System.Threading.Thread.Sleep(10000);
                 }
             }
-            toolStripStatusLabel1.Text = "完成";
+            toolStripStatusLabel1.Text = "盤後資料轉檔(TSE)完成";
         }
 
 
@@ -596,9 +610,9 @@ namespace M10Tools
         private void button6_Click(object sender, EventArgs e)
         {
             //開始日期
-            DateTime dt = new DateTime(2019, 3, 15);
+            DateTime dt = new DateTime(2007, 1, 2);
             //結束日期
-            DateTime dtEnd = new DateTime(2019, 4, 17);
+            DateTime dtEnd = new DateTime(2019, 8, 2);
 
             //取得資料庫最後一天
             //ssql = " select  distinct stockdate  from stockafter where stocktype = '{0}' order by stockdate asc ";
@@ -617,7 +631,17 @@ namespace M10Tools
                 string sLineTrans = "";
                 try
                 {
-                    toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.otc, LoopDatetime.ToString("yyyyMMdd"));
+                    //判斷是否已經轉檔成功
+                    ssql = @" select * from stocklog where logtype = '{0}' and logdate = '{1}' and logstatus = 'success' ";
+                    ssql = string.Format(ssql, M10Const.StockLogType.StockAfterOtc, Utils.getDateString(LoopDatetime, M10Const.DateStringType.ADT1));
+                    StockLog sl = dbDapper.QuerySingleOrDefault<StockLog>(ssql);
+                    if (sl != null)
+                    {
+                        System.Threading.Thread.Sleep(3000);
+                        continue;
+                    }
+
+                    toolStripStatusLabel1.Text = string.Format("盤後資料轉檔(OTC){0}-{1}", M10Const.StockType.otc, LoopDatetime.ToString("yyyyMMdd"));
                     Application.DoEvents();
 
                     if (Stockhelper.GetStockAfterOtc(LoopDatetime) == false)
@@ -626,7 +650,7 @@ namespace M10Tools
                         continue;
                     }
 
-                    toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.otc, "完成");
+                    toolStripStatusLabel1.Text = string.Format("盤後資料轉檔(OTC){0}-{1}", M10Const.StockType.otc, "完成");
                     Application.DoEvents();
                 }
                 catch (Exception ex)
@@ -635,7 +659,7 @@ namespace M10Tools
                     System.Threading.Thread.Sleep(10000);
                 }
             }
-            toolStripStatusLabel1.Text = "完成";
+            toolStripStatusLabel1.Text = "盤後資料轉檔(OTC)完成";
         }
 
 
@@ -1024,7 +1048,7 @@ namespace M10Tools
         {
 
             //開始日期
-            DateTime dt = new DateTime(2018, 5, 4);
+            DateTime dt = new DateTime(2019, 8, 2);
             //結束日期
             DateTime dtEnd = new DateTime(2017, 9, 12);
 

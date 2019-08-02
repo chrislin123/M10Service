@@ -8,61 +8,63 @@ using NLog;
 
 namespace M10.lib
 {
-  public class M10BaseClass
-  {
-    public string ssql = string.Empty;
-    private DALDapper _dbDapper;
-    private string _ConnectionString;
-    public Logger _logger;
-    private StockHelper _stockhelper;
-
-    public DALDapper dbDapper
+    public class M10BaseClass
     {
-      get
-      {
-        if (_dbDapper == null)
+        public string ssql = string.Empty;
+        private DALDapper _dbDapper;
+        private string _ConnectionString;
+        public Logger _logger;
+        private StockHelper _stockhelper;
+
+        
+
+        public DALDapper dbDapper
         {
-          _dbDapper = new DALDapper(ConnectionString);
+            get
+            {
+                if (_dbDapper == null)
+                {
+                    _dbDapper = new DALDapper(ConnectionString);
+                }
+
+                return _dbDapper;
+            }
         }
 
-        return _dbDapper;
-      }
-    }
-
-    public string ConnectionString
-    {
-      get
-      {
-        if (string.IsNullOrEmpty(_ConnectionString))
+        public string ConnectionString
         {
-          _ConnectionString = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]].ConnectionString;
+            get
+            {
+                if (string.IsNullOrEmpty(_ConnectionString))
+                {
+                    _ConnectionString = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]].ConnectionString;
+                }
+
+                return _ConnectionString;
+            }
         }
 
-        return _ConnectionString;
-      }
-    }
-
-    public Logger logger
-    {
-      get
-      {
-        _logger = NLog.LogManager.GetCurrentClassLogger();
-
-        return _logger;
-      }
-    }
-
-    public StockHelper stockhelper
-    {
-      get
-      {
-        if (_stockhelper == null)
+        public Logger logger
         {
-          _stockhelper = new StockHelper();
-        }
-        return _stockhelper;
-      }
+            get
+            {
+                _logger = NLog.LogManager.GetCurrentClassLogger();
 
+                return _logger;
+            }
+        }
+
+        public StockHelper stockhelper
+        {
+            get
+            {
+                if (_stockhelper == null)
+                {
+                    _stockhelper = new StockHelper();
+                }
+                return _stockhelper;
+            }
+
+        }
     }
-  }
 }

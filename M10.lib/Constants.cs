@@ -69,7 +69,13 @@ namespace M10.lib
 
         public static class StockLogType
         {
+            /// <summary>
+            /// 盤後資料轉檔(TSE)
+            /// </summary>
             public const string StockAfterTse = "StockAfterTse";
+            /// <summary>
+            /// 盤後資料轉檔(OTC)
+            /// </summary>
             public const string StockAfterOtc = "StockAfterOtc";
             public const string StockThreeTse = "StockThreeTse";
             public const string StockThreeOtc = "StockThreeOtc";

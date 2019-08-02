@@ -407,7 +407,7 @@ namespace C10Mvc.Controllers
     }
 
     /// <summary>
-    /// 
+    /// 盤後當沖資料
     /// </summary>
     //一次只執行一個體
     [DisallowConcurrentExecutionAttribute]

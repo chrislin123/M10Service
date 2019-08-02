@@ -15,12 +15,20 @@ namespace M10.lib
 {
     public class StockHelper : M10BaseClass
     {
+        
+
         public static WebClient getNewWebClient()
         {
             var wc = new WebClient();
             //wc.Headers.Add("User-Agent", HttpHelper.GetRandomAgent());
             wc.Encoding = Encoding.UTF8;
             wc.Proxy = null;
+
+            //預防基礎連接已關閉: 傳送時發生未預期的錯誤。
+            //TLS 1.0 已被視為不安全，近期應會被各大網站陸續停用
+            ServicePointManager.SecurityProtocol =
+                        SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls |
+                        SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
             return wc;
         }
 
@@ -133,7 +141,7 @@ namespace M10.lib
                 }
 
                 StockLog sl = new StockLog();
-                sl.logdate = Utils.getDateString(DateTime.Now, M10Const.DateStringType.ADT1);
+                sl.logdate = Utils.getDateString(GetDatetime, M10Const.DateStringType.ADT1);
                 sl.logdatetime = Utils.getDatatimeString();
                 sl.logstatus = M10Const.StockLogStatus.s200;
                 sl.memo = "";
@@ -286,7 +294,7 @@ namespace M10.lib
                 }
 
                 StockLog sl = new StockLog();
-                sl.logdate = Utils.getDateString(DateTime.Now, M10Const.DateStringType.ADT1);
+                sl.logdate = Utils.getDateString(GetDatetime, M10Const.DateStringType.ADT1);
                 sl.logdatetime = Utils.getDatatimeString();
                 sl.logstatus = M10Const.StockLogStatus.s200;
                 sl.memo = "";
@@ -520,6 +528,11 @@ namespace M10.lib
             return true;
         }
 
+        /// <summary>
+        /// 盤後當沖資料(TSE)
+        /// </summary>
+        /// <param name="GetDatetime"></param>
+        /// <returns></returns>
         public bool GetStockAfterRushTse(DateTime GetDatetime)
         {
             //bool bResult = false;
@@ -629,6 +642,11 @@ namespace M10.lib
             return true;
         }
 
+        /// <summary>
+        /// 盤後當沖資料(OTC)
+        /// </summary>
+        /// <param name="GetDatetime"></param>
+        /// <returns></returns>
         public bool GetStockAfterRushOtc(DateTime GetDatetime)
         {
             try
@@ -1761,8 +1779,8 @@ namespace M10.lib
 
 
                 ssql = @" select top 3 * from stockafter 
-               where stockdate <= '{0}' and stockcode = '{1}' order by stockdate desc
-               ";
+                            where stockdate <= '{0}' and stockcode = '{1}' order by stockdate desc
+                       ";
                 ssql = string.Format(ssql, sRunDate, sStockCode);
                 List<Stockafter> saList = dbDapper.Query<Stockafter>(ssql);
 

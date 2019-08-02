@@ -252,6 +252,29 @@ namespace C10Mvc.Controllers
             return TempList;
         }
 
+        [HttpGet]
+        [Route("DoStockAfter")]
+        public void DoStockAfter(string date)
+        {
+            
+            logger.Info("START DoStockAfter()");
+            DateTime dt = Utils.getStringToDateTime(date);
+
+            for (DateTime dtTemp = dt; dtTemp >= dt.AddDays(-3); dtTemp = dtTemp.AddDays(-1))
+            {
+                logger.Info(string.Format("{0}=={1}", "DoStockAfter()", Utils.getDatatimeString(dtTemp)));
+                #region tse-StockAfter
+                stockhelper.GetStockAfterTse(dtTemp);
+                #endregion
+
+                #region otc-StockAfter
+                stockhelper.GetStockAfterOtc(dtTemp);
+                #endregion
+            }
+
+            logger.Info("END DoStockAfter()");
+        }
+
 
         [HttpPost]
         [Route("PostTest")]

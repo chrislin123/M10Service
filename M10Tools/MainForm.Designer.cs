@@ -247,9 +247,9 @@
             // 
             this.StockAfterRushButton.Location = new System.Drawing.Point(408, 244);
             this.StockAfterRushButton.Name = "StockAfterRushButton";
-            this.StockAfterRushButton.Size = new System.Drawing.Size(126, 23);
+            this.StockAfterRushButton.Size = new System.Drawing.Size(126, 52);
             this.StockAfterRushButton.TabIndex = 25;
-            this.StockAfterRushButton.Text = "StockAfterRush";
+            this.StockAfterRushButton.Text = "StockAfterRush盤後當沖資料";
             this.StockAfterRushButton.UseVisualStyleBackColor = true;
             this.StockAfterRushButton.Click += new System.EventHandler(this.StockAfterRushTseButton_Click);
             // 
@@ -325,7 +325,7 @@
             // 
             // btnGetThreeDailyData
             // 
-            this.btnGetThreeDailyData.Location = new System.Drawing.Point(408, 273);
+            this.btnGetThreeDailyData.Location = new System.Drawing.Point(408, 302);
             this.btnGetThreeDailyData.Name = "btnGetThreeDailyData";
             this.btnGetThreeDailyData.Size = new System.Drawing.Size(126, 36);
             this.btnGetThreeDailyData.TabIndex = 34;
