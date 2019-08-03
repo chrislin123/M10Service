@@ -32,6 +32,8 @@ namespace M10.lib
             return wc;
         }
 
+        
+
         public bool GetStockAfterTse(DateTime GetDatetime)
         {
             //bool bResult = false;
@@ -314,6 +316,11 @@ namespace M10.lib
             return true;
         }
 
+        /// <summary>
+        /// 三大法人個股買賣盤後資料(TSE)
+        /// </summary>
+        /// <param name="GetDatetime"></param>
+        /// <returns></returns>
         public bool GetStockThreeTradeTse(DateTime GetDatetime)
         {
             try
@@ -442,6 +449,11 @@ namespace M10.lib
             return true;
         }
 
+        /// <summary>
+        /// 三大法人個股買賣盤後資料(OTC)
+        /// </summary>
+        /// <param name="GetDatetime"></param>
+        /// <returns></returns>
         public bool GetStockThreeTradeOtc(DateTime GetDatetime)
         {
             try
@@ -759,6 +771,10 @@ namespace M10.lib
             return true;
         }
 
+        /// <summary>
+        /// 更新個股基本資料
+        /// </summary>
+        /// <returns></returns>
         public bool GetStockInfo()
         {
             try
@@ -790,7 +806,16 @@ namespace M10.lib
             if (sType == M10Const.StockType.otc) surl = M10Const.StockInfoOtc;
             if (sType == M10Const.StockType.otc1) surl = M10Const.StockInfoOtc1;
 
+
+
             HtmlWeb webClient = new HtmlWeb();
+
+            //預防基礎連接已關閉: 傳送時發生未預期的錯誤。
+            //TLS 1.0 已被視為不安全，近期應會被各大網站陸續停用
+            ServicePointManager.SecurityProtocol =
+                        SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls |
+                        SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
             //網頁特殊編碼
             webClient.OverrideEncoding = Encoding.GetEncoding(950);
 
@@ -902,6 +927,13 @@ namespace M10.lib
             string surl = "https://tw.stock.yahoo.com/q/q?s=" + stockcode;
             //surl = "https://tw.stock.yahoo.com/s/tse.php";
             HtmlWeb webClient = new HtmlWeb();
+
+            //預防基礎連接已關閉: 傳送時發生未預期的錯誤。
+            //TLS 1.0 已被視為不安全，近期應會被各大網站陸續停用
+            ServicePointManager.SecurityProtocol =
+                        SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls |
+                        SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
             //網頁特殊編碼
             webClient.OverrideEncoding = System.Text.Encoding.GetEncoding(950);
 
@@ -990,7 +1022,7 @@ namespace M10.lib
                     sUrl = "https://tw.screener.finance.yahoo.net/future/q?type=tick&mkt=01&sym={0}";
                 }
 
-                using (WebClient wc = StockHelper.getNewWebClient())
+                using (WebClient wc = getNewWebClient())
                 {
                     sUrl = string.Format(sUrl, sStockcodeUrl);
                     string text = wc.DownloadString(sUrl);

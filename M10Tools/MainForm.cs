@@ -235,7 +235,27 @@ namespace M10Tools
         }
         private void button1_Click(object sender, EventArgs e)
         {
-             DateTime dt  =  Utils.getStringToDateTime("20190802");
+
+
+            var client = new System.Net.Mail.SmtpClient("smtp.gmail.com", 587)
+
+            {
+
+                EnableSsl = true,
+
+                DeliveryMethod = System.Net.Mail.SmtpDeliveryMethod.Network,
+
+                UseDefaultCredentials = false,
+
+                Credentials = new NetworkCredential("eswcrc.ncku@gmail.com", "ncku201102eswcrc")
+
+            };
+
+
+
+
+            client.Send("eswcrc.ncku@gmail.com", "chris.lin.tw123@gmail.com", "test", "testbody");
+
 
             return;
             string Url = "http://{0}/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw%7cotc_o00.tw%7ctse_FRMSA.tw&json=1&delay=0&_={1}";
