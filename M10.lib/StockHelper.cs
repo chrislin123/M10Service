@@ -1301,11 +1301,14 @@ namespace M10.lib
         }
 
         /// <summary>
-        /// 券商買賣證券日報表查詢系統
+        /// 券商買賣證券日報表查詢系統(暫停使用，因為無法驗證google grecaptcha)
         /// </summary>
         /// <returns></returns>
         public bool GetStockBrokerBS()
         {
+
+            return false;
+
             try
             {
                 //網頁瀏覽停滯時間

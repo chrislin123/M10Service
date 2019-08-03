@@ -71,17 +71,17 @@ namespace C10Mvc
                                     .WithIdentity("triggerStockAfter")
                                     .Build();
 
-
-            // 建立工作
-            IJobDetail jobStockBrokerBS = JobBuilder.Create<StockBrokerBSTask>()
-                                .WithIdentity("jobStockBrokerBS")
-                                .Build();
-            // 建立觸發器
-            ITrigger triggerStockBrokerBS = TriggerBuilder.Create()
-                                    .WithCronSchedule("0 5 16,18 * * ?")  // 每天16:05 18:05執行
-                                                                          //.WithCronSchedule("0/3 * * * * ?")  // 每三秒觸發一次。
-                                    .WithIdentity("triggerStockBrokerBS")
-                                    .Build();
+            //==券商買賣證券日報表查詢系統(暫停使用，因為無法驗證google grecaptcha)
+            //// 建立工作
+            //IJobDetail jobStockBrokerBS = JobBuilder.Create<StockBrokerBSTask>()
+            //                    .WithIdentity("jobStockBrokerBS")
+            //                    .Build();
+            //// 建立觸發器
+            //ITrigger triggerStockBrokerBS = TriggerBuilder.Create()
+            //                        .WithCronSchedule("0 5 16,18 * * ?")  // 每天16:05 18:05執行
+            //                                                              //.WithCronSchedule("0/3 * * * * ?")  // 每三秒觸發一次。
+            //                        .WithIdentity("triggerStockBrokerBS")
+            //                        .Build();
 
             //==當沖資料
             // 建立工作
@@ -101,7 +101,8 @@ namespace C10Mvc
             _Scheduler.ScheduleJob(jobStockInfo, triggerStockInfo);
             _Scheduler.ScheduleJob(jobStockThreeTrade, triggerStockThreeTrade);
             _Scheduler.ScheduleJob(jobStockAfter, triggerStockAfter);
-            _Scheduler.ScheduleJob(jobStockBrokerBS, triggerStockBrokerBS);
+            //(暫停使用，因為無法驗證google grecaptcha)
+            //_Scheduler.ScheduleJob(jobStockBrokerBS, triggerStockBrokerBS);
             _Scheduler.ScheduleJob(jobStockAfterRush, triggerStockAfterRush);
 
             // 啟動排程器

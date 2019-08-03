@@ -594,22 +594,22 @@ namespace M10Tools
                 string sLineTrans = "";
                 try
                 {
+                    toolStripStatusLabel1.Text = string.Format("盤後資料轉檔(TSE){0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
+                    Application.DoEvents();
+
                     //判斷是否已經轉檔成功
                     ssql = @" select * from stocklog where logtype = '{0}' and logdate = '{1}' and logstatus = 'success' ";
                     ssql = string.Format(ssql, M10Const.StockLogType.StockAfterTse, Utils.getDateString(LoopDatetime, M10Const.DateStringType.ADT1));
                     StockLog sl = dbDapper.QuerySingleOrDefault<StockLog>(ssql);
                     if (sl != null)
                     {
-                        System.Threading.Thread.Sleep(3000);
+                        //System.Threading.Thread.Sleep(3000);
                         continue;
                     }
 
-                    toolStripStatusLabel1.Text = string.Format("盤後資料轉檔(TSE){0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
-                    Application.DoEvents();
-
                     if (Stockhelper.GetStockAfterTse(LoopDatetime) == false)
                     {
-                        System.Threading.Thread.Sleep(3000);
+                        System.Threading.Thread.Sleep(15000);
                         continue;
                     }
 
@@ -619,7 +619,7 @@ namespace M10Tools
                 catch (Exception ex)
                 {
                     logger.Error(ex, "stock after:" + sLineTrans);
-                    System.Threading.Thread.Sleep(10000);
+                    System.Threading.Thread.Sleep(60000);
                 }
             }
             toolStripStatusLabel1.Text = "盤後資料轉檔(TSE)完成";
@@ -648,21 +648,22 @@ namespace M10Tools
 
             for (DateTime LoopDatetime = dt; LoopDatetime <= dtEnd; LoopDatetime = LoopDatetime.AddDays(1))
             {
+                
                 string sLineTrans = "";
                 try
                 {
+                    toolStripStatusLabel1.Text = string.Format("盤後資料轉檔(OTC){0}-{1}", M10Const.StockType.otc, LoopDatetime.ToString("yyyyMMdd"));
+                    Application.DoEvents();
+
                     //判斷是否已經轉檔成功
                     ssql = @" select * from stocklog where logtype = '{0}' and logdate = '{1}' and logstatus = 'success' ";
                     ssql = string.Format(ssql, M10Const.StockLogType.StockAfterOtc, Utils.getDateString(LoopDatetime, M10Const.DateStringType.ADT1));
                     StockLog sl = dbDapper.QuerySingleOrDefault<StockLog>(ssql);
                     if (sl != null)
                     {
-                        System.Threading.Thread.Sleep(3000);
+                        //System.Threading.Thread.Sleep(3000);
                         continue;
                     }
-
-                    toolStripStatusLabel1.Text = string.Format("盤後資料轉檔(OTC){0}-{1}", M10Const.StockType.otc, LoopDatetime.ToString("yyyyMMdd"));
-                    Application.DoEvents();
 
                     if (Stockhelper.GetStockAfterOtc(LoopDatetime) == false)
                     {
@@ -966,51 +967,7 @@ namespace M10Tools
         private void button10_Click(object sender, EventArgs e)
         {
 
-            ////Creates the client
-            //var client = new RestClient("http://example.com");
-            //client.CookieContainer = new System.Net.CookieContainer();
-            ////client.Authenticator = new SimpleAuthenticator("username", "xxx", "password", "xxx");
-
-            ////Creates the request
-            //var request = new RestRequest("/login", Method.POST);
-
-            ////Executes the login request
-            //var response = client.Execute(request);
-
-            ////This executes a seperate request, hence creating a new requestion
-            //client.DownloadData(new RestRequest("/file", Method.GET)).SaveAs("example.csv");
-
-            //Console.WriteLine(response.Content);
-            //Stockhelper.GetStockBrokerBS();
-
-            var client = new RestClient("http://www.tpex.org.tw/web/stock/aftertrading/broker_trading/download_ALLCSV.php");
-            var request = new RestRequest(Method.POST);
-            request.AddHeader("postman-token", "331fb74b-2e3d-bfe6-fcc3-eeb3eb21df64");
-            request.AddHeader("cache-control", "no-cache");
-            request.AddHeader("content-type", "application/x-www-form-urlencoded");
-            request.AddHeader("Origin", "http://www.tpex.org.tw");
-            request.AddHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
-            request.AddHeader("Referer", "http://www.tpex.org.tw/web/stock/aftertrading/broker_trading/brokerBS.php?l=zh-tw");
-            request.AddHeader("Accept-Language", "zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7");
-            request.AddHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36");
-
-            request.AddParameter("application/x-www-form-urlencoded", "stk_code=6180", ParameterType.RequestBody);
-
-
-
-            //byte[] byteArray = client.DownloadData(request);
-
-
-
-            //string result = System.Text.Encoding.UTF8.GetString(byteArray);
-
-            IRestResponse response = client.Execute(request);
-
-            string aaaa = response.Content;
-
-
-            //Stockhelper.GetStockBrokerBStest();
-            //Stockhelper.GetStockBrokerBSTSE();
+            Stockhelper.GetStockBrokerBS();
         }
 
 
