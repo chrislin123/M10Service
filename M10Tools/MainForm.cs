@@ -2907,6 +2907,8 @@ namespace M10Tools
                     
                     using (WebClient wc = StockHelper.getNewWebClient())
                     {
+
+
                         wc.Encoding = Encoding.GetEncoding(950);
                         string sFileName = @"d:\StockAfterTSE\{0}.csv";
                         sFileName = string.Format(sFileName, LoopDatetime.ToString("yyyyMMdd"));
