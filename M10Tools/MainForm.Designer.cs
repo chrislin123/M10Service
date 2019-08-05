@@ -56,6 +56,7 @@
             this.button14 = new System.Windows.Forms.Button();
             this.button15 = new System.Windows.Forms.Button();
             this.btnGetThreeDailyData = new System.Windows.Forms.Button();
+            this.button16 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -333,11 +334,22 @@
             this.btnGetThreeDailyData.UseVisualStyleBackColor = true;
             this.btnGetThreeDailyData.Click += new System.EventHandler(this.BtnGetThreeDailyData_Click);
             // 
+            // button16
+            // 
+            this.button16.Location = new System.Drawing.Point(408, 344);
+            this.button16.Name = "button16";
+            this.button16.Size = new System.Drawing.Size(126, 23);
+            this.button16.TabIndex = 35;
+            this.button16.Text = "StockAfter_Tse_ToFile";
+            this.button16.UseVisualStyleBackColor = true;
+            this.button16.Click += new System.EventHandler(this.Button16_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(866, 466);
+            this.Controls.Add(this.button16);
             this.Controls.Add(this.btnGetThreeDailyData);
             this.Controls.Add(this.button15);
             this.Controls.Add(this.button14);
@@ -404,6 +416,7 @@
         private System.Windows.Forms.Button button14;
         private System.Windows.Forms.Button button15;
         private System.Windows.Forms.Button btnGetThreeDailyData;
+        private System.Windows.Forms.Button button16;
     }
 }
 

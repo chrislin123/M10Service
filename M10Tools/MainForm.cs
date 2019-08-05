@@ -22,6 +22,7 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 using CL.Data;
 
+
 namespace M10Tools
 {
     public partial class MainForm : BaseForm
@@ -556,6 +557,8 @@ namespace M10Tools
                         continue;
                     }
 
+                    System.Threading.Thread.Sleep(3000);
+
                     toolStripStatusLabel1.Text = string.Format("{0}-{1}", M10Const.StockType.otc, "完成");
                     Application.DoEvents();
                 }
@@ -568,6 +571,12 @@ namespace M10Tools
             toolStripStatusLabel1.Text = "完成";
         }
 
+
+        /// <summary>
+        /// StockAfter_Tse
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button5_Click(object sender, EventArgs e)
         {
             //開始日期
@@ -613,6 +622,8 @@ namespace M10Tools
                         continue;
                     }
 
+                    System.Threading.Thread.Sleep(5000);
+
                     toolStripStatusLabel1.Text = string.Format("盤後資料轉檔(TSE){0}-{1}", M10Const.StockType.tse, "完成");
                     Application.DoEvents();
                 }
@@ -648,7 +659,7 @@ namespace M10Tools
 
             for (DateTime LoopDatetime = dt; LoopDatetime <= dtEnd; LoopDatetime = LoopDatetime.AddDays(1))
             {
-                
+
                 string sLineTrans = "";
                 try
                 {
@@ -2870,6 +2881,50 @@ namespace M10Tools
             //}
 
             //toolStripStatusLabel1.Text = "完成";
+        }
+
+        private void Button16_Click(object sender, EventArgs e)
+        {
+            //開始日期
+            DateTime dt = new DateTime(2007, 1, 2);
+            //DateTime dt = new DateTime(2019, 8, 2);
+            //結束日期
+            DateTime dtEnd = new DateTime(2019, 8, 2);
+
+            for (DateTime LoopDatetime = dt; LoopDatetime <= dtEnd; LoopDatetime = LoopDatetime.AddDays(1))
+            {
+                string sLineTrans = "";
+                try
+                {
+                    toolStripStatusLabel1.Text = string.Format("盤後資料轉檔(TSE){0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
+                    Application.DoEvents();
+
+                    //bool bResult = false;
+                   
+
+                    string sDate = Utils.getDateString(LoopDatetime, M10Const.DateStringType.ADT1);
+                    string sUrl = string.Format(M10Const.StockAfterTseUrl, sDate);
+                    
+                    using (WebClient wc = StockHelper.getNewWebClient())
+                    {
+                        wc.Encoding = Encoding.GetEncoding(950);
+                        string sFileName = @"d:\StockAfterTSE\{0}.csv";
+                        sFileName = string.Format(sFileName, LoopDatetime.ToString("yyyyMMdd"));
+                        wc.DownloadFile(sUrl, sFileName);
+                    }
+
+                    System.Threading.Thread.Sleep(10000);
+
+                    toolStripStatusLabel1.Text = string.Format("盤後資料轉檔(TSE){0}-{1}", M10Const.StockType.tse, "完成");
+                    Application.DoEvents();
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "stock after:" + sLineTrans);
+                    System.Threading.Thread.Sleep(60000);
+                }
+            }
+            toolStripStatusLabel1.Text = "盤後資料轉檔(TSE)完成";
         }
 
 

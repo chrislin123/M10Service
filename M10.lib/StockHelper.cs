@@ -142,6 +142,15 @@ namespace M10.lib
                     }
                 }
 
+                //刪除記錄檔
+                ssql = @"
+                    delete  stocklog where  logstatus = 'success' and logtype = '{0}' and logdate = '{1}'
+                ";
+                ssql = string.Format(ssql
+                    , M10Const.StockLogType.StockAfterTse.ToString(), Utils.getDateString(GetDatetime, M10Const.DateStringType.ADT1));
+                dbDapper.Execute(ssql);
+              
+                //新增記錄檔
                 StockLog sl = new StockLog();
                 sl.logdate = Utils.getDateString(GetDatetime, M10Const.DateStringType.ADT1);
                 sl.logdatetime = Utils.getDatatimeString();
@@ -294,7 +303,15 @@ namespace M10.lib
                     }
 
                 }
+                //刪除記錄檔
+                ssql = @"
+                    delete  stocklog where  logstatus = 'success' and logtype = '{0}' and logdate = '{1}'
+                ";
+                ssql = string.Format(ssql
+                    , M10Const.StockLogType.StockAfterOtc.ToString(), Utils.getDateString(GetDatetime, M10Const.DateStringType.ADT1));
+                dbDapper.Execute(ssql);
 
+                //新增記錄檔
                 StockLog sl = new StockLog();
                 sl.logdate = Utils.getDateString(GetDatetime, M10Const.DateStringType.ADT1);
                 sl.logdatetime = Utils.getDatatimeString();
