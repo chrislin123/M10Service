@@ -2886,7 +2886,7 @@ namespace M10Tools
         private void Button16_Click(object sender, EventArgs e)
         {
             //開始日期
-            DateTime dt = new DateTime(2007, 1, 2);
+            DateTime dt = new DateTime(2015, 1, 2);
             //DateTime dt = new DateTime(2019, 8, 2);
             //結束日期
             DateTime dtEnd = new DateTime(2019, 8, 2);
@@ -2904,14 +2904,21 @@ namespace M10Tools
 
                     string sDate = Utils.getDateString(LoopDatetime, M10Const.DateStringType.ADT1);
                     string sUrl = string.Format(M10Const.StockAfterTseUrl, sDate);
-                    
+
+                    string sFileName = @"d:\StockAfterTSE\{0}.csv";
+                    sFileName = string.Format(sFileName, LoopDatetime.ToString("yyyyMMdd"));
+
+                    //判斷檔案是否存在
+                    if (File.Exists(sFileName) == true)
+                    {
+                        continue;
+                    }
+
+
                     using (WebClient wc = StockHelper.getNewWebClient())
                     {
-
-
                         wc.Encoding = Encoding.GetEncoding(950);
-                        string sFileName = @"d:\StockAfterTSE\{0}.csv";
-                        sFileName = string.Format(sFileName, LoopDatetime.ToString("yyyyMMdd"));
+                        
                         wc.DownloadFile(sUrl, sFileName);
                     }
 
