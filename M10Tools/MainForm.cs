@@ -238,6 +238,10 @@ namespace M10Tools
         {
 
 
+            System.Threading.Thread.Sleep(100000);
+
+            return;
+
             var client = new System.Net.Mail.SmtpClient("smtp.gmail.com", 587)
 
             {
@@ -2923,7 +2927,7 @@ namespace M10Tools
                     using (WebClient wc = StockHelper.getNewWebClient())
                     {
                         wc.Encoding = Encoding.GetEncoding(950);
-                        
+
                         wc.DownloadFile(sUrl, sFileName);
                     }
 
@@ -3019,248 +3023,262 @@ namespace M10Tools
 
             foreach (FileInfo item in FileList)
             {
-                string[] slTemp = item.Name.Replace(item.Extension, "").Split('_');
-                string sDate = slTemp[1];
-
-                string text = File.ReadAllText(item.FullName, Encoding.GetEncoding(950));
-
-
-                if (item.Name.Contains("TSE") == true)
+                try
                 {
+                    string[] slTemp = item.Name.Replace(item.Extension, "").Split('_');
+                    string sDate = slTemp[1];
 
-                    List<string> StringList = text.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<string>();
-
-                    Int32 iIndex = 0;
-                    foreach (string LoopItem in StringList)
+                    if (File.Exists(item.FullName) == false)
                     {
-                        iIndex++;
-
-                        toolStripStatusLabel1.Text = string.Format("盤後資料匯入資料庫(TSE)-{0}-({1}/{2})", sDate
-                            , iIndex.ToString(), StringList.Count.ToString());
-                        Application.DoEvents();
-
-
-                        string Line = LoopItem;
-                        Line = Line.Replace(" ", "");
-                        Line = Line.Replace("\",\"", "|");
-                        Line = Line.Replace("\"", "");
-                        Line = Line.Replace(",", "");
-                        Line = Line.Replace("=", "");
-                        string[] aCol = Line.Split('|');
-
-                        if (aCol.Length == 16)
-                        {
-                            //檢核資料
-                            Decimal iCheck = -1;
-
-                            if (Decimal.TryParse(aCol[8], out iCheck) == false)
-                            {
-                                continue;
-                            }
-
-                            ssql = " select * from stockafter  where stockdate = '{0}' and stockcode = '{1}'  ";
-                            Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(string.Format(ssql, sDate, aCol[0]));
-
-                            decimal dpricelastbuy = 0;
-                            decimal.TryParse(aCol[11], out dpricelastbuy);
-
-                            decimal dpricelastsell = 0;
-                            decimal.TryParse(aCol[13], out dpricelastsell);
-
-                            if (aCol[9] == "") aCol[9] = "X";
-
-                            //計算昨收
-                            Decimal dPriceYesterday = Stockhelper.CalcPriceYesterday(aCol[8], aCol[9], aCol[10]);
-                            
-                            if (sa == null)
-                            {
-                                sa = new Stockafter();
-                                sa.stockdate = sDate;
-                                sa.stocktype = M10Const.StockType.tse;
-                                sa.stockcode = aCol[0];
-                                sa.pricelast = Convert.ToDecimal(aCol[8]);
-                                sa.updown = aCol[9];
-                                sa.pricediff = aCol[10];
-                                sa.priceopen = Convert.ToDecimal(aCol[5]);
-                                sa.pricetop = Convert.ToDecimal(aCol[6]);
-                                sa.pricelow = Convert.ToDecimal(aCol[7]);
-                                sa.priceavg = 0;
-                                sa.dealnum = Convert.ToInt64(aCol[2]);
-                                sa.dealmoney = Convert.ToInt64(aCol[4]);
-                                sa.dealamount = Convert.ToInt64(aCol[3]);
-                                sa.pricelastbuy = dpricelastbuy;
-                                sa.pricelastsell = dpricelastsell;
-                                sa.publicnum = 0;
-                                sa.pricenextday = Convert.ToDecimal(aCol[8]);
-                                sa.pricenextlimittop = 0;
-                                sa.pricenextlimitlow = 0;
-                                sa.priceyesterday = dPriceYesterday;
-                                sa.updatetime = Utils.getDatatimeString();
-
-                                dbDapper.Insert(sa);
-                            }
-                            else
-                            {
-                                sa.stocktype = M10Const.StockType.tse;
-                                sa.pricelast = Convert.ToDecimal(aCol[8]);
-                                sa.updown = aCol[9];
-                                sa.pricediff = aCol[10];
-                                sa.priceopen = Convert.ToDecimal(aCol[5]);
-                                sa.pricetop = Convert.ToDecimal(aCol[6]);
-                                sa.pricelow = Convert.ToDecimal(aCol[7]);
-                                sa.priceavg = 0;
-                                sa.dealnum = Convert.ToInt64(aCol[2]);
-                                sa.dealmoney = Convert.ToInt64(aCol[4]);
-                                sa.dealamount = Convert.ToInt64(aCol[3]);
-                                sa.pricelastbuy = dpricelastbuy;
-                                sa.pricelastsell = dpricelastsell;
-                                sa.publicnum = 0;
-                                sa.pricenextday = Convert.ToDecimal(aCol[8]);
-                                sa.pricenextlimittop = 0;
-                                sa.pricenextlimitlow = 0;
-                                sa.updatetime = Utils.getDatatimeString();
-                                sa.priceyesterday = dPriceYesterday;
-                                dbDapper.Update(sa);
-                            }
-                        }
-
+                        continue;
                     }
-                }
 
-                if (item.Name.Contains("OTC") == true)
-                {
-                    List<string> StringList = text.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<string>();
+                    string text = File.ReadAllText(item.FullName, Encoding.GetEncoding(950));
 
-                    Int32 iIndex = 0;
-                    foreach (string LoopItem in StringList)
+
+                    if (item.Name.Contains("TSE") == true)
                     {
-                        iIndex++;
 
-                        toolStripStatusLabel1.Text = string.Format("盤後資料匯入資料庫(OTC)-{0}-({1}/{2})", sDate
-                            , iIndex.ToString(), StringList.Count.ToString());
-                        Application.DoEvents();
+                        List<string> StringList = text.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<string>();
 
-                        string Line = LoopItem;
-                        Line = Line.Replace(" ", "");
-                        Line = Line.Replace("\",\"", "|");
-                        Line = Line.Replace("\"", "");
-                        Line = Line.Replace(",", "");
-                        Line = Line.Replace("=", "");
-
-                        string[] aCol = Line.Split('|');
-
-                        if (aCol.Length == 17)
+                        Int32 iIndex = 0;
+                        foreach (string LoopItem in StringList)
                         {
-                            //檢核資料
-                            Decimal iCheck = -1;
+                            iIndex++;
 
-                            if (Decimal.TryParse(aCol[2], out iCheck) == false)
-                            {
-                                continue;
-                            }
+                            toolStripStatusLabel1.Text = string.Format("盤後資料匯入資料庫(TSE)-{0}-({1}/{2})", sDate
+                                , iIndex.ToString(), StringList.Count.ToString());
+                            Application.DoEvents();
 
-                            //資訊整理
-                            string sDiff = aCol[3];
-                            string sUpdown = "X";
-                            string sPricediff = "0.00";
-                            if (sDiff.Length > 0)
+
+                            string Line = LoopItem;
+                            Line = Line.Replace(" ", "");
+                            Line = Line.Replace("\",\"", "|");
+                            Line = Line.Replace("\"", "");
+                            Line = Line.Replace(",", "");
+                            Line = Line.Replace("=", "");
+                            string[] aCol = Line.Split('|');
+
+                            if (aCol.Length == 16)
                             {
-                                string sCheck = sDiff.Substring(0, 1);
-                                if (sCheck == "+")
+                                //檢核資料
+                                Decimal iCheck = -1;
+
+                                if (Decimal.TryParse(aCol[8], out iCheck) == false)
                                 {
-                                    sUpdown = "+";
-                                    sPricediff = sDiff.Replace("+", "");
-                                }
-                                if (sCheck == "-")
-                                {
-                                    sUpdown = "-";
-                                    sPricediff = sDiff.Replace("-", "");
-                                }
-                                if (sCheck == "0")
-                                {
-                                    sUpdown = "X";
+                                    continue;
                                 }
 
-                                if (sCheck != "+" && sCheck != "-" && sCheck != "0")
+                                ssql = " select * from stockafter  where stockdate = '{0}' and stockcode = '{1}'  ";
+                                Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(string.Format(ssql, sDate, aCol[0]));
+
+                                decimal dpricelastbuy = 0;
+                                decimal.TryParse(aCol[11], out dpricelastbuy);
+
+                                decimal dpricelastsell = 0;
+                                decimal.TryParse(aCol[13], out dpricelastsell);
+
+                                if (aCol[9] == "") aCol[9] = "X";
+
+                                //計算昨收
+                                Decimal dPriceYesterday = Stockhelper.CalcPriceYesterday(aCol[8], aCol[9], aCol[10]);
+
+                                if (sa == null)
                                 {
-                                    sUpdown = "X";
+                                    sa = new Stockafter();
+                                    sa.stockdate = sDate;
+                                    sa.stocktype = M10Const.StockType.tse;
+                                    sa.stockcode = aCol[0];
+                                    sa.pricelast = Convert.ToDecimal(aCol[8]);
+                                    sa.updown = aCol[9];
+                                    sa.pricediff = aCol[10];
+                                    sa.priceopen = Convert.ToDecimal(aCol[5]);
+                                    sa.pricetop = Convert.ToDecimal(aCol[6]);
+                                    sa.pricelow = Convert.ToDecimal(aCol[7]);
+                                    sa.priceavg = 0;
+                                    sa.dealnum = Convert.ToInt64(aCol[2]);
+                                    sa.dealmoney = Convert.ToInt64(aCol[4]);
+                                    sa.dealamount = Convert.ToInt64(aCol[3]);
+                                    sa.pricelastbuy = dpricelastbuy;
+                                    sa.pricelastsell = dpricelastsell;
+                                    sa.publicnum = 0;
+                                    sa.pricenextday = Convert.ToDecimal(aCol[8]);
+                                    sa.pricenextlimittop = 0;
+                                    sa.pricenextlimitlow = 0;
+                                    sa.priceyesterday = dPriceYesterday;
+                                    sa.updatetime = Utils.getDatatimeString();
+
+                                    dbDapper.Insert(sa);
+                                }
+                                else
+                                {
+                                    sa.stocktype = M10Const.StockType.tse;
+                                    sa.pricelast = Convert.ToDecimal(aCol[8]);
+                                    sa.updown = aCol[9];
+                                    sa.pricediff = aCol[10];
+                                    sa.priceopen = Convert.ToDecimal(aCol[5]);
+                                    sa.pricetop = Convert.ToDecimal(aCol[6]);
+                                    sa.pricelow = Convert.ToDecimal(aCol[7]);
+                                    sa.priceavg = 0;
+                                    sa.dealnum = Convert.ToInt64(aCol[2]);
+                                    sa.dealmoney = Convert.ToInt64(aCol[4]);
+                                    sa.dealamount = Convert.ToInt64(aCol[3]);
+                                    sa.pricelastbuy = dpricelastbuy;
+                                    sa.pricelastsell = dpricelastsell;
+                                    sa.publicnum = 0;
+                                    sa.pricenextday = Convert.ToDecimal(aCol[8]);
+                                    sa.pricenextlimittop = 0;
+                                    sa.pricenextlimitlow = 0;
+                                    sa.updatetime = Utils.getDatatimeString();
+                                    sa.priceyesterday = dPriceYesterday;
+                                    dbDapper.Update(sa);
                                 }
                             }
-
-                            //計算昨收
-                            Decimal dPriceYesterday = Stockhelper.CalcPriceYesterday(aCol[2], sUpdown, sPricediff);
-                           
-
-                            ssql = " select * from stockafter  where stockdate = '{0}' and stockcode = '{1}'  ";
-                            Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(string.Format(ssql, sDate, aCol[0]));
-
-                            if (aCol[0] == "3226")
-                            {
-                                string aaaa = string.Empty;
-                            }
-
-                            if (sa == null)
-                            {
-                                sa = new Stockafter();
-                                sa.stockdate = sDate;
-                                sa.stocktype = M10Const.StockType.otc;
-                                sa.stockcode = aCol[0];
-                                sa.pricelast = Convert.ToDecimal(aCol[2]);
-                                sa.updown = sUpdown;
-                                sa.pricediff = sPricediff;
-                                sa.priceopen = Convert.ToDecimal(aCol[4]);
-                                sa.pricetop = Convert.ToDecimal(aCol[5]);
-                                sa.pricelow = Convert.ToDecimal(aCol[6]);
-                                sa.priceavg = Convert.ToDecimal(aCol[7]);
-                                sa.dealnum = Convert.ToInt64(aCol[8]);
-                                sa.dealmoney = Convert.ToInt64(aCol[9]);
-                                sa.dealamount = Convert.ToInt64(aCol[10]);
-                                sa.pricelastbuy = Convert.ToDecimal(aCol[11]);
-                                sa.pricelastsell = Convert.ToDecimal(aCol[12]);
-                                sa.publicnum = Convert.ToInt64(aCol[13]);
-                                sa.pricenextday = Convert.ToDecimal(aCol[14]);
-                                sa.pricenextlimittop = Convert.ToDecimal(aCol[15]);
-                                sa.pricenextlimitlow = Convert.ToDecimal(aCol[16]);
-                                sa.updatetime = Utils.getDatatimeString();
-                                sa.priceyesterday = dPriceYesterday;
-                                dbDapper.Insert(sa);
-                            }
-                            else
-                            {
-                                sa.stocktype = M10Const.StockType.otc;
-                                sa.pricelast = Convert.ToDecimal(aCol[2]);
-                                sa.updown = sUpdown;
-                                sa.pricediff = sPricediff;
-                                sa.priceopen = Convert.ToDecimal(aCol[4]);
-                                sa.pricetop = Convert.ToDecimal(aCol[5]);
-                                sa.pricelow = Convert.ToDecimal(aCol[6]);
-                                sa.priceavg = Convert.ToDecimal(aCol[7]);
-                                sa.dealnum = Convert.ToInt64(aCol[8]);
-                                sa.dealmoney = Convert.ToInt64(aCol[9]);
-                                sa.dealamount = Convert.ToInt64(aCol[10]);
-                                sa.pricelastbuy = Convert.ToDecimal(aCol[11]);
-                                sa.pricelastsell = Convert.ToDecimal(aCol[12]);
-                                sa.publicnum = Convert.ToInt64(aCol[13]);
-                                sa.pricenextday = Convert.ToDecimal(aCol[14]);
-                                sa.pricenextlimittop = Convert.ToDecimal(aCol[15]);
-                                sa.pricenextlimitlow = Convert.ToDecimal(aCol[16]);
-                                sa.updatetime = Utils.getDatatimeString();
-                                sa.priceyesterday = dPriceYesterday;
-                                dbDapper.Update(sa);
-                            }
-
 
                         }
-
-
                     }
-                }
 
-                //移動到備份區
-                string sFullRename = Path.Combine(sPathBak, item.Name);
-                if (File.Exists(sFullRename) == false)
+                    if (item.Name.Contains("OTC") == true)
+                    {
+                        List<string> StringList = text.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<string>();
+
+                        Int32 iIndex = 0;
+                        foreach (string LoopItem in StringList)
+                        {
+                            iIndex++;
+
+                            toolStripStatusLabel1.Text = string.Format("盤後資料匯入資料庫(OTC)-{0}-({1}/{2})", sDate
+                                , iIndex.ToString(), StringList.Count.ToString());
+                            Application.DoEvents();
+
+                            string Line = LoopItem;
+                            Line = Line.Replace(" ", "");
+                            Line = Line.Replace("\",\"", "|");
+                            Line = Line.Replace("\"", "");
+                            Line = Line.Replace(",", "");
+                            Line = Line.Replace("=", "");
+
+                            string[] aCol = Line.Split('|');
+
+                            if (aCol.Length == 17)
+                            {
+                                //檢核資料
+                                Decimal iCheck = -1;
+
+                                if (Decimal.TryParse(aCol[2], out iCheck) == false)
+                                {
+                                    continue;
+                                }
+
+                                //資訊整理
+                                string sDiff = aCol[3];
+                                string sUpdown = "X";
+                                string sPricediff = "0.00";
+                                if (sDiff.Length > 0)
+                                {
+                                    string sCheck = sDiff.Substring(0, 1);
+                                    if (sCheck == "+")
+                                    {
+                                        sUpdown = "+";
+                                        sPricediff = sDiff.Replace("+", "");
+                                    }
+                                    if (sCheck == "-")
+                                    {
+                                        sUpdown = "-";
+                                        sPricediff = sDiff.Replace("-", "");
+                                    }
+                                    if (sCheck == "0")
+                                    {
+                                        sUpdown = "X";
+                                    }
+
+                                    if (sCheck != "+" && sCheck != "-" && sCheck != "0")
+                                    {
+                                        sUpdown = "X";
+                                    }
+                                }
+
+                                //計算昨收
+                                Decimal dPriceYesterday = Stockhelper.CalcPriceYesterday(aCol[2], sUpdown, sPricediff);
+
+
+                                ssql = " select * from stockafter  where stockdate = '{0}' and stockcode = '{1}'  ";
+                                Stockafter sa = dbDapper.QuerySingleOrDefault<Stockafter>(string.Format(ssql, sDate, aCol[0]));
+
+                                if (aCol[0] == "3226")
+                                {
+                                    string aaaa = string.Empty;
+                                }
+
+                                if (sa == null)
+                                {
+                                    sa = new Stockafter();
+                                    sa.stockdate = sDate;
+                                    sa.stocktype = M10Const.StockType.otc;
+                                    sa.stockcode = aCol[0];
+                                    sa.pricelast = Convert.ToDecimal(aCol[2]);
+                                    sa.updown = sUpdown;
+                                    sa.pricediff = sPricediff;
+                                    sa.priceopen = Convert.ToDecimal(aCol[4]);
+                                    sa.pricetop = Convert.ToDecimal(aCol[5]);
+                                    sa.pricelow = Convert.ToDecimal(aCol[6]);
+                                    sa.priceavg = Convert.ToDecimal(aCol[7]);
+                                    sa.dealnum = Convert.ToInt64(aCol[8]);
+                                    sa.dealmoney = Convert.ToInt64(aCol[9]);
+                                    sa.dealamount = Convert.ToInt64(aCol[10]);
+                                    sa.pricelastbuy = Convert.ToDecimal(aCol[11]);
+                                    sa.pricelastsell = Convert.ToDecimal(aCol[12]);
+                                    sa.publicnum = Convert.ToInt64(aCol[13]);
+                                    sa.pricenextday = Convert.ToDecimal(aCol[14]);
+                                    sa.pricenextlimittop = Convert.ToDecimal(aCol[15]);
+                                    sa.pricenextlimitlow = Convert.ToDecimal(aCol[16]);
+                                    sa.updatetime = Utils.getDatatimeString();
+                                    sa.priceyesterday = dPriceYesterday;
+                                    dbDapper.Insert(sa);
+                                }
+                                else
+                                {
+                                    sa.stocktype = M10Const.StockType.otc;
+                                    sa.pricelast = Convert.ToDecimal(aCol[2]);
+                                    sa.updown = sUpdown;
+                                    sa.pricediff = sPricediff;
+                                    sa.priceopen = Convert.ToDecimal(aCol[4]);
+                                    sa.pricetop = Convert.ToDecimal(aCol[5]);
+                                    sa.pricelow = Convert.ToDecimal(aCol[6]);
+                                    sa.priceavg = Convert.ToDecimal(aCol[7]);
+                                    sa.dealnum = Convert.ToInt64(aCol[8]);
+                                    sa.dealmoney = Convert.ToInt64(aCol[9]);
+                                    sa.dealamount = Convert.ToInt64(aCol[10]);
+                                    sa.pricelastbuy = Convert.ToDecimal(aCol[11]);
+                                    sa.pricelastsell = Convert.ToDecimal(aCol[12]);
+                                    sa.publicnum = Convert.ToInt64(aCol[13]);
+                                    sa.pricenextday = Convert.ToDecimal(aCol[14]);
+                                    sa.pricenextlimittop = Convert.ToDecimal(aCol[15]);
+                                    sa.pricenextlimitlow = Convert.ToDecimal(aCol[16]);
+                                    sa.updatetime = Utils.getDatatimeString();
+                                    sa.priceyesterday = dPriceYesterday;
+                                    dbDapper.Update(sa);
+                                }
+
+
+                            }
+
+
+                        }
+                    }
+
+                    //移動到備份區
+                    string sFullRename = Path.Combine(sPathBak, item.Name);
+                    if (File.Exists(sFullRename) == false)
+                    {
+                        item.MoveTo(sFullRename);
+                    }
+
+                }
+                catch (Exception ex)
                 {
-                    item.MoveTo(sFullRename);
+                    logger.Error(ex, "盤後資料匯入資料庫 發生錯誤:" + item.FullName);
+                    //System.Threading.Thread.Sleep(60000);
                 }
             }
 
