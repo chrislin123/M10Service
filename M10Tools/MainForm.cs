@@ -238,9 +238,20 @@ namespace M10Tools
         {
 
 
-            System.Threading.Thread.Sleep(100000);
 
-            return;
+            try
+            {
+
+                string a = "";
+
+                int.Parse(a);
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "stock after:" );
+                System.Threading.Thread.Sleep(10000);
+            }
 
             var client = new System.Net.Mail.SmtpClient("smtp.gmail.com", 587)
 
@@ -256,13 +267,17 @@ namespace M10Tools
 
             };
 
-
-
+            
 
             client.Send("eswcrc.ncku@gmail.com", "chris.lin.tw123@gmail.com", "test", "testbody");
 
 
             return;
+
+            //System.Threading.Thread.Sleep(100000);
+
+            return;
+
             string Url = "http://{0}/stock/api/getStockInfo.jsp?ex_ch=tse_t00.tw%7cotc_o00.tw%7ctse_FRMSA.tw&json=1&delay=0&_={1}";
             double dd = ConvertToUnixTimestamp(DateTime.Now.AddMilliseconds(60000));
 
@@ -871,8 +886,8 @@ namespace M10Tools
             toolStripStatusLabel1.Text = string.Format("StockInfor Trans 開始");
             Application.DoEvents();
 
-            //Stockhelper.GetStockInfo();
-            Stockhelper.GetStockInfoSub(M10Const.StockType.otc1);
+            Stockhelper.GetStockInfo();
+            //Stockhelper.GetStockInfoSub(M10Const.StockType.otc1);
 
 
 
