@@ -3311,6 +3311,88 @@ namespace M10Tools
             Application.DoEvents();
         }
 
+        private void Button19_Click(object sender, EventArgs e)
+        {
+            string sPath = @"d:\Temp\StockThreeTrade\";
+
+            Directory.CreateDirectory(sPath);
+            //開始日期
+            DateTime dt = new DateTime(2012, 1, 1);
+            //DateTime dt = DateTime.Now.AddDays(-1);
+            //DateTime dt = new DateTime(2018, 1, 1);
+            //結束日期
+            DateTime dtEnd = DateTime.Now.AddDays(-1);
+
+            for (DateTime LoopDatetime = dt; LoopDatetime <= dtEnd; LoopDatetime = LoopDatetime.AddDays(1))
+            {
+                string sLineTrans = "";
+                try
+                {
+                    toolStripStatusLabel1.Text = string.Format("三大法人盤後資料轉檔(TSE){0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
+                    Application.DoEvents();
+
+                    string sDate = Utils.getDateString(LoopDatetime, M10Const.DateStringType.ADT1);
+                    string sUrl = string.Format(M10Const.StockThreeTradeTse, sDate);
+
+                    string sFileName = @"ThreeTrade_TSE_{0}.csv";
+                    sFileName = string.Format(sFileName, LoopDatetime.ToString("yyyyMMdd"));
+                    sFileName = sPath + sFileName;
+
+                    //判斷檔案是否存在
+                    if (File.Exists(sFileName) == true)
+                    {
+                        continue;
+                    }
+
+                    using (WebClient wc = StockHelper.getNewWebClient())
+                    {
+                        wc.Encoding = Encoding.GetEncoding(950);
+
+                        wc.DownloadFile(sUrl, sFileName);
+                    }
+
+                    toolStripStatusLabel1.Text = string.Format("三大法人盤後資料轉檔(TSE){0}-{1}", M10Const.StockType.tse, "完成");
+                    Application.DoEvents();
+
+                    toolStripStatusLabel1.Text = string.Format("三大法人盤後資料轉檔(OTC){0}-{1}", M10Const.StockType.otc, LoopDatetime.ToString("yyyyMMdd"));
+                    Application.DoEvents();
+
+                    sDate = Utils.getDateString(LoopDatetime, M10Const.DateStringType.ChineseT2);
+                    sUrl = string.Format(M10Const.StockThreeTradeOtc, sDate);
+
+                    sFileName = @"ThreeTrade_OTC_{0}.csv";
+                    sFileName = string.Format(sFileName, LoopDatetime.ToString("yyyyMMdd"));
+                    sFileName = sPath + sFileName;
+
+                    //判斷檔案是否存在
+                    if (File.Exists(sFileName) == true)
+                    {
+                        continue;
+                    }
+
+                    using (WebClient wc = StockHelper.getNewWebClient())
+                    {
+                        wc.Encoding = Encoding.GetEncoding(950);
+
+                        wc.DownloadFile(sUrl, sFileName);
+                    }
+
+                    toolStripStatusLabel1.Text = string.Format("三大法人盤後資料轉檔(OTC){0}-{1}", M10Const.StockType.otc, "完成");
+                    Application.DoEvents();
+
+
+
+                    System.Threading.Thread.Sleep(15000);
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "三大法人盤後資料轉檔:" + sLineTrans);
+                    System.Threading.Thread.Sleep(60000);
+                }
+            }
+            toolStripStatusLabel1.Text = "盤後資料轉檔(ALL)完成";
+        }
+
 
 
         //private void buildtableRTI()
