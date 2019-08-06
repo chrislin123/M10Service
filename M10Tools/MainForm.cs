@@ -2872,8 +2872,14 @@ namespace M10Tools
         private void BtnGetThreeDailyData_Click(object sender, EventArgs e)
         {
 
+            //Stockhelper.GetStockThreeTradeTse(DateTime.Now);
 
-            Stockhelper.getThreeFuturesDailyData(DateTime.Now);
+            Stockhelper.GetStockThreeTradeOtc(DateTime.Now);
+
+
+            //
+
+            //Stockhelper.getThreeFuturesDailyData(DateTime.Now);
             ////開始日期
             //DateTime dt = new DateTime(2019, 6, 26);
             ////結束日期

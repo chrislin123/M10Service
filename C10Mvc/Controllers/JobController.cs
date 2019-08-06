@@ -189,6 +189,8 @@ namespace C10Mvc.Controllers
                 //三大法人個股買賣盤後資料(OTC)
                 Stockhelper.GetStockThreeTradeOtc(dtTemp);
                 #endregion
+
+                System.Threading.Thread.Sleep(30000);
             }
 
             logger.Info("END DoStockThreeTrade()");
