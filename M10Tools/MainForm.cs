@@ -238,6 +238,10 @@ namespace M10Tools
         {
 
 
+            logger.Fatal("我是致命錯誤:Fatal");
+
+            return;
+
 
             try
             {
