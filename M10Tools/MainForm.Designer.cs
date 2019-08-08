@@ -57,9 +57,9 @@
             this.button15 = new System.Windows.Forms.Button();
             this.btnGetThreeDailyData = new System.Windows.Forms.Button();
             this.button16 = new System.Windows.Forms.Button();
-            this.button17 = new System.Windows.Forms.Button();
             this.button18 = new System.Windows.Forms.Button();
             this.button19 = new System.Windows.Forms.Button();
+            this.button20 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -249,9 +249,9 @@
             // 
             // StockAfterRushButton
             // 
-            this.StockAfterRushButton.Location = new System.Drawing.Point(540, 70);
+            this.StockAfterRushButton.Location = new System.Drawing.Point(408, 332);
             this.StockAfterRushButton.Name = "StockAfterRushButton";
-            this.StockAfterRushButton.Size = new System.Drawing.Size(126, 52);
+            this.StockAfterRushButton.Size = new System.Drawing.Size(126, 34);
             this.StockAfterRushButton.TabIndex = 25;
             this.StockAfterRushButton.Text = "StockAfterRush盤後當沖資料";
             this.StockAfterRushButton.UseVisualStyleBackColor = true;
@@ -339,27 +339,17 @@
             // 
             // button16
             // 
-            this.button16.Location = new System.Drawing.Point(408, 286);
+            this.button16.Location = new System.Drawing.Point(540, 291);
             this.button16.Name = "button16";
-            this.button16.Size = new System.Drawing.Size(126, 47);
+            this.button16.Size = new System.Drawing.Size(126, 34);
             this.button16.TabIndex = 35;
-            this.button16.Text = "個股盤後轉CSV檔StockAfter_Tse_ToFile";
+            this.button16.Text = "個股盤後下載CSV檔";
             this.button16.UseVisualStyleBackColor = true;
             this.button16.Click += new System.EventHandler(this.Button16_Click);
             // 
-            // button17
-            // 
-            this.button17.Location = new System.Drawing.Point(408, 339);
-            this.button17.Name = "button17";
-            this.button17.Size = new System.Drawing.Size(126, 34);
-            this.button17.TabIndex = 36;
-            this.button17.Text = "個股盤後轉CSV檔StockAfter_Otc_ToFile";
-            this.button17.UseVisualStyleBackColor = true;
-            this.button17.Click += new System.EventHandler(this.Button17_Click);
-            // 
             // button18
             // 
-            this.button18.Location = new System.Drawing.Point(408, 379);
+            this.button18.Location = new System.Drawing.Point(672, 291);
             this.button18.Name = "button18";
             this.button18.Size = new System.Drawing.Size(126, 34);
             this.button18.TabIndex = 37;
@@ -377,14 +367,24 @@
             this.button19.UseVisualStyleBackColor = true;
             this.button19.Click += new System.EventHandler(this.Button19_Click);
             // 
+            // button20
+            // 
+            this.button20.Location = new System.Drawing.Point(672, 245);
+            this.button20.Name = "button20";
+            this.button20.Size = new System.Drawing.Size(126, 34);
+            this.button20.TabIndex = 39;
+            this.button20.Text = "三大法人每日交易資料CSV匯入DB";
+            this.button20.UseVisualStyleBackColor = true;
+            this.button20.Click += new System.EventHandler(this.Button20_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(866, 466);
+            this.Controls.Add(this.button20);
             this.Controls.Add(this.button19);
             this.Controls.Add(this.button18);
-            this.Controls.Add(this.button17);
             this.Controls.Add(this.button16);
             this.Controls.Add(this.btnGetThreeDailyData);
             this.Controls.Add(this.button15);
@@ -453,9 +453,9 @@
         private System.Windows.Forms.Button button15;
         private System.Windows.Forms.Button btnGetThreeDailyData;
         private System.Windows.Forms.Button button16;
-        private System.Windows.Forms.Button button17;
         private System.Windows.Forms.Button button18;
         private System.Windows.Forms.Button button19;
+        private System.Windows.Forms.Button button20;
     }
 }
 
