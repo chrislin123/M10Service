@@ -253,7 +253,7 @@ namespace M10Tools
             }
             catch (Exception ex)
             {
-                logger.Error(ex, "stock after:" );
+                logger.Error(ex, "stock after:");
                 System.Threading.Thread.Sleep(10000);
             }
 
@@ -271,7 +271,7 @@ namespace M10Tools
 
             };
 
-            
+
 
             client.Send("eswcrc.ncku@gmail.com", "chris.lin.tw123@gmail.com", "test", "testbody");
 
@@ -1064,13 +1064,13 @@ namespace M10Tools
 
 
 
-            
 
 
-            
+
+
             //開始日期
             DateTime dt = new DateTime(2014, 1, 6);
-            
+
             //結束日期
             DateTime dtEnd = DateTime.Now.AddDays(-1);
 
@@ -1146,7 +1146,7 @@ namespace M10Tools
                 }
             }
             toolStripStatusLabel1.Text = "當沖資料轉檔(ALL)完成";
-            
+
 
 
 
@@ -3529,267 +3529,135 @@ namespace M10Tools
                     }
 
                     string text = File.ReadAllText(item.FullName, Encoding.GetEncoding(950));
+                    List<string> StringList = text.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<string>();
 
-
-                    if (item.Name.Contains("TSE") == true)
+                    foreach (string LoopItem in StringList)
                     {
-                        List<string> StringList = text.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<string>();
+                        string Line = LoopItem;
+                        Line = Line.Replace(" ", "");
+                        Line = Line.Replace("\",\"", "|");
+                        Line = Line.Replace("\"", "");
+                        Line = Line.Replace(",", "");
+                        Line = Line.Replace("=", "");
+                        string[] aCol = Line.Split('|');
 
-                        
-                        foreach (string LoopItem in StringList)
+                        if (aCol.Length == 1) continue;
+
+                        //檢核資料
+                        int iCheck = -1;
+
+                        if (int.TryParse(aCol[2], out iCheck) == false)
+                        {
+                            continue;
+                        }
+
+                        Stockthreetrade stTemp = new Stockthreetrade();
+
+                        if (item.Name.Contains("TSE") == true)
                         {
                             toolStripStatusLabel1.Text = string.Format("三大法人每日交易匯入資料庫(TSE)-{0}-({1}/{2})", sDate
                                 , iIndex.ToString(), FileList.Length.ToString());
                             Application.DoEvents();
 
 
-                            string Line = LoopItem;
-                            Line = Line.Replace(" ", "");
-                            Line = Line.Replace("\",\"", "|");
-                            Line = Line.Replace("\"", "");
-                            Line = Line.Replace(",", "");
-                            Line = Line.Replace("=", "");
-
-                            string[] aCol = Line.Split('|');
-
                             //第三版格式
                             if (aCol.Length == 19)
                             {
-                                //檢核資料
-                                int iCheck = -1;
-
-                                if (int.TryParse(aCol[15], out iCheck) == false)
-                                {
-                                    continue;
-                                }
-
-                                ssql = " select * from Stockthreetrade where date = '{0}' and stockcode = '{1}' ";
-                                Stockthreetrade st = dbDapper.QuerySingleOrDefault<Stockthreetrade>(string.Format(ssql, sDate, aCol[0]));
-
-                                if (st == null)
-                                {
-                                    st = new Stockthreetrade();
-                                    st.stockcode = aCol[0];
-                                    st.date = sDate;
-                                    st.type = M10Const.StockType.tse;
-                                    st.foreigninv = Convert.ToInt32(aCol[4]);
-                                    st.trustinv = Convert.ToInt32(aCol[7]);
-                                    st.selfempinv = Convert.ToInt32(aCol[14]);
-                                    st.threeinv = Convert.ToInt32(aCol[18]);
-                                    st.updatetime = Utils.getDatatimeString();
-                                    dbDapper.Insert(st);
-                                }
-                                else
-                                {
-                                    st.stockcode = aCol[0];
-                                    st.date = sDate;
-                                    st.type = M10Const.StockType.tse;
-                                    st.foreigninv = Convert.ToInt32(aCol[4]);
-                                    st.trustinv = Convert.ToInt32(aCol[7]);
-                                    st.selfempinv = Convert.ToInt32(aCol[14]);
-                                    st.threeinv = Convert.ToInt32(aCol[18]);
-                                    st.updatetime = Utils.getDatatimeString();
-                                    dbDapper.Update(st);
-                                }
+                                stTemp.type = M10Const.StockType.tse;
+                                stTemp.foreigninv = Convert.ToInt32(aCol[4]);
+                                stTemp.trustinv = Convert.ToInt32(aCol[7]);
+                                stTemp.selfempinv = Convert.ToInt32(aCol[14]);
+                                stTemp.threeinv = Convert.ToInt32(aCol[18]);
                             }
 
                             //第二版格式
                             if (aCol.Length == 16)
                             {
-                                //檢核資料
-                                int iCheck = -1;
-
-                                if (int.TryParse(aCol[15], out iCheck) == false)
-                                {
-                                    continue;
-                                }
-
-                                ssql = " select * from Stockthreetrade where date = '{0}' and stockcode = '{1}' ";
-                                Stockthreetrade st = dbDapper.QuerySingleOrDefault<Stockthreetrade>(string.Format(ssql, sDate, aCol[0]));
-
-                                if (st == null)
-                                {
-                                    st = new Stockthreetrade();
-                                    st.stockcode = aCol[0];
-                                    st.date = sDate;
-                                    st.type = M10Const.StockType.tse;
-                                    st.foreigninv = Convert.ToInt32(aCol[4]);
-                                    st.trustinv = Convert.ToInt32(aCol[7]);
-                                    st.selfempinv = Convert.ToInt32(aCol[14]);
-                                    st.threeinv = Convert.ToInt32(aCol[15]);
-                                    st.updatetime = Utils.getDatatimeString();
-                                    dbDapper.Insert(st);
-                                }
-                                else
-                                {
-                                    st.stockcode = aCol[0];
-                                    st.date = sDate;
-                                    st.type = M10Const.StockType.tse;
-                                    st.foreigninv = Convert.ToInt32(aCol[4]);
-                                    st.trustinv = Convert.ToInt32(aCol[7]);
-                                    st.selfempinv = Convert.ToInt32(aCol[14]);
-                                    st.threeinv = Convert.ToInt32(aCol[15]);
-                                    st.updatetime = Utils.getDatatimeString();
-                                    dbDapper.Update(st);
-                                }
+                                stTemp.type = M10Const.StockType.tse;
+                                stTemp.foreigninv = Convert.ToInt32(aCol[4]);
+                                stTemp.trustinv = Convert.ToInt32(aCol[7]);
+                                stTemp.selfempinv = Convert.ToInt32(aCol[14]);
+                                stTemp.threeinv = Convert.ToInt32(aCol[15]);
                             }
 
                             //第一版格式
                             if (aCol.Length == 12)
                             {
-                                //檢核資料
-                                int iCheck = -1;
-
-                                if (int.TryParse(aCol[11], out iCheck) == false)
-                                {
-                                    continue;
-                                }
-
-                                ssql = " select * from Stockthreetrade where date = '{0}' and stockcode = '{1}' ";
-                                Stockthreetrade st = dbDapper.QuerySingleOrDefault<Stockthreetrade>(string.Format(ssql, sDate, aCol[0]));
-
-                                if (st == null)
-                                {
-                                    st = new Stockthreetrade();
-                                    st.stockcode = aCol[0];
-                                    st.date = sDate;
-                                    st.type = M10Const.StockType.tse;
-                                    st.foreigninv = Convert.ToInt32(aCol[4]);
-                                    st.trustinv = Convert.ToInt32(aCol[7]);
-                                    st.selfempinv = Convert.ToInt32(aCol[10]);
-                                    st.threeinv = Convert.ToInt32(aCol[11]);
-                                    st.updatetime = Utils.getDatatimeString();
-                                    dbDapper.Insert(st);
-                                }
-                                else
-                                {
-                                    st.type = M10Const.StockType.tse;
-                                    st.foreigninv = Convert.ToInt32(aCol[4]);
-                                    st.trustinv = Convert.ToInt32(aCol[7]);
-                                    st.selfempinv = Convert.ToInt32(aCol[10]);
-                                    st.threeinv = Convert.ToInt32(aCol[11]);
-                                    st.updatetime = Utils.getDatatimeString();
-                                    dbDapper.Update(st);
-                                }
-
-
+                                stTemp.type = M10Const.StockType.tse;
+                                stTemp.foreigninv = Convert.ToInt32(aCol[4]);
+                                stTemp.trustinv = Convert.ToInt32(aCol[7]);
+                                stTemp.selfempinv = Convert.ToInt32(aCol[10]);
+                                stTemp.threeinv = Convert.ToInt32(aCol[11]);
                             }
                         }
-                    }
 
-                    if (item.Name.Contains("OTC") == true)
-                    {
-                        List<string> StringList = text.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<string>();
-
-                        foreach (string LoopItem in StringList)
+                        if (item.Name.Contains("OTC") == true)
                         {
                             toolStripStatusLabel1.Text = string.Format("三大法人每日交易匯入資料庫(OTC)-{0}-({1}/{2})", sDate
                                 , iIndex.ToString(), FileList.Length.ToString());
                             Application.DoEvents();
 
-                            string Line = LoopItem;
-                            Line = Line.Replace(" ", "");
-                            Line = Line.Replace("\",\"", "|");
-                            Line = Line.Replace("\"", "");
-                            Line = Line.Replace(",", "");
-                            Line = Line.Replace("=", "");
-
-                            string[] aCol = Line.Split('|');
-
                             //新版格式
                             if (aCol.Length == 24)
                             {
-                                //檢核資料
-                                int iCheck = -1;
-
-                                if (int.TryParse(aCol[15], out iCheck) == false)
-                                {
-                                    continue;
-                                }
-
-                                ssql = " select * from Stockthreetrade where date = '{0}' and stockcode = '{1}' ";
-                                Stockthreetrade st = dbDapper.QuerySingleOrDefault<Stockthreetrade>(string.Format(ssql, sDate, aCol[0]));
-
-                                if (st == null)
-                                {
-                                    st = new Stockthreetrade();
-                                    st.stockcode = aCol[0];
-                                    st.date = sDate;
-                                    st.type = M10Const.StockType.otc;
-                                    st.foreigninv = Convert.ToInt32(aCol[4]);
-                                    st.trustinv = Convert.ToInt32(aCol[13]);
-                                    st.selfempinv = Convert.ToInt32(aCol[22]);
-                                    st.threeinv = Convert.ToInt32(aCol[23]);
-                                    st.updatetime = Utils.getDatatimeString();
-                                    dbDapper.Insert(st);
-                                }
-                                else
-                                {
-                                    st.type = M10Const.StockType.otc;
-                                    st.foreigninv = Convert.ToInt32(aCol[4]);
-                                    st.trustinv = Convert.ToInt32(aCol[13]);
-                                    st.selfempinv = Convert.ToInt32(aCol[22]);
-                                    st.threeinv = Convert.ToInt32(aCol[23]);
-                                    st.updatetime = Utils.getDatatimeString();
-                                    dbDapper.Update(st);
-                                }
+                                stTemp.type = M10Const.StockType.otc;
+                                stTemp.foreigninv = Convert.ToInt32(aCol[4]);
+                                stTemp.trustinv = Convert.ToInt32(aCol[13]);
+                                stTemp.selfempinv = Convert.ToInt32(aCol[22]);
+                                stTemp.threeinv = Convert.ToInt32(aCol[23]);
                             }
 
                             //舊版格式
                             if (aCol.Length == 16)
                             {
-                                //檢核資料
-                                int iCheck = -1;
-
-                                if (int.TryParse(aCol[15], out iCheck) == false)
-                                {
-                                    continue;
-                                }
-
-                                ssql = " select * from Stockthreetrade where date = '{0}' and stockcode = '{1}' ";
-                                Stockthreetrade st = dbDapper.QuerySingleOrDefault<Stockthreetrade>(string.Format(ssql, sDate, aCol[0]));
-
-                                if (st == null)
-                                {
-                                    st = new Stockthreetrade();
-                                    st.stockcode = aCol[0];
-                                    st.date = sDate;
-                                    st.type = M10Const.StockType.otc;
-                                    st.foreigninv = Convert.ToInt32(aCol[4]);
-                                    st.trustinv = Convert.ToInt32(aCol[7]);
-                                    st.selfempinv = Convert.ToInt32(aCol[14]);
-                                    st.threeinv = Convert.ToInt32(aCol[15]);
-                                    st.updatetime = Utils.getDatatimeString();
-                                    dbDapper.Insert(st);
-                                }
-                                else
-                                {
-                                    st.type = M10Const.StockType.otc;
-                                    st.foreigninv = Convert.ToInt32(aCol[4]);
-                                    st.trustinv = Convert.ToInt32(aCol[7]);
-                                    st.selfempinv = Convert.ToInt32(aCol[14]);
-                                    st.threeinv = Convert.ToInt32(aCol[15]);
-                                    st.updatetime = Utils.getDatatimeString();
-                                    dbDapper.Update(st);
-                                }
+                                stTemp.type = M10Const.StockType.otc;
+                                stTemp.foreigninv = Convert.ToInt32(aCol[4]);
+                                stTemp.trustinv = Convert.ToInt32(aCol[7]);
+                                stTemp.selfempinv = Convert.ToInt32(aCol[14]);
+                                stTemp.threeinv = Convert.ToInt32(aCol[15]);
                             }
+                        }
 
+                        //寫入資料
+                        ssql = " select * from Stockthreetrade where date = '{0}' and stockcode = '{1}' ";
+                        Stockthreetrade st = dbDapper.QuerySingleOrDefault<Stockthreetrade>(string.Format(ssql, sDate, aCol[0]));
+                        if (st == null)
+                        {
+                            st = new Stockthreetrade();
+                            st.stockcode = aCol[0];
+                            st.date = sDate;
+                            st.type = stTemp.type;
+                            st.foreigninv = stTemp.foreigninv;
+                            st.trustinv = stTemp.trustinv;
+                            st.selfempinv = stTemp.selfempinv;
+                            st.threeinv = stTemp.threeinv;
+                            st.updatetime = Utils.getDatatimeString();
+                            dbDapper.Insert(st);
+                        }
+                        else
+                        {
+                            st.type = stTemp.type;
+                            st.foreigninv = stTemp.foreigninv;
+                            st.trustinv = stTemp.trustinv;
+                            st.selfempinv = stTemp.selfempinv;
+                            st.threeinv = stTemp.threeinv;
+                            st.updatetime = Utils.getDatatimeString();
+                            dbDapper.Update(st);
+                        }
 
+                        //完成後，移動到備份區
+                        string sFullRename = Path.Combine(sPathBak, item.Name);
+                        if (File.Exists(sFullRename) == false)
+                        {
+                            item.MoveTo(sFullRename);
                         }
                     }
 
-                    //移動到備份區
-                    string sFullRename = Path.Combine(sPathBak, item.Name);
-                    if (File.Exists(sFullRename) == false)
-                    {
-                        item.MoveTo(sFullRename);
-                    }
 
                 }
                 catch (Exception ex)
                 {
                     logger.Error(ex, "三大法人每日交易匯入資料庫 發生錯誤:" + item.FullName);
-                    //System.Threading.Thread.Sleep(60000);
                 }
             }
 
@@ -3797,22 +3665,195 @@ namespace M10Tools
             Application.DoEvents();
         }
 
+        /// <summary>
+        /// 盤後當沖資料匯入DB
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Button17_Click_1(object sender, EventArgs e)
+        {
+            string sPath = @"d:\Temp\StockAfterRush\";
+            string sPathBak = @"d:\Temp\StockAfterRush\bak\";
+            Directory.CreateDirectory(sPath);
+            Directory.CreateDirectory(sPathBak);
 
 
-        //private void buildtableRTI()
-        //{
-        //    dt_rti.Columns.Add("index");
-        //    dt_rti.Columns.Add("station");
-        //    dt_rti.Columns.Add("rti");
-        //    dt_rti.Columns.Add("totalcount");
-        //    dt_rti.Columns.Add("pas");
+            FileInfo[] FileList = new DirectoryInfo(sPath).GetFiles("*.csv", SearchOption.TopDirectoryOnly);
 
-        //    dt_rti90.Columns.Add("index");
-        //    dt_rti90.Columns.Add("station");
-        //    dt_rti90.Columns.Add("rti");
-        //    dt_rti90.Columns.Add("totalcount");
-        //    dt_rti90.Columns.Add("pas");
-        //}
+            
+            foreach (FileInfo item in FileList)
+            {
+                
+
+                try
+                {
+                    string[] slTemp = item.Name.Replace(item.Extension, "").Split('_');
+                    string sDate = slTemp[2];
+
+                    if (File.Exists(item.FullName) == false)
+                    {
+                        continue;
+                    }
+
+                    string text = File.ReadAllText(item.FullName, Encoding.GetEncoding(950));
+                    List<string> StringList = text.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<string>();
+
+                    Int32 iIndex = 0;
+                    foreach (string LoopItem in StringList)
+                    {
+                        iIndex++;
+
+                        string Line = LoopItem;
+                        Line = Line.Replace(" ", "");
+                        Line = Line.Replace("\",\"", "|");
+                        Line = Line.Replace("\"", "");
+                        Line = Line.Replace(",", "");
+                        Line = Line.Replace("=", "");
+                        string[] aCol = Line.Split('|');
+
+                        if (aCol.Length == 1) continue;
+                        if (aCol.Length == 3) continue;
+
+                        //檢核資料
+                        Decimal iCheck = -1;
+                        if (Decimal.TryParse(aCol[1], out iCheck) == true) continue;
+                        if (Decimal.TryParse(aCol[3], out iCheck) == false) continue;
+
+                        string StockCode = "";
+                        string StopRush = "";
+
+                        StockAfterRush saTemp = new StockAfterRush();
+
+                        if (item.Name.Contains("TSE") == true)
+                        {
+                            toolStripStatusLabel1.Text = string.Format("盤後當沖資料匯入DB(TSE)-{0}-({1}/{2})", sDate
+                                , iIndex.ToString(), StringList.Count.ToString());
+                            Application.DoEvents();
+
+                            if (aCol.Length == 6)
+                            {
+                                StockCode = aCol[0];
+                                StopRush = aCol[2];
+
+
+                                decimal dRushDealNum = 0;
+                                decimal.TryParse(aCol[3], out dRushDealNum);
+
+                                decimal dRushMoneyBuy = 0;
+                                decimal.TryParse(aCol[4], out dRushMoneyBuy);
+
+                                decimal dRushMoneySell = 0;
+                                decimal.TryParse(aCol[5], out dRushMoneySell);
+
+                                saTemp.type = M10Const.StockType.tse;
+                                saTemp.stockcode = StockCode;
+                                saTemp.stoprush = StopRush;
+                                saTemp.rushdealnum = Convert.ToInt64(dRushDealNum);
+                                saTemp.rushmoneybuy = Convert.ToInt64(dRushMoneyBuy);
+                                saTemp.rushmoneysell = Convert.ToInt64(dRushMoneySell);
+                            }                           
+                        }
+
+                        if (item.Name.Contains("OTC") == true)
+                        {
+                            toolStripStatusLabel1.Text = string.Format("盤後當沖資料匯入DB(OTC)-{0}-({1}/{2})", sDate
+                                , iIndex.ToString(), StringList.Count.ToString());
+                            Application.DoEvents();
+
+                            if (aCol.Length == 6)
+                            {
+                                StockCode = aCol[0];
+                                StopRush = aCol[2] == "＊" ? "Y" : "";
+
+                                decimal dRushDealNum = 0;
+                                decimal.TryParse(aCol[3], out dRushDealNum);
+
+                                decimal dRushMoneyBuy = 0;
+                                decimal.TryParse(aCol[4], out dRushMoneyBuy);
+
+                                decimal dRushMoneySell = 0;
+                                decimal.TryParse(aCol[5], out dRushMoneySell);
+
+                                saTemp.type = M10Const.StockType.otc;
+                                saTemp.stockcode = StockCode;
+                                saTemp.stoprush = StopRush;
+                                saTemp.rushdealnum = Convert.ToInt64(dRushDealNum);
+                                saTemp.rushmoneybuy = Convert.ToInt64(dRushMoneyBuy);
+                                saTemp.rushmoneysell = Convert.ToInt64(dRushMoneySell);
+                            }
+
+                            if (aCol.Length == 5)
+                            {
+                                StockCode = aCol[0];
+                                StopRush = "";
+
+                                decimal dRushDealNum = 0;
+                                decimal.TryParse(aCol[2], out dRushDealNum);
+
+                                decimal dRushMoneyBuy = 0;
+                                decimal.TryParse(aCol[3], out dRushMoneyBuy);
+
+                                decimal dRushMoneySell = 0;
+                                decimal.TryParse(aCol[4], out dRushMoneySell);
+
+                                saTemp.type = M10Const.StockType.otc;
+                                saTemp.stockcode = StockCode;
+                                saTemp.stoprush = StopRush;
+                                saTemp.rushdealnum = Convert.ToInt64(dRushDealNum);
+                                saTemp.rushmoneybuy = Convert.ToInt64(dRushMoneyBuy);
+                                saTemp.rushmoneysell = Convert.ToInt64(dRushMoneySell);
+                            }
+                        }
+
+                        //寫入資料
+                        ssql = " select * from stockafterrush  where stockdate = @stockdate and stockcode = @stockcode ";
+                        var p = dbDapper.GetNewDynamicParameters();
+                        p.Add("@stockdate", sDate);
+                        p.Add("@stockcode", StockCode);
+                        StockAfterRush sa = dbDapper.QuerySingleOrDefault<StockAfterRush>(ssql, p);
+                        
+                        if (sa == null)
+                        {
+                            sa = new StockAfterRush();
+                            sa.stockdate = sDate;
+                            sa.type = saTemp.type;
+                            sa.stockcode = StockCode;
+                            sa.stoprush = saTemp.stoprush;
+                            sa.rushdealnum = saTemp.rushdealnum;
+                            sa.rushmoneybuy = saTemp.rushmoneybuy;
+                            sa.rushmoneysell = saTemp.rushmoneysell;
+                            sa.createdatetime = Utils.getDatatimeString();
+                            sa.updatetime = Utils.getDatatimeString();
+
+                            dbDapper.Insert(sa);
+                        }
+                        else
+                        {
+                            sa.rushdealnum = saTemp.rushdealnum;
+                            sa.rushmoneybuy = saTemp.rushmoneybuy;
+                            sa.rushmoneysell = saTemp.rushmoneysell;
+                            sa.updatetime = Utils.getDatatimeString();
+
+                            dbDapper.Update(sa);
+                        }
+                    }
+
+                    //完成後，移動到備份區
+                    string sFullRename = Path.Combine(sPathBak, item.Name);
+                    if (File.Exists(sFullRename) == false)
+                    {
+                        item.MoveTo(sFullRename);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "盤後當沖資料匯入DB 發生錯誤:" + item.FullName);
+                }
+            }
+
+            toolStripStatusLabel1.Text = string.Format("盤後當沖資料匯入DB-完成");
+            Application.DoEvents();
+        }
     }
 
     public class RtiProc
