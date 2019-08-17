@@ -82,6 +82,11 @@ namespace M10AlertLRTI
         {
             try
             {
+
+
+
+                //int iii = Convert.ToInt32("");
+
                 //DateTime dd = Convert.ToDateTime("2017-05-16T10:31:14");
 
                 //UpdateLRTIAlertRainData("");
@@ -1310,7 +1315,7 @@ namespace M10AlertLRTI
                 ssql = @"
                         select RTime from RainStation 
                         where STID = '{0}' and RTime in ('{1}','{2}','{3}','{4}','{5}','{6}')
-                        and RAIN <= 10
+                        and CAST(RAIN AS FLOAT) <= 10
                         ";
                 ssql = string.Format(ssql, RumtimeItem.STID, sRTime, sRTime_1, sRTime_2, sRTime_3, sRTime_4, sRTime_5);
                 int iCount = dbDapper.QueryTotalCount(ssql);
