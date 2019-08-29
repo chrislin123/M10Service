@@ -233,6 +233,8 @@ namespace C10Mvc.Controllers
                 Stockhelper.GetStockAfterTse(dtTemp);
                 #endregion
 
+                System.Threading.Thread.Sleep(30000);
+
                 #region otc-StockAfter
                 Stockhelper.GetStockAfterOtc(dtTemp);
                 #endregion

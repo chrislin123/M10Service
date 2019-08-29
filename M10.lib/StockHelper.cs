@@ -888,6 +888,9 @@ namespace M10.lib
                 foreach (string sType in TypeList)
                 {
                     GetStockInfoSub(sType);
+
+                    //停止15秒再進行下一個更新
+                    System.Threading.Thread.Sleep(30 * 1000);
                 }
             }
             catch (Exception ex)
