@@ -826,7 +826,22 @@ namespace M10.lib.model
         public string a { get; set; }
 
         /// <summary>
-        /// 代碼
+        /// 開盤價
+        /// </summary>
+        public string open { get; set; }
+
+        /// <summary>
+        /// 昨高
+        /// </summary>
+        public string YTop { get; set; }
+
+        /// <summary>
+        /// 昨低
+        /// </summary>
+        public string YLow { get; set; }
+
+        /// <summary>
+        /// 資料狀態
         /// </summary>
         public M10Const.StockRuntimeStatus status { get; set; }
     }

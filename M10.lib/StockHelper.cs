@@ -1094,9 +1094,6 @@ namespace M10.lib
                 sr.c = si.stockcode;
             }
 
-
-
-
             return sr;
         }
 
@@ -1112,6 +1109,9 @@ namespace M10.lib
             sr.xx = "";
             sr.a = "";
             sr.TradeDay = "";
+            sr.open = "";
+            sr.YTop = "";
+            sr.YLow = "";
 
             string sJson = "";
             try
@@ -1159,25 +1159,42 @@ namespace M10.lib
                     sJson = text;
                     JObject jobj = JObject.Parse(text);
 
-                    //Price
+                    //成交價(125)
                     if (jobj["125"] != null)
                         sr.z = jobj["125"].ToString();
-                    ////昨收
+                    //昨收(129)
                     if (jobj["129"] != null)
                         sr.y = jobj["129"].ToString();
-                    //成交量
+                    //成交量(404)
                     if (jobj["404"] != null)
                         sr.a = jobj["404"].ToString();
 
                     //日期
                     if (jobj["TradeDay"] != null)
                         sr.TradeDay = jobj["TradeDay"].ToString();
-                    ////最高
-                    //if (jobj["mem"]["130"] != null)
-                    //  sr.u = jobj["mem"]["130"].ToString();
-                    ////最低
-                    //if (jobj["mem"]["131"] != null)
-                    //  sr.w = jobj["mem"]["131"].ToString();
+
+                    //開盤價(126)
+                    if (jobj["126"] != null)
+                        sr.open = jobj["126"].ToString();
+
+                    //最高(130)
+                    //if (jobj["130"] != null)
+                    //  sr.u = jobj["130"].ToString();
+                    //最低(131)
+                    //if (jobj["131"] != null)
+                    //  sr.w = jobj["131"].ToString();
+
+
+                    ////昨高(Yahoo沒提供)
+                    //if (jobj["106"] != null)
+                    //    sr.YTop = jobj["106"].ToString();
+                    ////昨低(Yahoo沒提供)
+                    //if (jobj["107"] != null)
+                    //    sr.YLow = jobj["107"].ToString();
+                    //均價(471)
+
+
+
                     if (stockcode != "0000" && stockcode != "9999")
                     {
                         //LimitUp

@@ -3854,6 +3854,87 @@ namespace M10Tools
             toolStripStatusLabel1.Text = string.Format("盤後當沖資料匯入DB-完成");
             Application.DoEvents();
         }
+
+        private void Button21_Click(object sender, EventArgs e)
+        {
+
+            //開盤昨高之上選股策略
+            try
+            {
+                ssql = @"select* from StockAfter where  dealnum / 1000 > 1000 and stockdate = '20190830' and LEN(stockcode) = 4";
+
+                List<Stockafter> listSa = dbDapper.Query<Stockafter>(ssql);
+
+                int i = 0;
+
+                string sss = "";
+
+                List<string> lsss = new List<string>();
+
+                foreach (Stockafter item in listSa)
+                {
+                    i++;
+
+                    //if (item.stockcode != "2412") continue;
+
+                    //取得昨高資料
+                    ssql = @"select top 1 * from StockAfter where stockcode = '{0}' and stockdate != '{1}' order by stockdate desc";
+                    //ssql = string.Format(ssql, item.stockcode, DateTime.Now.ToString("yyyyMMdd"));
+                    ssql = string.Format(ssql, item.stockcode, "20190830");
+                    Stockafter saYesterday = dbDapper.QuerySingleOrDefault<Stockafter>(ssql);
+
+                    if (saYesterday == null) continue;
+
+
+                    StockRuntime sr = Stockhelper.getStockRealtimeYahooApi(item.stockcode);
+
+                    
+                    double dOpen = 0;
+                    double.TryParse(sr.open, out dOpen);
+                    double dYPrice = (double)saYesterday.pricetop;
+                    //double.TryParse(saYesterday.pricetop, out dYPrice);
+
+                    
+
+
+                    toolStripStatusLabel1.Text = string.Format("[{3}/{4}]{0}({1})-收盤價：{2}", sr.n, sr.c, sr.z, i.ToString(), listSa.Count.ToString());
+
+                    Application.DoEvents();
+
+
+                    //昨高之上選股策略1--開盤價>昨高
+                    if (dOpen > dYPrice)
+                    {
+                        lsss.Add(item.stockcode);
+                    }
+
+                    //成交量
+
+
+
+
+                }
+
+
+
+                MessageBox.Show(string.Join(",", lsss));
+
+
+                //StockRuntime sr = Stockhelper.getStockRealtimeYahooApi(StockCodeTextBox.Text);
+
+                //toolStripStatusLabel1.Text = string.Format("[{3}/{4}]{0}({1})-開盤價價：{2}", sr.n, sr.c, sr.open, i.ToString(), i.ToString());
+
+
+
+                //Application.DoEvents();
+
+            }
+            catch (Exception ex)
+            {
+
+                
+            }
+        }
     }
 
     public class RtiProc
