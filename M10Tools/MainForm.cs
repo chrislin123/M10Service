@@ -238,6 +238,10 @@ namespace M10Tools
         {
 
 
+            StockRuntime srtest = Stockhelper.getStockRealtimeYahooApi("9999");
+
+            return;
+
             logger.Fatal("我是致命錯誤:Fatal");
 
             return;
@@ -3909,9 +3913,6 @@ namespace M10Tools
                     }
 
                     //成交量
-
-
-
 
                 }
 
