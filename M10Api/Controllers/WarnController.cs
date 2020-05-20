@@ -197,6 +197,7 @@ namespace M10Api.Controllers
             dt.Columns.Add("R3_70");
             dt.Columns.Add("Rt_50");
             dt.Columns.Add("R3_50");
+            dt.Columns.Add("Remark");
 
 
             foreach (var item in data)
@@ -221,6 +222,7 @@ namespace M10Api.Controllers
                 NewRow["R3_70"] = item.R3_70;
                 NewRow["Rt_50"] = item.Rt_50;
                 NewRow["R3_50"] = item.R3_50;
+                NewRow["Remark"] = item.Remark;
 
                 dt.Rows.Add(NewRow);
             }
@@ -344,12 +346,32 @@ namespace M10Api.Controllers
                 if (item.status == "O") item.status = M10Const.AlertStatus.O;
                 if (item.status == "D") item.status = M10Const.AlertStatus.D;
 
-                //108 年
-                if (item.status == "A1") item.status = M10Const.AlertStatus.A1;
-                if (item.status == "A2") item.status = M10Const.AlertStatus.A2;
-                if (item.status == "A3") item.status = M10Const.AlertStatus.A3;
-                if (item.status == "AD") item.status = M10Const.AlertStatus.AD;
+                //109年 yyyy-MM-ddTHH:mm:ss調整時間格式2019/8/30 17:00
+                //RecTime
+                DateTime dtTemp = Convert.ToDateTime(item.RecTime);
+                item.RecTime = dtTemp.ToString("yyyy/MM/dd HH:mm");
 
+                DateTime dt108 = new DateTime(2020, 5, 20);
+
+                if (dtTemp < dt108)
+                {
+                    //108 年
+                    if (item.status == "A1") item.status = M10Const.AlertStatus.A1;
+                    if (item.status == "A2") item.status = M10Const.AlertStatus.A2;
+                    if (item.status == "A3") item.status = M10Const.AlertStatus.A3;
+                    if (item.status == "AD") item.status = M10Const.AlertStatus.AD;
+                }
+                else
+                {
+                    //109 年
+                    //if (item.status == "A1") item.status = M10Const.AlertStatus.A1;
+                    if (item.status == "A2") item.status = M10Const.AlertStatus.A1;
+                    if (item.status == "A3") item.status = M10Const.AlertStatus.A3;
+                    if (item.status == "AD") item.status = M10Const.AlertStatus.AD;
+                }
+                
+
+                
 
 
                 //處理ELRTI取至小數第二位
@@ -365,7 +387,7 @@ namespace M10Api.Controllers
                     item.RT = Math.Round(dRT, 2).ToString();
                 }
 
-
+                
 
             }
 

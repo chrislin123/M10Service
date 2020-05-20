@@ -96,14 +96,17 @@ namespace M10AlertLRTI
 
                 //Alert LRTI資料處理
                 //LRTIAlertProc();
-                LRTIAlertProc_108();
+                //LRTIAlertProc_108();
+                LRTIAlertProc_109();
 
                 //AlertLRTI寫入歷史資料
                 LRTIAlertRecToHis();
 
                 //取得警戒通知資料
-                //getLRTIAlertData();
-                GetLRTIAlertData_108();
+                //getLRTIAlertData();                
+                //GetLRTIAlertData_108();
+                GetLRTIAlertData_109();
+
 
                 //1050615 判斷有資料才進行警戒提醒
                 if (AlertIList.Count == 0
@@ -113,6 +116,10 @@ namespace M10AlertLRTI
 
                 //文件產生      
                 string sAttachFileName = LRTIAlertReport();
+
+                //測試 上線要註解掉
+                return;
+
 
                 //1060519 判斷是否啟動發報功能，修改使用dapper
                 var chkMailFlag = dbDapper.ExecuteScale("select value from LRTIAlertMail where type = 'isal' and value = 'Y'");
@@ -198,6 +205,7 @@ namespace M10AlertLRTI
                         oHis.statustime = item.statustime;
                         oHis.villageid = item.villageid;
                         oHis.ReleaseRTime = item.ReleaseRTime;
+                        oHis.Remark = item.Remark;
 
                         HisData.Add(oHis);
                     }
@@ -229,7 +237,7 @@ namespace M10AlertLRTI
         {
             try
             {
-                ssql = " select country,town,village,HOUR1,HOUR2,HOUR3,RT,LRTI,ELRTI,status,statustime from LRTIAlert "
+                ssql = " select country,town,village,HOUR1,HOUR2,HOUR3,RT,LRTI,ELRTI,status,statustime,remark from LRTIAlert "
                      + " where status in ('{0}') "
                      + " order by country,town ";
 
@@ -402,6 +410,62 @@ namespace M10AlertLRTI
             }           
         }
 
+        private void GetLRTIAlertData_109()
+        {
+            try
+            {
+                ssql = " select country,town,village,HOUR1,HOUR2,HOUR3,RT,LRTI,ELRTI,status,statustime,remark from LRTIAlert "
+                     + " where status in ('{0}') "
+                     + " order by country,town ";
+
+
+                //AlertIList = dbDapper.Query(string.Format(ssql, "A1"));
+                AlertCList = dbDapper.Query(string.Format(ssql, "A2"));
+                AlertOList = dbDapper.Query(string.Format(ssql, "A3"));
+                AlertDList = dbDapper.Query(string.Format(ssql, "AD"));
+                
+                //foreach (var item in AlertIList)
+                //{
+                //    item.status = M10Const.AlertStatus.A1;
+                //    //if (item.status == "I") 
+                //    //if (item.status == "C") item.status = M10Const.AlertStatus.C;
+                //    //if (item.status == "O") item.status = M10Const.AlertStatus.O;
+                //    //if (item.status == "D") item.status = M10Const.AlertStatus.D;
+                //}
+
+                foreach (var item in AlertCList)
+                {
+                    item.status = M10Const.AlertStatus.A1;
+                    //if (item.status == "I") item.status = M10Const.AlertStatus.I;
+                    //if (item.status == "C") item.status = M10Const.AlertStatus.C;
+                    //if (item.status == "O") item.status = M10Const.AlertStatus.O;
+                    //if (item.status == "D") item.status = M10Const.AlertStatus.D;
+                }
+                foreach (var item in AlertOList)
+                {
+                    item.status = M10Const.AlertStatus.A3;
+                    //if (item.status == "I") item.status = M10Const.AlertStatus.I;
+                    //if (item.status == "C") item.status = M10Const.AlertStatus.C;
+                    //if (item.status == "O") item.status = M10Const.AlertStatus.O;
+                    //if (item.status == "D") item.status = M10Const.AlertStatus.D;
+                }
+                foreach (var item in AlertDList)
+                {
+                    item.status = M10Const.AlertStatus.AD;
+                    //if (item.status == "I") item.status = M10Const.AlertStatus.I;
+                    //if (item.status == "C") item.status = M10Const.AlertStatus.C;
+                    //if (item.status == "O") item.status = M10Const.AlertStatus.O;
+                    //if (item.status == "D") item.status = M10Const.AlertStatus.D;
+                }
+
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
+
 
         private string LRTIAlertReport()
         {
@@ -477,6 +541,7 @@ namespace M10AlertLRTI
             lHead.Add("警戒LRTI");
             lHead.Add("警戒發布狀態");
             lHead.Add("警戒發布時間");
+            lHead.Add("備註");
 
             workSheet.Cell(iRowIndex, 1).Value = sLrtiTime;
             workSheet.Range(iRowIndex, 1, iRowIndex, 1).Style.Font.Bold = true;
@@ -511,7 +576,7 @@ namespace M10AlertLRTI
             if (AlertCList.Count > 0)
             {
                 iRowIndex++;
-                workSheet.Cell(iRowIndex, 1).Value = "崩塌警戒區域 橙色 明細";
+                workSheet.Cell(iRowIndex, 1).Value = "崩塌警戒區域 黃色 明細";
                 workSheet.Range(iRowIndex, 1, iRowIndex, 1).Style.Font.Bold = true;
                 workSheet.Range(iRowIndex, 1, iRowIndex, 1).Style.Fill.BackgroundColor = XLColor.GrannySmithApple;
                 iRowIndex++;
@@ -611,6 +676,7 @@ namespace M10AlertLRTI
                 if (sHead == "警戒LRTI") sResult = Item.ELRTI;
                 if (sHead == "警戒發布狀態") sResult = Item.status;
                 if (sHead == "警戒發布時間") sResult = Item.statustime;
+                if (sHead == "備註") sResult = Item.remark;
             }
             catch (Exception)
             {
@@ -1165,6 +1231,8 @@ namespace M10AlertLRTI
             }
         }
 
+        
+
 
         /// <summary>
         /// 更新警戒的雨量資料
@@ -1332,6 +1400,505 @@ namespace M10AlertLRTI
             return sResult;
         }
 
+
+        /// <summary>
+        /// 109版本的崩塌警戒
+        /// </summary>
+        public void LRTIAlertProc_109()
+        {
+            //106 狀態 I C O D
+
+            //二、警戒發布作業調整(108年黃、橙、紅109年黃、紅)
+            //1.警戒發布門檻異動(詳附檔「全臺崩塌警戒基準值1090506_系統用」)
+            //a.土石流紅色警戒發布門檻：詳附檔G欄位
+            //若欄位為”該村里無潛勢溪流”表示該村里無需發布土石流警戒
+            //b.淺層崩塌警戒發布門檻：詳附檔H、I欄位
+            //淺層黃色警戒發布門檻：附檔I(3小時累積雨量) & H(有效累積雨量RT)欄位
+            //2.淺層黃色警戒發布條件
+            //當I欄位(3小時累積雨量) & H欄位(有效累積雨量RT)同時達到門檻
+            //3.土石流紅色警戒發布條件
+            //降雨時3小時累積雨量 > 30mm & 有效累積雨量RT > G欄位
+            //4.不同村里警戒發布差異
+            //a.有崩塌及土石流存在村里，可能會發布2種顏色
+            //b.僅有崩塌村里，通常只會發布黃色
+            //5.警戒發布層級說明
+            //簡化為紅色及黃色2等級，當某區域發布紅色警戒後，要往下降至黃色警戒，則需要參考以下解除標準。
+
+            //三、警戒解除標準
+            //1.警戒調降 / 解除標準
+            //6小時累積雨量≦24mm & 且這6小時內的所有小時雨量≦10mm。
+            //2.紅色警戒調降至黃色
+            //降雨條件符合前述1的標準時，紅色警戒 => 黃色警戒。
+            //3.黃色警戒解除
+            //降雨條件符合前述1的標準時，黃色警戒 => 解除警戒。
+            //4.警戒解除之狀態異動頻率為3小時
+            //警戒狀態判斷頻率雖然仍可維持每小時判斷，但警戒狀態調整需至少間隔3小時，如06: 00警戒狀態由紅色降為黃色，下次狀態要調整為解除警戒則至少要至09: 00。
+
+
+            string sDt = dtNow.ToString("yyyy-MM-ddTHH:mm:ss");
+            string sDtd35 = dtNow.AddHours(-3.5).ToString("yyyy-MM-ddTHH:mm:ss");
+            string sDtd65 = dtNow.AddHours(-6.5).ToString("yyyy-MM-ddTHH:mm:ss");
+
+            try
+            {
+                ////刪除已解除註記資料
+                dbDapper.Execute(" delete LRTIAlert where status = 'AD' ");
+
+                ////取消狀態註記
+                dbDapper.Execute(" update LRTIAlert set statuscheck = 'N' ");
+
+                ////判斷狀態前，更新即時資料
+                ssql = " select * from LRTIAlert ";
+                List<LRTIAlert> AlertList = dbDapper.Query<LRTIAlert>(ssql);
+                foreach (LRTIAlert AlertItem in AlertList)
+                {
+                    LRTIAlert LRTIAlertItem = AlertItem;
+                    //1080614 有狀態異動才改變數值
+                    string sSTID = AlertItem.STID;
+
+                    ssql = " select * from RunTimeRainData where STID = '" + sSTID + "' ";
+                    RunTimeRainData RuntimeData = dbDapper.QuerySingleOrDefault<RunTimeRainData>(ssql);
+                    if (RuntimeData != null)
+                    {
+                        if (RuntimeData.STATUS == "-99")
+                        {
+                            AlertItem.HOUR1 = "異常";
+                            AlertItem.HOUR2 = "異常";
+                            AlertItem.HOUR3 = "異常";
+                            AlertItem.HOUR6 = "異常";
+                            AlertItem.RT = "異常";
+                            AlertItem.LRTI = "異常";
+                        }
+                        else
+                        {
+                            AlertItem.HOUR1 = RuntimeData.RAIN;
+                            AlertItem.HOUR2 = RuntimeData.HOUR2;
+                            AlertItem.HOUR3 = RuntimeData.HOUR3;
+                            AlertItem.HOUR6 = RuntimeData.HOUR6;
+                            AlertItem.RT = RuntimeData.RT;
+                            AlertItem.LRTI = RuntimeData.LRTI;
+                        }
+                    }
+
+
+                    //1.雨量站出現異常訊號：若異常時間超過6小時，直接將已發布地區從清單中剃除，並新增備註欄位標示「雨量站異常」。
+                    string sRTime = RuntimeData.RTime;
+                    DateTime dtRuntime = Convert.ToDateTime(sRTime);
+                    string sRTime_1 = dtRuntime.AddHours(-1).ToString("yyyy-MM-ddTHH:mm:ss");
+                    string sRTime_2 = dtRuntime.AddHours(-2).ToString("yyyy-MM-ddTHH:mm:ss");
+                    string sRTime_3 = dtRuntime.AddHours(-3).ToString("yyyy-MM-ddTHH:mm:ss");
+                    string sRTime_4 = dtRuntime.AddHours(-4).ToString("yyyy-MM-ddTHH:mm:ss");
+                    string sRTime_5 = dtRuntime.AddHours(-5).ToString("yyyy-MM-ddTHH:mm:ss");
+                    ssql = @"
+                        select RTime from RainStation 
+                        where STID = '{0}' and RTime in ('{1}','{2}','{3}','{4}','{5}','{6}')
+                        and STATUS = '-99'
+                        ";
+                    ssql = string.Format(ssql, RuntimeData.STID, sRTime, sRTime_1, sRTime_2, sRTime_3, sRTime_4, sRTime_5);
+                    int iCount = dbDapper.QueryTotalCount(ssql);
+                                        
+                    if (iCount == 6)
+                    {
+                        LRTIAlertItem.Remark = "雨量站異常";
+                        LRTIAlertItem.statuscheck = "Y";
+                        LRTIAlertItem.nowwarm = "N";
+                        LRTIAlertItem.status = "AD"; //列入解除
+                        LRTIAlertItem.statustime = sDt;
+
+                        //更新
+                        dbDapper.Update<LRTIAlert>(LRTIAlertItem);
+                        continue;
+                    }
+
+                    //2.雨量站未出現異常訊號，但雨量值持續傳回恆定值(達3小時以上)直接將已發布地區從清單中剃除，於備註欄位標示「雨量站異常」。
+                    ssql = @"
+                        select * from RainStation 
+                        where STID = '{0}' and RTime in ('{1}','{2}','{3}','{4}')
+                        ";
+                    ssql = string.Format(ssql, RuntimeData.STID, sRTime, sRTime_1, sRTime_2, sRTime_3);
+                    List<RainStation> lRainStations = dbDapper.Query<RainStation>(ssql);
+
+                    double dRain = 0;
+                    int iIndex = 0;
+                    Boolean bTheSame = false;
+                    if (lRainStations.Count == 4)
+                    {
+                        //四筆時雨量都相同都相同
+                        if (lRainStations[0].RAIN == lRainStations[1].RAIN
+                        && lRainStations[0].RAIN == lRainStations[2].RAIN
+                        && lRainStations[0].RAIN == lRainStations[3].RAIN                        
+                        )
+                        {
+                            bTheSame = true;
+                        }
+                    }
+
+                    //foreach (RainStation item in lRainStations)
+                    //{
+                    //    if (iIndex == 0) dRain = double.Parse(item.RAIN);
+
+                    //    //時雨量數值有異動，代表非雨量站異常
+                    //    if (dRain != double.Parse(item.RAIN))
+                    //    {
+                    //        bTheSame = false;
+                    //        break;
+                    //    }
+
+                    //    iIndex++;
+                    //}
+                    
+
+                    if (bTheSame == true)
+                    {
+                        LRTIAlertItem.Remark = "雨量站異常";
+                        LRTIAlertItem.statuscheck = "Y";
+                        LRTIAlertItem.nowwarm = "N";
+                        LRTIAlertItem.status = "AD"; //列入解除
+                        LRTIAlertItem.statustime = sDt;
+
+                        //更新
+                        dbDapper.Update<LRTIAlert>(LRTIAlertItem);
+                        continue;
+                    }
+
+
+                    //判斷註記解除及調升
+                    string sLRTIAlertStatus = CheckLRTIAlertStatus_109(LRTIAlertItem.villageid);
+                    if (sLRTIAlertStatus == "") //解除註記(還沒正式解除警戒)
+                    {
+                        LRTIAlertItem.nowwarm = "Y";
+                        //更新
+                        dbDapper.Update<LRTIAlert>(LRTIAlertItem);
+                    }
+                    else //持續警戒
+                    {
+                        //判斷黃色(A1)調升為橙色(A2)或紅色(A3)
+                        //if (LRTIAlertItem.status == "A1" && sLRTIAlertStatus != "A1")
+                        //{
+                        //    LRTIAlertItem.status = sLRTIAlertStatus;
+                        //    //UpdateLRTIAlertRainData(ref LRTIAlertItem);
+                        //}
+
+                        //判斷橙色(A2)調升為紅色(A3)
+                        if (LRTIAlertItem.status == "A2" && sLRTIAlertStatus == "A3")
+                        {
+                            LRTIAlertItem.status = sLRTIAlertStatus;
+                            //UpdateLRTIAlertRainData(ref LRTIAlertItem);
+                        }
+
+                        LRTIAlertItem.nowwarm = "Y";
+                        //更新
+                        dbDapper.Update<LRTIAlert>(LRTIAlertItem);
+                    }
+                }
+
+
+                string sqlQuery = " select * from LRTIAlert where status = '{0}' and statuscheck = 'N' ";
+                string sqlCheck = @" select distinct RecTime from LRTIAlertHis 
+                      where nowwarm = 'Y' and villageID = '{0}' and RecTime > '{1}' and status = '{2}' ";
+                ////處理狀態黃色(A1)
+                //AlertList.Clear();
+                //AlertList = dbDapper.Query<LRTIAlert>(string.Format(sqlQuery, "A1"));
+                //foreach (LRTIAlert AlertItem in AlertList)
+                //{
+                //    LRTIAlert LRTIAlertItem = AlertItem;
+                //    string sStstus = "";
+
+                //    //同一狀態持續三個小時以上發布
+                //    if (LRTIAlertItem.nowwarm == "Y")
+                //    {
+                //        //判斷歷史資料三小時(用3.5小時切)同一個狀態維持三個小時以上
+                //        int iTemp = dbDapper.QueryTotalCount(string.Format(sqlCheck, LRTIAlertItem.villageid, sDtd35, "A1"));
+                //        if (iTemp >= 3)
+                //        {
+                //            //判斷是否符合調降規則，如果符合變更狀態(黃色(A1)=>解除警戒(AD))
+                //            if (CheckLRTIAlertStatusDowngrade_109(LRTIAlertItem.villageid) == true)
+                //            {
+                //                sStstus = "AD";
+                //            }
+                //        }
+                //    }
+
+                //    LRTIAlertItem.statuscheck = "Y";
+                //    if (sStstus != "")
+                //    {
+                //        LRTIAlertItem.status = sStstus;
+                //        LRTIAlertItem.nowwarm = "N";
+                //        LRTIAlertItem.statustime = sDt;
+                //        //UpdateLRTIAlertRainData(ref LRTIAlertItem);
+                //    }
+
+                //    //更新
+                //    dbDapper.Update<LRTIAlert>(LRTIAlertItem);
+                //}
+
+
+                //處理狀態黃色(A2)
+                AlertList.Clear();
+                AlertList = dbDapper.Query<LRTIAlert>(string.Format(sqlQuery, "A2"));
+                foreach (LRTIAlert AlertItem in AlertList)
+                {
+                    LRTIAlert LRTIAlertItem = AlertItem;
+                    string sStstus = "";
+
+                    //同一狀態持續三個小時以上發布
+                    if (LRTIAlertItem.nowwarm == "Y")
+                    {
+                        //判斷歷史資料三小時(用3.5小時切)同一個狀態維持三個小時以上
+                        int iTemp = dbDapper.QueryTotalCount(string.Format(sqlCheck, LRTIAlertItem.villageid, sDtd35, "A2"));
+                        if (iTemp >= 3)
+                        {
+                            //判斷是否符合調降規則，如果符合變更狀態(黃色(A2)=>解除警戒(AD))
+                            if (CheckLRTIAlertStatusDowngrade_109(LRTIAlertItem.villageid) == true)
+                            {
+                                sStstus = "AD";
+                            }
+                        }
+                    }
+
+                    LRTIAlertItem.statuscheck = "Y";
+                    if (sStstus != "")
+                    {
+                        LRTIAlertItem.status = sStstus;
+                        LRTIAlertItem.nowwarm = "N";
+                        LRTIAlertItem.statustime = sDt;
+                        //UpdateLRTIAlertRainData(ref LRTIAlertItem);
+                    }
+
+                    //更新
+                    dbDapper.Update<LRTIAlert>(LRTIAlertItem);
+                }
+
+                //處理狀態紅色(A3)
+                AlertList.Clear();
+                AlertList = dbDapper.Query<LRTIAlert>(string.Format(sqlQuery, "A3"));
+                foreach (LRTIAlert AlertItem in AlertList)
+                {
+                    string sStstus = "";
+                    LRTIAlert LRTIAlertItem = AlertItem;
+
+                    //同一狀態持續三個小時以上發布
+                    if (LRTIAlertItem.nowwarm == "Y")
+                    {
+                        //判斷歷史資料三小時(用3.5小時切)同一個狀態維持三個小時以上
+                        int iTemp = dbDapper.QueryTotalCount(string.Format(sqlCheck, LRTIAlertItem.villageid, sDtd35, "A3"));
+                        if (iTemp >= 3)
+                        {
+                            //判斷是否符合調降規則，如果符合變更狀態(紅色(A3)=>黃色(A2))
+                            if (CheckLRTIAlertStatusDowngrade_109(LRTIAlertItem.villageid) == true)
+                            {
+                                sStstus = "A2";
+                            }
+                        }
+                    }
+
+                    LRTIAlertItem.statuscheck = "Y";
+                    if (sStstus != "")
+                    {
+                        LRTIAlertItem.status = sStstus;
+                        LRTIAlertItem.statustime = sDt;
+                        //UpdateLRTIAlertRainData(ref LRTIAlertItem);
+                    }
+
+                    //更新
+                    dbDapper.Update<LRTIAlert>(LRTIAlertItem);
+                }
+
+                //處理狀態(新案)
+                //黃色A2、紅色A3
+                //依照條件進行發布
+                //使用成大提供[全臺崩塌警戒基準值_系統]用村里做主Key串接即時雨量資料進行發布
+                ssql = @" 
+                        select * from  LRTIAlertRefData   
+                        left join RunTimeRainData on LRTIAlertRefData.STID = RunTimeRainData.STID
+                        where LRTIAlertRefData.ver = 'now'
+                        ";
+                List<dynamic> RuntimeList = dbDapper.Query(ssql);
+
+                foreach (var RumtimeItem in RuntimeList)
+                {
+                    //測試
+                    if (RumtimeItem.STID == "C1U690")
+                    {
+                        string ssss = string.Empty;
+                    }
+
+                    //表示資料異常不進行判斷
+                    if (RumtimeItem.STATUS == "-99") continue;
+
+
+                    //判斷該村里是否已經在發布狀態
+                    ssql = " select villageID from  LRTIAlert where villageID = '{0}' ";
+                    int iCount = dbDapper.QueryTotalCount(string.Format(ssql, RumtimeItem.villageID));
+                    if (iCount > 0) continue;
+
+                    string sLRTIAlertStatus = CheckLRTIAlertStatus_109(RumtimeItem.villageID);
+
+                    if (sLRTIAlertStatus != "")
+                    {
+                        LRTIAlert AlertItem = new LRTIAlert();
+                        AlertItem.STID = RumtimeItem.STID;
+                        AlertItem.country = RumtimeItem.country;
+                        AlertItem.town = RumtimeItem.town;
+                        AlertItem.village = RumtimeItem.village;
+                        AlertItem.status = sLRTIAlertStatus;
+                        AlertItem.HOUR1 = RumtimeItem.RAIN;
+                        AlertItem.HOUR2 = RumtimeItem.Hour2;
+                        AlertItem.HOUR3 = RumtimeItem.HOUR3;
+                        AlertItem.HOUR6 = RumtimeItem.HOUR6;
+                        AlertItem.RT = RumtimeItem.RT;
+                        AlertItem.LRTI = RumtimeItem.LRTI;
+                        AlertItem.ELRTI = ""; //確認是否需要存在                        
+                        AlertItem.nowwarm = "Y";
+                        AlertItem.statustime = sDt;
+                        AlertItem.statuscheck = "Y";
+                        AlertItem.villageid = RumtimeItem.villageID;
+                        AlertItem.ReleaseRTime = RumtimeItem.RTime;
+
+                        dbDapper.Insert(AlertItem);
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "");
+            }
+        }
+
+        /// <summary>
+        /// 109年，判斷狀態
+        /// </summary>
+        /// <param name="villageID"></param>
+        /// <returns></returns>
+        private string CheckLRTIAlertStatus_109(string villageID)
+        {
+            string sStatus = "";
+
+            ssql = @" 
+                    select * from  LRTIAlertRefData   
+                    inner join RunTimeRainData on LRTIAlertRefData.STID = RunTimeRainData.STID
+                    where LRTIAlertRefData.ver = 'now' and LRTIAlertRefData.villageID = '{0}'
+                    ";
+            ssql = string.Format(ssql, villageID);
+            List<dynamic> RuntimeList = dbDapper.Query(ssql);
+
+            foreach (var RumtimeItem in RuntimeList)
+            {
+                double dRT = 0;    //有效累積雨量
+                double dHOUR3 = 0; //3小時累積雨量
+                Double.TryParse(RumtimeItem.RT, out dRT);
+                Double.TryParse(RumtimeItem.HOUR3, out dHOUR3);
+
+
+                //若欄位為”該村里無潛勢溪流”表示該村里無需發布土石流警戒(紅色)
+                if (RumtimeItem.FlowWarning != "該村里無潛勢溪流")
+                {
+                    //依照規則判斷發布狀態
+                    //發布順位1，紅色(土石流警戒)                
+                    //土石流紅色警戒發布條件 降雨時3小時累積雨量 > 30mm，且有效累積雨量RT > G欄位
+                    double dFlowWarning = double.MaxValue;
+                    Double.TryParse(RumtimeItem.FlowWarning, out dFlowWarning);
+                    if (dFlowWarning == 0) dFlowWarning = double.MaxValue; //無法轉型，預設最大值
+
+                    if (dHOUR3 > 30 && dRT > dFlowWarning)
+                    {
+                        sStatus = "A3";
+                        break;
+                    }
+                }
+
+
+                //發布順位2，黃(淺層崩塌警戒)
+                //降雨時I(3小時累積雨量)欄為 & H(有效累積雨量RT)欄位同時達到門檻
+                double dRt_70 = 0;
+                double dR3_70 = 0;
+                dRt_70 = RumtimeItem.Rt_70;
+                dR3_70 = RumtimeItem.R3_70;
+                if (dHOUR3 > dR3_70 && dRT > dRt_70)
+                {
+                    sStatus = "A2";
+                    break;
+                }
+
+                ////發布順位3，黃色
+                ////降雨時K(3小時累積雨量)欄位 & J(有效累積雨量RT)欄位同時達到門檻
+                //double dRt_50 = 0;
+                //double dR3_50 = 0;
+                //dRt_50 = RumtimeItem.Rt_50;
+                //dR3_50 = RumtimeItem.R3_50;
+                //if (dHOUR3 > dR3_50 && dRT > dRt_50)
+                //{
+                //    sStatus = "A1";
+                //    break;
+                //}
+
+            }
+
+            return sStatus;
+        }
+
+        /// <summary>
+        /// 109年，判斷調降條件，是否需要調降
+        /// </summary>
+        /// <param name="villageID"></param>
+        /// <returns></returns>
+        private Boolean CheckLRTIAlertStatusDowngrade_109(string villageID)
+        {
+            Boolean sResult = false;
+
+            //調降規則
+            //三、	警戒解除標準
+            //1.警戒調降 / 解除標準
+            //6小時累積雨量≦24mm & 且這6小時內的所有小時雨量≦10mm。
+            //2.紅色警戒調降至黃色
+            //降雨條件符合前述1的標準時，紅色警戒 => 黃色警戒。
+            //3.黃色警戒解除
+            //降雨條件符合前述1的標準時，黃色警戒 => 解除警戒。
+            //4.警戒解除之狀態異動頻率為3小時
+            //警戒狀態判斷頻率雖然仍可維持每小時判斷，但警戒狀態調整需至少間隔3小時，如06: 00警戒狀態由紅色降為黃色，下次狀態要調整為解除警戒則至少要至09: 00。
+
+            ssql = @" 
+                    select * from  LRTIAlert 
+                    inner join RunTimeRainData on LRTIAlert.STID = RunTimeRainData.STID
+                    where LRTIAlert.villageID = '{0}'
+                    ";
+            ssql = string.Format(ssql, villageID);
+            List<dynamic> RuntimeList = dbDapper.Query(ssql);
+
+            foreach (var RumtimeItem in RuntimeList)
+            {
+                //6小時累積雨量≦24mm
+                double dHOUR6 = 0; //6小時累積雨量                
+                Double.TryParse(RumtimeItem.HOUR6, out dHOUR6);
+
+                //6小時內的所有小時雨量≦10mm
+                //取得目前的RTime
+                string sRTime = RumtimeItem.RTime;
+                DateTime dtRuntime = Convert.ToDateTime(sRTime);
+                string sRTime_1 = dtRuntime.AddHours(-1).ToString("yyyy-MM-ddTHH:mm:ss");
+                string sRTime_2 = dtRuntime.AddHours(-2).ToString("yyyy-MM-ddTHH:mm:ss");
+                string sRTime_3 = dtRuntime.AddHours(-3).ToString("yyyy-MM-ddTHH:mm:ss");
+                string sRTime_4 = dtRuntime.AddHours(-4).ToString("yyyy-MM-ddTHH:mm:ss");
+                string sRTime_5 = dtRuntime.AddHours(-5).ToString("yyyy-MM-ddTHH:mm:ss");
+                ssql = @"
+                        select RTime from RainStation 
+                        where STID = '{0}' and RTime in ('{1}','{2}','{3}','{4}','{5}','{6}')
+                        and CAST(RAIN AS FLOAT) <= 10
+                        ";
+                ssql = string.Format(ssql, RumtimeItem.STID, sRTime, sRTime_1, sRTime_2, sRTime_3, sRTime_4, sRTime_5);
+                int iCount = dbDapper.QueryTotalCount(ssql);
+
+                //1.	警戒調降/解除標準
+                // 6小時累積雨量≦24mm，且這6小時內的所有小時雨量≦10mm。
+                if (dHOUR6 <= 24 && iCount == 6)
+                {
+                    sResult = true;
+                }
+            }
+
+            return sResult;
+        }
 
 
 

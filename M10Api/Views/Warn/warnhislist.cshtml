@@ -84,9 +84,10 @@
                                 <th style="min-width: 80px;">崩塌警戒值R3_70</th>
                                 <th style="min-width: 80px;">崩塌警戒值Rt_50</th>
                                 <th style="min-width: 80px;">崩塌警戒值R3_50</th>
+                                <th style="min-width: 80px;">備註</th>
 
                                 @*<th style="width:20px;"> </th>
-                                    <th style="width:20px;"> </th>*@
+        <th style="width:20px;"> </th>*@
                             </tr>
                         </thead>
                         <tbody>
@@ -95,27 +96,28 @@
                                 foreach (var item in ViewData["LRTIAlert"] as List<dynamic>)
                                 {
 
-                                    <tr>
-                                        <td>@item.RecTime</td>
-                                        <td>@item.country</td>
-                                        <td>@item.town</td>
-                                        <td>@item.village</td>
-                                        <td>@item.HOUR1</td>
-                                        <td>@item.HOUR2</td>
-                                        <td>@item.HOUR3</td>
-                                        <td>@item.HOUR6</td>
-                                        <td>@item.LRTI</td>
-                                        <td>@item.status</td>
-                                        <td>@item.statustime</td>
-                                        <td>@item.RT</td>
-                                        <td>@item.FlowWarning</td>
-                                        <td>@item.Rt_70</td>
-                                        <td>@item.R3_70</td>
-                                        <td>@item.Rt_50</td>
-                                        <td>@item.R3_50</td>
-                                        @*<td><a ng-click="editUser(user.id)" class="btn btn-small btn-primary" title="修改"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
-                                            <td><a ng-click="deleteUser(user.id)" class="btn btn-small btn-danger" title="刪除"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>*@
-                                    </tr>
+                            <tr>
+                                <td>@item.RecTime</td>
+                                <td>@item.country</td>
+                                <td>@item.town</td>
+                                <td>@item.village</td>
+                                <td>@item.HOUR1</td>
+                                <td>@item.HOUR2</td>
+                                <td>@item.HOUR3</td>
+                                <td>@item.HOUR6</td>
+                                <td>@item.LRTI</td>
+                                <td>@item.status</td>
+                                <td>@item.statustime</td>
+                                <td>@item.RT</td>
+                                <td>@item.FlowWarning</td>
+                                <td>@item.Rt_70</td>
+                                <td>@item.R3_70</td>
+                                <td>@item.Rt_50</td>
+                                <td>@item.R3_50</td>
+                                <td>@item.Remark</td>
+                                @*<td><a ng-click="editUser(user.id)" class="btn btn-small btn-primary" title="修改"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
+        <td><a ng-click="deleteUser(user.id)" class="btn btn-small btn-danger" title="刪除"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></td>*@
+                            </tr>
                                 }
                             }
 
