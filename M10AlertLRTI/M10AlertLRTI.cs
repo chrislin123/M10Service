@@ -118,7 +118,7 @@ namespace M10AlertLRTI
                 string sAttachFileName = LRTIAlertReport();
 
                 //測試 上線要註解掉
-                return;
+                //return;
 
 
                 //1060519 判斷是否啟動發報功能，修改使用dapper
