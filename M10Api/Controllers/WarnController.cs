@@ -11,6 +11,8 @@ using Newtonsoft.Json;
 using System.IO;
 using M10.lib;
 using System.Data;
+using System.Dynamic;
+using M10.lib.model;
 //using System.Web.Http;
 
 
@@ -78,8 +80,13 @@ namespace M10Api.Controllers
                 if (item.status == "D") item.status = M10Const.AlertStatus.D;
 
                 //108 年
-                if (item.status == "A1") item.status = M10Const.AlertStatus.A1;
-                if (item.status == "A2") item.status = M10Const.AlertStatus.A2;
+                //if (item.status == "A1") item.status = M10Const.AlertStatus.A1;
+                //if (item.status == "A2") item.status = M10Const.AlertStatus.A2;
+                //if (item.status == "A3") item.status = M10Const.AlertStatus.A3;
+                //if (item.status == "AD") item.status = M10Const.AlertStatus.AD;
+
+                //109 年
+                if (item.status == "A2") item.status = M10Const.AlertStatus.A1;
                 if (item.status == "A3") item.status = M10Const.AlertStatus.A3;
                 if (item.status == "AD") item.status = M10Const.AlertStatus.AD;
 
@@ -414,6 +421,52 @@ namespace M10Api.Controllers
             }
 
             return View();
+        }
+
+        public ActionResult postAlertSet()
+        {
+            dynamic result = new ExpandoObject();
+
+
+            ssql = " select * from LRTIAlertMail where type = 'isal' ";
+            LRTIAlertMail inst = dbDapper.QuerySingleOrDefault<LRTIAlertMail>(ssql);
+
+            if (inst.value == "Y")
+            {
+                inst.value = "N";
+            }
+            else
+            {
+                inst.value = "Y";
+            }
+
+            //更新成功才回傳
+            if (dbDapper.Update(inst))
+            {
+                result.result = "OK";
+                result.AlertSet = inst.value;
+            }
+
+
+
+            return Content(JsonConvert.SerializeObject(result), "application/json");
+            //return Json(JsonConvert.SerializeObject(result), "application/json", JsonRequestBehavior.AllowGet);
+
+            //return this.Json(result, JsonRequestBehavior.AllowGet);
+            //return JsonConvert.SerializeObject(result);
+        }
+
+        public ActionResult getAlertSet()
+        {
+            dynamic result = new ExpandoObject();
+
+
+            ssql = " select * from LRTIAlertMail where type = 'isal' ";
+            LRTIAlertMail inst = dbDapper.QuerySingleOrDefault<LRTIAlertMail>(ssql);
+
+            result.AlertSet = inst.value;
+
+            return Content(JsonConvert.SerializeObject(result), "application/json");
         }
     }
 

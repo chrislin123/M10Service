@@ -38,7 +38,7 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">雨量資料<b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("雨量查詢", "QueryRain", "Rain", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("即時雨量", "QueryRain", "Rain", new { area = "" }, null)</li>
                             <li>@Html.ActionLink("統計資料查詢", "QueryRainStatistics", "Rain", new { area = "" }, null)</li>
                             <li>@Html.ActionLink("土石流警戒基準值(RTI)", "QueryRTI", "Rain", new { area = "" }, null)</li>
                             <li>@Html.ActionLink("崩塌警戒基準值(RTI3)", "QueryRTI3", "Rain", new { area = "" }, null)</li>
@@ -47,10 +47,11 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">資料匯出<b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("縣市雨量站逐時雨量", "ExpRainCountry", "Rain", new { area = "" }, null)</li>
-                            <li>@Html.ActionLink("單站雨量站逐時雨量", "ExpRainStation", "Rain", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("即時縣市逐時雨量", "ExpRainCountry", "Rain", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("即時單站雨量站逐時雨量", "ExpRainStation", "Rain", new { area = "" }, null)</li>
                             <li>@Html.ActionLink("各雨量站累積雨量座標", "ExpStationCoord", "Rain", new { area = "" }, null)</li>
                             <li>@Html.ActionLink("雨場分割資料下載", "ExpRainArea", "Rain", new { area = "" }, null)</li>
+                            @*<li>@Html.ActionLink("氣象局歷史雨量下載", "ExpRainAreaHis", "Rain", new { area = "" }, null)</li>*@
                         </ul>
                     </li>
                 </ul>

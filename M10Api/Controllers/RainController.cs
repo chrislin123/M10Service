@@ -535,6 +535,11 @@ namespace M10Api.Controllers
             return View();
         }
 
+        public ActionResult ExpRainAreaHis()
+        {
+            return View();
+        }
+
         public ActionResult ExpStationCoord()
         {
             return View();

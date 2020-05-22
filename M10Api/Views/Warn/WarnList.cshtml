@@ -8,13 +8,18 @@
 
 @*<h2>WarnList</h2>*@
 
-<div class="row">
-    <div class="col-md-12">
-        <h1 class="page-header">
-            降雨已達崩塌警戒即時資料 <small>預報時間：@ViewBag.forecastdate</small>
-        </h1>
+    <div class="row">
+        <div class="col-md-9">
+            <h1 class="page-header">
+                降雨已達崩塌警戒即時資料 <small>預報時間：@ViewBag.forecastdate</small>
+            </h1>
+        </div>
+        <div class="col-md-3">
+            <h1 class="page-header">
+                <Button ID="btnSetAlert" onclick="SetAlert();" class=""></Button>
+            </h1>
+        </div>
     </div>
-</div>
 
 <div class="panel panel-success">
     <div class="panel-heading">查詢結果 - 共 @ViewBag.count 筆</div>
@@ -112,3 +117,34 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+       
+        $.getJSON('@Url.Action("getAlertSet")', null, function (data) {
+            if (data.AlertSet == "Y") {
+                $("#btnSetAlert").attr('class', 'btn btn-warning');
+                $("#btnSetAlert").text("崩塌警戒發報-已啟動");
+            } else {
+                $("#btnSetAlert").attr('class', 'btn btn-success');
+                $("#btnSetAlert").text("崩塌警戒發報-已關閉");
+            }
+        });
+
+    });
+
+
+    function SetAlert() {
+        $.getJSON('@Url.Action("postAlertSet")', null, function (data) {
+            if (data.result == "OK") {
+                if (data.AlertSet == "Y") {
+                    $("#btnSetAlert").attr('class', 'btn btn-warning');
+                    $("#btnSetAlert").text("崩塌警戒發報-已啟動");
+                } else {
+                    $("#btnSetAlert").attr('class', 'btn btn-success');
+                    $("#btnSetAlert").text("崩塌警戒發報-已關閉");
+                }
+            }
+        });
+    }
+</script>

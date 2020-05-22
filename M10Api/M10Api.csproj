@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <Use64BitIISExpress />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -455,6 +456,7 @@
     <Content Include="Views\Rain\ExpStationCoord.cshtml" />
     <Content Include="Views\Rain\QueryRainStatistics.cshtml" />
     <Content Include="Views\Rain\ExpRainArea.cshtml" />
+    <Content Include="Views\Rain\ExpRainAreaHis.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
