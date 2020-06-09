@@ -616,6 +616,34 @@ namespace M10.lib.model
 
     }
 
+    [Table("WeaRainDataHis")]
+    public class WeaRainDataHis
+    {
+        //設定key
+        [Key]
+        public long no { get; set; }
+
+        public string Stid { get; set; }
+
+        public string Time { get; set; }
+
+        public decimal Hour { get; set; }
+
+        public decimal Hour3 { get; set; }
+
+        public decimal Hour6 { get; set; }
+
+        public decimal Hour12 { get; set; }
+
+        public decimal Hour24 { get; set; }
+
+        public decimal DayRainfall { get; set; }
+
+        public decimal RT { get; set; }
+
+
+    }
+
     [Table("WeaRainStatistics")]
     public class WeaRainStatistics
     {

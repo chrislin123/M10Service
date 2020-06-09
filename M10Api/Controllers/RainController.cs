@@ -443,6 +443,102 @@ namespace M10Api.Controllers
             return null;
         }
 
+        public ActionResult DownWeaRainHis(string sd, string ed, string Station)
+        {
+            DateTime dtStart;
+            DateTime dtEnd;
+
+            sd = sd.Replace(' ', '-');
+            ed = ed.Replace(' ', '-');
+
+            if (string.IsNullOrEmpty(sd) || string.IsNullOrEmpty(ed))
+            {
+                dtStart = DateTime.Now;
+                dtEnd = DateTime.Now;
+            }
+            else
+            {
+                string[] aSdt = sd.Split('-');
+                string[] aEdt = ed.Split('-');
+
+                dtStart = new DateTime(Convert.ToInt32(aSdt[0]), Convert.ToInt32(aSdt[1]), Convert.ToInt32(aSdt[2]), Convert.ToInt32(aSdt[3]), 0, 1);
+                dtEnd = new DateTime(Convert.ToInt32(aEdt[0]), Convert.ToInt32(aEdt[1]), Convert.ToInt32(aEdt[2]), Convert.ToInt32(aEdt[3]), 59, 59);
+            }
+
+            string sStartDate = dtStart.ToString("yyyyMMddHH");
+            string sEndDate = dtEnd.ToString("yyyyMMddHH");
+
+            string ssql = @" select * from WeaRainDataHis where 1=1
+                              and STID = @STID
+                              and Time between @sd and @ed                      
+                              order by Time   ";
+
+            List<WeaRainDataHis> DataList = new List<WeaRainDataHis>();
+            DataList = dbDapper.Query<WeaRainDataHis>(ssql, new { STID = Station, sd = sStartDate, ed = sEndDate });
+
+            //產生檔案路徑
+            string sTempPath = Path.Combine(Server.MapPath("~/temp/"), DateTime.Now.ToString("yyyyMMdd"));
+            //建立資料夾
+            Directory.CreateDirectory(sTempPath);
+            string sSaveFilePath = Path.Combine(sTempPath, "WeaRainDataHisByStation_" + Guid.NewGuid().ToString() + ".xlsx");
+
+            DataTable dt = Utils.ConvertToDataTable<WeaRainDataHis>(DataList);
+
+            List<string> head = new List<string>();
+            head.Add("站號");
+            head.Add("時間");
+            head.Add("Hour");
+            head.Add("Hour3");
+            head.Add("Hour6");
+            head.Add("Hour12");
+            head.Add("Hour24");
+            head.Add("DayRainFall");
+            head.Add("RT");
+
+
+            List<string[]> datas = new List<string[]>();
+            foreach (WeaRainDataHis item in DataList)
+            {
+                List<string> cols = new List<string>();
+                cols.Add(item.Stid);
+
+                //日期格式化
+                DateTime MainTime = DateTime.ParseExact(item.Time, "yyyyMMddHH", null);
+
+                cols.Add(MainTime.ToString("yyyy/MM/dd HH:00"));
+                cols.Add(item.Hour.ToString());
+                cols.Add(item.Hour3.ToString());
+                cols.Add(item.Hour6.ToString());
+                cols.Add(item.Hour12.ToString());
+                cols.Add(item.Hour24.ToString());
+                cols.Add(item.DayRainfall.ToString());
+                cols.Add(item.RT.ToString());
+                datas.Add(cols.ToArray());
+            }
+
+            DataExport de = new DataExport();
+            Boolean bSuccess = de.ExportListToExcel(sSaveFilePath, head, datas);
+
+            if (bSuccess)
+            {
+                string filename = string.Format("WeaRainDataHis_{0}_{1}_{2}.xlsx", Station, sd, ed).Replace("-", "");
+
+                //ASP.NET 回應大型檔案的注意事項
+                //http://blog.miniasp.com/post/2008/03/11/Caution-about-ASPNET-Response-a-Large-File.aspx
+
+
+                //***** 下載檔案過大，使用特殊方法 *****
+                HttpContext context = System.Web.HttpContext.Current;
+                context.Response.TransmitFile(sSaveFilePath);
+                context.Response.ContentType = "application/vnd.ms-excel";
+                context.Response.AddHeader("Content-Disposition", string.Format("attachment;filename={0}", filename));
+                Response.End();
+            }
+
+            return null;
+        }
+
+
         public ActionResult DownSumRain(string sd, string ed)
         {
             DateTime dtStart;
@@ -536,6 +632,11 @@ namespace M10Api.Controllers
         }
 
         public ActionResult ExpRainAreaHis()
+        {
+            return View();
+        }
+
+        public ActionResult ExpWeaRainHis()
         {
             return View();
         }
@@ -804,7 +905,7 @@ namespace M10Api.Controllers
             string sSaveFilePath = Path.Combine(sTempPath, "WeaRainStatistics_" + Guid.NewGuid().ToString() + ".xlsx");
 
             //DataTable dt = Utils.ConvertToDataTable<RainStation>(wrs);
-            DataTable dt = new DataTable();
+            //DataTable dt = new DataTable();
 
 
             DataExport de = new DataExport();
