@@ -182,12 +182,30 @@ namespace M10Api.Controllers
                 });
             }
 
+            return this.Json(items, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetWeaRainStationDDL(string STID)
+        {
+            List<SelectListItem> items = new List<SelectListItem>();
 
 
-            //if (Stations.Count != 0)
-            //{
-            //  items.Insert(0, new SelectListItem() { Text = "全部", Value = "全部" });
-            //}
+            ssql = @" select a.STID,b.COUNTY,b.STNAME from WeaRainStation a
+                    left join BasStationData b on a.stid = b.stid
+                     ";
+            if (string.IsNullOrEmpty(STID) == false) ssql += " where a.STID like @STID ";
+            ssql += " order by a.STID ";
+
+            var Stations = dbDapper.Query(ssql, new { STID = "%" + STID + "%" });
+
+            foreach (var item in Stations)
+            {
+                items.Add(new SelectListItem()
+                {
+                    Text = string.Format("{0}[{1}-{2}]", Convert.ToString(item.STID).ToUpper(), item.COUNTY, item.STNAME),
+                    Value = item.STID
+                });
+            }
 
             return this.Json(items, JsonRequestBehavior.AllowGet);
         }

@@ -99,7 +99,7 @@
       defaultDate: new Date(),
     });
 
-    $.getJSON('@Url.Action("GetStationDDL")', null, function (data) {
+    $.getJSON('@Url.Action("GetWeaRainStationDDL")', null, function (data) {
       $('#Station').empty();
       $.each(data, function (i, item) {
         $('#Station').append($('<option></option>').val(item.Value).text(item.Text));
@@ -109,7 +109,7 @@
   });
 
   function SearchSTID() {
-    $.getJSON('@Url.Action("GetStationDDL")', { STID :$("#txtSTID").val()}, function (data) {
+    $.getJSON('@Url.Action("GetWeaRainStationDDL")', { STID :$("#txtSTID").val()}, function (data) {
       $('#Station').empty();
       $.each(data, function (i, item) {
         $('#Station').append($('<option></option>').val(item.Value).text(item.Text));
