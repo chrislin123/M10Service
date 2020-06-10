@@ -2598,7 +2598,7 @@ namespace M10Tools
             */
 
 
-            string sVer = "20190515";
+            string sVer = "20200609";
             List<RtiDetail> rdList = new List<RtiDetail>();
 
             ssql = " select distinct stid from WeaRainArea order by STID ";
@@ -2658,11 +2658,11 @@ namespace M10Tools
                         rd.coefficient = itemCoefficient;
                         rd.version = "temp";
 
-                        rd.rti10 = oRtiProc.dRTI10;
-                        rd.rti30 = oRtiProc.dRTI30;
-                        rd.rti50 = oRtiProc.dRTI50;
-                        rd.rti70 = oRtiProc.dRTI70;
-                        rd.rti90 = oRtiProc.dRTI90;
+                        rd.rti10 = Math.Round(oRtiProc.dRTI10, 2); 
+                        rd.rti30 = Math.Round(oRtiProc.dRTI30, 2);
+                        rd.rti50 = Math.Round(oRtiProc.dRTI50, 2);
+                        rd.rti70 = Math.Round(oRtiProc.dRTI70, 2);
+                        rd.rti90 = Math.Round(oRtiProc.dRTI90, 2);
 
                         dbDapper.Insert(rd);
 
@@ -2708,23 +2708,23 @@ namespace M10Tools
                         rd.coefficient = itemCoefficient;
                         rd.version = "temp";
 
-                        rd.rti10 = oRtiProc.dRTI10;
-                        rd.rti30 = oRtiProc.dRTI30;
-                        rd.rti50 = oRtiProc.dRTI50;
-                        rd.rti70 = oRtiProc.dRTI70;
-                        rd.rti90 = oRtiProc.dRTI90;
+                        rd.rti10 = Math.Round(oRtiProc.dRTI10, 2); 
+                        rd.rti30 = Math.Round(oRtiProc.dRTI30, 2);
+                        rd.rti50 = Math.Round(oRtiProc.dRTI50, 2);
+                        rd.rti70 = Math.Round(oRtiProc.dRTI70, 2); 
+                        rd.rti90 = Math.Round(oRtiProc.dRTI90, 2);
 
-                        rd.rt10 = oRtiProc.dRT10;
-                        rd.rt30 = oRtiProc.dRT30;
-                        rd.rt50 = oRtiProc.dRT50;
-                        rd.rt70 = oRtiProc.dRT70;
-                        rd.rt90 = oRtiProc.dRT90;
+                        rd.rt10 = Math.Round(oRtiProc.dRT10, 2);
+                        rd.rt30 = Math.Round(oRtiProc.dRT30, 2); 
+                        rd.rt50 = Math.Round(oRtiProc.dRT50, 2);
+                        rd.rt70 = Math.Round(oRtiProc.dRT70, 2); 
+                        rd.rt90 = Math.Round(oRtiProc.dRT90, 2); 
 
-                        rd.r310 = oRtiProc.dR310;
-                        rd.r330 = oRtiProc.dR330;
-                        rd.r350 = oRtiProc.dR350;
-                        rd.r370 = oRtiProc.dR370;
-                        rd.r390 = oRtiProc.dR390;
+                        rd.r310 = Math.Round(oRtiProc.dR310, 2); 
+                        rd.r330 = Math.Round(oRtiProc.dR330, 2); 
+                        rd.r350 = Math.Round(oRtiProc.dR350, 2); 
+                        rd.r370 = Math.Round(oRtiProc.dR370, 2); 
+                        rd.r390 = Math.Round(oRtiProc.dR390, 2); 
 
                         dbDapper.Insert(rd);
 
