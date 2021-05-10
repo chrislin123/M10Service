@@ -9,13 +9,14 @@
 @*<h2>WarnList</h2>*@
 
     <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-8">
             <h1 class="page-header">
                 降雨已達崩塌警戒即時資料 <small>預報時間：@ViewBag.forecastdate</small>
             </h1>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <h1 class="page-header">
+                <Button ID="btnMap" onclick="ToMap();" class="btn btn-success">切換至地圖畫面</Button>
                 <Button ID="btnSetAlert" onclick="SetAlert();" class=""></Button>
             </h1>
         </div>
@@ -120,7 +121,7 @@
 
 <script>
     $(document).ready(function () {
-       
+
         $.getJSON('@Url.Action("getAlertSet")', null, function (data) {
             if (data.AlertSet == "Y") {
                 $("#btnSetAlert").attr('class', 'btn btn-warning');
@@ -133,6 +134,9 @@
 
     });
 
+    function ToMap() {
+        location.href = '@Url.Action("Map", "Map")';
+    }
 
     function SetAlert() {
         $.getJSON('@Url.Action("postAlertSet")', null, function (data) {

@@ -32,14 +32,16 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("即時", "warnlist", "warn", new { area = "" }, null)</li>
-                    <li>@Html.ActionLink("地圖", "map", "map", new { area = "" }, null)</li>
-                    <li>@Html.ActionLink("歷史", "warnhislist", "warn", new { area = "" }, null)</li>
+                    <li>@Html.ActionLink("即時降雨監測", "QueryRain", "Rain", new { area = "" }, null)</li>
+                    <li>@Html.ActionLink("即時崩塌監測", "warnlist", "warn", new { area = "" }, null)</li>
+                    
+                    @*<li>@Html.ActionLink("地圖", "map", "map", new { area = "" }, null)</li>*@
+                    @*<li>@Html.ActionLink("歷史", "warnhislist", "warn", new { area = "" }, null)</li>*@
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">雨量資料<b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">統計資訊<b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("即時雨量", "QueryRain", "Rain", new { area = "" }, null)</li>
-                            <li>@Html.ActionLink("統計資料查詢", "QueryRainStatistics", "Rain", new { area = "" }, null)</li>
+                            @*<li>@Html.ActionLink("即時雨量", "QueryRain", "Rain", new { area = "" }, null)</li>*@
+                            <li>@Html.ActionLink("雨量站統計資訊", "QueryRainStatistics", "Rain", new { area = "" }, null)</li>
                             <li>@Html.ActionLink("土石流警戒基準值(RTI)", "QueryRTI", "Rain", new { area = "" }, null)</li>
                             <li>@Html.ActionLink("崩塌警戒基準值(RTI3)", "QueryRTI3", "Rain", new { area = "" }, null)</li>
                         </ul>
@@ -47,11 +49,11 @@
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">資料匯出<b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li>@Html.ActionLink("即時縣市逐時雨量", "ExpRainCountry", "Rain", new { area = "" }, null)</li>
-                            <li>@Html.ActionLink("即時單站雨量站逐時雨量", "ExpRainStation", "Rain", new { area = "" }, null)</li>
-                            <li>@Html.ActionLink("各雨量站累積雨量座標", "ExpStationCoord", "Rain", new { area = "" }, null)</li>
-                            <li>@Html.ActionLink("雨場分割資料下載", "ExpRainArea", "Rain", new { area = "" }, null)</li>
-                            <li>@Html.ActionLink("氣象局歷史雨量下載", "ExpWeaRainHis", "Rain", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("點對點逐時雨量匯出(縣市)", "ExpRainCountry", "Rain", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("點對點逐時雨量匯出(單站)", "ExpRainStation", "Rain", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("點對點累積雨量計算", "ExpStationCoord", "Rain", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("雨場分割資料(1987~2020)", "ExpRainArea", "Rain", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("氣象局歷史雨量(1987~2020)", "ExpWeaRainHis", "Rain", new { area = "" }, null)</li>
                         </ul>
                     </li>
                 </ul>

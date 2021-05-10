@@ -518,6 +518,8 @@ namespace M10.lib
                     ////}
                     //sheetData.AppendChild(headerRow);
 
+
+                    int iDx = 1;
                     foreach (string[] row in ListData)
                     {
                         var newRow = new Row();
@@ -541,6 +543,7 @@ namespace M10.lib
                         }
 
                         sheetData.AppendChild(newRow);
+                        iDx++;
                     }
 
                     spreadsheetDocument.Save();

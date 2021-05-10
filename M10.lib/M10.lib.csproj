@@ -69,9 +69,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class1.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DALDapper.cs" />
     <Compile Include="DataExport.cs" />
+    <Compile Include="FTP.cs" />
     <Compile Include="Gmail.cs" />
     <Compile Include="M10BaseClass.cs" />
     <Compile Include="model\modeldhoe.cs" />

@@ -51,7 +51,7 @@ namespace M10.lib
                     return cn.Query<T>(sql).ToList<T>();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return null;
             }

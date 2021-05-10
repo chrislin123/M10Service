@@ -18,9 +18,14 @@
 }
 
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-9">
         <h1 class="page-header">
             降雨已達崩塌警戒即時地圖資料 <small>預報時間：@ViewBag.forecastdate</small>
+        </h1>
+    </div>
+    <div class="col-md-3">
+        <h1 class="page-header">
+            <Button ID="btnToList" onclick="ToList();" class="btn btn-success">切換至清單畫面</Button>
         </h1>
     </div>
 </div>
@@ -246,6 +251,9 @@
 
   }
 
+    function ToList() {
+        location.href = '@Url.Action("warnlist", "warn")';
+    }
 
 
 

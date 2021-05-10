@@ -50,6 +50,7 @@ namespace M10.lib
         public static class DataStaticLogType
         {
             public const string RainAreaSplit = "RainAreaSplit";
+            //雨場分割轉EXCEL
             public const string RainAreaToExcel = "RainAreaToExcel";
           
         }
@@ -196,5 +197,61 @@ namespace M10.lib
 
 
     }
+
+    public static class GlobalConst
+    {
+        public static string Demo = "123";
+
+
+
+        public static class AlertStatus
+        {
+            public const string I = "發布黃色";
+            public const string C = "黃升紅";
+            public const string O = "紅降黃";
+            public const string D = "解除黃色";
+
+            public const string A1 = "黃色";
+            public const string A2 = "澄色";
+            public const string A3 = "紅色";
+            public const string AD = "解除";
+        }
+
+        public enum StockTransRecType
+        {
+            StockAfterRush,
+            Histroy,
+        }
+
+
+    }
+
+    public static class MVCControlClass
+    {
+        public static string Demo = "123";
+
+
+
+        public class ApiResult
+        {
+
+            public string ApiResultStauts { get; set; }
+
+            public string Message { get; set; }
+
+            public dynamic Data { get; set; }
+
+        }
+
+
+        public static class ApiResultStautsType
+        {
+            public static string Success = "123";
+            public static string Error = "123";
+        }
+
+
+    }
+
 
 }

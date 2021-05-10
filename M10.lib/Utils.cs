@@ -63,13 +63,15 @@ namespace M10.lib
         {
             DateTime dt = DateTime.MinValue;
 
-
             string[] DateTimeList = {
                             "yyyy/M/d tt hh:mm:ss",
                             "yyyy/MM/dd tt hh:mm:ss",
                             "yyyy/MM/dd HH:mm:ss",
                             "yyyy/M/d HH:mm:ss",
                             "yyyy/M/d",
+                            "yyyy-MM-dd",
+                            "yyyyMMddHHmmss",
+                            "yyyy-MM-dd HH:mm:ss", //M11日期格式
                             "yyyyMMdd"
                         };
 

@@ -210,6 +210,30 @@ namespace M10Api.Controllers
             return this.Json(items, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult GetWeaRainStationDDLByCountry(string Country)
+        {
+            List<SelectListItem> items = new List<SelectListItem>();
+
+
+            ssql = @" select a.STID,b.COUNTY,b.STNAME from WeaRainStation a
+                    inner join BasStationData b on a.stid = b.stid
+                     ";
+            if (string.IsNullOrEmpty(Country) == false && Country != "全部") ssql += " where b.COUNTY = @COUNTY ";
+            ssql += " order by a.STID ";
+
+            var Stations = dbDapper.Query(ssql, new { COUNTY = Country });
+
+            foreach (var item in Stations)
+            {
+                items.Add(new SelectListItem()
+                {
+                    Text = string.Format("{0}[{1}-{2}]", Convert.ToString(item.STID).ToUpper(), item.COUNTY, item.STNAME),
+                    Value = item.STID
+                });
+            }
+
+            return this.Json(items, JsonRequestBehavior.AllowGet);
+        }
 
         public ActionResult postAlertSet()
         {

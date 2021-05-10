@@ -1287,7 +1287,8 @@ namespace M10Tools
                 //StidItem.stid = "466880";
                 //每個STID都要跑1987-2017的資料
                 //每個STID都要跑1987-2017的資料
-                for (int y = 2019; y <= 2019; y++)
+                //20210504 雨量站統計資訊年度更新，要改成要跑的年度
+                for (int y = 2020; y <= 2020; y++)
                 {
                     Application.DoEvents();
                     //雨量站
@@ -1796,9 +1797,9 @@ namespace M10Tools
                         dbDapper.Update(dsl_new);
                     }
 
-                    DateTime dtStart = DateTime.ParseExact("2019010100", "yyyyMMddHH", null);
+                    DateTime dtStart = DateTime.ParseExact("2020010100", "yyyyMMddHH", null);
                     //dtStart = DateTime.ParseExact("2017060200", "yyyyMMddHH", null);
-                    DateTime dtFinish = DateTime.ParseExact("2019123123", "yyyyMMddHH", null);
+                    DateTime dtFinish = DateTime.ParseExact("2021123123", "yyyyMMddHH", null);
                     //dtFinish = DateTime.ParseExact("2009080000", "yyyyMMddHH", null);
 
 
@@ -2242,9 +2243,10 @@ namespace M10Tools
 
         private void button12_Click(object sender, EventArgs e)
         {
+            //每年第一次轉檔時，請執行以下SQL，清除已轉檔完成或是執行中未清除的資料
+            // delete DataStaticLog where type = 'RainAreaToExcel'
+
             string sDataStaticLogType = M10Const.DataStaticLogType.RainAreaToExcel;
-
-
 
 
             ssql = " select distinct stid from WeaRainData order by STID ";
@@ -2257,7 +2259,7 @@ namespace M10Tools
                 iIndex++;
                 //雨量站
                 string sStid = StidItem.stid;
-
+                //
                 try
                 {
                     //10:執行中 60:已完成
@@ -2456,7 +2458,7 @@ namespace M10Tools
 
             string sFileName = "all.xlsx";
             string sSaveFilePath = Path.Combine(sTempPath, sFileName);
-            sSaveFilePath = @"c:\" + sFileName;
+            sSaveFilePath = @"c:\temp\" + sFileName;
             FileInfo[] fiList = new DirectoryInfo(sTempPath).GetFiles("*.xlsx", SearchOption.AllDirectories);
             DataExport de = new DataExport();
 
@@ -2487,21 +2489,40 @@ namespace M10Tools
 
             Boolean bSuccess = de.ExportListToExcel(sSaveFilePath, head, datas);
 
+            //int i = 0;
+            //foreach (FileInfo item in fiList)
+            //{
+            //    i++;
+            //    ShowStatus(string.Format("({0}/{1}){2}", i.ToString(), fiList.Count().ToString(), item.Name));
+            //    List<string[]> temp = de.ReadExcelToList(item.FullName);
+            //    //datas.AddRange(temp);
 
+            //    temp.RemoveAt(0);
+
+            //    de.AppendListToExcel(sSaveFilePath, temp);
+            //}
+
+            //20210507 原本的方式很慢，調整作法，把所有的資料先彙整成List再塞入
+            List<string[]> lstImpTemp = new List<string[]>();
             int i = 0;
             foreach (FileInfo item in fiList)
             {
                 i++;
-                ShowStatus(string.Format("({0}/{1}){2}", i.ToString(), fiList.Count().ToString(), item.Name));
+                ShowStatus(string.Format("[彙整所有Excel到清單中]({0}/{1}){2}", i.ToString(), fiList.Count().ToString(), item.Name));
+                this.Text = string.Format("[彙整所有Excel到清單中]({0}/{1}){2}", i.ToString(), fiList.Count().ToString(), item.Name);
                 List<string[]> temp = de.ReadExcelToList(item.FullName);
                 //datas.AddRange(temp);
 
+                //移除原本的表頭
                 temp.RemoveAt(0);
 
-                de.AppendListToExcel(sSaveFilePath, temp);
-
-
+                lstImpTemp.AddRange(temp);
             }
+
+            //所有的資料一次寫入Excel中
+            ShowStatus(string.Format("清單中({0}筆)所有資料一次寫入，非常耗時，預估五分鐘左右。", lstImpTemp.Count()));
+            this.Text = string.Format("清單中({0}筆)所有資料一次寫入，非常耗時，預估五分鐘左右。", lstImpTemp.Count());
+            de.AppendListToExcel(sSaveFilePath, lstImpTemp);
 
             ShowStatus("完成");
 
@@ -2590,7 +2611,7 @@ namespace M10Tools
                 ([station],[ver],[raindelay],[Rtd6],[Rtd7],[Rtd8],[Rti6],[Rti7]
                 ,[Rti8],[Rti36],[Rti37],[Rti38],[R3],[date])
 
-                select STID,'20190515' as ver,RainHour,rt6,rt7,RT8
+                select STID,'20210507' as ver,RainHour,rt6,rt7,RT8
                 ,RT6*MaxRain as rti6,RT7*MaxRain as rti7,RT8*MaxRain as rti8
                 ,RT6*Max3Sum/3 as rti36,RT7*Max3Sum/3 as rti37,RT8*Max3Sum/3 as rti38
                 ,max3sum,SUBSTRING(TimeStart,1,8) as date 
@@ -2598,7 +2619,7 @@ namespace M10Tools
             */
 
 
-            string sVer = "20200609";
+            string sVer = "20210507";
             List<RtiDetail> rdList = new List<RtiDetail>();
 
             ssql = " select distinct stid from WeaRainArea order by STID ";
@@ -2611,7 +2632,8 @@ namespace M10Tools
                 iIndex++;
                 string sStid = StidItem.stid;
 
-                string sDALConnStr = "M10VPN";
+                //string sDALConnStr = "M10VPN";
+                string sDALConnStr = "DbM10";
                 string[] typeList = { "RTI", "RTI3" };
                 string[] DelaytimeList = { "0", "1", "2", "3" };
                 string[] CoefficientList = { "6", "7", "8" };
@@ -3961,34 +3983,97 @@ namespace M10Tools
                 this.Text = sStid;
                 ProcWeaRainDataHis(sStid);
             }
-            else //如果沒輸入，則由資料庫判斷尚未執行的雨量站進行轉檔
-            {   
+            else //如果沒輸入，則由資料庫判斷尚未執行或還沒執行完全的雨量站進行轉檔
+            {
+
+                //每年第一次轉檔時，請執行以下SQL，清除已轉檔完成或是執行中未清除的資料
+                // delete DataStaticLog where type = 'WeaRainTransHisSTID' and status in ('10','60')
+
                 while (true)
-                {   
-                    ssql = @" 
-                    select * from (
-                     select * from (
-                         select STID,count(*) ttData from WeaRainData   group by STID
-                     ) a 
-                     left join (
-                         select key2,count(*) ttLog from DataStaticLog where type = '109WeaRainTrans'  group by key2
-                     ) b on a.STID = b.key2 
-                    ) r where ttLog is null
-                    order by r.STID
-                    ";
-                    //ssql = string.Format(ssql, sStid);
+                {
+                    try
+                    {
+                        //比較該雨量站資料數量與轉檔LOG紀錄數量，如果沒轉過或是資料數不符，則進行轉檔
+                        //20210506 新增排除已經在轉檔的雨量站
+                        ssql = @" 
+                            select * from (
+                             select * from (
+                                 select STID,count(*) ttData from WeaRainData   group by STID
+                             ) a 
+                             left join (
+                                 select key2,count(*) ttLog from DataStaticLog where type = '109WeaRainTrans'  group by key2
+                             ) b on a.STID = b.key2 
+                            ) r 
+                            left join DataStaticLog c  on c.type = 'WeaRainTransHisSTID' and c.key1 = r.STID and c.status = '10'
+                            where (ttLog != ttData or ttLog is null) and c.key1 is null    
+                            order by r.STID
+                        ";
+                        //ssql = string.Format(ssql, sStid);
 
-                    //ShowStatus(string.Format("取得雨量站[{0}]的所有氣象局雨量資料....", sStid));
+                        ShowStatus(string.Format("正在統計尚未轉檔到歷史資料的雨量站...."));
 
-                    List<dynamic> TransList = dbDapper.Query(ssql);
+                        List<dynamic> TransList = dbDapper.Query(ssql);
 
-                    //如果沒資料則停止
-                    if (TransList.Count() == 0) break;
+                        //如果沒資料則停止
+                        if (TransList.Count() == 0) break;
 
+                        //總筆數，使用Random取得資料避免重複執行問題
+                        int iRandom = new Random().Next(0, TransList.Count() - 1);
 
-                    sStid = TransList[0].STID;
-                    this.Text = sStid;
-                    ProcWeaRainDataHis(sStid);
+                        sStid = TransList[iRandom].STID;
+                        this.Text = string.Format("{0}-剩餘數量：{1}", sStid, TransList.Count());
+
+                        //==判斷是否執行過
+                        //10:執行中 60:已完成 90:轉檔失敗
+                        string sDataStaticLogType = "WeaRainTransHisSTID";
+                        ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}' ";
+                        ssql = string.Format(ssql, sDataStaticLogType, sStid);
+                        DataStaticLog dsl_new = dbDapper.QuerySingleOrDefault<DataStaticLog>(ssql);
+
+                        //沒有轉檔紀錄
+                        if (dsl_new == null)
+                        {
+                            //如果沒有轉檔紀錄，則新增一筆執行中
+                            //寫入統計LOG
+                            dsl_new = new DataStaticLog();
+                            dsl_new.type = sDataStaticLogType;
+                            dsl_new.key1 = sStid;
+                            dsl_new.key2 = "";
+                            dsl_new.status = "10";
+                            dsl_new.logtime = DateTime.Now;
+                            dbDapper.Insert(dsl_new);
+                        }
+                        else//已經有轉檔紀錄
+                        {
+                            //如果執行中，則不進行該站轉檔
+                            if (dsl_new.status == "10")
+                            {
+                                continue;
+                            }
+
+                            //重新更新為執行中
+                            dsl_new.status = "10";
+                            dbDapper.Update(dsl_new);
+                        }
+
+                        ProcWeaRainDataHis(sStid);
+
+                        //註記已經轉檔完成
+                        ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}' ";
+                        ssql = string.Format(ssql, sDataStaticLogType, sStid);
+
+                        DataStaticLog dslu = dbDapper.QuerySingleOrDefault<DataStaticLog>(ssql);
+                        if (dslu != null)
+                        {
+                            dslu.status = "60";
+                            dbDapper.Update(dslu);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        //發生錯誤繼續後面的轉檔，直到全部雨量站執行完畢
+                        continue;
+                    }
                 }
             }
 
@@ -4240,6 +4325,11 @@ namespace M10Tools
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             Environment.Exit(0);
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 

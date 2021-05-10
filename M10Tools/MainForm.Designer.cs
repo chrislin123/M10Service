@@ -237,7 +237,7 @@
             // 
             // StockCodeTextBox
             // 
-            this.StockCodeTextBox.Location = new System.Drawing.Point(10, 389);
+            this.StockCodeTextBox.Location = new System.Drawing.Point(10, 421);
             this.StockCodeTextBox.Name = "StockCodeTextBox";
             this.StockCodeTextBox.Size = new System.Drawing.Size(100, 22);
             this.StockCodeTextBox.TabIndex = 23;
@@ -246,7 +246,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(116, 392);
+            this.label1.Location = new System.Drawing.Point(116, 424);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(33, 12);
             this.label1.TabIndex = 24;
@@ -264,7 +264,7 @@
             // 
             // btnImpWeatherData
             // 
-            this.btnImpWeatherData.Location = new System.Drawing.Point(12, 127);
+            this.btnImpWeatherData.Location = new System.Drawing.Point(12, 157);
             this.btnImpWeatherData.Name = "btnImpWeatherData";
             this.btnImpWeatherData.Size = new System.Drawing.Size(126, 32);
             this.btnImpWeatherData.TabIndex = 27;
@@ -306,15 +306,15 @@
             // 
             this.button13.Location = new System.Drawing.Point(10, 282);
             this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(126, 23);
+            this.button13.Size = new System.Drawing.Size(126, 38);
             this.button13.TabIndex = 31;
-            this.button13.Text = "雨場分割轉Excel_All";
+            this.button13.Text = "(4-1)雨場分割轉Excel_All";
             this.button13.UseVisualStyleBackColor = true;
             this.button13.Click += new System.EventHandler(this.button13_Click);
             // 
             // button14
             // 
-            this.button14.Location = new System.Drawing.Point(12, 311);
+            this.button14.Location = new System.Drawing.Point(12, 343);
             this.button14.Name = "button14";
             this.button14.Size = new System.Drawing.Size(126, 23);
             this.button14.TabIndex = 32;
@@ -324,11 +324,11 @@
             // 
             // button15
             // 
-            this.button15.Location = new System.Drawing.Point(12, 340);
+            this.button15.Location = new System.Drawing.Point(12, 372);
             this.button15.Name = "button15";
             this.button15.Size = new System.Drawing.Size(126, 23);
             this.button15.TabIndex = 33;
-            this.button15.Text = "RTI與RTI3轉檔";
+            this.button15.Text = "(5)RTI與RTI3轉檔";
             this.button15.UseVisualStyleBackColor = true;
             this.button15.Click += new System.EventHandler(this.button15_Click);
             // 
@@ -404,17 +404,17 @@
             // 
             // button22
             // 
-            this.button22.Location = new System.Drawing.Point(144, 12);
+            this.button22.Location = new System.Drawing.Point(144, 195);
             this.button22.Name = "button22";
             this.button22.Size = new System.Drawing.Size(169, 23);
             this.button22.TabIndex = 42;
-            this.button22.Text = "109年氣象局歷史資料轉檔";
+            this.button22.Text = "(6)氣象局歷史資料轉檔";
             this.button22.UseVisualStyleBackColor = true;
             this.button22.Click += new System.EventHandler(this.button22_Click);
             // 
             // Trans109Text
             // 
-            this.Trans109Text.Location = new System.Drawing.Point(249, 41);
+            this.Trans109Text.Location = new System.Drawing.Point(265, 224);
             this.Trans109Text.Name = "Trans109Text";
             this.Trans109Text.Size = new System.Drawing.Size(64, 22);
             this.Trans109Text.TabIndex = 43;
@@ -422,11 +422,11 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(142, 46);
+            this.label2.Location = new System.Drawing.Point(152, 229);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(107, 12);
+            this.label2.Size = new System.Drawing.Size(113, 12);
             this.label2.TabIndex = 44;
-            this.label2.Text = "109氣象局轉檔站號";
+            this.label2.Text = "氣象局單獨轉檔站號";
             // 
             // MainForm
             // 
@@ -472,6 +472,7 @@
             this.Name = "MainForm";
             this.Text = "MainForm";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
+            this.Load += new System.EventHandler(this.MainForm_Load);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);

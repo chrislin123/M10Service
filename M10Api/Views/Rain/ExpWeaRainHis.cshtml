@@ -18,7 +18,7 @@
 <div class="row">
   <div class="col-md-12">
       <h1 class="page-header">
-          氣象局歷史雨量
+          氣象局歷史雨量(1987~2020)
       </h1>
   </div>
 </div>
@@ -28,21 +28,24 @@
   <div class="panel-heading">匯出</div>
   <div class="panel-body">
     <div class="col-md-12">
-      <div class="form-inline">
-        <label for="keyWord">雨量站：</label>
-        <select id="Station" name="Station" class="form-control"></select>
-        <label for="keyWord">搜尋(雨量站代碼)：</label>
-        <input type="text" id="txtSTID" value="" />
-        <button class="btn btn-default" id="btnSearchSTID" onclick="SearchSTID();">搜尋雨量站</button>
-        <br />
-        <label for="keyWord">起始時間：</label>
-        <input type="text" id="StartDate" name="StartDate" value="" />
-        <label for="keyWord">結束時間：</label>
-        <input type="text" id="EndDate" name="EndDate" value="" />
-        <label for="keyWord">密碼：</label>
-        <input type="text" id="txtpass" name="txtpass" value="" />
-        <button class="btn btn-default" id="btnExport" onclick="Export();">資料匯出</button>
-      </div>
+        <div class="form-inline">
+            <label for="keyWord">雨量站：</label>
+            <select id="Station" name="Station" class="form-control"></select>
+            <label for="keyWord">搜尋(雨量站代碼)：</label>
+            <input type="text" id="txtSTID" value="" />
+            <button class="btn btn-default" id="btnSearchSTID" onclick="SearchSTID();">搜尋雨量站</button>
+            <label for="keyWord">縣市搜尋：</label>
+            <select id="Country" name="county" class="form-control"></select>
+            <button class="btn btn-default" id="btnSearchCountry" onclick="SearchCountry();">縣市搜尋雨量站</button>
+            <br />
+            <label for="keyWord">起始時間：</label>
+            <input type="text" id="StartDate" name="StartDate" value="" />
+            <label for="keyWord">結束時間：</label>
+            <input type="text" id="EndDate" name="EndDate" value="" />
+            <label for="keyWord">密碼：</label>
+            <input type="text" id="txtpass" name="txtpass" value="" />
+            <button class="btn btn-default" id="btnExport" onclick="Export();">資料匯出</button>
+        </div>
     </div>
   </div>
 </div>
@@ -106,6 +109,16 @@
       });
     });
 
+    $.getJSON('@Url.Action("GetCountyDDL")', { cityId: "test" }, function (data) {
+      $('#Country').empty();
+      $.each(data, function (i, item) {
+        $('#Country').append($('<option></option>').val(item.Value).text(item.Text));
+      });
+
+      //設定預設項目
+      $('#Product').val("全部");
+    });
+
   });
 
   function SearchSTID() {
@@ -115,8 +128,16 @@
         $('#Station').append($('<option></option>').val(item.Value).text(item.Text));
       });
     });
+    }
 
-  }
+    function SearchCountry() {
+        $.getJSON('@Url.Action("GetWeaRainStationDDLByCountry")', { Country: $("#Country").val()}, function (data) {
+            $('#Station').empty();
+            $.each(data, function (i, item) {
+                $('#Station').append($('<option></option>').val(item.Value).text(item.Text));
+            });
+        });
+    }
 
   function Export() {
     if ($("#StartDate").val() == "" || $("#EndDate").val() == "") {
