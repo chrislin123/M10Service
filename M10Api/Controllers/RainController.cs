@@ -214,7 +214,6 @@ namespace M10Api.Controllers
         {
             List<SelectListItem> items = new List<SelectListItem>();
 
-
             ssql = @" select a.STID,b.COUNTY,b.STNAME from WeaRainStation a
                     inner join BasStationData b on a.stid = b.stid
                      ";
