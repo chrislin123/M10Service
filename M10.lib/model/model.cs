@@ -878,6 +878,141 @@ namespace M10.lib.model
         public M10Const.StockRuntimeStatus status { get; set; }
     }
 
+    public class StockYahooAPI
+    {
+
+        private List<StockYahooAPITick> _tick = null;
+
+        /// <summary>
+        /// 代號
+        /// </summary>
+        public string id { get; set; }
+
+        /// <summary>
+        /// 名稱
+        /// </summary>
+        public string name { get; set; }
+
+        /// <summary>
+        /// 交易日
+        /// </summary>
+        public string TradeDay { get; set; }
+
+        /// <summary>
+        /// 開盤價
+        /// </summary>
+        public string open { get; set; }
+
+        /// <summary>
+        /// 開盤價
+        /// </summary>
+        public string close { get; set; }
+
+        /// <summary>
+        /// 最高價
+        /// </summary>
+        public string high { get; set; }
+
+        /// <summary>
+        /// 最低價
+        /// </summary>
+        public string low { get; set; }
+
+
+        /// <summary>
+        /// 成交量
+        /// </summary>
+        public string vol { get; set; }
+
+        /// <summary>
+        /// 當日Tick
+        /// </summary>
+        public List<StockYahooAPITick> Tick
+        {
+            get
+            {
+                if (_tick == null)
+                {
+                    _tick = new List<StockYahooAPITick>();
+                }
+
+                return _tick;
+            }
+            set { _tick = value; }
+
+        }
+
+
+
+        ///// <summary>
+        ///// 目前成交價
+        ///// </summary>
+        //public string z { get; set; }
+
+        ///// <summary>
+        ///// 昨日成交價
+        ///// </summary>
+        //public string y { get; set; }
+
+        ///// <summary>
+        ///// 漲停價
+        ///// </summary>
+        //public string u { get; set; }
+
+        ///// <summary>
+        ///// 跌停價
+        ///// </summary>
+        //public string w { get; set; }
+
+        ///// <summary>
+        ///// yahoo漲跌
+        ///// </summary>
+        //public string xx { get; set; }
+
+
+
+
+
+
+
+        ///// <summary>
+        ///// 昨高
+        ///// </summary>
+        //public string YTop { get; set; }
+
+        ///// <summary>
+        ///// 昨低
+        ///// </summary>
+        //public string YLow { get; set; }
+
+        ///// <summary>
+        ///// 資料狀態
+        ///// </summary>
+        //public M10Const.StockRuntimeStatus status { get; set; }
+    }
+
+    public class StockYahooAPITick
+    {
+        /// <summary>
+        /// 目前成交價
+        /// </summary>
+        public string tick { get; set; }
+
+        /// <summary>
+        /// 目前成交價
+        /// </summary>
+        public string price { get; set; }
+
+        /// <summary>
+        /// 目前成交價
+        /// </summary>
+        public string vol { get; set; }
+
+
+
+
+    }
+
 
     [Table("Stockafter")]
     public class Stockafter
@@ -1075,6 +1210,204 @@ namespace M10.lib.model
         public string updatetime { get; set; }
 
     }
+
+    [Table("StockTumd")]
+    public class StockTumd
+    {
+        private string _tseTU;
+        private string _tseTM;
+        private string _tseTD;
+        private string _tseTW;
+        private string _otcTU;
+        private string _otcTM;
+        private string _otcTD;
+        private string _otcTW;
+        private string _txfTU;
+        private string _txfTM;
+        private string _txfTD;
+        private string _txfTW;
+
+        //設定key
+        [Key]
+        public int no { get; set; }
+
+        public string stockdate { get; set; }
+
+        public string TseTU
+        {
+            get
+            {
+                if (_tseTU == null)
+                {
+                    _tseTU = "0";
+                }
+
+                return _tseTU;
+            }
+            set { _tseTU = value; }
+        }
+
+        public string TseTM
+        {
+            get
+            {
+                if (_tseTM == null)
+                {
+                    _tseTM = "0";
+                }
+
+                return _tseTM;
+            }
+            set { _tseTM = value; }
+        }
+
+        public string TseTD
+        {
+            get
+            {
+                if (_tseTD == null)
+                {
+                    _tseTD = "0";
+                }
+
+                return _tseTD;
+            }
+            set { _tseTD = value; }
+        }
+
+        public string TseTW
+        {
+            get
+            {
+                if (_tseTW == null)
+                {
+                    _tseTW = "0";
+                }
+
+                return _tseTW;
+            }
+            set { _tseTW = value; }
+        }
+
+        public string OtcTU
+        {
+            get
+            {
+                if (_otcTU == null)
+                {
+                    _otcTU = "0";
+                }
+
+                return _otcTU;
+            }
+            set { _otcTU = value; }
+        }
+
+        public string OtcTM
+        {
+            get
+            {
+                if (_otcTM == null)
+                {
+                    _otcTM = "0";
+                }
+
+                return _otcTM;
+            }
+            set { _otcTM = value; }
+        }
+
+        public string OtcTD
+        {
+            get
+            {
+                if (_otcTD == null)
+                {
+                    _otcTD = "0";
+                }
+
+                return _otcTD;
+            }
+            set { _otcTD = value; }
+        }
+
+        public string OtcTW
+        {
+            get
+            {
+                if (_otcTW == null)
+                {
+                    _otcTW = "0";
+                }
+
+                return _otcTW;
+            }
+            set { _otcTW = value; }
+        }
+
+        public string TxfTU
+        {
+            get
+            {
+                if (_txfTU == null)
+                {
+                    _txfTU = "0";
+                }
+
+                return _txfTU;
+            }
+            set { _txfTU = value; }
+        }
+
+        public string TxfTM
+        {
+            get
+            {
+                if (_txfTM == null)
+                {
+                    _txfTM = "0";
+                }
+
+                return _txfTM;
+            }
+            set { _txfTM = value; }
+        }
+
+        public string TxfTD
+        {
+            get
+            {
+                if (_txfTD == null)
+                {
+                    _txfTD = "0";
+                }
+
+                return _txfTD;
+            }
+            set { _txfTD = value; }
+        }
+
+
+        public string TxfTW
+        {
+            get
+            {
+                if (_txfTW == null)
+                {
+                    _txfTW = "0";
+                }
+
+                return _txfTW;
+            }
+            set { _txfTW = value; }
+        }
+
+    }
+
+
+
+
+
 
     [Table("Price1")]
     public class Price1

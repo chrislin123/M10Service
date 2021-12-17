@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31229.75
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "M10Service", "M10Service\M10Service.csproj", "{3088FF9F-E249-4A71-8451-22B5D45B38B7}"
 EndProject
@@ -33,6 +33,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C10Mvc", "C10Mvc\C10Mvc.csproj", "{6B4249D7-0B27-4FFD-BCCA-9B7495F166D7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "C10Routine", "C10Routine\C10Routine.csproj", "{17923DD4-1252-4997-BC12-1C42371E65EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockNotifyService", "StockNotifyService\StockNotifyService.csproj", "{4FB2264A-8F3B-4C25-B403-E5B83A749A53}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,8 +97,15 @@ Global
 		{17923DD4-1252-4997-BC12-1C42371E65EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17923DD4-1252-4997-BC12-1C42371E65EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17923DD4-1252-4997-BC12-1C42371E65EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FB2264A-8F3B-4C25-B403-E5B83A749A53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FB2264A-8F3B-4C25-B403-E5B83A749A53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FB2264A-8F3B-4C25-B403-E5B83A749A53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FB2264A-8F3B-4C25-B403-E5B83A749A53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {13E5D4DD-66E1-4FA7-A628-C1AFF4BD91F2}
 	EndGlobalSection
 EndGlobal

@@ -1238,6 +1238,265 @@ namespace M10.lib
             return sr;
         }
 
+        public List<string> getStockTUMD(string sComm)
+        {
+            string sStockCode = sComm.Replace("Q", "");
+            List<string> ResultList = new List<string>();
+            string sTU = "";
+            string sTM = "";
+            string sTD = "";
+            string sStockName = "";
+
+            string sJson = "";
+            try
+            {
+                string sUrl = "https://cronjob.uanalyze.com.tw/fetch/IndividualStock_TUMD_Free/{0}";
+                using (WebClient wc = getNewWebClient())
+                {
+                    sUrl = string.Format(sUrl, sStockCode);
+                    string text = wc.DownloadString(sUrl);
+
+                    sJson = text;
+
+                    dynamic dd = JObject.Parse(text);
+
+                    sTU = dd.data.display.ua80250_cp.Data;
+                    sTM = dd.data.display.ua80251_cp.Data;
+                    sTD = dd.data.display.ua80252_cp.Data;                    
+                }
+
+                ssql = " select * from StockInfo where stockcode = '{0}' ";
+                StockInfo si = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, sStockCode));
+                //個股名稱
+                if (si != null) sStockName = si.stockname;
+
+                //ResultList.Add(string.Format("TUMD 日期：{0}", sStockDate));
+                ResultList.Add("股泰免費版TUMD");
+                ResultList.Add(string.Format("{0}({1})", sStockName, sStockCode));
+                ResultList.Add(string.Format("TU：{0}", sTU));
+                ResultList.Add(string.Format("TM：{0}", sTM));
+                ResultList.Add(string.Format("TD：{0}", sTD));
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, sJson);
+            }
+
+            return ResultList;
+        }
+
+
+        private string tempCheckObjectNull(Object o) 
+        {
+            string sResult = "";
+
+            try
+            {
+                if (o != null) sResult = o.ToString();
+            }
+            catch (Exception ex)
+            {
+                //遇到錯誤，直接回傳空字串
+                return sResult;
+            }
+
+            return sResult;
+        }
+
+        /// <summary>
+        /// 取得資料後，完整格式化API資料
+        /// </summary>
+        /// <param name="stockcode"></param>
+        /// <returns></returns>
+        public StockYahooAPI getStockRealtimeYahooApi2(string stockcode)
+        {
+            StockYahooAPI sr = new StockYahooAPI();
+
+            //sr.z = "";
+            //sr.y = "";
+            //sr.u = "";
+            //sr.w = "";
+            //sr.n = "";
+            //sr.c = "";
+            //sr.xx = "";
+            //sr.a = "";
+            //sr.TradeDay = "";
+            //sr.open = "";
+            //sr.YTop = "";
+            //sr.YLow = "";
+
+            //櫃檯指數
+            //https://tw.quote.finance.yahoo.net/quote/q?type=tick&sym=%23026
+
+
+            string sJson = "";
+            try
+            {
+                string sUrl = "https://tw.quote.finance.yahoo.net/quote/q?type=tick&sym={0}";
+                string sStockcodeUrl = "";
+                sStockcodeUrl = stockcode;
+                if (stockcode == "0000") sStockcodeUrl = "%23001";
+                if (stockcode == "9999")
+                {
+                    sStockcodeUrl = "WTX%26";
+                    sUrl = "https://tw.screener.finance.yahoo.net/future/q?type=tick&mkt=01&sym={0}";
+                }
+
+                using (WebClient wc = getNewWebClient())
+                {
+                    sUrl = string.Format(sUrl, sStockcodeUrl);
+                    string sApiText = wc.DownloadString(sUrl);
+
+
+                    //格式化
+                    sApiText = sApiText.Replace("null(", "");
+                    sApiText = sApiText.Replace(");", "");
+                    //text = text.Replace(",\"tick\":[]}", "");
+                    //text = text.Replace(text.Substring(0, text.IndexOf(",\"mem\":") + 7), "");
+                    //if (stockcode != "9999")
+                    //{
+                    //    text = text.Replace(text.Substring(text.IndexOf(",\"tick\":")), "");
+                    //}
+
+                    //// 1090320 配合JSON格式異動，調整格式化
+                    //if (stockcode == "9999")
+                    //{
+                    //    text = text.Replace(text.Substring(text.IndexOf(",\"tick\":")), "");
+                    //    text = text.Replace("sections", @"""sections""");
+                    //}
+
+
+                    //if (text.Contains(",\"143\":"))
+                    //{
+                    //    //1061219 修改為取代
+                    //    //text = text.Insert(text.IndexOf(",\"143\":") + 7, "\"").Insert(text.IndexOf(",\"143\":") + 14, "\"");
+
+                    //    int iStart = text.IndexOf(",\"143\":");
+                    //    int iEnd = text.IndexOf(",", iStart + 1);
+                    //    string sRep = text.Substring(iStart, iEnd - iStart);
+
+                    //    text = text.Replace(sRep, "");
+                    //}
+
+
+                    //sJson = sApiText;
+                    JObject jobj = JObject.Parse(sApiText);
+
+                    
+                    if (jobj["mem"] != null) 
+                    {
+                        JObject jobMem = (JObject)jobj["mem"];
+
+                        sr.id   = tempCheckObjectNull(jobMem["id"]);
+                        sr.name = tempCheckObjectNull(jobMem["name"]);
+                        sr.TradeDay = tempCheckObjectNull(jobMem["TradeDay"]);
+                        sr.vol = tempCheckObjectNull(jobMem["404"]);
+                        sr.open = tempCheckObjectNull(jobMem["126"]);
+                        sr.close = tempCheckObjectNull(jobMem["125"]);
+                        sr.high = tempCheckObjectNull(jobMem["130"]);
+                        sr.low = tempCheckObjectNull(jobMem["131"]);
+                    }
+
+                    if (jobj["tick"] != null)
+                    {
+                        JArray jobTick = (JArray)jobj["tick"];
+
+                        foreach (JToken item in jobTick)
+                        {
+                            StockYahooAPITick syat = new StockYahooAPITick();
+                            syat.tick = tempCheckObjectNull(item["t"]);
+                            syat.price = tempCheckObjectNull(item["p"]);
+                            syat.vol = tempCheckObjectNull(item["v"]);
+
+                            sr.Tick.Add(syat);
+                        }
+
+
+                    }
+
+
+
+
+                    //if (jobj["id"] != null)
+                    //    sr.id = jobj["id"].ToString();
+
+                    //if (jobj["id"] != null)
+                    //    sr.id = jobj["id"].ToString();
+
+
+
+                    ////成交價(125)
+                    //if (jobj["125"] != null)
+                    //    sr.z = jobj["125"].ToString();
+                    ////昨收(129)
+                    //if (jobj["129"] != null)
+                    //    sr.y = jobj["129"].ToString();
+                    ////成交量(404)
+                    //if (jobj["404"] != null)
+                    //    sr.a = jobj["404"].ToString();
+
+                    ////日期
+                    //if (jobj["TradeDay"] != null)
+                    //    sr.TradeDay = jobj["TradeDay"].ToString();
+
+                    ////開盤價(126)
+                    //if (jobj["126"] != null)
+                    //    sr.open = jobj["126"].ToString();
+
+                    //最高(130)
+                    //if (jobj["130"] != null)
+                    //  sr.u = jobj["130"].ToString();
+                    //最低(131)
+                    //if (jobj["131"] != null)
+                    //  sr.w = jobj["131"].ToString();
+
+
+                    ////昨高(Yahoo沒提供)
+                    //if (jobj["106"] != null)
+                    //    sr.YTop = jobj["106"].ToString();
+                    ////昨低(Yahoo沒提供)
+                    //if (jobj["107"] != null)
+                    //    sr.YLow = jobj["107"].ToString();
+                    //均價(471)
+
+
+
+                    //if (stockcode != "0000" && stockcode != "9999")
+                    //{
+                    //    ////LimitUp
+                    //    //if (jobj["132"] != null)
+                    //    //    sr.u = jobj["132"].ToString();
+                    //    ////LimitDw
+                    //    //if (jobj["133"] != null)
+                    //    //    sr.w = jobj["133"].ToString();
+                    //}
+                }
+
+                ////大盤不顯示量
+                //if (stockcode == "0000") sr.a = "";
+
+                ////取得個股資訊
+                //ssql = " select * from StockInfo where stockcode = '{0}' ";
+                //StockInfo si = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, stockcode));
+                //if (si != null)
+                //{
+                //    //個股名稱
+                //    sr.n = si.stockname;
+                //    //個股代碼
+                //    sr.c = si.stockcode;
+                //}
+
+                //sr.status = M10Const.StockRuntimeStatus.YahooApi;
+
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, sJson);
+            }
+
+            return sr;
+        }
 
         /// <summary>
         /// 
@@ -2185,6 +2444,98 @@ namespace M10.lib
 
         }
 
+
+
+        public List<string> GetCallComm(string sComm) 
+        {
+            List<string> ResultList = new List<string>();
+
+            switch (sComm)
+            {
+               case "TUMD":
+                    ResultList = GetCommTUMD();
+
+                    break;
+                default:
+
+                    break;
+            }
+
+            if (sComm.Substring(0,1) == "Q")
+            {
+                ResultList = GetOnlineTUMD(sComm);
+            }
+
+
+            return ResultList;
+        }
+
+        private List<string> GetCommTUMD()
+        {
+            List<string> ResultList = new List<string>();
+
+
+            string sStockDate = DateTime.Now.ToString("yyyyMMdd");
+            ssql = " select * from stocktumd where stockdate = '{0}' ";
+            StockTumd StockTumdItem = dbDapper.QuerySingleOrDefault<StockTumd>(string.Format(ssql, sStockDate));
+
+            if (StockTumdItem != null)
+            {
+                ResultList.Add(string.Format("TUMD 日期：{0}", sStockDate));
+                ResultList.Add("[加權]");
+                ResultList.Add(string.Format("TU：{0}",StockTumdItem.TseTU));
+                ResultList.Add(string.Format("TM：{0}", StockTumdItem.TseTM));
+                ResultList.Add(string.Format("TD：{0}", StockTumdItem.TseTD));
+                ResultList.Add(string.Format("TW：{0}", StockTumdItem.TseTW));
+                ResultList.Add("[櫃買]");
+                ResultList.Add(string.Format("TU：{0}", StockTumdItem.OtcTU));
+                ResultList.Add(string.Format("TM：{0}", StockTumdItem.OtcTM));
+                ResultList.Add(string.Format("TD：{0}", StockTumdItem.OtcTD));
+                ResultList.Add(string.Format("TW：{0}", StockTumdItem.OtcTW));
+                ResultList.Add("[台指]");
+                ResultList.Add(string.Format("TU：{0}", StockTumdItem.TxfTU));
+                ResultList.Add(string.Format("TM：{0}", StockTumdItem.TxfTM));
+                ResultList.Add(string.Format("TD：{0}", StockTumdItem.TxfTD));
+                ResultList.Add(string.Format("TW：{0}", StockTumdItem.TxfTW));
+            }
+
+            return ResultList;
+        }
+
+        public List<string> GetOnlineTUMD(string sComm)
+        {
+            List<string> ResultList = new List<string>();
+
+
+
+            ResultList = stockhelper.getStockTUMD(sComm);
+
+            //string sStockDate = DateTime.Now.ToString("yyyyMMdd");
+            //ssql = " select * from stocktumd where stockdate = '{0}' ";
+            //StockTumd StockTumdItem = dbDapper.QuerySingleOrDefault<StockTumd>(string.Format(ssql, sStockDate));
+
+            //if (StockTumdItem != null)
+            //{
+            //    ResultList.Add(string.Format("TUMD 日期：{0}", sStockDate));
+            //    ResultList.Add("[加權]");
+            //    ResultList.Add(string.Format("TU：{0}", StockTumdItem.TseTU));
+            //    ResultList.Add(string.Format("TM：{0}", StockTumdItem.TseTM));
+            //    ResultList.Add(string.Format("TD：{0}", StockTumdItem.TseTD));
+            //    ResultList.Add(string.Format("TW：{0}", StockTumdItem.TseTW));
+            //    ResultList.Add("[櫃買]");
+            //    ResultList.Add(string.Format("TU：{0}", StockTumdItem.OtcTU));
+            //    ResultList.Add(string.Format("TM：{0}", StockTumdItem.OtcTM));
+            //    ResultList.Add(string.Format("TD：{0}", StockTumdItem.OtcTD));
+            //    ResultList.Add(string.Format("TW：{0}", StockTumdItem.OtcTW));
+            //    ResultList.Add("[台指]");
+            //    ResultList.Add(string.Format("TU：{0}", StockTumdItem.TxfTU));
+            //    ResultList.Add(string.Format("TM：{0}", StockTumdItem.TxfTM));
+            //    ResultList.Add(string.Format("TD：{0}", StockTumdItem.TxfTD));
+            //    ResultList.Add(string.Format("TW：{0}", StockTumdItem.TxfTW));
+            //}
+
+            return ResultList;
+        }
 
     }
 }

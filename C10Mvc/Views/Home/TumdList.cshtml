@@ -1,0 +1,232 @@
+﻿@*@model IEnumerable<M10Api.Models.RunTimeRainData>*@
+
+
+@{
+    ViewBag.Title = "TUMD";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section scripts {
+    <script type="text/javascript" src="~/scripts/moment.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="~/Scripts/bootstrap-datepicker/bootstrap-datetimepicker.zh-tw.js"></script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/Content/bootstrap-datetimepicker.css" />
+}
+
+<div class="row">
+
+    <div class="col-md-4">
+        <div class="form-inline">
+            <label for="keyWord">TUMD即時資料</label> @*<small>時間：@ViewBag.forecastdate</small>*@
+
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="form-inline">
+            <label for="keyWord">日期：</label>
+            <input type="text" id="StartDate" name="StartDate" value="" />
+            <Button ID="btnMap" onclick="btnSave();" class="btn btn-success" style="height:25px">Save</Button>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-inline">
+            <label for="keyWord">TseTU：</label>
+            <input type="text" id="txtTseTU" name="txtTseTU" style="width:60px" value="" />
+            <label for="keyWord">TseTM：</label>
+            <input type="text" id="txtTseTM" name="txtTseTM" style="width:60px" value="" />
+            <label for="keyWord">TseTD：</label>
+            <input type="text" id="txtTseTD" name="txtTseTD" style="width:60px" value="" />
+            <label for="keyWord">TseTW：</label>
+            <input type="text" id="txtTseTW" name="txtTseTW" style="width:60px" value="" />
+            <label for="keyWord">OtcTU：</label>
+            <input type="text" id="txtOtcTU" name="txtOtcTU" style="width:60px" value="" />
+            <label for="keyWord">OtcTM：</label>
+            <input type="text" id="txtOtcTM" name="txtOtcTM" style="width:60px" value="" />
+            <label for="keyWord">OtcTD：</label>
+            <input type="text" id="txtOtcTD" name="txtOtcTD" style="width:60px" value="" />
+            <label for="keyWord">OtcTW：</label>
+            <input type="text" id="txtOtcTW" name="txtOtcTW" style="width:60px" value="" />
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-inline">
+            <label for="keyWord">TxfTU：</label>
+            <input type="text" id="txtTxfTU" name="txtTxfTU" style="width:60px" value="" />
+            <label for="keyWord">TxfTM：</label>
+            <input type="text" id="txtTxfTM" name="txtTxfTM" style="width:60px" value="" />
+            <label for="keyWord">TxfTD：</label>
+            <input type="text" id="txtTxfTD" name="txtTxfTD" style="width:60px" value="" />
+            <label for="keyWord">TxfTW：</label>
+            <input type="text" id="txtTxfTW" name="txtTxfTW" style="width:60px" value="" />
+        </div>
+    </div>
+
+</div>
+
+<div class="panel panel-success">
+    <div class="panel-heading">查詢結果 - 共 @ViewBag.count 筆</div>
+    <div class="panel-body">
+        <div class="col-md-12">
+            <div class="row">
+
+                <table class="table table-striped table-condensed">
+                    <thead>
+                        <tr>
+                            <th style="min-width: 60px;">操作</th>
+                            <th style="min-width: 60px;">日期</th>
+                            <th style="min-width: 60px;">TseTU</th>
+                            <th style="min-width: 60px;">TseTM</th>
+                            <th style="min-width: 60px;">TseTD</th>
+                            <th style="min-width: 60px;">TseTW</th>
+                            <th style="min-width: 60px;">OtcTU</th>
+                            <th style="min-width: 60px;">OtcTM</th>
+                            <th style="min-width: 60px;">OtcTD</th>
+                            <th style="min-width: 60px;">OtcTW</th>
+                            <th style="min-width: 60px;">TxfTU</th>
+                            <th style="min-width: 60px;">TxfTM</th>
+                            <th style="min-width: 60px;">TxfTD</th>
+                            <th style="min-width: 60px;">TxfTW</th>
+                        </tr>
+                    </thead>
+                    <!--動態讀取-->
+                    <tbody id="tbyDefault">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $("#StartDate").datetimepicker({
+            format: 'YYYYMMDD',
+            sideBySide: true,
+            //預設今天
+            defaultDate: new Date(),
+            //showMeridian:true,
+            //maxViewMode: 0,
+            //startView:1,
+            //language: 'zh-tw',
+        });
+
+        Query();
+
+        //建立tbody中btnSetAlert按鈕click事件
+        $("#tbyDefault").on('click', '#btnSetAlert', function () {
+            //alert('test');
+            //找到該button中所存在的TR物件
+            var self = $(this).closest("tr");
+
+            //測試搜尋
+            //alert(self.children().eq(2).text());
+            //找到TD中資料填入編輯區
+            $("#StartDate").val(self.children().eq(1).text());
+            $("#txtTseTU").val(self.children().eq(2).text());
+            $("#txtTseTM").val(self.children().eq(3).text());
+            $("#txtTseTD").val(self.children().eq(4).text());
+            $("#txtTseTW").val(self.children().eq(5).text());
+            $("#txtOtcTU").val(self.children().eq(6).text());
+            $("#txtOtcTM").val(self.children().eq(7).text());
+            $("#txtOtcTD").val(self.children().eq(8).text());
+            $("#txtOtcTW").val(self.children().eq(9).text());
+            $("#txtTxfTU").val(self.children().eq(10).text());
+            $("#txtTxfTM").val(self.children().eq(11).text());
+            $("#txtTxfTD").val(self.children().eq(12).text());
+            $("#txtTxfTW").val(self.children().eq(13).text());
+        });
+    });
+
+    function btnSave() {
+
+        var BasRainallStation = {};
+        BasRainallStation.stockdate = $("#StartDate").val()
+        BasRainallStation.TseTU = $("#txtTseTU").val()
+        BasRainallStation.TseTM = $("#txtTseTM").val()
+        BasRainallStation.TseTD = $("#txtTseTD").val()
+        BasRainallStation.TseTW = $("#txtTseTW").val()
+        BasRainallStation.OtcTU = $("#txtOtcTU").val()
+        BasRainallStation.OtcTM = $("#txtOtcTM").val()
+        BasRainallStation.OtcTD = $("#txtOtcTD").val()
+        BasRainallStation.OtcTW = $("#txtOtcTW").val()
+        BasRainallStation.TxfTU = $("#txtTxfTU").val()
+        BasRainallStation.TxfTM = $("#txtTxfTM").val()
+        BasRainallStation.TxfTD = $("#txtTxfTD").val()
+        BasRainallStation.TxfTW = $("#txtTxfTW").val()
+
+        $.ajax({
+            type: "POST",
+            url : '@Url.Action("TumdSave", "Home")',
+            data: JSON.stringify(BasRainallStation),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (r) {
+                //alert(r.Message);
+                //alert(r + " record(s) inserted.");
+                Query();
+            }
+        });
+    }
+
+    function Query() {
+
+        var Params = {};
+        //Params.station = $("#station").val();
+        //Params.dtstart = $("#StartDate").val();
+        //Params.dtend = $("#EndDate").val();
+        //Params.RG = $("#RG").prop('checked') == true ? "Y" : "N";
+        //Params.TM = $("#TM").prop('checked') == true ? "Y" : "N";
+        //Params.PM = $("#PM").prop('checked') == true ? "Y" : "N";
+        //Params.GW = $("#GW").prop('checked') == true ? "Y" : "N";
+        //Params.GPS = $("#GPS").prop('checked') == true ? "Y" : "N";
+        //Params.timerange = $("#timerange").val();
+
+
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("getTumdQuery", "Home")',
+            data: { Params: JSON.stringify(Params)} ,
+            contentType: "application/json; charset=utf-8",
+            dataType: 'json',
+            success: function (response) {
+
+                if (response.ApiResultStauts == "Y") {
+                    $('#tbyDefault').empty();
+                    var trHTML = '';
+                    $.each(response.Data, function (i, item) {
+                        var tr = $('<tr>').append(
+                            $('<td>').append('<Button ID="btnSetAlert">修</Button>'),
+                            $('<td>').text(item.stockdate),
+                            $('<td>').text(item.TseTU),
+                            $('<td>').text(item.TseTM),
+                            $('<td>').text(item.TseTD),
+                            $('<td>').text(item.TseTW),
+                            $('<td>').text(item.OtcTU),
+                            $('<td>').text(item.OtcTM),
+                            $('<td>').text(item.OtcTD),
+                            $('<td>').text(item.OtcTW),
+                            $('<td>').text(item.TxfTU),
+                            $('<td>').text(item.TxfTM),
+                            $('<td>').text(item.TxfTD),
+                            $('<td>').text(item.TxfTW)
+                        );
+                        $('#tbyDefault').append(tr);
+                    });
+
+
+                }
+
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+            },
+        });
+     }
+</script>

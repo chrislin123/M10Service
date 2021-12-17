@@ -4331,6 +4331,18 @@ namespace M10Tools
         {
 
         }
+
+        private void TUMDButton_Click(object sender, EventArgs e)
+        {
+            string ss  = "https://cronjob.uanalyze.com.tw/fetch/IndividualStock_TUMD_Free/3008";
+
+
+            List<string> ResultList =  Stockhelper.GetOnlineTUMD("Q3008");
+
+
+
+
+        }
     }
 
     public class RtiProc

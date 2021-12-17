@@ -16,6 +16,48 @@ namespace C10Mvc.Controllers
     [RoutePrefix("StockApi")]
     public class StockController : BaseApiController
     {
+        /// <summary>
+        /// LineBot接收通用指令後，在主機端處理後，回傳結果給LineBot
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("getCallComm")]
+        public dynamic getCallComm(string MessageText)
+        {
+            //先統一轉大寫判斷
+            MessageText = MessageText.ToUpper();
+
+            dynamic CommResult;
+
+            List<string> CommList = new List<string>();
+            CommList.Add("TUMD");
+
+
+            try
+            {
+                //判斷指令是否符合，不符合則不執行
+                if (MessageText.Substring(0,1) != "Q") //股泰軟體TUMD查詢
+                {
+                    if (CommList.Contains(MessageText) == false)
+                    {
+                        CommResult = new { status = "Y", datas = new List<string>() };
+
+                        return CommResult;
+                    }
+                }
+                
+                List<string> Datas = stockhelper.GetCallComm(MessageText);
+                CommResult = new { status = "Y", datas = Datas };                
+
+            }
+            catch (Exception ex)
+            {
+                CommResult = new { status = "N", datas = new List<string>() };
+            }
+
+            return CommResult;
+
+        }
 
         [HttpGet]
         [Route("getStockType")]

@@ -1715,8 +1715,10 @@ namespace M10AlertLRTI
                         ";
                 List<dynamic> RuntimeList = dbDapper.Query(ssql);
 
+                int ii = 0;
                 foreach (var RumtimeItem in RuntimeList)
                 {
+                    ii++;
                     //測試
                     if (RumtimeItem.STID == "C1U690")
                     {
