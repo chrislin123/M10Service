@@ -644,6 +644,36 @@ namespace M10.lib.model
 
     }
 
+    [Table("SoilWaterRainDataHis")]
+    public class SoilWaterRainDataHis
+    {
+        //設定key
+        [Key]
+        public long no { get; set; }
+
+        public string Stid { get; set; }
+
+        public string Time { get; set; }
+
+        public decimal Min10 { get; set; }
+
+        public decimal Hour { get; set; }
+
+        public decimal Hour6 { get; set; }
+
+        public decimal Hour24 { get; set; }
+
+        public decimal DayRainfall { get; set; }
+
+        public decimal Hour3 { get; set; }
+
+        public decimal Hour12 { get; set; }
+
+        public decimal RT { get; set; }
+
+
+    }
+
     [Table("WeaRainStatistics")]
     public class WeaRainStatistics
     {
@@ -838,7 +868,7 @@ namespace M10.lib.model
         public string xx { get; set; }
 
         /// <summary>
-        /// 名稱
+        /// 代號名稱
         /// </summary>
         public string n { get; set; }
 
@@ -1403,6 +1433,53 @@ namespace M10.lib.model
         }
 
     }
+
+    [Table("StockTumdRec")]
+    public class StockTumdRec
+    {
+        //設定key
+        [Key]
+        public int no { get; set; }
+
+        public string stockcode { get; set; }
+
+        public string stockdate { get; set; }
+
+        public decimal? Tu { get; set; }
+
+        public decimal? Tm { get; set; }
+
+        public decimal? Td { get; set; }
+
+        public decimal? DefWeek { get; set; }
+
+        public decimal? DefMonth { get; set; }
+
+        public decimal? DayVolTurnoverRate { get; set; }
+
+        public decimal? RecentVolAvgHr { get; set; }
+
+        public decimal? RecentTurnoverRate { get; set; }
+
+        public decimal? Ema5 { get; set; }
+
+        public decimal? Ema10 { get; set; }
+
+        public decimal? Ema20 { get; set; }
+
+        public decimal? Ema60 { get; set; }
+
+        public decimal? Ema120 { get; set; }
+
+        public decimal? Ema240 { get; set; }
+
+        public string updatetime { get; set; }
+
+        public string updYN { get; set; }
+
+    }
+
+
 
 
 

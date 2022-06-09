@@ -6,17 +6,59 @@ using System.Threading.Tasks;
 using Dapper;
 using Dapper.Contrib.Extensions;
 using System.Transactions;
+using System.Configuration;
+using MySql.Data;
+
 
 namespace M10.lib
 {
     public class DALDapper
     {
+        string _ConnStr = string.Empty;
+        //public ConnectionString objCon;
+        //預設使用MsSQL
+        public string _ProviderName = "System.Data.SqlClient";
+        public ConnectionStringSettings _objConColl;
+        
+        public dynamic SqlClient
+        {
+            get
+            {
+                if (_ProviderName == "System.Data.SqlClient")
+                {
+                    return new System.Data.SqlClient.SqlConnection(ConnStr);
+                }
+                else if (_ProviderName == "System.Data.OleDb")
+                {
+                    return new System.Data.SqlClient.SqlConnection(ConnStr);
+                }
+                else if (_ProviderName == "System.Data.OracleClient")
+                {
+                    return new System.Data.SqlClient.SqlConnection(ConnStr);
+                }
+                else if (_ProviderName == "MySql.Data.MySqlClient")
+                {   
+                    return new MySql.Data.MySqlClient.MySqlConnection(ConnStr);
+                }
+                else
+                {
+                    //預設使用sSQL
+                    return new System.Data.SqlClient.SqlConnection(ConnStr);
+                }
+            }
+        }        
+
         public DALDapper(string pConnStr)
         {
             _ConnStr = pConnStr;
         }
 
-        string _ConnStr = string.Empty;
+        public DALDapper(ConnectionStringSettings objConColl)
+        {
+            _objConColl = objConColl;
+            _ConnStr = objConColl.ConnectionString;
+            _ProviderName = objConColl.ProviderName;
+        }        
 
         public string ConnStr
         {
@@ -28,48 +70,156 @@ namespace M10.lib
 
         public List<dynamic> Query(string sql)
         {
-            using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-            {
-                return cn.Query(sql).ToList();
+            //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+            //{
+            //    lResult = cn.Query(sql).ToList();
+            //}
+
+            List<dynamic> lResult = new List<dynamic>();
+
+            if (_ProviderName == "System.Data.SqlClient")
+            { 
+                using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                {
+                    lResult = cn.Query(sql).ToList();
+                }
             }
+            else if (_ProviderName == "MySql.Data.MySqlClient")
+            {
+                using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
+                {
+                    lResult = cn.Query(sql).ToList();
+                }
+            }
+            else
+            {
+                using (System.Data.SqlClient.SqlConnection cn = SqlClient)
+                {
+                    lResult = cn.Query(sql).ToList();
+                }
+            }            
+
+            return lResult;
         }
 
         public List<dynamic> Query(string sql, object param)
         {
-            using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+            //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+            //{
+            //    return cn.Query(sql, param).ToList();
+            //}
+
+            List<dynamic> lResult = new List<dynamic>();
+
+            if (_ProviderName == "System.Data.SqlClient")
             {
-                return cn.Query(sql, param).ToList();
+                using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                {
+                    lResult = cn.Query(sql, param).ToList();
+                }
             }
+            else if (_ProviderName == "MySql.Data.MySqlClient")
+            {
+                using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
+                {
+                    lResult = cn.Query(sql, param).ToList();
+                }
+            }
+            else
+            {
+                using (System.Data.SqlClient.SqlConnection cn = SqlClient)
+                {
+                    lResult = cn.Query(sql, param).ToList();
+                }
+            }
+
+            return lResult;
         }
 
         public List<T> Query<T>(string sql) where T : class
         {
+            List<T> lResult = new List<T>();
+
             try
             {
-                using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //{
+                //    return cn.Query<T>(sql).ToList<T>();
+                //}
+
+                
+
+                if (_ProviderName == "System.Data.SqlClient")
                 {
-                    return cn.Query<T>(sql).ToList<T>();
+                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                    {
+                        lResult = cn.Query<T>(sql).ToList<T>();
+                    }
                 }
+                else if (_ProviderName == "MySql.Data.MySqlClient")
+                {
+                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
+                    {
+                        lResult = cn.Query<T>(sql).ToList<T>();
+                    }
+                }
+                else
+                {
+                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
+                    {
+                        lResult = cn.Query<T>(sql).ToList<T>();
+                    }
+                }
+
+                
             }
             catch (Exception ex)
             {
                 return null;
             }
+
+            return lResult;
         }
 
         public List<T> Query<T>(string sql, object param) where T : class
         {
+            List<T> lResult = new List<T>();
+
             try
             {
-                using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //{
+                //    return cn.Query<T>(sql, param).ToList<T>();
+                //}
+
+                if (_ProviderName == "System.Data.SqlClient")
                 {
-                    return cn.Query<T>(sql, param).ToList<T>();
+                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                    {
+                        lResult = cn.Query<T>(sql, param).ToList<T>();
+                    }
+                }
+                else if (_ProviderName == "MySql.Data.MySqlClient")
+                {
+                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
+                    {
+                        lResult = cn.Query<T>(sql, param).ToList<T>();
+                    }
+                }
+                else
+                {
+                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
+                    {
+                        lResult = cn.Query<T>(sql, param).ToList<T>();
+                    }
                 }
             }
             catch (Exception)
             {
                 return null;
             }
+
+            return lResult;
         }
 
 
@@ -80,10 +230,33 @@ namespace M10.lib
 
             try
             {
-                using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //{
+                //    i = cn.Query(sql).Count();
+                //}
+
+                if (_ProviderName == "System.Data.SqlClient")
                 {
-                    i = cn.Query(sql).Count();
+                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                    {
+                        i = cn.Query(sql).Count();
+                    }
                 }
+                else if (_ProviderName == "MySql.Data.MySqlClient")
+                {
+                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
+                    {
+                        i = cn.Query(sql).Count();
+                    }
+                }
+                else
+                {
+                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
+                    {
+                        i = cn.Query(sql).Count();
+                    }
+                }
+
             }
             catch (Exception ex)
             {
@@ -99,9 +272,31 @@ namespace M10.lib
 
             try
             {
-                using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //{
+                //    i = cn.Query(sql, param).Count();
+                //}
+
+                if (_ProviderName == "System.Data.SqlClient")
                 {
-                    i = cn.Query(sql, param).Count();
+                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                    {
+                        i = cn.Query(sql, param).Count();
+                    }
+                }
+                else if (_ProviderName == "MySql.Data.MySqlClient")
+                {
+                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
+                    {
+                        i = cn.Query(sql, param).Count();
+                    }
+                }
+                else
+                {
+                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
+                    {
+                        i = cn.Query(sql, param).Count();
+                    }
                 }
             }
             catch (Exception ex)
@@ -118,10 +313,34 @@ namespace M10.lib
 
             try
             {
-                using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //{
+                //    i = cn.Execute(sql, param);
+                //}
+
+                if (_ProviderName == "System.Data.SqlClient")
                 {
-                    i = cn.Execute(sql, param);
+                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                    {
+                        i = cn.Execute(sql, param);
+                    }
                 }
+                else if (_ProviderName == "MySql.Data.MySqlClient")
+                {
+                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
+                    {
+                        i = cn.Execute(sql, param);
+                    }
+                }
+                else
+                {
+                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
+                    {
+                        i = cn.Execute(sql, param);
+                    }
+                }
+
+
             }
             catch (Exception ex)
             {
@@ -136,9 +355,31 @@ namespace M10.lib
 
             try
             {
-                using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //{
+                //    i = cn.Execute(sql);
+                //}
+
+                if (_ProviderName == "System.Data.SqlClient")
                 {
-                    i = cn.Execute(sql);
+                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                    {
+                        i = cn.Execute(sql);
+                    }
+                }
+                else if (_ProviderName == "MySql.Data.MySqlClient")
+                {
+                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
+                    {
+                        i = cn.Execute(sql);
+                    }
+                }
+                else
+                {
+                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
+                    {
+                        i = cn.Execute(sql);
+                    }
                 }
             }
             catch (Exception ex)
@@ -154,16 +395,62 @@ namespace M10.lib
 
             try
             {
-                using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-                {
-                    using (var transactionScope = new TransactionScope())
-                    {
-                        foreach (SqlObject d in SqlList)
-                        {
-                            i += cn.Execute(d.sql, d.param);
-                        }
+                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //{
+                //    using (var transactionScope = new TransactionScope())
+                //    {
+                //        foreach (SqlObject d in SqlList)
+                //        {
+                //            i += cn.Execute(d.sql, d.param);
+                //        }
 
-                        transactionScope.Complete();
+                //        transactionScope.Complete();
+                //    }
+                //}
+
+                if (_ProviderName == "System.Data.SqlClient")
+                {
+                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                    {
+                        using (var transactionScope = new TransactionScope())
+                        {
+                            foreach (SqlObject d in SqlList)
+                            {
+                                i += cn.Execute(d.sql, d.param);
+                            }
+
+                            transactionScope.Complete();
+                        }
+                    }
+                }
+                else if (_ProviderName == "MySql.Data.MySqlClient")
+                {
+                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
+                    {
+                        using (var transactionScope = new TransactionScope())
+                        {
+                            foreach (SqlObject d in SqlList)
+                            {
+                                i += cn.Execute(d.sql, d.param);
+                            }
+
+                            transactionScope.Complete();
+                        }
+                    }
+                }
+                else
+                {
+                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
+                    {
+                        using (var transactionScope = new TransactionScope())
+                        {
+                            foreach (SqlObject d in SqlList)
+                            {
+                                i += cn.Execute(d.sql, d.param);
+                            }
+
+                            transactionScope.Complete();
+                        }
                     }
                 }
             }
@@ -180,9 +467,31 @@ namespace M10.lib
 
             try
             {
-                using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //{
+                //    bResult = cn.Update<T>(entityToUpdate);
+                //}
+
+                if (_ProviderName == "System.Data.SqlClient")
                 {
-                    bResult = cn.Update<T>(entityToUpdate);
+                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                    {
+                        bResult = cn.Update<T>(entityToUpdate);
+                    }
+                }
+                else if (_ProviderName == "MySql.Data.MySqlClient")
+                {
+                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
+                    {
+                        bResult = cn.Update<T>(entityToUpdate);
+                    }
+                }
+                else
+                {
+                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
+                    {
+                        bResult = cn.Update<T>(entityToUpdate);
+                    }
                 }
             }
             catch (Exception ex)
@@ -199,9 +508,31 @@ namespace M10.lib
 
             try
             {
-                using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-                {   
-                    bResult = cn.Delete<T>(entityToDelete);
+                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //{   
+                //    bResult = cn.Delete<T>(entityToDelete);
+                //}
+
+                if (_ProviderName == "System.Data.SqlClient")
+                {
+                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                    {
+                        bResult = cn.Delete<T>(entityToDelete);
+                    }
+                }
+                else if (_ProviderName == "MySql.Data.MySqlClient")
+                {
+                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
+                    {
+                        bResult = cn.Delete<T>(entityToDelete);
+                    }
+                }
+                else
+                {
+                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
+                    {
+                        bResult = cn.Delete<T>(entityToDelete);
+                    }
                 }
             }
             catch (Exception ex)
@@ -218,9 +549,31 @@ namespace M10.lib
 
             try
             {
-                using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //{
+                //    oo = cn.QuerySingleOrDefault<T>(sql);
+                //}
+
+                if (_ProviderName == "System.Data.SqlClient")
                 {
-                    oo = cn.QuerySingleOrDefault<T>(sql);
+                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                    {
+                        oo = cn.QuerySingleOrDefault<T>(sql);
+                    }
+                }
+                else if (_ProviderName == "MySql.Data.MySqlClient")
+                {
+                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
+                    {
+                        oo = cn.QuerySingleOrDefault<T>(sql);
+                    }
+                }
+                else
+                {
+                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
+                    {
+                        oo = cn.QuerySingleOrDefault<T>(sql);
+                    }
                 }
             }
             catch (Exception ex)
@@ -237,9 +590,31 @@ namespace M10.lib
 
             try
             {
-                using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //{
+                //    oo = cn.QuerySingleOrDefault<T>(sql, param);
+                //}
+
+                if (_ProviderName == "System.Data.SqlClient")
                 {
-                    oo = cn.QuerySingleOrDefault<T>(sql, param);
+                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                    {
+                        oo = cn.QuerySingleOrDefault<T>(sql, param);
+                    }
+                }
+                else if (_ProviderName == "MySql.Data.MySqlClient")
+                {
+                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
+                    {
+                        oo = cn.QuerySingleOrDefault<T>(sql, param);
+                    }
+                }
+                else
+                {
+                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
+                    {
+                        oo = cn.QuerySingleOrDefault<T>(sql, param);
+                    }
                 }
             }
             catch (Exception ex)
@@ -255,9 +630,31 @@ namespace M10.lib
             long lResult = 0;
             try
             {
-                using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //{
+                //    lResult = cn.Insert<T>(entityToInsert);
+                //}
+
+                if (_ProviderName == "System.Data.SqlClient")
                 {
-                    lResult = cn.Insert<T>(entityToInsert);
+                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                    {
+                        lResult = cn.Insert<T>(entityToInsert);
+                    }
+                }
+                else if (_ProviderName == "MySql.Data.MySqlClient")
+                {
+                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
+                    {
+                        lResult = cn.Insert<T>(entityToInsert);
+                    }
+                }
+                else
+                {
+                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
+                    {
+                        lResult = cn.Insert<T>(entityToInsert);
+                    }
                 }
             }
             catch (Exception ex)
@@ -274,9 +671,31 @@ namespace M10.lib
 
             try
             {
-                using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //{
+                //    oo = cn.ExecuteScalar(sql, param);
+                //}
+
+                if (_ProviderName == "System.Data.SqlClient")
                 {
-                    oo = cn.ExecuteScalar(sql, param);
+                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                    {
+                        oo = cn.ExecuteScalar(sql, param);
+                    }
+                }
+                else if (_ProviderName == "MySql.Data.MySqlClient")
+                {
+                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
+                    {
+                        oo = cn.ExecuteScalar(sql, param);
+                    }
+                }
+                else
+                {
+                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
+                    {
+                        oo = cn.ExecuteScalar(sql, param);
+                    }
                 }
             }
             catch (Exception ex)
@@ -298,9 +717,31 @@ namespace M10.lib
 
             try
             {
-                using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                //{
+                //    oo = cn.ExecuteScalar(sql);
+                //}
+
+                if (_ProviderName == "System.Data.SqlClient")
                 {
-                    oo = cn.ExecuteScalar(sql);
+                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                    {
+                        oo = cn.ExecuteScalar(sql);
+                    }
+                }
+                else if (_ProviderName == "MySql.Data.MySqlClient")
+                {
+                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
+                    {
+                        oo = cn.ExecuteScalar(sql);
+                    }
+                }
+                else
+                {
+                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
+                    {
+                        oo = cn.ExecuteScalar(sql);
+                    }
                 }
             }
             catch (Exception ex)
@@ -350,5 +791,71 @@ namespace M10.lib
         }
         public string sql { get; set; }
         public object param { get; set; }
+    }
+
+    /// <summary>
+    /// 2010.9.14 新建置-資料庫連接字串使用類別
+    /// 2011.6.13 改寫
+    /// </summary>
+    public class ConnectionString
+    {
+        private ConnectionStringSettings objConnection;
+        /// <summary>
+        /// 資料庫連線名稱ByString
+        /// </summary>
+        /// <param name="Connection">連結字串關鍵字</param>
+        public ConnectionString(string Connection)
+        {
+            objConnection = ConfigurationManager.ConnectionStrings[Connection];
+        }
+        /// <summary>
+        /// 資料庫連線名稱By索引
+        /// </summary>
+        /// <param name="ConnectionIndex">連結字串索引</param>
+        public ConnectionString(int ConnectionIndex)
+        {
+            objConnection = ConfigurationManager.ConnectionStrings[ConnectionIndex];
+        }
+        /// <summary>
+        /// 取得資料庫連線元件
+        /// </summary>
+        /// <returns>資料庫連線元件</returns>
+        public ConnectionStringSettings GetConnection()
+        {
+            return objConnection;
+        }
+        /// <summary>
+        /// 取得資料庫連結字串
+        /// </summary>
+        /// <returns></returns>
+        public string ConString
+        {
+            get
+            {
+                return objConnection.ConnectionString;
+            }
+        }
+        /// <summary>
+        /// 取得資料庫連結字串名稱
+        /// </summary>
+        public string ProviderName
+        {
+            get
+            {
+                return objConnection.ProviderName;
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool Debug
+        {
+            get
+            {
+                string str = ConfigurationManager.AppSettings["debug"];
+                return (!string.IsNullOrEmpty(str) && (str == bool.TrueString));
+            }
+        }
+
     }
 }

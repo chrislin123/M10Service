@@ -17,13 +17,29 @@ namespace M10.lib
     public static class GoogleDrive
     {
 
-        public static DriveService GenDriveService()
+        //public DriveService _Service;
+
+        //public DriveService Service { get => _Service; set => _Service = value; }
+
+        //public GoogleDrive(DriveService ClientService)
+        //{
+        //    Service = ClientService;
+        //}
+
+        //public GoogleDrive(string ClientId ,string ClientSecret)
+        //{
+        //    Service = GenDriveService(ClientId, ClientSecret);
+        //}
+
+        public static DriveService GenDriveService(string _ClientId , string _ClientSecret)
         {
             DriveService dsResutl = new DriveService();
             try
             {
                 UserCredential credential = GoogleWebAuthorizationBroker.AuthorizeAsync(
-                new ClientSecrets { ClientId = "52848081395-idb16mbka1jli6qjir2elmdks2b0bkpi.apps.googleusercontent.com", ClientSecret = "9LDYZ8yAdPqYNPPB2v06U9M9" },
+                new ClientSecrets { ClientId = _ClientId
+                , ClientSecret = _ClientSecret
+                },
                 new[] { DriveService.Scope.Drive, DriveService.Scope.DriveFile },
                 "MProject",
                 CancellationToken.None,
@@ -157,6 +173,7 @@ namespace M10.lib
             {
                 FilesResource.ListRequest request = _service.Files.List();
                 request.PageSize = 1000;
+                request.Fields = "nextPageToken, files(id, name,parents,mimeType,size,capabilities,modifiedTime,webViewLink,webContentLink)";
                 //request.MaxResults = 1000;
                 if (searchPattern != "*")
                 {
@@ -238,37 +255,93 @@ namespace M10.lib
         /// <param name="parentid"></param>
         /// <param name="_uploadFile"></param>
         /// <returns></returns>
-        public static GData.File CreateFile(DriveService _service, string parentid, string _uploadFile)
+        public static GData.File CreateFile(DriveService _service, string parentid, string _uploadFilePath)
         {
-            if (System.IO.File.Exists(_uploadFile))
-            {
-                GData.File body = new GData.File();
-                body.Name = System.IO.Path.GetFileName(_uploadFile);
-                body.Description = "File updated by Diamto Drive Sample";
-                body.MimeType = GetMimeType(_uploadFile);
-                body.Parents = new List<string> { parentid };
+            GData.File ResultFile;
+            //var FileMetaData = new Google.Apis.Drive.v3.Data.File()
+            //{
+            //    Name = Path.GetFileName(path),
+            //    MimeType = GetMimeType(path),
+            //    //id of parent folder 
+            //    Parents = new List<string>
+            //    {
+            //        folderId
+            //    }
+            //};
+            //FilesResource.CreateMediaUpload request;
+            ////create stream and upload
+            //using (var stream = new System.IO.FileStream(path, System.IO.FileMode.Open))
+            //{
+            //    request = service.Files.Create(FileMetaData, stream, FileMetaData.MimeType);
+            //    request.Fields = "id";
+            //    request.Upload();
+            //}
+            //var file1 = request.ResponseBody;
 
-                byte[] byteArray = System.IO.File.ReadAllBytes(_uploadFile);
-                System.IO.MemoryStream stream = new System.IO.MemoryStream(byteArray);
-                try
+            if (System.IO.File.Exists(_uploadFilePath))
+            {
+                GData.File FileMetaData = new GData.File();
+                FileMetaData.Name = System.IO.Path.GetFileName(_uploadFilePath);
+                FileMetaData.Description = "";
+                FileMetaData.MimeType = GetMimeType(_uploadFilePath);
+                FileMetaData.Parents = new List<string> { parentid };
+
+                FilesResource.CreateMediaUpload request;
+                //create stream and upload
+                using (var stream = new System.IO.FileStream(_uploadFilePath, System.IO.FileMode.Open))
                 {
-                    FilesResource.CreateMediaUpload request = _service.Files.Create(body, stream, GetMimeType(_uploadFile));
+                    request = _service.Files.Create(FileMetaData, stream, FileMetaData.MimeType);
+                    request.Fields = "id";
                     request.Upload();
-                    return request.ResponseBody;
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine("An error occurred: " + e.Message);
-                    return null;
-                }
+
+                ResultFile = request.ResponseBody;
+
+                //byte[] byteArray = System.IO.File.ReadAllBytes(_uploadFile);
+                //System.IO.MemoryStream stream = new System.IO.MemoryStream(byteArray);
+                //try
+                //{
+                //    FilesResource.CreateMediaUpload request = _service.Files.Create(body, stream, GetMimeType(_uploadFile));
+                //    request.Upload();
+                //    return request.ResponseBody;
+                //}
+                //catch (Exception e)
+                //{
+                //    Console.WriteLine("An error occurred: " + e.Message);
+                //    return null;
+                //}
             }
             else
             {
-                Console.WriteLine("File does not exist: " + _uploadFile);
+                Console.WriteLine("File does not exist: " + _uploadFilePath);
                 return null;
             }
 
+            return ResultFile;
         }
+
+        public static string CheckCreateFolder(DriveService _service, string parentid, string FolderName) 
+        {
+            string sFolderId = "";
+
+            //取得父資料夾中的所有資料夾
+            List<GData.File> FolderLists = GetFolderList(_service, parentid);
+            //找尋目標資料夾是否存在
+            GData.File FindLists = FolderLists.Where(s => s.Name == FolderName).FirstOrDefault();
+
+            if (FindLists != null) //資料夾存在，則回傳ID
+            {
+                sFolderId = FindLists.Id;
+            }
+            else //資料夾不存在，則新增資料夾並回傳ID
+            {
+                GData.File file = CreateFolder(_service, parentid, FolderName);
+                sFolderId = file.Id;
+            }
+
+            return sFolderId;
+        }
+
 
 
         /// <summary>

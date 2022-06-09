@@ -15,8 +15,9 @@ namespace M10.lib
         private string _ConnectionString;
         public Logger _logger;
         private StockHelper _stockhelper;
+        private ConnectionStringSettings _ConnectionStringSettings;
 
-        
+
 
         public DALDapper dbDapper
         {
@@ -24,10 +25,24 @@ namespace M10.lib
             {
                 if (_dbDapper == null)
                 {
-                    _dbDapper = new DALDapper(ConnectionString);
+                    //_dbDapper = new DALDapper(ConnectionString);
+                    _dbDapper = new DALDapper(ConnectionStringSettings);
                 }
 
                 return _dbDapper;
+            }
+        }
+
+        public ConnectionStringSettings ConnectionStringSettings
+        {
+            get
+            {
+                if (_ConnectionStringSettings == null)
+                {
+                    _ConnectionStringSettings = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]];
+                }
+
+                return _ConnectionStringSettings;
             }
         }
 
