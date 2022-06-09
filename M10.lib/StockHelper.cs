@@ -1169,6 +1169,16 @@ namespace M10.lib
                     //成交價(125)
                     if (jobj["125"] != null)
                         sr.z = jobj["125"].ToString();
+                    //判斷是否早盤試搓期間(0830-0900)，則使用昨收(129)回報
+                    TimeSpan tsS = new TimeSpan(8, 30, 0);
+                    TimeSpan tsE = new TimeSpan(9, 0, 0);
+                    TimeSpan tsNow = DateTime.Now.TimeOfDay;
+                    if (tsNow >= tsS && tsNow <= tsE)
+                    {
+                        if (jobj["129"] != null)
+                            sr.z = jobj["129"].ToString();
+                    }
+
                     //昨收(129)
                     if (jobj["129"] != null)
                         sr.y = jobj["129"].ToString();
@@ -1246,6 +1256,7 @@ namespace M10.lib
             string sTM = "";
             string sTD = "";
             string sStockName = "";
+            string sStockValue = "";
 
             string sJson = "";
             try
@@ -1265,17 +1276,56 @@ namespace M10.lib
                     sTD = dd.data.display.ua80252_cp.Data;                    
                 }
 
-                ssql = " select * from StockInfo where stockcode = '{0}' ";
-                StockInfo si = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, sStockCode));
-                //個股名稱
-                if (si != null) sStockName = si.stockname;
+                //20211218 個股名稱改由呼叫即時股價時取得
+                //ssql = " select * from StockInfo where stockcode = '{0}' ";
+                //StockInfo si = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, sStockCode));
+                ////個股名稱
+                //if (si != null) sStockName = si.stockname;
+
+                //20211218 毛哥交代取得現在的價格
+                StockRuntime sr = getStockRealtimeYahooApi(sStockCode);
+                sStockName = sr.n;
+                sStockValue = sr.z;
+
+
+                List<string> sValueList = new List<string>();
+                sValueList.Add(sTU);
+                sValueList.Add(sTM);
+                sValueList.Add(sTD);
+                sValueList.Add(sStockValue);
+
+                //進階作法
+                //直接排序現價
+                List<double> ValueList = new List<double>();
+                //ValueList.ConvertAll(s => Convert.ToDouble(s));
+
+                foreach (string sValue in sValueList)
+                {
+                    double dTmp = 0;
+                    if (double.TryParse(sValue, out dTmp) == true) ValueList.Add(dTmp);
+                }
+
+                //數列進行反向排列(價格高在上面) 
+                // List<double> 直接使用Reverse沒有效果，先用Sort後，在執行Reverse才會正常
+                ValueList.Sort();
+                ValueList.Reverse();
 
                 //ResultList.Add(string.Format("TUMD 日期：{0}", sStockDate));
                 ResultList.Add("股泰免費版TUMD");
                 ResultList.Add(string.Format("{0}({1})", sStockName, sStockCode));
-                ResultList.Add(string.Format("TU：{0}", sTU));
-                ResultList.Add(string.Format("TM：{0}", sTM));
-                ResultList.Add(string.Format("TD：{0}", sTD));
+                foreach (double value in ValueList)
+                {
+                    string sType = "";
+                    if (sTU == value.ToString()) sType = "TU";
+                    if (sTM == value.ToString()) sType = "TM";
+                    if (sTD == value.ToString()) sType = "TD";
+                    if (sStockValue == value.ToString()) sType = "現價";
+
+                    ResultList.Add(string.Format("[{0}]：{1}", sType, value.ToString()));
+                }
+                //ResultList.Add(string.Format("[TU]：{0}", sTU));
+                //ResultList.Add(string.Format("[TM]：{0}", sTM));
+                //ResultList.Add(string.Format("[TD]：{0}", sTD));
 
             }
             catch (Exception ex)
@@ -1285,6 +1335,8 @@ namespace M10.lib
 
             return ResultList;
         }
+
+        
 
 
         private string tempCheckObjectNull(Object o) 
