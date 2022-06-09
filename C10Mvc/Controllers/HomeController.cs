@@ -23,10 +23,17 @@ namespace C10Mvc.Controllers
 
         public ActionResult TumdList()
         {
-            string ssql = @" select top 20 *
+
+            //string ssql = @" select top 20 *
+            //    from stocktumd 
+            //    order by stockdate desc
+            //    ";
+            //for mysql 
+            string ssql = @" select  *
                 from stocktumd 
                 order by stockdate desc
                 ";
+
             List<dynamic> data = dbDapper.Query(ssql);
 
             foreach (var item in data)
@@ -143,7 +150,12 @@ namespace C10Mvc.Controllers
 
             string station = dParams["station"];
 
-            string ssql = @" select top 20 *
+            //string ssql = @" select top 20 *
+            //    from stocktumd 
+            //    order by stockdate desc
+            //    ";
+            //for mysql 
+            string ssql = @" select *
                 from stocktumd 
                 order by stockdate desc
                 ";

@@ -158,17 +158,21 @@ namespace M10Winform
             if (Directory.Exists(sGoogleDrivePathH) == true)
             {
                 sGoogleDrivePath = sGoogleDrivePathH;
+                ShowMessageToFront("1" + sGoogleDrivePath);
             }
             if (Directory.Exists(sGoogleDrivePathG) == true)
             {
                 sGoogleDrivePath = sGoogleDrivePathG;
+                ShowMessageToFront("2" + sGoogleDrivePath);
             }
 
             if (sGoogleDrivePath == string.Empty)
             {
                 sGoogleDrivePath = Properties.Settings.Default.GoogleDrivePath;
+                ShowMessageToFront("3" + sGoogleDrivePath);
             }
 
+            ShowMessageToFront("4" + sGoogleDrivePath);
             try
             {
                 //取得最後轉檔資料
@@ -191,6 +195,8 @@ namespace M10Winform
                     string sTransFileName = dtTrans.ToString("yyyy_MM_dd_HH_mm") + ".xml";
 
                     string sGoogleFilePath = Path.Combine(sGoogleDrivePath, sSub1, sSub2, sTransFileName);
+                    ShowMessageToFront("5=" + dtTrans.ToString());
+                    ShowMessageToFront("5=" + sGoogleFilePath);
                     if (File.Exists(sGoogleFilePath))
                     {
                         //檔案存在，複製到轉檔路徑
@@ -198,6 +204,8 @@ namespace M10Winform
                         string sCopyToPath = Path.Combine(folderName, sTransFileName);
 
                         fi.CopyTo(sCopyToPath, true);
+
+                        ShowMessageToFront("COPY=" + sCopyToPath);
 
                         //設定非唯讀
                         new FileInfo(sCopyToPath).Attributes = FileAttributes.Normal;

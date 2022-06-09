@@ -17,17 +17,45 @@ namespace C10Mvc.Class
         private StockUtil _StockUtil;
         private StockHelper _stockhelper;
         private NLog.Logger _logger;
+        private ConnectionStringSettings _ConnectionStringSettings;
 
+
+        //public DALDapper dbDapper
+        //{
+        //    get
+        //    {
+        //        if (_dbDapper == null)
+        //        {
+        //            _dbDapper = new DALDapper(ConnectionString);
+        //        }
+
+        //        return _dbDapper;
+        //    }
+        //}
         public DALDapper dbDapper
         {
             get
             {
                 if (_dbDapper == null)
                 {
-                    _dbDapper = new DALDapper(ConnectionString);
+                    //_dbDapper = new DALDapper(ConnectionString);
+                    _dbDapper = new DALDapper(ConnectionStringSettings);
                 }
 
                 return _dbDapper;
+            }
+        }
+
+        public ConnectionStringSettings ConnectionStringSettings
+        {
+            get
+            {
+                if (_ConnectionStringSettings == null)
+                {
+                    _ConnectionStringSettings = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]];
+                }
+
+                return _ConnectionStringSettings;
             }
         }
 

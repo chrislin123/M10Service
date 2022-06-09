@@ -66,6 +66,9 @@
             this.Trans109Text = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.TUMDButton = new System.Windows.Forms.Button();
+            this.button23 = new System.Windows.Forms.Button();
+            this.button24 = new System.Windows.Forms.Button();
+            this.button25 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -254,7 +257,7 @@
             // 
             // StockCodeTextBox
             // 
-            this.StockCodeTextBox.Location = new System.Drawing.Point(15, 632);
+            this.StockCodeTextBox.Location = new System.Drawing.Point(658, 644);
             this.StockCodeTextBox.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.StockCodeTextBox.Name = "StockCodeTextBox";
             this.StockCodeTextBox.Size = new System.Drawing.Size(148, 29);
@@ -264,7 +267,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(174, 636);
+            this.label1.Location = new System.Drawing.Point(818, 648);
             this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(50, 18);
@@ -287,29 +290,29 @@
             this.btnImpWeatherData.Location = new System.Drawing.Point(18, 236);
             this.btnImpWeatherData.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnImpWeatherData.Name = "btnImpWeatherData";
-            this.btnImpWeatherData.Size = new System.Drawing.Size(189, 48);
+            this.btnImpWeatherData.Size = new System.Drawing.Size(254, 48);
             this.btnImpWeatherData.TabIndex = 27;
-            this.btnImpWeatherData.Text = "(1)匯入雨量資料(氣象站)";
+            this.btnImpWeatherData.Text = "(1)匯入雨量資料(auto+氣象站cwb)";
             this.btnImpWeatherData.UseVisualStyleBackColor = true;
             this.btnImpWeatherData.Click += new System.EventHandler(this.btnImpWeatherData_Click);
             // 
             // btnTransWeaRainStatic
             // 
-            this.btnTransWeaRainStatic.Location = new System.Drawing.Point(15, 292);
+            this.btnTransWeaRainStatic.Location = new System.Drawing.Point(18, 404);
             this.btnTransWeaRainStatic.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnTransWeaRainStatic.Name = "btnTransWeaRainStatic";
-            this.btnTransWeaRainStatic.Size = new System.Drawing.Size(189, 34);
+            this.btnTransWeaRainStatic.Size = new System.Drawing.Size(254, 34);
             this.btnTransWeaRainStatic.TabIndex = 28;
-            this.btnTransWeaRainStatic.Text = "(2)氣象雨量資料統計";
+            this.btnTransWeaRainStatic.Text = "(2)氣象年度雨量資料統計";
             this.btnTransWeaRainStatic.UseVisualStyleBackColor = true;
             this.btnTransWeaRainStatic.Click += new System.EventHandler(this.btnTransWeaRainStatic_Click);
             // 
             // btnRainAreaSplit
             // 
-            this.btnRainAreaSplit.Location = new System.Drawing.Point(15, 336);
+            this.btnRainAreaSplit.Location = new System.Drawing.Point(15, 447);
             this.btnRainAreaSplit.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnRainAreaSplit.Name = "btnRainAreaSplit";
-            this.btnRainAreaSplit.Size = new System.Drawing.Size(189, 34);
+            this.btnRainAreaSplit.Size = new System.Drawing.Size(256, 34);
             this.btnRainAreaSplit.TabIndex = 29;
             this.btnRainAreaSplit.Text = "(3)雨場分割";
             this.btnRainAreaSplit.UseVisualStyleBackColor = true;
@@ -317,10 +320,10 @@
             // 
             // button12
             // 
-            this.button12.Location = new System.Drawing.Point(15, 380);
+            this.button12.Location = new System.Drawing.Point(15, 490);
             this.button12.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(189, 34);
+            this.button12.Size = new System.Drawing.Size(256, 34);
             this.button12.TabIndex = 30;
             this.button12.Text = "(4)雨場分割轉Excel";
             this.button12.UseVisualStyleBackColor = true;
@@ -328,10 +331,10 @@
             // 
             // button13
             // 
-            this.button13.Location = new System.Drawing.Point(15, 423);
+            this.button13.Location = new System.Drawing.Point(18, 534);
             this.button13.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(189, 57);
+            this.button13.Size = new System.Drawing.Size(254, 57);
             this.button13.TabIndex = 31;
             this.button13.Text = "(4-1)雨場分割轉Excel_All";
             this.button13.UseVisualStyleBackColor = true;
@@ -339,7 +342,7 @@
             // 
             // button14
             // 
-            this.button14.Location = new System.Drawing.Point(18, 514);
+            this.button14.Location = new System.Drawing.Point(376, 105);
             this.button14.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button14.Name = "button14";
             this.button14.Size = new System.Drawing.Size(189, 34);
@@ -350,10 +353,10 @@
             // 
             // button15
             // 
-            this.button15.Location = new System.Drawing.Point(18, 558);
+            this.button15.Location = new System.Drawing.Point(21, 600);
             this.button15.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button15.Name = "button15";
-            this.button15.Size = new System.Drawing.Size(189, 34);
+            this.button15.Size = new System.Drawing.Size(250, 34);
             this.button15.TabIndex = 33;
             this.button15.Text = "(5)RTI與RTI3轉檔";
             this.button15.UseVisualStyleBackColor = true;
@@ -438,10 +441,10 @@
             // 
             // button22
             // 
-            this.button22.Location = new System.Drawing.Point(216, 292);
+            this.button22.Location = new System.Drawing.Point(21, 644);
             this.button22.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.button22.Name = "button22";
-            this.button22.Size = new System.Drawing.Size(254, 34);
+            this.button22.Size = new System.Drawing.Size(250, 34);
             this.button22.TabIndex = 42;
             this.button22.Text = "(6)氣象局歷史資料轉檔";
             this.button22.UseVisualStyleBackColor = true;
@@ -449,7 +452,7 @@
             // 
             // Trans109Text
             // 
-            this.Trans109Text.Location = new System.Drawing.Point(398, 336);
+            this.Trans109Text.Location = new System.Drawing.Point(188, 192);
             this.Trans109Text.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Trans109Text.Name = "Trans109Text";
             this.Trans109Text.Size = new System.Drawing.Size(94, 29);
@@ -458,7 +461,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(228, 344);
+            this.label2.Location = new System.Drawing.Point(18, 200);
             this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(170, 18);
@@ -468,7 +471,7 @@
             // TUMDButton
             // 
             this.TUMDButton.Location = new System.Drawing.Point(658, 429);
-            this.TUMDButton.Margin = new System.Windows.Forms.Padding(4);
+            this.TUMDButton.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.TUMDButton.Name = "TUMDButton";
             this.TUMDButton.Size = new System.Drawing.Size(189, 34);
             this.TUMDButton.TabIndex = 45;
@@ -476,11 +479,47 @@
             this.TUMDButton.UseVisualStyleBackColor = true;
             this.TUMDButton.Click += new System.EventHandler(this.TUMDButton_Click);
             // 
+            // button23
+            // 
+            this.button23.Location = new System.Drawing.Point(658, 472);
+            this.button23.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button23.Name = "button23";
+            this.button23.Size = new System.Drawing.Size(189, 66);
+            this.button23.TabIndex = 46;
+            this.button23.Text = "TUMD線上完整更新資料";
+            this.button23.UseVisualStyleBackColor = true;
+            this.button23.Click += new System.EventHandler(this.button23_Click);
+            // 
+            // button24
+            // 
+            this.button24.Location = new System.Drawing.Point(18, 292);
+            this.button24.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button24.Name = "button24";
+            this.button24.Size = new System.Drawing.Size(254, 48);
+            this.button24.TabIndex = 47;
+            this.button24.Text = "(1-1)匯入雨量資料(水保局CVS)";
+            this.button24.UseVisualStyleBackColor = true;
+            this.button24.Click += new System.EventHandler(this.button24_Click);
+            // 
+            // button25
+            // 
+            this.button25.Location = new System.Drawing.Point(279, 644);
+            this.button25.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.button25.Name = "button25";
+            this.button25.Size = new System.Drawing.Size(250, 34);
+            this.button25.TabIndex = 48;
+            this.button25.Text = "(6-1)水保局歷史資料轉檔";
+            this.button25.UseVisualStyleBackColor = true;
+            this.button25.Click += new System.EventHandler(this.button25_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1299, 801);
+            this.Controls.Add(this.button25);
+            this.Controls.Add(this.button24);
+            this.Controls.Add(this.button23);
             this.Controls.Add(this.TUMDButton);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.Trans109Text);
@@ -570,6 +609,9 @@
         private System.Windows.Forms.TextBox Trans109Text;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button TUMDButton;
+        private System.Windows.Forms.Button button23;
+        private System.Windows.Forms.Button button24;
+        private System.Windows.Forms.Button button25;
     }
 }
 

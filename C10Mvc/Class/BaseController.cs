@@ -9,38 +9,65 @@ using M10.lib;
 
 namespace C10Mvc.Class
 {
-  public class BaseController : Controller
-  {
-    public string ssql = string.Empty;
-    private DALDapper _dbDapper;
-    private string _ConnectionString;
-
-
-    public DALDapper dbDapper
+    public class BaseController : Controller
     {
-      get
-      {
-        if (_dbDapper == null)
+        public string ssql = string.Empty;
+        private DALDapper _dbDapper;
+        private string _ConnectionString;
+        private ConnectionStringSettings _ConnectionStringSettings;
+
+
+        //public DALDapper dbDapper
+        //{
+        //    get
+        //    {
+        //        if (_dbDapper == null)
+        //        {
+        //            _dbDapper = new DALDapper(ConnectionString);
+        //        }
+
+        //        return _dbDapper;
+        //    }
+        //}
+        public DALDapper dbDapper
         {
-          _dbDapper = new DALDapper(ConnectionString);
+            get
+            {
+                if (_dbDapper == null)
+                {
+                    //_dbDapper = new DALDapper(ConnectionString);
+                    _dbDapper = new DALDapper(ConnectionStringSettings);
+                }
+
+                return _dbDapper;
+            }
         }
 
-        return _dbDapper;
-      }
-    }
-
-    public string ConnectionString
-    {
-      get
-      {
-        if (string.IsNullOrEmpty(_ConnectionString))
+        public string ConnectionString
         {
-          _ConnectionString = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]].ConnectionString;         
+            get
+            {
+                if (string.IsNullOrEmpty(_ConnectionString))
+                {
+                    _ConnectionString = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]].ConnectionString;
+                }
+
+                return _ConnectionString;
+            }
         }
 
-        return _ConnectionString;
-      }
-    }
+        public ConnectionStringSettings ConnectionStringSettings
+        {
+            get
+            {
+                if (_ConnectionStringSettings == null)
+                {
+                    _ConnectionStringSettings = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]];
+                }
 
-  }
+                return _ConnectionStringSettings;
+            }
+        }
+
+    }
 }

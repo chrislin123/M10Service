@@ -9,12 +9,12 @@ namespace M10Tools
     public class BaseForm : Form
     {
         private string _ConnectionString;
+        private string _ProviderName;
+        private ConnectionStringSettings _ConnectionStringSettings;
         private DALDapper _dbDapper;
         public string ssql = string.Empty;
         public Logger logger;
         private StockHelper _stockhelper;
-
-
 
         public DALDapper dbDapper
         {
@@ -22,7 +22,8 @@ namespace M10Tools
             {
                 if (_dbDapper == null)
                 {
-                    _dbDapper = new DALDapper(ConnectionString);
+                    //_dbDapper = new DALDapper(ConnectionString);
+                    _dbDapper = new DALDapper(ConnectionStringSettings);
                 }
 
                 return _dbDapper;
@@ -41,6 +42,35 @@ namespace M10Tools
                 return _ConnectionString;
             }
         }
+
+        public string ProviderName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_ProviderName))
+                {
+                    _ProviderName = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]].ProviderName;
+                }
+
+                return _ProviderName;
+            }
+        }
+
+        public ConnectionStringSettings ConnectionStringSettings
+        {
+            get
+            {
+                if (_ConnectionStringSettings == null)
+                {
+                    _ConnectionStringSettings = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]];
+                }
+
+                return _ConnectionStringSettings;
+            }
+        }
+
+
+        
 
         public StockHelper Stockhelper
         {
