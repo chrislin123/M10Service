@@ -882,9 +882,9 @@ namespace M10.lib
             try
             {
                 List<string> TypeList = new List<string>();
-                TypeList.Add(M10Const.StockType.tse);
+                //TypeList.Add(M10Const.StockType.tse);
                 TypeList.Add(M10Const.StockType.otc);
-                TypeList.Add(M10Const.StockType.otc1);
+                //TypeList.Add(M10Const.StockType.otc1);
 
                 foreach (string sType in TypeList)
                 {
@@ -972,6 +972,7 @@ namespace M10.lib
                     else
                     {
                         StockInfoItem.type = sType;
+                        StockInfoItem.stockname = sName;
                         StockInfoItem.updatetime = Utils.getDatatimeString();
                         StockInfoItem.updstatus = "Y";
                         StockInfoItem.status = "Y";
