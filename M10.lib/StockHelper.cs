@@ -1139,13 +1139,20 @@ namespace M10.lib
                     text = text.Replace(text.Substring(0, text.IndexOf(",\"mem\":") + 7), "");
                     if (stockcode != "9999")
                     {
-                        text = text.Replace(text.Substring(text.IndexOf(",\"tick\":")), "");
+                        if (text.IndexOf(",\"tick\":") > 0)
+                        {
+                            text = text.Replace(text.Substring(text.IndexOf(",\"tick\":")), "");
+                        }   
                     }
 
                     // 1090320 配合JSON格式異動，調整格式化
                     if (stockcode == "9999")
                     {
-                        text = text.Replace(text.Substring(text.IndexOf(",\"tick\":")), "");
+                        if (text.IndexOf(",\"tick\":") > 0)
+                        {
+                            text = text.Replace(text.Substring(text.IndexOf(",\"tick\":")), "");
+                        }
+                        
                         text = text.Replace("sections", @"""sections""");
                     }
 
