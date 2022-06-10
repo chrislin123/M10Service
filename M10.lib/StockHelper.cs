@@ -144,7 +144,7 @@ namespace M10.lib
 
                 //刪除記錄檔
                 ssql = @"
-                    delete  stocklog where  logstatus = 'success' and logtype = '{0}' and logdate = '{1}'
+                    delete from stocklog where  logstatus = 'success' and logtype = '{0}' and logdate = '{1}'
                 ";
                 ssql = string.Format(ssql
                     , M10Const.StockLogType.StockAfterTse.ToString(), Utils.getDateString(GetDatetime, M10Const.DateStringType.ADT1));
@@ -305,7 +305,7 @@ namespace M10.lib
                 }
                 //刪除記錄檔
                 ssql = @"
-                    delete  stocklog where  logstatus = 'success' and logtype = '{0}' and logdate = '{1}'
+                    delete from stocklog where  logstatus = 'success' and logtype = '{0}' and logdate = '{1}'
                 ";
                 ssql = string.Format(ssql
                     , M10Const.StockLogType.StockAfterOtc.ToString(), Utils.getDateString(GetDatetime, M10Const.DateStringType.ADT1));

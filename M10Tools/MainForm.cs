@@ -2310,7 +2310,7 @@ namespace M10Tools
                     int iTC = dbDapper.QueryTotalCount(ssql);
                     if (iTC > 1)
                     {
-                        string ssqdel = @" delete DataStaticLog where type = '{0}' and key1 = '{1}'  ";
+                        string ssqdel = @" delete from DataStaticLog where type = '{0}' and key1 = '{1}'  ";
                         ssqdel = string.Format(ssqdel, sDataStaticLogType, sStid);
                         dbDapper.Execute(ssqdel);
                     }

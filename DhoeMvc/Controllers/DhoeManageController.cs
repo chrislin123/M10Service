@@ -86,7 +86,7 @@ namespace DhoeMvc.Controllers
 
         if (Data.ExperienceList != null)
         {
-          ssql = " delete studentd where studentno = '{0}' and type = '{1}' ";
+          ssql = " delete from studentd where studentno = '{0}' and type = '{1}' ";
           ssql = string.Format(ssql, Data.no.ToString(), "exp");
           dbDapper.Execute(ssql);
           foreach (string item in Data.ExperienceList)
@@ -101,7 +101,7 @@ namespace DhoeMvc.Controllers
 
         if (Data.ResearchList != null)
         {
-          ssql = " delete studentd where studentno = '{0}' and type = '{1}' ";
+          ssql = " delete from studentd where studentno = '{0}' and type = '{1}' ";
           ssql = string.Format(ssql, Data.no.ToString(), "res");
           dbDapper.Execute(ssql);
           foreach (string item in Data.ResearchList)
@@ -135,7 +135,7 @@ namespace DhoeMvc.Controllers
       
       try
       {
-        ssql = " delete students where no = '{0}' ";
+        ssql = " delete from students where no = '{0}' ";
         ssql = string.Format(ssql, no);
 
         dbDapper.Execute(ssql);

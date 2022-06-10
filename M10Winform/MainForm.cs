@@ -575,7 +575,7 @@ namespace M10Winform
         if (bUpdateRuntim == true)
         {
           //清空runtime 資料表
-          ssql = " delete RunTimeRainData ";
+          ssql = " delete from RunTimeRainData ";
           oDal.CommandText = ssql;
           oDal.ExecuteSql();
 
@@ -664,7 +664,7 @@ namespace M10Winform
         foreach (DataRow dr in dt.Rows)
         {
           //刪除資料
-          ssql = " delete RainStation "
+          ssql = " delete from RainStation "
                + " where 1=1 "
                + " and STID = '" + dr["STID"].ToString() + "' "
                + " and RTime = '" + dr["RTime"].ToString() + "' "

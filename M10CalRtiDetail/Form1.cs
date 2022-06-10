@@ -242,7 +242,7 @@ namespace M10CalRtiDetail
                 if (ddltype.Text == "RTI")
                 {
                     //刪除資料
-                    ssql = " delete RtiDetail "
+                    ssql = " delete from RtiDetail "
                          + " where station = '" + dr["station"].ToString() + "' "
                          + " and delaytime = '" + dr["delaytime"].ToString() + "' "
                          ;
@@ -284,7 +284,7 @@ namespace M10CalRtiDetail
                 if (ddltype.Text == "RTI3")
                 {
                     //刪除資料
-                    ssql = " delete Rti3Detail "
+                    ssql = " delete from Rti3Detail "
                          + " where station = '" + dr["station"].ToString() + "' "
                          + " and delaytime = '" + dr["delaytime"].ToString() + "' "
                          ;

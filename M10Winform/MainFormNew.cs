@@ -594,7 +594,7 @@ namespace M10Winform
                     ShowMessageToFront(string.Format("{0} {1} 狀態：寫入RainStation", FiTrans.Name, dr["STID"].ToString()));
 
                     //刪除資料
-                    ssql = string.Format(" delete RainStation  where STID = '{0}' and RTime = '{1}' "
+                    ssql = string.Format(" delete from RainStation  where STID = '{0}' and RTime = '{1}' "
                           , dr["STID"].ToString()
                           , dr["RTime"].ToString());
                     dbDapper.Execute(ssql);
