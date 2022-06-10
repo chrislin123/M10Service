@@ -150,6 +150,7 @@ namespace M10.lib
                     , M10Const.StockLogType.StockAfterTse.ToString(), Utils.getDateString(GetDatetime, M10Const.DateStringType.ADT1));
                 dbDapper.Execute(ssql);
 
+                
                 //新增記錄檔
                 StockLog sl = new StockLog();
                 sl.logdate = Utils.getDateString(GetDatetime, M10Const.DateStringType.ADT1);
@@ -1130,7 +1131,7 @@ namespace M10.lib
                 {
                     sUrl = string.Format(sUrl, sStockcodeUrl);
                     string text = wc.DownloadString(sUrl);
-
+                    sJson = text;
 
 
                     text = text.Replace("null(", "");
@@ -1170,7 +1171,7 @@ namespace M10.lib
                     }
 
 
-                    sJson = text;
+                    
                     JObject jobj = JObject.Parse(text);
 
                     //成交價(125)

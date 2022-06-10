@@ -24,6 +24,8 @@ namespace C10Mvc.Controllers
         private NLog.Logger _logger;
         protected string ssql = string.Empty;
         private string _ConnectionString;
+        private string _ProviderName;
+        private ConnectionStringSettings _ConnectionStringSettings;
         private DALDapper _dbDapper;
         private StockHelper _stockhelper;
 
@@ -60,7 +62,8 @@ namespace C10Mvc.Controllers
             {
                 if (_dbDapper == null)
                 {
-                    _dbDapper = new DALDapper(ConnectionString);
+                    //_dbDapper = new DALDapper(ConnectionString);
+                    _dbDapper = new DALDapper(ConnectionStringSettings);
                 }
 
                 return _dbDapper;
@@ -77,6 +80,32 @@ namespace C10Mvc.Controllers
                 }
 
                 return _ConnectionString;
+            }
+        }
+
+        public string ProviderName
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_ProviderName))
+                {
+                    _ProviderName = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]].ProviderName;
+                }
+
+                return _ProviderName;
+            }
+        }
+
+        public ConnectionStringSettings ConnectionStringSettings
+        {
+            get
+            {
+                if (_ConnectionStringSettings == null)
+                {
+                    _ConnectionStringSettings = ConfigurationManager.ConnectionStrings[ConfigurationManager.AppSettings["DBDefault"]];
+                }
+
+                return _ConnectionStringSettings;
             }
         }
     }

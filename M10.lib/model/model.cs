@@ -1049,6 +1049,7 @@ namespace M10.lib.model
     {
         //設定key
         [Key]
+        //[ExplicitKey]
         public int no { get; set; }
 
         public string stockcode { get; set; }

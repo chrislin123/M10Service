@@ -638,10 +638,10 @@ namespace M10Tools
         private void button5_Click(object sender, EventArgs e)
         {
             //開始日期
-            DateTime dt = new DateTime(2007, 1, 2);
+            DateTime dt = new DateTime(2022, 6, 9);
             //DateTime dt = new DateTime(2019, 8, 2);
             //結束日期
-            DateTime dtEnd = new DateTime(2019, 8, 2);
+            DateTime dtEnd = new DateTime(2022, 6, 9);
 
             ////取得資料庫最後一天
             //ssql = " select  distinct stockdate  from stockafter where stocktype = '{0}' order by stockdate asc ";
@@ -4674,7 +4674,10 @@ namespace M10Tools
             Directory.CreateDirectory(sConstDirectoryPath);
 
 
-            StockRuntime sr = Stockhelper.getStockRealtimeYahooApi("2330");
+            //StockRuntime sr = Stockhelper.getStockRealtimeYahooApi("2330");
+
+
+          
 
 
 
