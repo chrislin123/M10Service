@@ -4674,7 +4674,7 @@ namespace M10Tools
             Directory.CreateDirectory(sConstDirectoryPath);
 
 
-            //StockRuntime sr = Stockhelper.getStockRealtimeYahooApi("2330");
+            //StockRuntime sr = Stockhelper.getStockRealtimeYahooApi("00902");
 
 
           
