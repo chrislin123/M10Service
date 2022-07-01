@@ -1125,7 +1125,7 @@ namespace M10.lib
             sr.u = "";
             sr.w = "";
             sr.n = "";
-            sr.c = "";
+            sr.c = stockcode;
             sr.xx = "";
             sr.a = "";
             sr.TradeDay = "";
@@ -1253,16 +1253,25 @@ namespace M10.lib
                 //大盤不顯示量
                 if (stockcode == "0000") sr.a = "";
 
-                //取得個股資訊
-                ssql = " select * from StockInfo where stockcode = '{0}' ";
-                StockInfo si = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, stockcode));
-                if (si != null)
+                //20220617 加上TryCatch避免資料庫沒有啟動時，無法查詢報價
+                try
                 {
-                    //個股名稱
-                    sr.n = si.stockname;
-                    //個股代碼
-                    sr.c = si.stockcode;
+                    //取得個股資訊
+                    ssql = " select * from StockInfo where stockcode = '{0}' ";
+                    StockInfo si = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, stockcode));
+                    if (si != null)
+                    {
+                        //個股名稱
+                        sr.n = si.stockname;
+                        //個股代碼
+                        sr.c = si.stockcode;
+                    }
                 }
+                catch (Exception ex)
+                {
+                    
+                }
+                
 
                 sr.status = M10Const.StockRuntimeStatus.YahooApi;
 

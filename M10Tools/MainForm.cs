@@ -36,6 +36,9 @@ namespace M10Tools
             base.InitForm();
 
 
+            //StockRuntime sr = Stockhelper.getStockRealtimeYahooApi("9999");
+
+
         }
 
         private void btnImpErrLRTI_Click(object sender, EventArgs e)
@@ -1782,6 +1785,8 @@ namespace M10Tools
             string sDataStaticLogType = "RainAreaSplit";
 
             ssql = " select distinct stid from WeaRainData order by STID ";
+            //只轉水保局雨量站資料
+            //ssql = " select distinct stid from SoilWaterRainStation order by STID ";
             List<dynamic> StidList = dbDapper.Query(ssql);
 
             DateTime dttest = DateTime.Now;
@@ -1829,7 +1834,7 @@ namespace M10Tools
                         dbDapper.Update(dsl_new);
                     }
 
-                    DateTime dtStart = DateTime.ParseExact("2021010100", "yyyyMMddHH", null);
+                    DateTime dtStart = DateTime.ParseExact("2012010100", "yyyyMMddHH", null);
                     //dtStart = DateTime.ParseExact("2017060200", "yyyyMMddHH", null);
                     DateTime dtFinish = DateTime.ParseExact("2022043023", "yyyyMMddHH", null);
                     //dtFinish = DateTime.ParseExact("2009080000", "yyyyMMddHH", null);
@@ -2290,6 +2295,8 @@ namespace M10Tools
 
 
             ssql = " select distinct stid from WeaRainData order by STID ";
+            //只轉水保局雨量站資料
+            //ssql = " select distinct stid from SoilWaterRainStation order by STID ";
             List<dynamic> StidList = dbDapper.Query(ssql);
 
             DateTime dttest = DateTime.Now;
@@ -2299,6 +2306,11 @@ namespace M10Tools
                 iIndex++;
                 //雨量站
                 string sStid = StidItem.stid;
+
+                if (sStid == "81E910")
+                {
+
+                }
                 //
                 try
                 {
@@ -2454,7 +2466,7 @@ namespace M10Tools
                     Random rnd = new Random();
                     int month = rnd.Next(1, 2000);
 
-                    System.Threading.Thread.Sleep(month);
+                    //System.Threading.Thread.Sleep(month);
 
                     //註記已經轉檔完成
                     ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}'  ";
@@ -2684,27 +2696,30 @@ namespace M10Tools
 
 
 
-            string sVer = "20220518";
+            string sVer = "20220701";
 
             //請先將新版的雨場分割資料匯入RtiData2中
-            ssql = @"
-                INSERT INTO [dbo].[RtiData2]
-                ([station],[ver],[raindelay],[Rtd6],[Rtd7],[Rtd8],[Rti6],[Rti7]
-                ,[Rti8],[Rti36],[Rti37],[Rti38],[R3],[date])
+            //ssql = @"
+            //    INSERT INTO [dbo].[RtiData2]
+            //    ([station],[ver],[raindelay],[Rtd6],[Rtd7],[Rtd8],[Rti6],[Rti7]
+            //    ,[Rti8],[Rti36],[Rti37],[Rti38],[R3],[date])
 
-                select STID,'{0}' as ver,RainHour,rt6,rt7,RT8
-                ,RT6*MaxRain as rti6,RT7*MaxRain as rti7,RT8*MaxRain as rti8
-                ,RT6*Max3Sum/3 as rti36,RT7*Max3Sum/3 as rti37,RT8*Max3Sum/3 as rti38
-                ,max3sum,SUBSTRING(TimeStart,1,8) as date 
-                from WeaRainArea 
-            ";
-            ssql = string.Format(ssql, sVer);
-            dbDapper.Execute(ssql);
+            //    select STID,'{0}' as ver,RainHour,rt6,rt7,RT8
+            //    ,RT6*MaxRain as rti6,RT7*MaxRain as rti7,RT8*MaxRain as rti8
+            //    ,RT6*Max3Sum/3 as rti36,RT7*Max3Sum/3 as rti37,RT8*Max3Sum/3 as rti38
+            //    ,max3sum,SUBSTRING(TimeStart,1,8) as date 
+            //    from WeaRainArea 
+            //";
+            //ssql = string.Format(ssql, sVer);
+            //dbDapper.Execute(ssql);
 
 
             List<RtiDetail> rdList = new List<RtiDetail>();
 
             ssql = " select distinct stid from WeaRainArea order by STID ";
+            //
+            //ssql = " select distinct stid from SoilWaterRainStation order by STID ";
+            
             List<dynamic> StidList = dbDapper.Query(ssql);
 
             DateTime dttest = DateTime.Now;
@@ -2714,8 +2729,8 @@ namespace M10Tools
                 iIndex++;
                 string sStid = StidItem.stid;
 
-                //string sDALConnStr = "M10VPN";
-                string sDALConnStr = "DbM10";
+                string sDALConnStr = "M10VPN";
+                //string sDALConnStr = "DbM10";
                 string[] typeList = { "RTI", "RTI3" };
                 string[] DelaytimeList = { "0", "1", "2", "3" };
                 string[] CoefficientList = { "6", "7", "8" };
