@@ -150,7 +150,7 @@ namespace M10.lib
                     , M10Const.StockLogType.StockAfterTse.ToString(), Utils.getDateString(GetDatetime, M10Const.DateStringType.ADT1));
                 dbDapper.Execute(ssql);
 
-                
+
                 //新增記錄檔
                 StockLog sl = new StockLog();
                 sl.logdate = Utils.getDateString(GetDatetime, M10Const.DateStringType.ADT1);
@@ -1026,9 +1026,9 @@ namespace M10.lib
             }
 
 
-            
 
-            
+
+
 
 
         }
@@ -1162,7 +1162,7 @@ namespace M10.lib
                         if (text.IndexOf(",\"tick\":") > 0)
                         {
                             text = text.Replace(text.Substring(text.IndexOf(",\"tick\":")), "");
-                        }   
+                        }
                     }
 
                     // 1090320 配合JSON格式異動，調整格式化
@@ -1172,7 +1172,7 @@ namespace M10.lib
                         {
                             text = text.Replace(text.Substring(text.IndexOf(",\"tick\":")), "");
                         }
-                        
+
                         text = text.Replace("sections", @"""sections""");
                     }
 
@@ -1190,7 +1190,7 @@ namespace M10.lib
                     }
 
 
-                    
+
                     JObject jobj = JObject.Parse(text);
 
                     //成交價(125)
@@ -1269,9 +1269,9 @@ namespace M10.lib
                 }
                 catch (Exception ex)
                 {
-                    
+
                 }
-                
+
 
                 sr.status = M10Const.StockRuntimeStatus.YahooApi;
 
@@ -1300,6 +1300,9 @@ namespace M10.lib
                 string sUrl = "https://cronjob.uanalyze.com.tw/fetch/IndividualStock_TUMD_Free/{0}";
                 using (WebClient wc = getNewWebClient())
                 {
+                    //因應優分析調整需要加上Header才能抓取資料
+                    wc.Headers.Add("origin", "https://pro.uanalyze.com.tw");
+
                     sUrl = string.Format(sUrl, sStockCode);
                     string text = wc.DownloadString(sUrl);
 
@@ -1309,7 +1312,7 @@ namespace M10.lib
 
                     sTU = dd.data.display.ua80250_cp.Data;
                     sTM = dd.data.display.ua80251_cp.Data;
-                    sTD = dd.data.display.ua80252_cp.Data;                    
+                    sTD = dd.data.display.ua80252_cp.Data;
                 }
 
                 //20211218 個股名稱改由呼叫即時股價時取得
@@ -1372,10 +1375,13 @@ namespace M10.lib
             return ResultList;
         }
 
-        
 
 
-        private string tempCheckObjectNull(Object o) 
+
+
+
+
+        private string tempCheckObjectNull(Object o)
         {
             string sResult = "";
 
@@ -1471,12 +1477,12 @@ namespace M10.lib
                     //sJson = sApiText;
                     JObject jobj = JObject.Parse(sApiText);
 
-                    
-                    if (jobj["mem"] != null) 
+
+                    if (jobj["mem"] != null)
                     {
                         JObject jobMem = (JObject)jobj["mem"];
 
-                        sr.id   = tempCheckObjectNull(jobMem["id"]);
+                        sr.id = tempCheckObjectNull(jobMem["id"]);
                         sr.name = tempCheckObjectNull(jobMem["name"]);
                         sr.TradeDay = tempCheckObjectNull(jobMem["TradeDay"]);
                         sr.vol = tempCheckObjectNull(jobMem["404"]);
@@ -2534,13 +2540,13 @@ namespace M10.lib
 
 
 
-        public List<string> GetCallComm(string sComm) 
+        public List<string> GetCallComm(string sComm)
         {
             List<string> ResultList = new List<string>();
 
             switch (sComm)
             {
-               case "TUMD":
+                case "TUMD":
                     ResultList = GetCommTUMD();
 
                     break;
@@ -2549,7 +2555,7 @@ namespace M10.lib
                     break;
             }
 
-            if (sComm.Substring(0,1) == "Q")
+            if (sComm.Substring(0, 1) == "Q")
             {
                 ResultList = GetOnlineTUMD(sComm);
             }
@@ -2571,7 +2577,7 @@ namespace M10.lib
             {
                 ResultList.Add(string.Format("TUMD 日期：{0}", sStockDate));
                 ResultList.Add("[加權]");
-                ResultList.Add(string.Format("TU：{0}",StockTumdItem.TseTU));
+                ResultList.Add(string.Format("TU：{0}", StockTumdItem.TseTU));
                 ResultList.Add(string.Format("TM：{0}", StockTumdItem.TseTM));
                 ResultList.Add(string.Format("TD：{0}", StockTumdItem.TseTD));
                 ResultList.Add(string.Format("TW：{0}", StockTumdItem.TseTW));
@@ -2623,6 +2629,99 @@ namespace M10.lib
             //}
 
             return ResultList;
+        }
+
+
+        /// <summary>
+        /// 單一分點買賣超-玩股網
+        /// </summary>
+        /// <param name="majorId">卷商代碼</param>
+        /// <param name="branchId">分點代碼</param>
+        /// <returns></returns>
+        public StockRuntime getbrokerbuysellrank(string majorId, string branchId)
+        {
+            //if (stockcode == "t00") stockcode = "0000";
+            //if (stockcode == "t00") stockcode = "0000";
+
+            StockRuntime sr = new StockRuntime();
+            sr.z = "";
+            sr.y = "";
+            sr.u = "";
+            sr.w = "";
+            sr.n = "";
+            sr.c = "";
+            sr.xx = "";
+
+
+            string surl = "";
+            surl = "https://www.wantgoo.com/stock/major-investors/broker-buy-sell-rank";
+            HtmlWeb webClient = new HtmlWeb();
+
+            //預防基礎連接已關閉: 傳送時發生未預期的錯誤。
+            //TLS 1.0 已被視為不安全，近期應會被各大網站陸續停用
+            ServicePointManager.SecurityProtocol =
+                        SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls |
+                        SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
+            //網頁特殊編碼
+            //webClient.OverrideEncoding = System.Text.Encoding.GetEncoding(950);
+            webClient.AutoDetectEncoding = true;
+
+
+            // 載入網頁資料 
+            HtmlAgilityPack.HtmlDocument doc = webClient.Load(surl);
+            // 裝載查詢結果 
+            HtmlNodeCollection nodes = doc.DocumentNode.SelectNodes("//table[2]/tr/td/table/tr[2]/td");
+
+            int idx = 0;
+            foreach (HtmlNode node in nodes)
+            {
+                //目前成交價
+                if (idx == 2)
+                {
+                    sr.z = node.InnerText;
+                }
+
+                //yahoo漲跌
+                if (idx == 5)
+                {
+                    if (node.InnerText.Length > 0)
+                    {
+                        sr.xx = node.InnerText.Substring(0, 1);
+                    }
+
+                }
+
+                //昨收
+                if (idx == 7)
+                {
+                    sr.y = node.InnerText;
+                }
+
+                idx++;
+            }
+
+
+            //使用api呼叫取得
+            //if (stockcode == "0000" || stockcode == "9999")
+            //{
+            //    StockRuntime sr_0000 = getStockRealtimeYahooApi(stockcode);
+
+            //    sr = sr_0000;
+            //}
+
+            //取得資訊
+            //ssql = " select * from StockInfo where stockcode = '{0}' ";
+            //StockInfo si = dbDapper.QuerySingleOrDefault<StockInfo>(string.Format(ssql, stockcode));
+            //if (si != null)
+            //{
+            //    //名稱
+            //    sr.n = si.stockname;
+            //    //代碼
+            //    sr.c = si.stockcode;
+            //}
+
+            return sr;
         }
 
     }

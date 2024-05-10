@@ -1236,11 +1236,13 @@ namespace M10Tools
         /// <param name="e"></param>
         private void btnImpWeatherData_Click(object sender, EventArgs e)
         {
+            //時間格式已經調整為00-23，但是auto站跟氣象站cwb都是1-24，所以轉檔要注意
+            //auto站(全年原始)與氣象站cwb
 
             string sConstDirectoryPath = Directory.GetCurrentDirectory() + @"\Weather";
             Directory.CreateDirectory(sConstDirectoryPath);
 
-            //auto站跟氣象站cwb都放到C:\temp\Weather目錄下，開啟轉檔
+            //auto站跟氣象站cwb都放到"程式根目錄\Weather"目錄下，開啟轉檔
             FileInfo[] fiList = new DirectoryInfo(sConstDirectoryPath).GetFiles("*.txt", SearchOption.TopDirectoryOnly);
 
             //try
@@ -1288,13 +1290,36 @@ namespace M10Tools
                 int idx = 1;
                 foreach (DataRow dr in dt.Rows)
                 {
+                    Decimal tt = 0;
                     ShowStatus(string.Format("[{0}/{1}]{2}", idx, dt.Rows.Count, item.FullName));
 
                     WeaRainData WeaRainDataTemp = new WeaRainData();
                     WeaRainDataTemp.STID = dr["stno"].ToString();
-                    WeaRainDataTemp.time = dr["yyyymmddhh"].ToString();
-                    WeaRainDataTemp.PP01 = Convert.ToDecimal(dr["PP01"].ToString()) < 0 ? 0 : Convert.ToDecimal(dr["PP01"].ToString());
-                    WeaRainDataTemp.PP01old = Convert.ToDecimal(dr["PP01"].ToString());
+                    // 20230514 調整Auto站與Cwb站時間格式1-24轉換為0-23
+                    WeaRainDataTemp.time = Convert.ToString(Convert.ToInt32(dr["yyyymmddhh"].ToString()) - 1);
+                    // 20240504 時間格式來源為0-23
+                    //WeaRainDataTemp.time = dr["yyyymmddhh"].ToString();
+
+                    // 20240504 新增檢核時間格式如果來源為0-23，則顯示錯誤
+                    if (WeaRainDataTemp.time.Contains("99") == true)
+                    {
+                        throw new Exception(string.Format("{0}-{1}==時間格式異常", WeaRainDataTemp.STID, dr["yyyymmddhh"].ToString()));
+                    }
+
+                    // 20240504 判斷來源資料是否為數值，否則預設為0
+                    if (Decimal.TryParse(dr["PP01"].ToString(), out tt))
+                    {
+                        WeaRainDataTemp.PP01 = Convert.ToDecimal(dr["PP01"].ToString()) < 0 ? 0 : Convert.ToDecimal(dr["PP01"].ToString());
+                        WeaRainDataTemp.PP01old = Convert.ToDecimal(dr["PP01"].ToString());
+                    }
+                    else
+                    {
+                        WeaRainDataTemp.PP01 = 0;
+                        WeaRainDataTemp.PP01old = 0;
+                    }                    
+
+
+                    ShowStatus(string.Format("[{0}/{1}]{3}-{4}-{2}", idx, dt.Rows.Count, item.FullName, WeaRainDataTemp.STID, WeaRainDataTemp.time));
 
                     ssql = @" select * from WeaRainData where stid = '{0}' and time = '{1}' ";
                     ssql = string.Format(ssql, WeaRainDataTemp.STID, WeaRainDataTemp.time);
@@ -1321,14 +1346,7 @@ namespace M10Tools
                         dbDapper.Update(dsl_new);
                     }
 
-                    //WeaRainData wd = new WeaRainData();
-                    //wd.STID = dr["stno"].ToString();
-                    //wd.time = dr["yyyymmddhh"].ToString();
-                    ////如果原始資料異常值，則資料為0
-                    //wd.PP01 = Convert.ToDecimal(dr["PP01"].ToString()) < 0 ? 0: Convert.ToDecimal(dr["PP01"].ToString());
-                    //wd.PP01old = Convert.ToDecimal(dr["PP01"].ToString());
-
-                    //dbDapper.Insert(wd);
+                 
                     Application.DoEvents();
                     idx++;
                 }
@@ -1348,9 +1366,12 @@ namespace M10Tools
         /// <param name="e"></param>
         private void btnTransWeaRainStatic_Click(object sender, EventArgs e)
         {
+            ShowStatus("取動取得所有要執行的雨量站");
+            //全部的站都要跑都要跑
             ssql = " select distinct stid from WeaRainData order by STID ";
-
-            ssql = " select stid from SoilWaterRainStation ";
+            //ssql = " select distinct stid from WeaRainData where stid = '00H710' order by STID ";
+            //如果要跑特定的的站，要抓取需要跑資料的STID
+            //ssql = " select distinct stid from WraRainDataHis ";
 
             List<dynamic> StidList = dbDapper.Query(ssql);
 
@@ -1364,7 +1385,7 @@ namespace M10Tools
                 //每個STID都要跑1987-2017的資料
                 //每個STID都要跑1987-2017的資料
                 //20210504 雨量站統計資訊年度更新，要改成要跑的年度
-                for (int y = 2012; y <= 2022; y++)
+                for (int y = 2023; y <= 2023; y++)
                 {
                     Application.DoEvents();
                     //雨量站
@@ -1767,6 +1788,16 @@ namespace M10Tools
             //1-每年重跑要先刪除所有資料
             //select * from DataStaticLog where type = 'RainAreaSplit'
 
+            //1-1檢核是否有重複的資料
+            /*
+                -檢核            
+                select * from (
+                    select STID,time,count(*) as tt from WeaRainData group by STID,time 
+                ) a where a.tt > 1 
+                -刪除重複的序號
+                delete WeaRainData where no = '1213387'
+             */
+
             //2-調整要重新跑雨場分割的時間區間(dtStart、dtFinish)
             //每年的批次大概就是調整為前一年的0101到本年度的年底1231
 
@@ -1786,7 +1817,7 @@ namespace M10Tools
 
             ssql = " select distinct stid from WeaRainData order by STID ";
             //只轉水保局雨量站資料
-            //ssql = " select distinct stid from SoilWaterRainStation order by STID ";
+            //ssql = " select distinct stid from WraRainDataHis order by STID ";
             List<dynamic> StidList = dbDapper.Query(ssql);
 
             DateTime dttest = DateTime.Now;
@@ -1834,9 +1865,9 @@ namespace M10Tools
                         dbDapper.Update(dsl_new);
                     }
 
-                    DateTime dtStart = DateTime.ParseExact("2012010100", "yyyyMMddHH", null);
+                    DateTime dtStart = DateTime.ParseExact("2022010100", "yyyyMMddHH", null);
                     //dtStart = DateTime.ParseExact("2017060200", "yyyyMMddHH", null);
-                    DateTime dtFinish = DateTime.ParseExact("2022043023", "yyyyMMddHH", null);
+                    DateTime dtFinish = DateTime.ParseExact("2023123123", "yyyyMMddHH", null);
                     //dtFinish = DateTime.ParseExact("2009080000", "yyyyMMddHH", null);
 
 
@@ -1851,7 +1882,7 @@ namespace M10Tools
                     for (DateTime i = dtStart; i <= dtFinish; i = i.AddHours(1))
                     {
                         dttest = i;
-                        int iTime = Convert.ToInt32(i.ToString("yyyyMMddHH")) + 1;
+                        int iTime = Convert.ToInt32(i.ToString("yyyyMMddHH"));
 
                         WeaRainData wrd = RainList.SingleOrDefault(s => s.time == iTime.ToString());
 
@@ -1878,11 +1909,11 @@ namespace M10Tools
                         if (wrd.PP01 <= 4 && sRainAreaS != "")
                         {
 
-                            int iTime2 = Convert.ToInt32(i.AddHours(1).ToString("yyyyMMddHH")) + 1;
-                            int iTime3 = Convert.ToInt32(i.AddHours(2).ToString("yyyyMMddHH")) + 1;
-                            int iTime4 = Convert.ToInt32(i.AddHours(3).ToString("yyyyMMddHH")) + 1;
-                            int iTime5 = Convert.ToInt32(i.AddHours(4).ToString("yyyyMMddHH")) + 1;
-                            int iTime6 = Convert.ToInt32(i.AddHours(5).ToString("yyyyMMddHH")) + 1;
+                            int iTime2 = Convert.ToInt32(i.AddHours(1).ToString("yyyyMMddHH"));
+                            int iTime3 = Convert.ToInt32(i.AddHours(2).ToString("yyyyMMddHH"));
+                            int iTime4 = Convert.ToInt32(i.AddHours(3).ToString("yyyyMMddHH"));
+                            int iTime5 = Convert.ToInt32(i.AddHours(4).ToString("yyyyMMddHH"));
+                            int iTime6 = Convert.ToInt32(i.AddHours(5).ToString("yyyyMMddHH"));
                             WeaRainData wrd2 = RainList.SingleOrDefault(s => s.time == iTime2.ToString());
                             WeaRainData wrd3 = RainList.SingleOrDefault(s => s.time == iTime3.ToString());
                             WeaRainData wrd4 = RainList.SingleOrDefault(s => s.time == iTime4.ToString());
@@ -1932,7 +1963,7 @@ namespace M10Tools
                             {
                                 sRainAreaE = wrd.time;
 
-                                sRainAreaE = Convert.ToString(Convert.ToInt32(i.AddHours(-1).ToString("yyyyMMddHH")) + 1);
+                                sRainAreaE = Convert.ToString(Convert.ToInt32(i.AddHours(-1).ToString("yyyyMMddHH")));
 
 
 
@@ -2123,7 +2154,7 @@ namespace M10Tools
                 }
                 catch (Exception ex)
                 {
-                    logger.Error(ex, dttest.ToString("yyyyMMddHH"));
+                    logger.Error(ex, string.Format("[{0}]{1}", sStid, dttest.ToString("yyyyMMddHH")));
 
                     //註記轉檔失敗
                     ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}'  ";
@@ -2307,10 +2338,12 @@ namespace M10Tools
                 //雨量站
                 string sStid = StidItem.stid;
 
-                if (sStid == "81E910")
-                {
+                //if (sStid != "81M690") continue;
 
-                }
+                //if (sStid == "81M690")
+                //{
+                //    string sss = "";
+                //}
                 //
                 try
                 {
@@ -2479,7 +2512,7 @@ namespace M10Tools
                         dbDapper.Update(dslu);
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
 
                     //註記轉檔失敗
@@ -2593,10 +2626,27 @@ namespace M10Tools
                 lstImpTemp.AddRange(temp);
             }
 
+            //20240505 資料量太大，一次寫入會造成OutOfMomery的錯誤，所以改寫一次寫入固定筆數
             //所有的資料一次寫入Excel中
             ShowStatus(string.Format("清單中({0}筆)所有資料一次寫入，非常耗時，預估五分鐘左右。", lstImpTemp.Count()));
             this.Text = string.Format("清單中({0}筆)所有資料一次寫入，非常耗時，預估五分鐘左右。", lstImpTemp.Count());
-            de.AppendListToExcel(sSaveFilePath, lstImpTemp);
+            //de.AppendListToExcel(sSaveFilePath, lstImpTemp);
+
+            int iWriteCount = 10000;
+            while (lstImpTemp.Count != 0)
+            {
+                List<string[]> lstAppend1000 = lstImpTemp.Take(iWriteCount).ToList();
+
+                //如果剩餘筆數不足，則移除剩餘的數量
+                if (lstImpTemp.Count < iWriteCount) iWriteCount = lstImpTemp.Count;
+
+                lstImpTemp.RemoveRange(0, iWriteCount);
+
+                de.AppendListToExcel(sSaveFilePath, lstAppend1000);
+
+                ShowStatus(string.Format("清單中({0}筆)剩餘筆數，非常耗時，預估五分鐘左右。", lstImpTemp.Count()));
+            }
+            
 
             ShowStatus("完成");
 
@@ -2678,7 +2728,7 @@ namespace M10Tools
 
         private void button15_Click(object sender, EventArgs e)
         {
-            /*    ====執行前請先將新版的雨場分割資料匯入RtiData2中====         
+            /*    ====執行前 請先將新版的雨場分割資料匯入RtiData2中====         
              *    20220503 改到程式中執行
              *    WeaRainArea直接匯入 RtiData2        
              *    
@@ -2693,33 +2743,49 @@ namespace M10Tools
                 from WeaRainArea 
             */
 
+            /* === 執行完畢 要調整RTI及RTI3資料表 要先將原本線上資料(Version= 'new')備份後，再將新轉檔資料(Version= 'temp')改為線上資料(Version= 'new')生效
+             * 
+             * (1)SQL 線上資料(Version= 'new')備份
+             *    update RtiDetail  set version = '20230620' where version = 'new'
+             *    update Rti3Detail set version = '20230620' where version = 'new'
+             * 
+             * (2)SQL 新轉檔資料(Version= 'temp')改為線上資料(Version= 'new')生效
+             *    update RtiDetail  set version = 'new' where version = 'temp'
+             *    update Rti3Detail  set version = 'new' where version = 'temp'             * 
+             */
 
 
+            string sVer = "20240505";
 
-            string sVer = "20220701";
-
+            //刪除已經存在的RtiData2資料
+            ssql = @" delete  RtiData2  
+                            where ver = '{0}' 
+                            ";
+            ssql = string.Format(ssql, sVer);
+            dbDapper.Execute(ssql);
             //請先將新版的雨場分割資料匯入RtiData2中
-            //ssql = @"
-            //    INSERT INTO [dbo].[RtiData2]
-            //    ([station],[ver],[raindelay],[Rtd6],[Rtd7],[Rtd8],[Rti6],[Rti7]
-            //    ,[Rti8],[Rti36],[Rti37],[Rti38],[R3],[date])
+            ssql = @"
+                INSERT INTO [dbo].[RtiData2]
+                ([station],[ver],[raindelay],[Rtd6],[Rtd7],[Rtd8],[Rti6],[Rti7]
+                ,[Rti8],[Rti36],[Rti37],[Rti38],[R3],[date])
 
-            //    select STID,'{0}' as ver,RainHour,rt6,rt7,RT8
-            //    ,RT6*MaxRain as rti6,RT7*MaxRain as rti7,RT8*MaxRain as rti8
-            //    ,RT6*Max3Sum/3 as rti36,RT7*Max3Sum/3 as rti37,RT8*Max3Sum/3 as rti38
-            //    ,max3sum,SUBSTRING(TimeStart,1,8) as date 
-            //    from WeaRainArea 
-            //";
-            //ssql = string.Format(ssql, sVer);
-            //dbDapper.Execute(ssql);
+                select STID,'{0}' as ver,RainHour,rt6,rt7,RT8
+                ,RT6*MaxRain as rti6,RT7*MaxRain as rti7,RT8*MaxRain as rti8
+                ,RT6*Max3Sum/3 as rti36,RT7*Max3Sum/3 as rti37,RT8*Max3Sum/3 as rti38
+                ,max3sum,SUBSTRING(TimeStart,1,8) as date 
+                from WeaRainArea 
+            ";
+            ssql = string.Format(ssql, sVer);
+            dbDapper.Execute(ssql);
 
 
             List<RtiDetail> rdList = new List<RtiDetail>();
 
             ssql = " select distinct stid from WeaRainArea order by STID ";
+            //ssql = " select distinct stid from WeaRainArea where stid = '466880' order by STID ";
             //
             //ssql = " select distinct stid from SoilWaterRainStation order by STID ";
-            
+
             List<dynamic> StidList = dbDapper.Query(ssql);
 
             DateTime dttest = DateTime.Now;
@@ -2735,6 +2801,20 @@ namespace M10Tools
                 string[] DelaytimeList = { "0", "1", "2", "3" };
                 string[] CoefficientList = { "6", "7", "8" };
 
+                //刪除已經存在的temp資料
+                ssql = @" delete  RtiDetail  
+                            where station = '{0}' 
+                            and version = '{1}'
+                            ";
+                ssql = string.Format(ssql, sStid, "temp");
+                dbDapper.Execute(ssql);
+
+                ssql = @" delete  Rti3Detail  
+                            where station = '{0}' 
+                            and version = '{1}'
+                            ";
+                ssql = string.Format(ssql, sStid, "temp");
+                dbDapper.Execute(ssql);
 
                 //foreach (string itemtype in typeList)
                 //{ }
@@ -4078,6 +4158,17 @@ namespace M10Tools
             //(1-2)DataStaticLog where type = '109WeaRainTrans'不需要刪除任何的LOG紀錄，因為，歷年已經跑過的資料，已經有LOG，如果篩除，會全部重跑
             //2.直接執行多個程式一起跑
 
+            //3.最後比對是否有全部轉檔成功到歷史區
+            /* SQL:
+                    select * from (
+                        select STID,count(*) ttData from WeaRainData group by STID
+                    ) a 
+                    left join (
+                        select STID,count(*) ttDataHis from WeaRainDataHis  group by STID
+                    ) b on a.STID = b.STID 
+                    where a.ttData <> b.ttDataHis
+             * */
+
             string sStid = "";
 
             //有輸入資料，則轉該雨量站的資料
@@ -4118,18 +4209,32 @@ namespace M10Tools
                         if (TransList.Count() == 0) break;
 
                         //剩餘總筆數，使用Random取得資料避免重複執行問題
-                        int iRandom = new Random().Next(0, TransList.Count() - 1);
+                        //int iRandom = new Random().Next(0, TransList.Count() - 1);
+                        int iRandom = new Random().Next(0, TransList.Count());
 
 
                         //TransList[iRandom].ttData.GetType();
                         //預防重複執行後，LOG紀錄筆數>WeaRainData的筆數導致前面判斷未轉完畢的篩選，所以如果超過筆數，則刪除LOG重新跑
+                        //20240507 刪除LOG紀錄重複的資料，以免全部重跑耗費太多時間
                         Int64 ittLog = TransList[iRandom].ttLog == null ? 0 : TransList[iRandom].ttLog;
                         Int64 ittData = TransList[iRandom].ttData == null ? 0 : TransList[iRandom].ttData;
                         if (ittLog > ittData)
                         {
-                            ssql = @" delete from DataStaticLog where type = '109WeaRainTrans' and key2 = '{0}' ";
+                            //20240507 查詢問題後，發現LOG多餘的資料對應到WeaRainData，是NULL，所以刪除LOG紀錄NULL的資料，以免全部重跑耗費太多時間
+                            ssql = @" select * from DataStaticLog a 
+                                        left join WeaRainData b on  b.no = a.key1
+                                        where a.type = '109WeaRainTrans' and b.STID is null and a.key2 = '{0}' ";
                             ssql = string.Format(ssql, TransList[iRandom].STID);
-                            dbDapper.Execute(ssql);
+                            List<dynamic> ErrorList = dbDapper.Query(ssql);
+
+                            foreach (dynamic item in ErrorList)
+                            {
+                                ssql = @" delete DataStaticLog where type = '109WeaRainTrans' and key2 = '{0}' and no = '{1}' ";
+                                ssql = string.Format(ssql, item.key2 ,item.no);
+                                dbDapper.Execute(ssql);
+                            }
+
+                            continue;
                         }
 
                         sStid = TransList[iRandom].STID;
@@ -4233,7 +4338,7 @@ namespace M10Tools
                     iIndex1++;
 
                     //目前該筆資料主要時間
-                    DateTime MainTime = DateTime.ParseExact(Convert.ToString(Convert.ToInt32(item.time) - 1), "yyyyMMddHH", null);
+                    DateTime MainTime = DateTime.ParseExact(item.time, "yyyyMMddHH", null);
 
                     ShowStatus(string.Format("站號：{2}[{3}/{4}]正在轉檔：{5}", "", "", sStid
                         , iIndex1.ToString(), NoExecList.Count().ToString(), MainTime.ToString("yyyy/MM/dd-HH")));
@@ -4470,7 +4575,6 @@ namespace M10Tools
                         dbDapper.Update(dsl_new);
                     }
 
-
                     //取得當月及前一個月的資料
                     List<SoilWaterRainDataHis> wrdList = new List<SoilWaterRainDataHis>();
                     //取得當月資料
@@ -4603,6 +4707,212 @@ namespace M10Tools
             }
         }
 
+        private void ProcWraRainDataHis(string STID, string sSTIDTimeLogType)
+        {
+            //雨量站
+            string sStid = STID;
+            //sStid = "466900";
+
+            //string sDataStaticLogType = "109WeaRainTrans";
+           
+
+            //取得尚未轉檔完成的資料(KEY1:STID , KEY2:Time )
+            ssql = @" 
+                    select * from WraRainDataHis where STID = '{0}' order by time 
+                    ";
+            ssql = string.Format(ssql, sStid);
+
+            ShowStatus(string.Format("取得雨量站[{0}]的所有水利署雨量資料....", sStid));
+            List<WraRainDataHis> WraRainList = dbDapper.Query<WraRainDataHis>(ssql);
+
+
+            //取得尚未轉檔的資料
+            ssql = @" 
+                    select a.* from WraRainDataHis a
+                    left join DataStaticLog b on CAST( a.no as varchar) = b.key1 and  b.type = '{1}' 
+                    where a.STID = '{0}' and b.no is  null 
+                    order by a.time ";
+            ssql = string.Format(ssql, sStid, sSTIDTimeLogType);
+            ShowStatus(string.Format("取得雨量站[{0}]尚未執行的資料....", sStid));
+            List<WraRainDataHis> NoExecList = dbDapper.Query<WraRainDataHis>(ssql);
+
+            int iIndex1 = 0;
+            foreach (WraRainDataHis item in NoExecList)
+            {
+                try
+                {
+                    iIndex1++;
+
+                    //目前該筆資料主要時間
+                    DateTime MainTime = DateTime.ParseExact(item.Time, "yyyyMMddHH", null);
+
+                    ShowStatus(string.Format("站號：{2}[{3}/{4}]正在轉檔：{5}", "", "", sStid
+                        , iIndex1.ToString(), NoExecList.Count().ToString(), MainTime.ToString("yyyy/MM/dd-HH")));
+
+                    //==判斷是否執行過
+                    //10:執行中 60:已完成 90:轉檔失敗
+                    ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}'    ";
+                    ssql = string.Format(ssql, sSTIDTimeLogType, item.no.ToString());
+                    DataStaticLog dsl_new = dbDapper.QuerySingleOrDefault<DataStaticLog>(ssql);
+
+                    //沒有轉檔紀錄
+                    if (dsl_new == null)
+                    {
+                        //如果沒有轉檔紀錄，則新增一筆執行中
+                        //寫入統計LOG
+                        dsl_new = new DataStaticLog();
+                        dsl_new.type = sSTIDTimeLogType;
+                        dsl_new.key1 = item.no.ToString();
+                        dsl_new.key2 = item.Stid;
+                        dsl_new.status = "10";
+                        dsl_new.logtime = DateTime.Now;
+                        dbDapper.Insert(dsl_new);
+                    }
+                    else//已經有轉檔紀錄
+                    {
+                        if (dsl_new.status == "10" || dsl_new.status == "60") //10:執行中 60:已完成
+                        {
+                            continue;
+                        }
+
+                        //重新更新為執行中
+                        dsl_new.status = "10";
+                        dbDapper.Update(dsl_new);
+                    }
+                    
+
+                    //取得當月及前一個月的資料
+                    List<WraRainDataHis> wrdList = new List<WraRainDataHis>();
+                    //取得當月資料
+                    string sNowYM = MainTime.ToString("yyyyMM");
+                    //取得前月資料
+                    string sPreYM = MainTime.AddMonths(-1).ToString("yyyyMM");
+
+                    List<WraRainDataHis> NowYMList = WraRainList.Where(element => element.Time.StartsWith(sNowYM)).ToList<WraRainDataHis>();
+                    List<WraRainDataHis> PreYMList = WraRainList.Where(element => element.Time.StartsWith(sPreYM)).ToList<WraRainDataHis>();
+                    wrdList.AddRange(NowYMList);
+                    wrdList.AddRange(PreYMList);
+                    
+
+                    //==計算Hour3
+                    decimal dHour3 = getSumRangeRainWra(wrdList, item, 0, 2);
+
+                    //==計算Hour6
+                    decimal dHour6 = getSumRangeRainWra(wrdList, item, 0, 5);
+
+                    //==計算Hour12
+                    decimal dHour12 = getSumRangeRainWra(wrdList, item, 0, 11);
+
+                    //==計算Hour24
+                    decimal dHour24 = getSumRangeRainWra(wrdList, item, 0, 23);
+                    //decimal dtestTest = getSumRangeRain(wrdList, item, 0, 23);
+                    //if (dHour24 != dtestTest)
+                    //{
+                    //    string sErroe = "";
+                    //}
+
+                    //==計算HourDayRainFall
+                    string sFallDay = item.Time.Substring(0, 8);
+                    List<WraRainDataHis> DayRainFallList = WraRainList.Where(element => element.Time.StartsWith(sFallDay)).ToList<WraRainDataHis>();
+                    decimal dFallDay = 0;
+                    foreach (WraRainDataHis DayRainFall in DayRainFallList)
+                    {
+                        if (DayRainFall != null)
+                        {
+                            dFallDay += DayRainFall.Hour;
+                        }
+                    }
+
+                    //==計算RT
+                    decimal dRT = 0;
+                    double α = 0.7;
+                    //M：七天前期雨量，前頁P的計算
+                    //如：2012 / 1 / 8 5:00起始，2012 / 1 / 8 13:00尖峰
+                    //P = 2012 / 1 / 8 5:00~13:00累積雨量加總，雨量不折減
+                    //＋2012 / 1 / 7 日累積雨量* 折減係數α＋2012 / 1 / 6 日累積雨量* 折減係數α 2
+                    //＋2012 / 1 / 5 日累積雨量* 折減係數α 3 ＋2012 / 1 / 4 日累積雨量* 折減係數α 4
+                    //＋2012 / 1 / 3 日累積雨量* 折減係數α 5 ＋2012 / 1 / 2 日累積雨量* 折減係數α 6
+                    //＋2012 / 1 / 1 日累積雨量* 折減係數α
+
+                    //Rt = 當下時刻~24小時內雨量加總 + 25hr~48hr雨量加總 * 0.7 + 49hr~72hr雨量加總 * 0.7 ^ 2 + .....+167hr~192hr雨量加總 * 0.7 ^ 7之總和
+
+
+                    decimal dRange = getSumRangeRainWra(wrdList, item, 0, 23);
+                    decimal dRange1 = getSumRangeRainWra(wrdList, item, 24, 47) * Convert.ToDecimal(Math.Pow(α, 1));
+                    decimal dRange2 = getSumRangeRainWra(wrdList, item, 48, 71) * Convert.ToDecimal(Math.Pow(α, 2));
+                    decimal dRange3 = getSumRangeRainWra(wrdList, item, 72, 95) * Convert.ToDecimal(Math.Pow(α, 3));
+                    decimal dRange4 = getSumRangeRainWra(wrdList, item, 96, 119) * Convert.ToDecimal(Math.Pow(α, 4));
+                    decimal dRange5 = getSumRangeRainWra(wrdList, item, 120, 143) * Convert.ToDecimal(Math.Pow(α, 5));
+                    decimal dRange6 = getSumRangeRainWra(wrdList, item, 144, 167) * Convert.ToDecimal(Math.Pow(α, 6));
+                    decimal dRange7 = getSumRangeRainWra(wrdList, item, 168, 191) * Convert.ToDecimal(Math.Pow(α, 7));
+
+                    dRT = dRange + dRange1 + dRange2 + dRange3 + dRange4 + dRange5 + dRange6 + dRange7;
+
+
+                    WraRainDataHis wraTemp = new WraRainDataHis();
+                    wraTemp.Stid = item.Stid;
+                    wraTemp.Time = MainTime.ToString("yyyyMMddHH");
+                    wraTemp.Hour = item.Hour;
+                    wraTemp.Hour3 = dHour3;
+                    wraTemp.Hour6 = dHour6;
+                    wraTemp.Hour12 = dHour12;
+                    wraTemp.Hour24 = dHour24;
+                    wraTemp.DayRainfall = dFallDay;
+                    wraTemp.RT = dRT;
+
+                    //紀錄氣象局雨量歷史資料(時間序改為微軟標準0-23為一天)
+                    ssql = " select * from WraRainDataHis where Stid = '{0}' and Time = '{1}' ";
+                    ssql = string.Format(ssql, wraTemp.Stid, wraTemp.Time);
+                    WraRainDataHis wra = dbDapper.QuerySingleOrDefault<WraRainDataHis>(ssql);
+                    if (wra == null)
+                    {
+                        wra = wraTemp;
+
+                        dbDapper.Insert(wra);
+                    }
+                    else
+                    {
+                        wra.Hour = wraTemp.Hour;
+                        wra.Hour3 = wraTemp.Hour3;
+                        wra.Hour6 = wraTemp.Hour6;
+                        wra.Hour12 = wraTemp.Hour12;
+                        wra.Hour24 = wraTemp.Hour24;
+                        wra.DayRainfall = wraTemp.DayRainfall;
+                        wra.RT = wraTemp.RT;
+
+                        dbDapper.Update(wra);
+                    }
+
+                    //註記已經轉檔完成
+                    ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}'    ";
+                    ssql = string.Format(ssql, sSTIDTimeLogType, item.no.ToString());
+
+                    DataStaticLog dslu = dbDapper.QuerySingleOrDefault<DataStaticLog>(ssql);
+                    if (dslu != null)
+                    {
+                        dslu.status = "60";
+                        dbDapper.Update(dslu);
+                    }
+
+
+                }
+                catch (Exception ex)
+                {
+                    //註記轉檔失敗
+                    ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}' ";
+                    ssql = string.Format(ssql, sSTIDTimeLogType, item.no.ToString());
+
+                    DataStaticLog dslu = dbDapper.QuerySingleOrDefault<DataStaticLog>(ssql);
+                    if (dslu != null)
+                    {
+                        dslu.status = "90";
+                        dbDapper.Update(dslu);
+                    }
+                    continue;
+                }
+            }
+        }
+
         /// <summary>
         /// 計算區間雨量總和
         /// </summary>
@@ -4616,7 +4926,7 @@ namespace M10Tools
             decimal dSum = 0;
 
             //目前該筆資料主要時間
-            DateTime MainTime = DateTime.ParseExact(Convert.ToString(Convert.ToInt32(Main.time) - 1), "yyyyMMddHH", null);
+            DateTime MainTime = DateTime.ParseExact(Convert.ToString(Convert.ToInt32(Main.time)), "yyyyMMddHH", null);
 
             //取得起始時間
             DateTime StartTime = MainTime.AddHours(-iStart);
@@ -4627,7 +4937,7 @@ namespace M10Tools
             for (int i = 0; i < iCalCount; i++)
             {
                 DateTime CalTime = StartTime.AddHours(-i);
-                int iTime = Convert.ToInt32(CalTime.ToString("yyyyMMddHH")) + 1;
+                int iTime = Convert.ToInt32(CalTime.ToString("yyyyMMddHH"));
                 WeaRainData wrdCal = AllList.SingleOrDefault(s => s.time == iTime.ToString());
 
                 if (wrdCal != null)
@@ -4652,7 +4962,7 @@ namespace M10Tools
             decimal dSum = 0;
 
             //目前該筆資料主要時間
-            DateTime MainTime = DateTime.ParseExact(Convert.ToString(Convert.ToInt32(Main.Time) - 1), "yyyyMMddHH", null);
+            DateTime MainTime = DateTime.ParseExact(Convert.ToString(Convert.ToInt32(Main.Time)), "yyyyMMddHH", null);
 
             //取得起始時間
             DateTime StartTime = MainTime.AddHours(-iStart);
@@ -4663,7 +4973,7 @@ namespace M10Tools
             for (int i = 0; i < iCalCount; i++)
             {
                 DateTime CalTime = StartTime.AddHours(-i);
-                int iTime = Convert.ToInt32(CalTime.ToString("yyyyMMddHH")) + 1;
+                int iTime = Convert.ToInt32(CalTime.ToString("yyyyMMddHH"));
                 SoilWaterRainDataHis wrdCal = AllList.SingleOrDefault(s => s.Time == iTime.ToString());
 
                 if (wrdCal != null)
@@ -4674,6 +4984,43 @@ namespace M10Tools
 
             return dSum;
         }
+
+        /// <summary>
+        /// 計算區間雨量總和
+        /// </summary>
+        /// <param name="AllList">該站號所有雨量資料</param>
+        /// <param name="Main">主要雨量資料</param>
+        /// <param name="iStart">計算的起始雨量區間</param>
+        /// <param name="iEnd">計算的結束雨量區間</param>
+        /// <returns></returns>
+        private decimal getSumRangeRainWra(List<WraRainDataHis> AllList, WraRainDataHis Main, int iStart, int iEnd)
+        {
+            decimal dSum = 0;
+
+            //目前該筆資料主要時間
+            DateTime MainTime = DateTime.ParseExact(Convert.ToString(Convert.ToInt32(Main.Time) ), "yyyyMMddHH", null);
+
+            //取得起始時間
+            DateTime StartTime = MainTime.AddHours(-iStart);
+
+            //總共要計算多少次
+            int iCalCount = iEnd - iStart + 1;
+
+            for (int i = 0; i < iCalCount; i++)
+            {
+                DateTime CalTime = StartTime.AddHours(-i);
+                int iTime = Convert.ToInt32(CalTime.ToString("yyyyMMddHH"));
+                WraRainDataHis wrdCal = AllList.SingleOrDefault(s => s.Time == iTime.ToString());
+
+                if (wrdCal != null)
+                {
+                    dSum += wrdCal.Hour;
+                }
+            }
+
+            return dSum;
+        }
+
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
@@ -4689,7 +5036,7 @@ namespace M10Tools
             Directory.CreateDirectory(sConstDirectoryPath);
 
 
-            //StockRuntime sr = Stockhelper.getStockRealtimeYahooApi("00902");
+            //StockRuntime sr = Stockhelper.getStockRealtimeYahooApi("2330");
 
 
           
@@ -5339,7 +5686,7 @@ namespace M10Tools
             string sConstDirectoryPath = Directory.GetCurrentDirectory() + @"\SoilWaterRainDataHis";
             Directory.CreateDirectory(sConstDirectoryPath);
 
-            //auto站跟氣象站cwb都放到C:\temp\Weather目錄下，開啟轉檔
+            //水保局CVS都放到"程式根目錄\SoilWaterRainDataHis"目錄下，開啟轉檔
             FileInfo[] fiList = new DirectoryInfo(sConstDirectoryPath).GetFiles("*.csv", SearchOption.TopDirectoryOnly);
 
 
@@ -5381,7 +5728,722 @@ namespace M10Tools
                     {
                         string sTemp = StringList[0];
                         BackgroundWorker bw = new BackgroundWorker();
-                        bw.DoWork += new DoWorkEventHandler(bw_DoWork);
+                        bw.DoWork += new DoWorkEventHandler(bw_DoWork_SoilWaterRainDataHis);
+                        bw.WorkerSupportsCancellation = true;
+                        bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_RunWorkerCompleted);
+                        bws.Add(bw);
+
+                        bw.RunWorkerAsync(sTemp);
+
+                        StringList.Remove(StringList[0]);
+                    }
+                }
+
+                //資料補遺WeaRainData,SoilWaterRainDataHis，資料可能再轉檔的時候筆數不正確，兩邊都可以有缺漏，比較後互相補上
+                ssql = @"
+                    select * from (
+                        select STID,count(*) ttData from WeaRainData
+	                    where STID in (
+		                    select distinct STID from SoilWaterRainDataHis 
+	                    )
+	                    group by STID
+                    ) a 
+                    left join (
+                        select STID,count(*) ttDataHis from SoilWaterRainDataHis  group by STID
+                    ) b on a.STID = b.STID 
+                    where a.ttData <> b.ttDataHis
+                ";
+
+                List<dynamic> checkList = dbDapper.Query<dynamic>(ssql);
+
+                foreach (var StidItem in checkList)
+                {
+                    //歷史資料比較多，寫回WeaRainData
+                    if (StidItem.ttDataHis > StidItem.ttData)
+                    {
+                        Application.DoEvents();
+                        ssql = @"
+                            select * from SoilWaterRainDataHis a 
+                            left join WeaRainData b on a.STID = b.Stid and a.time = b.Time
+                            where a.STID = '{0}' and b.no is null
+                        ";
+                        ssql = string.Format(ssql, StidItem.STID);
+                        List<WraRainDataHis> TempList = dbDapper.Query<WraRainDataHis>(ssql);
+                        foreach (WraRainDataHis WraRainDataHisitem in TempList)
+                        {
+
+                            //同步寫入 WeaRainData
+                            WeaRainData WeaRainDataTemp = new WeaRainData();
+                            WeaRainDataTemp.STID = WraRainDataHisitem.Stid;
+                            WeaRainDataTemp.time = WraRainDataHisitem.Time;
+                            WeaRainDataTemp.PP01 = WraRainDataHisitem.Hour;
+                            WeaRainDataTemp.PP01old = WraRainDataHisitem.Hour;
+
+                            ssql = @" select * from WeaRainData where stid = '{0}' and time = '{1}' ";
+                            ssql = string.Format(ssql, WeaRainDataTemp.STID, WeaRainDataTemp.time);
+                            WeaRainData WeaRainData_new = dbDapper.QuerySingleOrDefault<WeaRainData>(ssql);
+
+                            //沒有轉檔紀錄
+                            if (WeaRainData_new == null)
+                            {
+                                //如果沒有轉檔紀錄，則新增一筆
+                                dbDapper.Insert(WeaRainDataTemp);
+                            }
+                            else//已經有轉檔紀錄
+                            {
+                                //更新
+                                WeaRainData_new.PP01 = WeaRainDataTemp.PP01;
+                                WeaRainData_new.PP01old = WeaRainDataTemp.PP01old;
+                                dbDapper.Update(WeaRainData_new);
+                            }
+                        }
+                        Application.DoEvents();
+                    }
+
+
+                }
+
+
+
+                return;
+
+                Directory.CreateDirectory(Path.Combine(item.DirectoryName, "OK"));
+                string sNewFullName = Path.Combine(item.DirectoryName, "OK", item.Name);
+
+                item.MoveTo(sNewFullName);
+                Application.DoEvents();
+            }
+
+        }
+        
+
+        private void bw_DoWork_SoilWaterRainDataHis(object sender, DoWorkEventArgs e)
+        {
+
+            String line = Convert.ToString(e.Argument);
+            if (line == "") return;
+            List<string> ColsList1 = line.Split(',').Where(x => x != "" && x != "#").ToList<string>();
+
+            //處理時間轉換
+            DateTime dtTime = DateTime.ParseExact(ColsList1[1], "yyyy-MM-dd HH:mm:ss", new CultureInfo(""));
+            
+            //string sTime = Convert.ToString(Int32.Parse(dtTime.ToString("yyyyMMddHH")) + 1);
+            string sTime = dtTime.ToString("yyyyMMddHH");
+            //處理數據轉換
+            decimal dMin10 = 0;
+            decimal dHour = 0;
+            decimal dHour6 = 0;
+            decimal dHour24 = 0;
+            decimal dDayRainfall = 0;
+
+            dMin10 = Convert.ToDecimal(ColsList1[2]) < 0 ? 0 : Convert.ToDecimal(ColsList1[2]);
+            dHour = Convert.ToDecimal(ColsList1[3]) < 0 ? 0 : Convert.ToDecimal(ColsList1[3]);
+            dHour6 = Convert.ToDecimal(ColsList1[4]) < 0 ? 0 : Convert.ToDecimal(ColsList1[4]);
+            dHour24 = Convert.ToDecimal(ColsList1[5]) < 0 ? 0 : Convert.ToDecimal(ColsList1[5]);
+            dDayRainfall = Convert.ToDecimal(ColsList1[6]) < 0 ? 0 : Convert.ToDecimal(ColsList1[6]);
+
+            //產生預寫資料
+            SoilWaterRainDataHis SoilWaterRainDataHisTemp = new SoilWaterRainDataHis();
+            SoilWaterRainDataHisTemp.Stid = ColsList1[0];
+            SoilWaterRainDataHisTemp.Time = sTime;
+            SoilWaterRainDataHisTemp.Min10 = dMin10;
+            SoilWaterRainDataHisTemp.Hour = dHour;
+            SoilWaterRainDataHisTemp.Hour6 = dHour6;
+            SoilWaterRainDataHisTemp.Hour24 = dHour24;
+            SoilWaterRainDataHisTemp.DayRainfall = dDayRainfall;
+
+            ssql = @" select * from SoilWaterRainDataHis where stid = '{0}' and time = '{1}' ";
+            ssql = string.Format(ssql, SoilWaterRainDataHisTemp.Stid, SoilWaterRainDataHisTemp.Time);
+            SoilWaterRainDataHis dsl_new = dbDapper.QuerySingleOrDefault<SoilWaterRainDataHis>(ssql);
+
+            //沒有轉檔紀錄
+            if (dsl_new == null)
+            {
+                //如果沒有轉檔紀錄，則新增一筆執行中
+                dbDapper.Insert(SoilWaterRainDataHisTemp);
+            }
+            else//已經有轉檔紀錄
+            {
+                //更新
+                dsl_new.Min10 = SoilWaterRainDataHisTemp.Min10;
+                dsl_new.Hour = SoilWaterRainDataHisTemp.Hour;
+                dsl_new.Hour6 = SoilWaterRainDataHisTemp.Hour6;
+                dsl_new.Hour24 = SoilWaterRainDataHisTemp.Hour24;
+                dsl_new.DayRainfall = SoilWaterRainDataHisTemp.DayRainfall;
+
+                dbDapper.Update(dsl_new);
+            }
+
+            //同步寫入 WeaRainData
+            WeaRainData WeaRainDataTemp = new WeaRainData();
+            WeaRainDataTemp.STID = SoilWaterRainDataHisTemp.Stid;            
+            WeaRainDataTemp.time = SoilWaterRainDataHisTemp.Time;
+            WeaRainDataTemp.PP01 = SoilWaterRainDataHisTemp.Hour;
+            WeaRainDataTemp.PP01old = SoilWaterRainDataHisTemp.Hour;
+
+            ssql = @" select * from WeaRainData where stid = '{0}' and time = '{1}' ";
+            ssql = string.Format(ssql, WeaRainDataTemp.STID, WeaRainDataTemp.time);
+            WeaRainData WeaRainData_new = dbDapper.QuerySingleOrDefault<WeaRainData>(ssql);
+
+            //沒有轉檔紀錄
+            if (WeaRainData_new == null)
+            {
+                //如果沒有轉檔紀錄，則新增一筆
+                dbDapper.Insert(WeaRainDataTemp);
+            }
+            else//已經有轉檔紀錄
+            {
+                //更新
+                WeaRainData_new.PP01 = WeaRainDataTemp.PP01;
+                WeaRainData_new.PP01old = WeaRainDataTemp.PP01old;
+                dbDapper.Update(WeaRainData_new);
+            }
+
+            //dbDapper.Insert(wd);
+            Application.DoEvents();
+        }
+
+        private void bw_DoWork_WraRainDataHis(object sender, DoWorkEventArgs e)
+        {
+
+            String line = Convert.ToString(e.Argument);
+            if (line == "") return;
+            List<string> ColsList1 = line.Split(',').Where(x => x != "" && x != "#").ToList<string>();
+
+            //處理時間轉換
+            DateTime dtTime = DateTime.ParseExact(ColsList1[1], "yyyy-MM-dd HH:mm:ss", new CultureInfo(""));
+
+            //string sTime = Convert.ToString(Int32.Parse(dtTime.ToString("yyyyMMddHH")) + 1);
+            string sTime = dtTime.ToString("yyyyMMddHH");
+            //處理數據轉換
+            decimal dMin10 = 0;
+            decimal dHour = 0;
+            decimal dHour6 = 0;
+            decimal dHour24 = 0;
+            decimal dDayRainfall = 0;
+
+            dMin10 = Convert.ToDecimal(ColsList1[2]) < 0 ? 0 : Convert.ToDecimal(ColsList1[2]);
+            dHour = Convert.ToDecimal(ColsList1[3]) < 0 ? 0 : Convert.ToDecimal(ColsList1[3]);
+            dHour6 = Convert.ToDecimal(ColsList1[4]) < 0 ? 0 : Convert.ToDecimal(ColsList1[4]);
+            dHour24 = Convert.ToDecimal(ColsList1[5]) < 0 ? 0 : Convert.ToDecimal(ColsList1[5]);
+            dDayRainfall = Convert.ToDecimal(ColsList1[6]) < 0 ? 0 : Convert.ToDecimal(ColsList1[6]);
+
+
+            //產生預寫資料
+            WraRainDataHis WraRainDataHisTemp = new WraRainDataHis();
+            WraRainDataHisTemp.Stid = ColsList1[0];
+            WraRainDataHisTemp.Time = sTime;
+            WraRainDataHisTemp.Min10 = dMin10;
+            WraRainDataHisTemp.Hour = dHour;
+            WraRainDataHisTemp.Hour6 = dHour6;
+            WraRainDataHisTemp.Hour24 = dHour24;
+            WraRainDataHisTemp.DayRainfall = dDayRainfall;
+
+            ssql = @" select * from WraRainDataHis where stid = '{0}' and time = '{1}' ";
+            ssql = string.Format(ssql, WraRainDataHisTemp.Stid, WraRainDataHisTemp.Time);
+            WraRainDataHis dsl_new = dbDapper.QuerySingleOrDefault<WraRainDataHis>(ssql);
+
+            //沒有轉檔紀錄
+            if (dsl_new == null)
+            {
+                //如果沒有轉檔紀錄，則新增一筆執行中
+                dbDapper.Insert(WraRainDataHisTemp);
+            }
+            else//已經有轉檔紀錄
+            {
+                //更新
+                dsl_new.Min10 = WraRainDataHisTemp.Min10;
+                dsl_new.Hour = WraRainDataHisTemp.Hour;
+                dsl_new.Hour6 = WraRainDataHisTemp.Hour6;
+                dsl_new.Hour24 = WraRainDataHisTemp.Hour24;
+                dsl_new.DayRainfall = WraRainDataHisTemp.DayRainfall;
+
+                dbDapper.Update(dsl_new);
+            }
+
+            //同步寫入 WeaRainData
+            WeaRainData WeaRainDataTemp = new WeaRainData();
+            WeaRainDataTemp.STID = WraRainDataHisTemp.Stid;            
+            WeaRainDataTemp.time = WraRainDataHisTemp.Time;
+            WeaRainDataTemp.PP01 = WraRainDataHisTemp.Hour;
+            WeaRainDataTemp.PP01old = WraRainDataHisTemp.Hour;
+
+            ssql = @" select * from WeaRainData where stid = '{0}' and time = '{1}' ";
+            ssql = string.Format(ssql, WeaRainDataTemp.STID, WeaRainDataTemp.time);
+            WeaRainData WeaRainData_new = dbDapper.QuerySingleOrDefault<WeaRainData>(ssql);
+
+            //沒有轉檔紀錄
+            if (WeaRainData_new == null)
+            {
+                //如果沒有轉檔紀錄，則新增一筆
+                dbDapper.Insert(WeaRainDataTemp);
+            }
+            else//已經有轉檔紀錄
+            {
+                //更新
+                WeaRainData_new.PP01 = WeaRainDataTemp.PP01;
+                WeaRainData_new.PP01old = WeaRainDataTemp.PP01old;
+                dbDapper.Update(WeaRainData_new);
+            }
+
+            //dbDapper.Insert(wd);
+            Application.DoEvents();
+        }
+
+        private void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            bws.Remove(sender as BackgroundWorker);
+            if (bws.Count == 0)
+            {
+                if (e.Cancelled)
+                {
+                    //this.richTextBox1.Text = “執行緒已經停止”;
+                }
+                else
+                {
+                    //this.richTextBox1.Text = “執行緒已經完成”;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 水保局歷史資料轉檔(包含計算RT)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button25_Click(object sender, EventArgs e)
+        {
+            //1.處理資料來源，已經由1-2匯入檔案資料到(SoilWaterRainDataHis及WeaRainData)
+            //(1-1) 按鈕匯入水保局CSV檔
+            //比對兩個資料表的資料內容是否有相同筆數，如果筆數不相同則找出問題互相補遺
+            /* SQL:
+                select * from (
+                    select STID,count(*) ttData from WeaRainData
+	                where STID in (
+		                select distinct STID from SoilWaterRainDataHis 
+	                )
+	                group by STID
+                ) a 
+                left join (
+                    select STID,count(*) ttDataHis from SoilWaterRainDataHis  group by STID
+                ) b on a.STID = b.STID 
+                where a.ttData <> b.ttDataHis
+            */
+
+            //20240510 在(1-1)按鈕已經加上WraRainDataHis補遺到WeaRainData的功能
+            //**但是WeaRainData補遺到WraRainDataHis，功能還沒完成
+
+            //(2-1)每年第一次轉檔時，請執行以下SQL，清除已轉檔完成或是執行中未清除的資料
+            // delete DataStaticLog where type = 'SoilWaterRainHisSTID' and status in ('10','60')
+
+            //(2-2)不需要刪除任何的LOG紀錄，因為歷年已經跑過的資料，已經有LOG，如果篩除，會全部重跑
+            //delete DataStaticLog where type = 'SoilWaterRainHisSTIDTime'
+
+
+            //2.直接執行多個程式一起跑
+
+            //3.最後比對是否有全部轉檔成功到歷史區
+            /* SQL:
+                select * from (
+                    select STID,count(*) ttData from WeaRainData
+	                where STID in (
+		                select distinct STID from SoilWaterRainDataHis 
+	                )
+	                group by STID
+                ) a 
+                left join (
+                    select STID,count(*) ttDataHis from SoilWaterRainDataHis  group by STID
+                ) b on a.STID = b.STID 
+                where a.ttData <> b.ttDataHis
+             * */
+
+            string sStid = "";
+
+            //轉檔註記
+            //每個雨量站
+            string sSTIDLogType = "SoilWaterRainHisSTID";
+            //每個雨量站的時刻
+            string sSTIDTimeLogType = "SoilWaterRainHisSTIDTime";
+
+
+            //有輸入資料，則轉該雨量站的資料
+            if (Trans109Text.Text.Trim() != "")
+            {
+                sStid = Trans109Text.Text;
+                this.Text = sStid;
+                ProcSoilWaterRainDataHis(sStid, sSTIDTimeLogType);
+            }
+            else //如果沒輸入，則由資料庫判斷尚未執行或還沒執行完全的雨量站進行轉檔
+            {
+                while (true)
+                {
+                    try
+                    {
+                        //比較該雨量站資料數量與轉檔LOG紀錄數量，如果沒轉過或是資料數不符，則進行轉檔
+                        //20210506 新增排除已經在轉檔的雨量站
+                        ssql = @" 
+                                select * from (
+                                 select * from (
+                                     select STID,count(*) ttData from SoilWaterRainDataHis group by STID
+                                 ) a 
+                                 left join (
+                                     select key2,count(*) ttLog from DataStaticLog where type = '{1}'  group by key2
+                                 ) b on a.STID = b.key2 
+                                ) r 
+                                left join DataStaticLog c  on c.type = '{0}' and c.key1 = r.STID and c.status = '10'
+                                where (ttLog != ttData or ttLog is null) and c.key1 is null    
+                                order by r.STID
+                            ";
+                        ssql = string.Format(ssql, sSTIDLogType, sSTIDTimeLogType);
+
+                        ShowStatus(string.Format("正在統計尚未轉檔到歷史資料的雨量站...."));
+
+                        List<dynamic> TransList = dbDapper.Query(ssql);
+
+                        //如果沒資料則停止
+                        if (TransList.Count() == 0) break;
+
+                        //總筆數，使用Random取得資料避免重複執行問題
+                        int iRandom = new Random().Next(0, TransList.Count() );
+
+                        //預防重複執行後，LOG紀錄筆數>WeaRainData的筆數導致前面判斷未轉完畢的篩選，所以如果超過筆數，則刪除LOG重新跑
+                        int ittLog = TransList[iRandom].ttLog == null ? 0 : TransList[iRandom].ttLog;
+                        int ittData = TransList[iRandom].ttData == null ? 0 : TransList[iRandom].ttData;
+                        if (ittLog > ittData)
+                        {
+                            //20240507 查詢問題後，發現LOG多餘的資料對應到SoilWaterRainDataHis，是NULL，所以刪除LOG紀錄NULL的資料，以免全部重跑耗費太多時間
+                            ssql = @" select * from DataStaticLog a 
+                                        left join SoilWaterRainDataHis b on  b.no = a.key1
+                                        where a.type = '{0}' and b.STID is null and a.key2 = '{1}' ";
+                            ssql = string.Format(ssql , sSTIDTimeLogType, TransList[iRandom].STID);
+                            List<dynamic> ErrorList = dbDapper.Query(ssql);
+
+                            foreach (dynamic item in ErrorList)
+                            {
+                                ssql = @" delete DataStaticLog where type = '{0}' and key2 = '{1}' and no = '{2}' ";
+                                ssql = string.Format(ssql , sSTIDTimeLogType, item.key2, item.no);
+                                dbDapper.Execute(ssql);
+                            }
+
+                            continue;
+                        }
+
+                        sStid = TransList[iRandom].STID;
+                        this.Text = string.Format("{0}-剩餘數量：{1}", sStid, TransList.Count());
+                        Application.DoEvents();
+
+                        //==判斷是否執行過
+                        //10:執行中 60:已完成 90:轉檔失敗
+                        //string sDataStaticLogType = "WeaRainTransHisSTID";
+                        ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}' ";
+                        ssql = string.Format(ssql, sSTIDLogType, sStid);
+                        DataStaticLog dsl_new = dbDapper.QuerySingleOrDefault<DataStaticLog>(ssql);
+
+                        //沒有轉檔紀錄
+                        if (dsl_new == null)
+                        {
+                            //如果沒有轉檔紀錄，則新增一筆執行中
+                            //寫入統計LOG
+                            dsl_new = new DataStaticLog();
+                            dsl_new.type = sSTIDLogType;
+                            dsl_new.key1 = sStid;
+                            dsl_new.key2 = "";
+                            dsl_new.status = "10";
+                            dsl_new.logtime = DateTime.Now;
+                            dbDapper.Insert(dsl_new);
+                        }
+                        else//已經有轉檔紀錄
+                        {
+                            //如果執行中，則不進行該站轉檔
+                            if (dsl_new.status == "10")
+                            {
+                                continue;
+                            }
+
+                            //重新更新為執行中
+                            dsl_new.status = "10";
+                            dbDapper.Update(dsl_new);
+                        }
+
+                        //主要轉檔程序
+                        ProcSoilWaterRainDataHis(sStid, sSTIDTimeLogType);
+
+                        //註記已經轉檔完成
+                        ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}' ";
+                        ssql = string.Format(ssql, sSTIDLogType, sStid);
+
+                        DataStaticLog dslu = dbDapper.QuerySingleOrDefault<DataStaticLog>(ssql);
+                        if (dslu != null)
+                        {
+                            dslu.status = "60";
+                            dbDapper.Update(dslu);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        //發生錯誤繼續後面的轉檔，直到全部雨量站執行完畢
+                        continue;
+                    }
+                }
+            }
+
+            this.Text = "OK-ALL";
+
+
+
+        }
+
+        /// <summary>
+        /// 20230501
+        /// 水利署(Wra)歷史資料轉檔()
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button26_Click(object sender, EventArgs e)
+        {
+            //1.處理資料來源，已經由1-2匯入檔案資料到(WraRainDataHis及WeaRainData)
+            //(1-2)按鈕匯入水利署CSV檔
+            //比對兩個資料表的資料內容是否有相同筆數，如果筆數不相同則找出問題互相補遺
+            /* SQL:
+                select * from (
+                    select STID,count(*) ttData from WeaRainData
+	                where STID in (
+		                select distinct STID from WraRainDataHis 
+	                )
+	                group by STID
+                ) a 
+                left join (
+                    select STID,count(*) ttDataHis from WraRainDataHis  group by STID
+                ) b on a.STID = b.STID 
+                where a.ttData <> b.ttDataHis
+            */
+            //20240510 在(1-2)按鈕已經加上WraRainDataHis補遺到WeaRainData的功能
+            //**但是WeaRainData補遺到WraRainDataHis，功能還沒完成
+            //2.清除原本已經轉檔紀錄
+            //(2-1)每年第一次轉檔時，請執行以下SQL，清除已轉檔完成或是執行中未清除的資料
+            //      SQL：delete DataStaticLog where type = 'WraRainHisSTID' and status in ('10','60')
+            //(2-2)不需要刪除任何的LOG紀錄，
+            //     因為歷年已經跑過的資料，已經有LOG，如果篩除，會全部重跑
+            //      SQL：delete DataStaticLog where type = 'WraRainHisSTIDTime'            
+
+            //3.直接執行多個程式一起跑
+
+            //4.最後比對是否有全部轉檔成功到歷史區
+            /* SQL:
+                    select * from (
+                        select STID,count(*) ttData from WeaRainData
+	                    where STID in (
+		                    select distinct STID from WraRainDataHis 
+	                    )
+	                    group by STID
+                    ) a 
+                    left join (
+                        select STID,count(*) ttDataHis from WraRainDataHis  group by STID
+                    ) b on a.STID = b.STID 
+                    where a.ttData <> b.ttDataHis
+             * */
+
+            string sStid = "";
+
+            //轉檔註記
+            //每個雨量站
+            string sSTIDLogType = "WraRainHisSTID";
+            //每個雨量站的時刻
+            string sSTIDTimeLogType = "WraRainHisSTIDTime";
+
+
+            //有輸入資料，則轉該雨量站的資料
+            if (Trans109Text.Text.Trim() != "")
+            {
+                sStid = Trans109Text.Text;
+                this.Text = sStid;
+                ProcWraRainDataHis(sStid, sSTIDTimeLogType);
+            }
+            else //如果沒輸入，則由資料庫判斷尚未執行或還沒執行完全的雨量站進行轉檔
+            {
+                while (true)
+                {
+                    try
+                    {
+                        //比較該雨量站資料數量與轉檔LOG紀錄數量，如果沒轉過或是資料數不符，則進行轉檔
+                        //20210506 新增排除已經在轉檔的雨量站
+                        ssql = @" 
+                                select * from (
+                                    select * from (
+                                        select STID,count(*) ttData from WraRainDataHis group by STID
+                                    ) a 
+                                    left join (
+                                        select key2,count(*) ttLog from DataStaticLog where type = '{1}'  group by key2
+                                    ) b on a.STID = b.key2 
+                                ) r 
+                                left join DataStaticLog c  on c.type = '{0}' and c.key1 = r.STID and c.status = '10'
+                                where (ttLog != ttData or ttLog is null) and c.key1 is null    
+                                order by r.STID
+                            ";
+                        ssql = string.Format(ssql, sSTIDLogType, sSTIDTimeLogType);
+
+                        ShowStatus(string.Format("正在統計尚未轉檔到歷史資料的雨量站...."));
+
+                        List<dynamic> TransList = dbDapper.Query(ssql);
+
+                        //如果沒資料則停止
+                        if (TransList.Count() == 0) break;
+
+                        //總筆數，使用Random取得資料避免重複執行問題
+                        int iRandom = new Random().Next(0, TransList.Count() );
+
+                        //預防重複執行後，LOG紀錄筆數>WeaRainData的筆數導致前面判斷未轉完畢的篩選，所以如果超過筆數，則刪除LOG重新跑
+                        int ittLog = TransList[iRandom].ttLog == null ? 0 : TransList[iRandom].ttLog;
+                        int ittData = TransList[iRandom].ttData == null ? 0 : TransList[iRandom].ttData;
+                        if (ittLog > ittData)
+                        {
+                            //20240507 查詢問題後，發現LOG多餘的資料對應到WraRainDataHis，是NULL，所以刪除LOG紀錄NULL的資料，以免全部重跑耗費太多時間
+                            ssql = @" select * from DataStaticLog a 
+                                        left join WraRainDataHis b on  b.no = a.key1
+                                        where a.type = '{0}' and b.STID is null and a.key2 = '{1}' ";
+                            ssql = string.Format(ssql, sSTIDTimeLogType, TransList[iRandom].STID);
+                            List<dynamic> ErrorList = dbDapper.Query(ssql);
+
+                            foreach (dynamic item in ErrorList)
+                            {
+                                ssql = @" delete DataStaticLog where type = '{0}' and key2 = '{1}' and no = '{2}' ";
+                                ssql = string.Format(ssql, sSTIDTimeLogType, item.key2, item.no);
+                                dbDapper.Execute(ssql);
+                            }
+
+                            continue;
+
+                            //ssql = @" delete from DataStaticLog where type = '{1}' and key2 = '{0}' ";
+                            //ssql = string.Format(ssql, TransList[iRandom].STID, sSTIDTimeLogType);
+                            //dbDapper.Execute(ssql);
+                        }
+
+                        sStid = TransList[iRandom].STID;
+                        this.Text = string.Format("{0}-剩餘數量：{1}", sStid, TransList.Count());
+                        Application.DoEvents();
+
+                        //==判斷是否執行過
+                        //10:執行中 60:已完成 90:轉檔失敗
+                        //string sDataStaticLogType = "WeaRainTransHisSTID";
+                        ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}' ";
+                        ssql = string.Format(ssql, sSTIDLogType, sStid);
+                        DataStaticLog dsl_new = dbDapper.QuerySingleOrDefault<DataStaticLog>(ssql);
+
+                        //沒有轉檔紀錄
+                        if (dsl_new == null)
+                        {
+                            //如果沒有轉檔紀錄，則新增一筆執行中
+                            //寫入統計LOG
+                            dsl_new = new DataStaticLog();
+                            dsl_new.type = sSTIDLogType;
+                            dsl_new.key1 = sStid;
+                            dsl_new.key2 = "";
+                            dsl_new.status = "10";
+                            dsl_new.logtime = DateTime.Now;
+                            dbDapper.Insert(dsl_new);
+                        }
+                        else//已經有轉檔紀錄
+                        {
+                            //如果執行中，則不進行該站轉檔
+                            if (dsl_new.status == "10")
+                            {
+                                continue;
+                            }
+
+                            //重新更新為執行中
+                            dsl_new.status = "10";
+                            dbDapper.Update(dsl_new);
+                        }
+
+                        //主要轉檔程序
+                        ProcWraRainDataHis(sStid, sSTIDTimeLogType);
+
+                        //註記已經轉檔完成
+                        ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}' ";
+                        ssql = string.Format(ssql, sSTIDLogType, sStid);
+
+                        DataStaticLog dslu = dbDapper.QuerySingleOrDefault<DataStaticLog>(ssql);
+                        if (dslu != null)
+                        {
+                            dslu.status = "60";
+                            dbDapper.Update(dslu);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        //發生錯誤繼續後面的轉檔，直到全部雨量站執行完畢
+                        continue;
+                    }
+                }
+            }
+
+            this.Text = "OK-ALL";
+        }
+
+        /// <summary>
+        /// (1-2)匯入雨量資料(水利署CVS)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button27_Click(object sender, EventArgs e)
+        {
+
+            string sConstDirectoryPath = Directory.GetCurrentDirectory() + @"\WraRainDataHis";
+            Directory.CreateDirectory(sConstDirectoryPath);
+
+            //水利署CVS都放到"程式根目錄\WraRainDataHis"目錄下，開啟轉檔
+            FileInfo[] fiList = new DirectoryInfo(sConstDirectoryPath).GetFiles("*.csv", SearchOption.TopDirectoryOnly);
+
+            //try
+            //{
+            foreach (FileInfo item in fiList)
+            {
+
+                string readText = File.ReadAllText(item.FullName, Encoding.Default);
+                string sss = readText.Substring(0, 8);
+                List<string> StringList = new List<string>();
+
+                using (FileStream fs = File.Open(item.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    using (BufferedStream bs = new BufferedStream(fs))
+                    {
+                        using (StreamReader sr = new StreamReader(bs))
+                        {
+                            string line;
+                            int i = 0;
+                            while ((line = sr.ReadLine()) != null)
+                            {
+                                StringList.Add(line);
+                            }
+                        }
+                    }
+                }
+
+                int iTotal = StringList.Count;
+
+                StringList.Remove(StringList[0]);
+                while (StringList.Count > 0)
+                {
+                    //顯示目前狀態
+                    ShowStatus(string.Format("({0}/{1}),同步正在執行筆數：{2}", StringList.Count, iTotal, bws.Count));
+
+                    //==單獨測試一筆
+                    //string sTempTest = StringList[0];
+                    //BackgroundWorker bwTest = new BackgroundWorker();
+                    //bwTest.DoWork += new DoWorkEventHandler(bw_DoWork_WraRainDataHis);
+                    //bwTest.WorkerSupportsCancellation = true;
+                    //bwTest.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_RunWorkerCompleted);
+                    //bws.Add(bwTest);
+                    //bwTest.RunWorkerAsync(sTempTest);
+                    //break;
+                    //==單獨測試一筆
+
+
+                    if (bws.Count < t)
+                    {
+                        string sTemp = StringList[0];
+                        BackgroundWorker bw = new BackgroundWorker();
+                        bw.DoWork += new DoWorkEventHandler(bw_DoWork_WraRainDataHis);
                         bw.WorkerSupportsCancellation = true;
                         bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_RunWorkerCompleted);
                         bws.Add(bw);
@@ -5393,110 +6455,175 @@ namespace M10Tools
                 }
 
 
+                //資料補遺WeaRainData,WraRainDataHis，資料可能再轉檔的時候筆數不正確，兩邊都可以有缺漏，比較後互相補上
+                ssql = @"
+                    select * from (
+                        select STID,count(*) ttData from WeaRainData
+	                    where STID in (
+		                    select distinct STID from WraRainDataHis 
+	                    )
+	                    group by STID
+                    ) a 
+                    left join (
+                        select STID,count(*) ttDataHis from WraRainDataHis  group by STID
+                    ) b on a.STID = b.STID 
+                    where a.ttData <> b.ttDataHis
+                ";
+
+                List<dynamic> checkList = dbDapper.Query<dynamic>(ssql);
+
+                foreach (var StidItem in checkList)
+                {
+                    //歷史資料比較多，寫回WeaRainData
+                    if (StidItem.ttDataHis > StidItem.ttData)
+                    {
+                        Application.DoEvents();
+                        ssql = @"
+                            select * from WraRainDataHis a 
+                            left join WeaRainData b on a.STID = b.Stid and a.time = b.Time
+                            where a.STID = '{0}' and b.no is null
+                        ";
+                        ssql = string.Format(ssql, StidItem.STID);
+                        List<WraRainDataHis> TempList = dbDapper.Query<WraRainDataHis>(ssql);
+                        foreach (WraRainDataHis WraRainDataHisitem in TempList)
+                        {
+
+                            //同步寫入 WeaRainData
+                            WeaRainData WeaRainDataTemp = new WeaRainData();
+                            WeaRainDataTemp.STID = WraRainDataHisitem.Stid;
+                            WeaRainDataTemp.time = WraRainDataHisitem.Time;
+                            WeaRainDataTemp.PP01 = WraRainDataHisitem.Hour;
+                            WeaRainDataTemp.PP01old = WraRainDataHisitem.Hour;
+
+                            ssql = @" select * from WeaRainData where stid = '{0}' and time = '{1}' ";
+                            ssql = string.Format(ssql, WeaRainDataTemp.STID, WeaRainDataTemp.time);
+                            WeaRainData WeaRainData_new = dbDapper.QuerySingleOrDefault<WeaRainData>(ssql);
+
+                            //沒有轉檔紀錄
+                            if (WeaRainData_new == null)
+                            {
+                                //如果沒有轉檔紀錄，則新增一筆
+                                dbDapper.Insert(WeaRainDataTemp);
+                            }
+                            else//已經有轉檔紀錄
+                            {
+                                //更新
+                                WeaRainData_new.PP01 = WeaRainDataTemp.PP01;
+                                WeaRainData_new.PP01old = WeaRainDataTemp.PP01old;
+                                dbDapper.Update(WeaRainData_new);
+                            }                           
+                        }
+                        Application.DoEvents();
+                    }
+                    
+                    
+                }
+
 
                 return;
 
-                ShowStatus(item.FullName);
+                //ShowStatus(item.FullName);
 
-                //超過money大小，改用StreamReader
-                using (FileStream fs = File.Open(item.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                {
-                    using (BufferedStream bs = new BufferedStream(fs))
-                    {
-                        using (StreamReader sr = new StreamReader(bs))
-                        {
-                            string line;
-                            int i = 0;
-                            while ((line = sr.ReadLine()) != null)
-                            {
-                                i++;
+                ////超過money大小，改用StreamReader
+                //using (FileStream fs = File.Open(item.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                //{
+                //    using (BufferedStream bs = new BufferedStream(fs))
+                //    {
+                //        using (StreamReader sr = new StreamReader(bs))
+                //        {
+                //            string line;
+                //            int i = 0;
+                //            while ((line = sr.ReadLine()) != null)
+                //            {
+                //                i++;
 
-                                if (i == 1) continue; //標題列排除
-                                List<string> ColsList1 = line.Split(',').Where(x => x != "" && x != "#").ToList<string>();
+                //                if (i == 1) continue; //標題列排除
+                //                List<string> ColsList1 = line.Split(',').Where(x => x != "" && x != "#").ToList<string>();
 
-                                ShowStatus(string.Format("[{0}/{1}]{2}-{3}", i, i, ColsList1[0], ColsList1[1]));
+                //                ShowStatus(string.Format("[{0}/{1}]{2}-{3}", i, i, ColsList1[0], ColsList1[1]));
 
-                                //處理時間轉換
-                                DateTime dtTime = DateTime.ParseExact(ColsList1[1], "yyyy-MM-dd HH:mm:ss", new CultureInfo(""));
-                                //雨量資料的小時格式為01-24，正常Datetime小時格式為00-23，所以進行轉換
-                                string sTime = Convert.ToString(Int32.Parse(dtTime.ToString("yyyyMMddHH")) + 1);
-                                //處理數據轉換
-                                decimal dMin10 = 0;
-                                decimal dHour = 0;
-                                decimal dHour6 = 0;
-                                decimal dHour24 = 0;
-                                decimal dDayRainfall = 0;
+                //                //處理時間轉換
+                //                DateTime dtTime = DateTime.ParseExact(ColsList1[1], "yyyy-MM-dd HH:mm:ss", new CultureInfo(""));
+                //                //雨量資料的小時格式為01-24，正常Datetime小時格式為00-23，所以進行轉換
+                //                string sTime = Convert.ToString(Int32.Parse(dtTime.ToString("yyyyMMddHH")) + 1);
+                //                //處理數據轉換
+                //                decimal dMin10 = 0;
+                //                decimal dHour = 0;
+                //                decimal dHour6 = 0;
+                //                decimal dHour24 = 0;
+                //                decimal dDayRainfall = 0;
 
-                                dMin10 = Convert.ToDecimal(ColsList1[2]) < 0 ? 0 : Convert.ToDecimal(ColsList1[2]);
-                                dHour = Convert.ToDecimal(ColsList1[3]) < 0 ? 0 : Convert.ToDecimal(ColsList1[3]);
-                                dHour6 = Convert.ToDecimal(ColsList1[4]) < 0 ? 0 : Convert.ToDecimal(ColsList1[4]);
-                                dHour24 = Convert.ToDecimal(ColsList1[5]) < 0 ? 0 : Convert.ToDecimal(ColsList1[5]);
-                                dDayRainfall = Convert.ToDecimal(ColsList1[6]) < 0 ? 0 : Convert.ToDecimal(ColsList1[6]);
+                //                dMin10 = Convert.ToDecimal(ColsList1[2]) < 0 ? 0 : Convert.ToDecimal(ColsList1[2]);
+                //                dHour = Convert.ToDecimal(ColsList1[3]) < 0 ? 0 : Convert.ToDecimal(ColsList1[3]);
+                //                dHour6 = Convert.ToDecimal(ColsList1[4]) < 0 ? 0 : Convert.ToDecimal(ColsList1[4]);
+                //                dHour24 = Convert.ToDecimal(ColsList1[5]) < 0 ? 0 : Convert.ToDecimal(ColsList1[5]);
+                //                dDayRainfall = Convert.ToDecimal(ColsList1[6]) < 0 ? 0 : Convert.ToDecimal(ColsList1[6]);
 
-                                //產生預寫資料
-                                SoilWaterRainDataHis SoilWaterRainDataHisTemp = new SoilWaterRainDataHis();
-                                SoilWaterRainDataHisTemp.Stid = ColsList1[0];
-                                SoilWaterRainDataHisTemp.Time = sTime;
-                                SoilWaterRainDataHisTemp.Min10 = dMin10;
-                                SoilWaterRainDataHisTemp.Hour = dHour;
-                                SoilWaterRainDataHisTemp.Hour6 = dHour6;
-                                SoilWaterRainDataHisTemp.Hour24 = dHour24;
-                                SoilWaterRainDataHisTemp.DayRainfall = dDayRainfall;
+                                
+                //                //產生預寫資料
+                //                SoilWaterRainDataHis SoilWaterRainDataHisTemp = new SoilWaterRainDataHis();
+                //                SoilWaterRainDataHisTemp.Stid = ColsList1[0];
+                //                SoilWaterRainDataHisTemp.Time = sTime;
+                //                SoilWaterRainDataHisTemp.Min10 = dMin10;
+                //                SoilWaterRainDataHisTemp.Hour = dHour;
+                //                SoilWaterRainDataHisTemp.Hour6 = dHour6;
+                //                SoilWaterRainDataHisTemp.Hour24 = dHour24;
+                //                SoilWaterRainDataHisTemp.DayRainfall = dDayRainfall;
 
-                                ssql = @" select * from SoilWaterRainDataHis where stid = '{0}' and time = '{1}' ";
-                                ssql = string.Format(ssql, SoilWaterRainDataHisTemp.Stid, SoilWaterRainDataHisTemp.Time);
-                                SoilWaterRainDataHis dsl_new = dbDapper.QuerySingleOrDefault<SoilWaterRainDataHis>(ssql);
+                //                ssql = @" select * from SoilWaterRainDataHis where stid = '{0}' and time = '{1}' ";
+                //                ssql = string.Format(ssql, SoilWaterRainDataHisTemp.Stid, SoilWaterRainDataHisTemp.Time);
+                //                SoilWaterRainDataHis dsl_new = dbDapper.QuerySingleOrDefault<SoilWaterRainDataHis>(ssql);
 
-                                //沒有轉檔紀錄
-                                if (dsl_new == null)
-                                {
-                                    //如果沒有轉檔紀錄，則新增一筆執行中
-                                    dbDapper.Insert(SoilWaterRainDataHisTemp);
-                                }
-                                else//已經有轉檔紀錄
-                                {
-                                    //更新
-                                    dsl_new.Min10 = SoilWaterRainDataHisTemp.Min10;
-                                    dsl_new.Hour = SoilWaterRainDataHisTemp.Hour;
-                                    dsl_new.Hour6 = SoilWaterRainDataHisTemp.Hour6;
-                                    dsl_new.Hour24 = SoilWaterRainDataHisTemp.Hour24;
-                                    dsl_new.DayRainfall = SoilWaterRainDataHisTemp.DayRainfall;
+                //                //沒有轉檔紀錄
+                //                if (dsl_new == null)
+                //                {
+                //                    //如果沒有轉檔紀錄，則新增一筆執行中
+                //                    dbDapper.Insert(SoilWaterRainDataHisTemp);
+                //                }
+                //                else//已經有轉檔紀錄
+                //                {
+                //                    //更新
+                //                    dsl_new.Min10 = SoilWaterRainDataHisTemp.Min10;
+                //                    dsl_new.Hour = SoilWaterRainDataHisTemp.Hour;
+                //                    dsl_new.Hour6 = SoilWaterRainDataHisTemp.Hour6;
+                //                    dsl_new.Hour24 = SoilWaterRainDataHisTemp.Hour24;
+                //                    dsl_new.DayRainfall = SoilWaterRainDataHisTemp.DayRainfall;
 
-                                    dbDapper.Update(dsl_new);
-                                }
+                //                    dbDapper.Update(dsl_new);
+                //                }
 
-                                //同步寫入 WeaRainData
-                                WeaRainData WeaRainDataTemp = new WeaRainData();
-                                WeaRainDataTemp.STID = SoilWaterRainDataHisTemp.Stid;
-                                WeaRainDataTemp.time = SoilWaterRainDataHisTemp.Time;
-                                WeaRainDataTemp.PP01 = SoilWaterRainDataHisTemp.Hour;
-                                WeaRainDataTemp.PP01old = SoilWaterRainDataHisTemp.Hour;
+                //                //同步寫入 WeaRainData
+                //                WeaRainData WeaRainDataTemp = new WeaRainData();
+                //                WeaRainDataTemp.STID = SoilWaterRainDataHisTemp.Stid;
+                //                WeaRainDataTemp.time = SoilWaterRainDataHisTemp.Time;
+                //                WeaRainDataTemp.PP01 = SoilWaterRainDataHisTemp.Hour;
+                //                WeaRainDataTemp.PP01old = SoilWaterRainDataHisTemp.Hour;
 
-                                ssql = @" select * from WeaRainData where stid = '{0}' and time = '{1}' ";
-                                ssql = string.Format(ssql, WeaRainDataTemp.STID, WeaRainDataTemp.time);
-                                WeaRainData WeaRainData_new = dbDapper.QuerySingleOrDefault<WeaRainData>(ssql);
+                //                ssql = @" select * from WeaRainData where stid = '{0}' and time = '{1}' ";
+                //                ssql = string.Format(ssql, WeaRainDataTemp.STID, WeaRainDataTemp.time);
+                //                WeaRainData WeaRainData_new = dbDapper.QuerySingleOrDefault<WeaRainData>(ssql);
 
-                                //沒有轉檔紀錄
-                                if (WeaRainData_new == null)
-                                {
-                                    //如果沒有轉檔紀錄，則新增一筆
-                                    dbDapper.Insert(WeaRainDataTemp);
-                                }
-                                else//已經有轉檔紀錄
-                                {
-                                    //更新
-                                    WeaRainData_new.PP01 = WeaRainDataTemp.PP01;
-                                    WeaRainData_new.PP01old = WeaRainDataTemp.PP01old;
-                                    dbDapper.Update(WeaRainData_new);
-                                }
+                //                //沒有轉檔紀錄
+                //                if (WeaRainData_new == null)
+                //                {
+                //                    //如果沒有轉檔紀錄，則新增一筆
+                //                    dbDapper.Insert(WeaRainDataTemp);
+                //                }
+                //                else//已經有轉檔紀錄
+                //                {
+                //                    //更新
+                //                    WeaRainData_new.PP01 = WeaRainDataTemp.PP01;
+                //                    WeaRainData_new.PP01old = WeaRainDataTemp.PP01old;
+                //                    dbDapper.Update(WeaRainData_new);
+                //                }
 
-                                //dbDapper.Insert(wd);
-                                Application.DoEvents();
+                //                //dbDapper.Insert(wd);
+                //                Application.DoEvents();
 
-                            }
-                        }
-                    }
-                }
+                //            }
+                //        }
+                //    }
+                //}
 
 
 
@@ -5608,295 +6735,120 @@ namespace M10Tools
                 Application.DoEvents();
             }
 
-        }
 
-
-
-
-
-
-        private void buttonb1_Click(object sender, EventArgs e)
-        {
-
-
-
-            while (true)
-            {
-
-
-
-
-            }
-
-
-            for (int i = 0; i < t; i++)
-            {
-                BackgroundWorker bw = new BackgroundWorker();
-                bw.DoWork += new DoWorkEventHandler(bw_DoWork);
-                bw.WorkerSupportsCancellation = true;
-                bw.RunWorkerCompleted += new RunWorkerCompletedEventHandler(bw_RunWorkerCompleted);
-                bws.Add(bw);
-
-                bw.RunWorkerAsync(i);
-            }
-        }
-
-        private void buttonb2_Click(object sender, EventArgs e)
-        {
-            for (int i = 0; i < t; i++)
-            {
-                bws[i].CancelAsync();
-            }
-        }
-
-        private void bw_DoWork(object sender, DoWorkEventArgs e)
-        {
-
-            String line = Convert.ToString(e.Argument);
-            if (line == "") return;
-            List<string> ColsList1 = line.Split(',').Where(x => x != "" && x != "#").ToList<string>();
-
-            //處理時間轉換
-            DateTime dtTime = DateTime.ParseExact(ColsList1[1], "yyyy-MM-dd HH:mm:ss", new CultureInfo(""));
             
-            //string sTime = Convert.ToString(Int32.Parse(dtTime.ToString("yyyyMMddHH")) + 1);
-            string sTime = dtTime.ToString("yyyyMMddHH");
-            //處理數據轉換
-            decimal dMin10 = 0;
-            decimal dHour = 0;
-            decimal dHour6 = 0;
-            decimal dHour24 = 0;
-            decimal dDayRainfall = 0;
 
-            dMin10 = Convert.ToDecimal(ColsList1[2]) < 0 ? 0 : Convert.ToDecimal(ColsList1[2]);
-            dHour = Convert.ToDecimal(ColsList1[3]) < 0 ? 0 : Convert.ToDecimal(ColsList1[3]);
-            dHour6 = Convert.ToDecimal(ColsList1[4]) < 0 ? 0 : Convert.ToDecimal(ColsList1[4]);
-            dHour24 = Convert.ToDecimal(ColsList1[5]) < 0 ? 0 : Convert.ToDecimal(ColsList1[5]);
-            dDayRainfall = Convert.ToDecimal(ColsList1[6]) < 0 ? 0 : Convert.ToDecimal(ColsList1[6]);
 
-            //產生預寫資料
-            SoilWaterRainDataHis SoilWaterRainDataHisTemp = new SoilWaterRainDataHis();
-            SoilWaterRainDataHisTemp.Stid = ColsList1[0];
-            SoilWaterRainDataHisTemp.Time = sTime;
-            SoilWaterRainDataHisTemp.Min10 = dMin10;
-            SoilWaterRainDataHisTemp.Hour = dHour;
-            SoilWaterRainDataHisTemp.Hour6 = dHour6;
-            SoilWaterRainDataHisTemp.Hour24 = dHour24;
-            SoilWaterRainDataHisTemp.DayRainfall = dDayRainfall;
 
-            ssql = @" select * from SoilWaterRainDataHis where stid = '{0}' and time = '{1}' ";
-            ssql = string.Format(ssql, SoilWaterRainDataHisTemp.Stid, SoilWaterRainDataHisTemp.Time);
-            SoilWaterRainDataHis dsl_new = dbDapper.QuerySingleOrDefault<SoilWaterRainDataHis>(ssql);
 
-            //沒有轉檔紀錄
-            if (dsl_new == null)
-            {
-                //如果沒有轉檔紀錄，則新增一筆執行中
-                dbDapper.Insert(SoilWaterRainDataHisTemp);
-            }
-            else//已經有轉檔紀錄
-            {
-                //更新
-                dsl_new.Min10 = SoilWaterRainDataHisTemp.Min10;
-                dsl_new.Hour = SoilWaterRainDataHisTemp.Hour;
-                dsl_new.Hour6 = SoilWaterRainDataHisTemp.Hour6;
-                dsl_new.Hour24 = SoilWaterRainDataHisTemp.Hour24;
-                dsl_new.DayRainfall = SoilWaterRainDataHisTemp.DayRainfall;
 
-                dbDapper.Update(dsl_new);
-            }
 
-            //同步寫入 WeaRainData
-            WeaRainData WeaRainDataTemp = new WeaRainData();
-            WeaRainDataTemp.STID = SoilWaterRainDataHisTemp.Stid;
-            //雨量資料(WeaRainData)的小時格式為01-24，正常Datetime小時格式為00-23，所以進行轉換
-            WeaRainDataTemp.time = Convert.ToString(Int32.Parse(SoilWaterRainDataHisTemp.Time) + 1);
-            WeaRainDataTemp.PP01 = SoilWaterRainDataHisTemp.Hour;
-            WeaRainDataTemp.PP01old = SoilWaterRainDataHisTemp.Hour;
 
-            ssql = @" select * from WeaRainData where stid = '{0}' and time = '{1}' ";
-            ssql = string.Format(ssql, WeaRainDataTemp.STID, WeaRainDataTemp.time);
-            WeaRainData WeaRainData_new = dbDapper.QuerySingleOrDefault<WeaRainData>(ssql);
-
-            //沒有轉檔紀錄
-            if (WeaRainData_new == null)
-            {
-                //如果沒有轉檔紀錄，則新增一筆
-                dbDapper.Insert(WeaRainDataTemp);
-            }
-            else//已經有轉檔紀錄
-            {
-                //更新
-                WeaRainData_new.PP01 = WeaRainDataTemp.PP01;
-                WeaRainData_new.PP01old = WeaRainDataTemp.PP01old;
-                dbDapper.Update(WeaRainData_new);
-            }
-
-            //dbDapper.Insert(wd);
-            Application.DoEvents();
         }
 
-        private void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void button28_Click(object sender, EventArgs e)
         {
-            bws.Remove(sender as BackgroundWorker);
-            if (bws.Count == 0)
+            //全部的站都要跑都要跑
+            ssql = @" select * from (
+                select stid,time,count(*) tt  from SoilWaterRainDataHis  group by stid,time
+                ) a where a.tt > 1 ";
+            //如果要跑特定的的站，要抓取需要跑資料的STID
+            //ssql = " select distinct stid from WraRainDataHis ";
+
+            List<dynamic> SoilWaterRainDataHisList = dbDapper.Query(ssql);
+
+            int iIndex = 0;
+            foreach (var StidItem in SoilWaterRainDataHisList)
             {
-                if (e.Cancelled)
+                iIndex++;
+                ShowStatus(string.Format("[{0}/{1}]{2}-{3}", iIndex, SoilWaterRainDataHisList.Count, StidItem.stid, StidItem.time));
+                Application.DoEvents();
+                ssql = @"
+                    select * from SoilWaterRainDataHis where Stid = '{0}' and time = '{1}' 
+                ";
+                ssql = string.Format(ssql, StidItem.stid, StidItem.time);
+                List<SoilWaterRainDataHis> TempList = dbDapper.Query< SoilWaterRainDataHis>(ssql);
+                foreach (SoilWaterRainDataHis item in TempList)
                 {
-                    //this.richTextBox1.Text = “執行緒已經停止”;
+                    ssql = @"delete SoilWaterRainDataHis where no = '{0}'";
+                    ssql = string.Format(ssql, item.no);
+                    dbDapper.Execute(ssql);
+
+                    
+                    Application.DoEvents();
+                    break;
                 }
-                else
-                {
-                    //this.richTextBox1.Text = “執行緒已經完成”;
-                }
+                Application.DoEvents();
             }
         }
 
-        /// <summary>
-        /// 水保局歷史資料轉檔(包含計算RT)
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void button25_Click(object sender, EventArgs e)
+        private void button29_Click(object sender, EventArgs e)
         {
-            //1.
-
-            //(1-1)每年第一次轉檔時，請執行以下SQL，清除已轉檔完成或是執行中未清除的資料
-            // delete DataStaticLog where type = 'SoilWaterRainHisSTID' and status in ('10','60')
-
-            //(1-2)delete DataStaticLog where type = 'SoilWaterRainHisSTIDTime'不需要刪除任何的LOG紀錄，
-            //因為歷年已經跑過的資料，已經有LOG，如果篩除，會全部重跑
-
-            //2.直接執行多個程式一起跑
-
-            string sStid = "";
-
-            //轉檔註記
-            //每個雨量站
-            string sSTIDLogType = "SoilWaterRainHisSTID";
-            //每個雨量站的時刻
-            string sSTIDTimeLogType = "SoilWaterRainHisSTIDTime";
 
 
-            //有輸入資料，則轉該雨量站的資料
-            if (Trans109Text.Text.Trim() != "")
+            Stockhelper.getbrokerbuysellrank(null, null);
+
+
+            return;
+
+
+
+            //開始日期
+            DateTime dt = new DateTime(2022, 6, 9);
+            //DateTime dt = new DateTime(2019, 8, 2);
+            //結束日期
+            DateTime dtEnd = new DateTime(2022, 6, 9);
+
+            ////取得資料庫最後一天
+            //ssql = " select  distinct stockdate  from stockafter where stocktype = '{0}' order by stockdate asc ";
+
+            //var vDbDate = dbDapper.ExecuteScale(string.Format(ssql, M10Const.StockType.tse));
+            //if (vDbDate != null)
+            //{
+            //  string sDbDate = vDbDate.ToString();
+            //  dt = new DateTime(Convert.ToInt32(sDbDate.Substring(0, 4))
+            //    , Convert.ToInt32(sDbDate.Substring(4, 2))
+            //    , Convert.ToInt32(sDbDate.Substring(6, 2)));
+            //}
+
+            //for (DateTime date = checkBgn; date <= checkEnd; date = date.AddDays(1))
+            for (DateTime LoopDatetime = dt; LoopDatetime <= dtEnd; LoopDatetime = LoopDatetime.AddDays(1))
             {
-                sStid = Trans109Text.Text;
-                this.Text = sStid;
-                ProcSoilWaterRainDataHis(sStid, sSTIDTimeLogType);
-            }
-            else //如果沒輸入，則由資料庫判斷尚未執行或還沒執行完全的雨量站進行轉檔
-            {
-                while (true)
+                string sLineTrans = "";
+                try
                 {
-                    try
+                    toolStripStatusLabel1.Text = string.Format("盤後資料轉檔(TSE){0}-{1}", M10Const.StockType.tse, LoopDatetime.ToString("yyyyMMdd"));
+                    Application.DoEvents();
+
+                    //判斷是否已經轉檔成功
+                    ssql = @" select * from stocklog where logtype = '{0}' and logdate = '{1}' and logstatus = 'success' ";
+                    ssql = string.Format(ssql, M10Const.StockLogType.StockAfterTse, Utils.getDateString(LoopDatetime, M10Const.DateStringType.ADT1));
+                    StockLog sl = dbDapper.QuerySingleOrDefault<StockLog>(ssql);
+                    if (sl != null)
                     {
-                        //比較該雨量站資料數量與轉檔LOG紀錄數量，如果沒轉過或是資料數不符，則進行轉檔
-                        //20210506 新增排除已經在轉檔的雨量站
-                        ssql = @" 
-                                select * from (
-                                 select * from (
-                                     select STID,count(*) ttData from SoilWaterRainDataHis group by STID
-                                 ) a 
-                                 left join (
-                                     select key2,count(*) ttLog from DataStaticLog where type = '{1}'  group by key2
-                                 ) b on a.STID = b.key2 
-                                ) r 
-                                left join DataStaticLog c  on c.type = '{0}' and c.key1 = r.STID and c.status = '10'
-                                where (ttLog != ttData or ttLog is null) and c.key1 is null    
-                                order by r.STID
-                            ";
-                        ssql = string.Format(ssql, sSTIDLogType, sSTIDTimeLogType);
-
-                        ShowStatus(string.Format("正在統計尚未轉檔到歷史資料的雨量站...."));
-
-                        List<dynamic> TransList = dbDapper.Query(ssql);
-
-                        //如果沒資料則停止
-                        if (TransList.Count() == 0) break;
-
-                        //總筆數，使用Random取得資料避免重複執行問題
-                        int iRandom = new Random().Next(0, TransList.Count() - 1);
-
-                        //預防重複執行後，LOG紀錄筆數>WeaRainData的筆數導致前面判斷未轉完畢的篩選，所以如果超過筆數，則刪除LOG重新跑
-                        int ittLog = TransList[iRandom].ttLog == null ? 0 : TransList[iRandom].ttLog;
-                        int ittData = TransList[iRandom].ttData == null ? 0 : TransList[iRandom].ttData;
-                        if (ittLog > ittData)
-                        {
-                            ssql = @" delete from DataStaticLog where type = '{1}' and key2 = '{0}' ";
-                            ssql = string.Format(ssql, TransList[iRandom].STID, sSTIDTimeLogType);
-                            dbDapper.Execute(ssql);
-                        }
-
-                        sStid = TransList[iRandom].STID;
-                        this.Text = string.Format("{0}-剩餘數量：{1}", sStid, TransList.Count());
-                        Application.DoEvents();
-
-                        //==判斷是否執行過
-                        //10:執行中 60:已完成 90:轉檔失敗
-                        //string sDataStaticLogType = "WeaRainTransHisSTID";
-                        ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}' ";
-                        ssql = string.Format(ssql, sSTIDLogType, sStid);
-                        DataStaticLog dsl_new = dbDapper.QuerySingleOrDefault<DataStaticLog>(ssql);
-
-                        //沒有轉檔紀錄
-                        if (dsl_new == null)
-                        {
-                            //如果沒有轉檔紀錄，則新增一筆執行中
-                            //寫入統計LOG
-                            dsl_new = new DataStaticLog();
-                            dsl_new.type = sSTIDLogType;
-                            dsl_new.key1 = sStid;
-                            dsl_new.key2 = "";
-                            dsl_new.status = "10";
-                            dsl_new.logtime = DateTime.Now;
-                            dbDapper.Insert(dsl_new);
-                        }
-                        else//已經有轉檔紀錄
-                        {
-                            //如果執行中，則不進行該站轉檔
-                            if (dsl_new.status == "10")
-                            {
-                                continue;
-                            }
-
-                            //重新更新為執行中
-                            dsl_new.status = "10";
-                            dbDapper.Update(dsl_new);
-                        }
-
-                        //主要轉檔程序
-                        ProcSoilWaterRainDataHis(sStid, sSTIDTimeLogType);
-
-                        //註記已經轉檔完成
-                        ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}' ";
-                        ssql = string.Format(ssql, sSTIDLogType, sStid);
-
-                        DataStaticLog dslu = dbDapper.QuerySingleOrDefault<DataStaticLog>(ssql);
-                        if (dslu != null)
-                        {
-                            dslu.status = "60";
-                            dbDapper.Update(dslu);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        //發生錯誤繼續後面的轉檔，直到全部雨量站執行完畢
+                        //System.Threading.Thread.Sleep(3000);
                         continue;
                     }
+
+                    if (Stockhelper.GetStockAfterTse(LoopDatetime) == false)
+                    {
+                        System.Threading.Thread.Sleep(15000);
+                        continue;
+                    }
+
+                    System.Threading.Thread.Sleep(5000);
+
+                    toolStripStatusLabel1.Text = string.Format("盤後資料轉檔(TSE){0}-{1}", M10Const.StockType.tse, "完成");
+                    Application.DoEvents();
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "stock after:" + sLineTrans);
+                    System.Threading.Thread.Sleep(60000);
                 }
             }
-
-            this.Text = "OK-ALL";
-
-
-
+            toolStripStatusLabel1.Text = "盤後資料轉檔(TSE)完成";
         }
-
-
-
-
-
     }
 
     public class TumdOnlineData

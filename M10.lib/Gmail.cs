@@ -52,7 +52,7 @@ namespace M10.lib
         MySmtp.EnableSsl = true;//開啟ssl
         MySmtp.Send(message);
       }
-      catch (Exception)
+      catch (Exception ex)
       {
         bSendResult = false;
       }

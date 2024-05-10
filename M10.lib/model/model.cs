@@ -777,8 +777,59 @@ namespace M10.lib.model
 
     }
 
+    [Table("WraRainDataNew")]
+    public class WraRainDataNew
+    {
+        public string STID { get; set; }
 
+        public string rTime { get; set; }
 
+        public string Min10 { get; set; }
+
+        public string OneHour { get; set; }
+
+        public string SixHour { get; set; }
+
+        public string Hour24 { get; set; }
+
+        public string DayRainfall { get; set; }
+
+        public string Effective { get; set; }
+
+        public string RT { get; set; }
+
+        public string ETR3 { get; set; }
+
+    }
+
+    [Table("WraRainDataHis")]
+    public class WraRainDataHis
+    {
+        //設定key
+        [Key]
+        public long no { get; set; }
+
+        public string Stid { get; set; }
+
+        public string Time { get; set; }
+
+        public decimal Min10 { get; set; }
+
+        public decimal Hour { get; set; }
+
+        public decimal Hour3 { get; set; }
+
+        public decimal Hour6 { get; set; }
+
+        public decimal Hour12 { get; set; }
+
+        public decimal Hour24 { get; set; }
+
+        public decimal DayRainfall { get; set; }
+
+        public decimal RT { get; set; }
+
+    }
 
 
 

@@ -176,5 +176,14 @@ namespace M10.lib
 
         }
 
+
+        public static void test() 
+        {
+
+
+            System.IO.File.Copy(@"G:\我的雲端硬碟\Project\M11\Data\ProjectData\Ccd\CcdHistory\DS002_2\2024\03\30\DS002_2-20240330-000000.jpg", @"E:\123.jpg", true);
+
+        }
+
     }
 }
