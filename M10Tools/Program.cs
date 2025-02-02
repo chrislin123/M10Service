@@ -6,17 +6,19 @@ using System.Windows.Forms;
 
 namespace M10Tools
 {
-  static class Program
-  {
-    /// <summary>
-    /// 應用程式的主要進入點。
-    /// </summary>
-    [STAThread]
-    static void Main()
+    static class Program
     {
-      Application.EnableVisualStyles();
-      Application.SetCompatibleTextRenderingDefault(false);
-      Application.Run(new MainForm());
+        /// <summary>
+        /// 應用程式的主要進入點。
+        /// </summary>
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            //Application.Run(new MainForm());
+
+            Application.Run(new FormTest());
+        }
     }
-  }
 }

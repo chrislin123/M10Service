@@ -173,7 +173,7 @@ namespace M10.lib
 
                 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return null;
             }

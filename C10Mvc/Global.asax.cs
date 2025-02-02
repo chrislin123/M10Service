@@ -9,6 +9,9 @@ using System.Web.Routing;
 using Quartz;
 using C10Mvc.Controllers;
 using NLog;
+using Quartz.Impl.Triggers;
+using Quartz.Impl;
+using static Quartz.Logging.OperationName;
 namespace C10Mvc
 {
     public class WebApiApplication : System.Web.HttpApplication
@@ -24,6 +27,14 @@ namespace C10Mvc
             //資料回覆為Json格式
             GlobalConfiguration.Configuration.Formatters.XmlFormatter.SupportedMediaTypes.Clear();
 
+            MyJobs();
+        }
+
+
+        private static async void MyJobs()
+        {
+            
+
             //Quartz Log與Nlog綁定
             Common.Logging.LogManager.Adapter = new Common.Logging.Simple.ConsoleOutLoggerFactoryAdapter { Level = Common.Logging.LogLevel.Info };
 
@@ -32,7 +43,8 @@ namespace C10Mvc
 
             //建立以Ram為儲存體的排程器
             ISchedulerFactory schedulerFactory = new Quartz.Impl.StdSchedulerFactory();
-            IScheduler _Scheduler = schedulerFactory.GetScheduler();
+            
+            IScheduler _Scheduler = await schedulerFactory.GetScheduler();
             //WithCronSchedule：https://www.quartz-scheduler.net/documentation/quartz-2.x/tutorial/crontriggers.html
 
 
@@ -95,18 +107,31 @@ namespace C10Mvc
                                     .Build();
 
 
+            //測試JOB的執行
+            //描述工作
+            IJobDetail jobDetail = new JobDetailImpl("mylittlejob", null, typeof(StockInfoTask));
+            //触发器
+            ISimpleTrigger trigger = new SimpleTriggerImpl("mytrigger",
+                null,
+                DateTime.Now,
+                null,
+                SimpleTriggerImpl.RepeatIndefinitely,                
+                TimeSpan.FromSeconds(3));
+            //执行
+            await _Scheduler.ScheduleJob(jobDetail, trigger);
+
 
 
             // 把工作加入排程
-            _Scheduler.ScheduleJob(jobStockInfo, triggerStockInfo);
-            _Scheduler.ScheduleJob(jobStockThreeTrade, triggerStockThreeTrade);
-            _Scheduler.ScheduleJob(jobStockAfter, triggerStockAfter);
+            await _Scheduler.ScheduleJob(jobStockInfo, triggerStockInfo);
+            await _Scheduler.ScheduleJob(jobStockThreeTrade, triggerStockThreeTrade);
+            await _Scheduler.ScheduleJob(jobStockAfter, triggerStockAfter);
             //(暫停使用，因為無法驗證google grecaptcha)
             //_Scheduler.ScheduleJob(jobStockBrokerBS, triggerStockBrokerBS);
-            _Scheduler.ScheduleJob(jobStockAfterRush, triggerStockAfterRush);
+            await _Scheduler.ScheduleJob(jobStockAfterRush, triggerStockAfterRush);
 
             // 啟動排程器
-            _Scheduler.Start();
+            await _Scheduler.Start();
 
 
             //===========================================
@@ -145,12 +170,6 @@ namespace C10Mvc
             ////7.0銷毀內置的Job和Trigger
             //scheduler.Shutdown(true);
             //Console.ReadKey();
-
-
-
-
-
-
         }
 
 

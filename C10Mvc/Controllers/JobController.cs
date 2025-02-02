@@ -12,6 +12,9 @@ using NLog;
 using M10.lib.model;
 using HtmlAgilityPack;
 using System.IO;
+using System.Threading.Tasks;
+using System.Diagnostics;
+using System.Web.UI.WebControls;
 
 namespace C10Mvc.Controllers
 {
@@ -130,7 +133,9 @@ namespace C10Mvc.Controllers
 
         }
 
-        public void Execute(IJobExecutionContext context)
+        //public Task  execute()  
+
+        public async Task Execute(IJobExecutionContext context)
         {
             try
             {
@@ -176,7 +181,7 @@ namespace C10Mvc.Controllers
 
         }
 
-        public void Execute(IJobExecutionContext context)
+        public async Task Execute(IJobExecutionContext context)
         {
             try
             {
@@ -225,7 +230,7 @@ namespace C10Mvc.Controllers
             logger.Info("END DoStockThreeTrade()");
         }
 
-        public void Execute(IJobExecutionContext context)
+        public async Task Execute(IJobExecutionContext context)
         {
             try
             {
@@ -308,7 +313,7 @@ namespace C10Mvc.Controllers
         }
 
 
-        public void Execute(IJobExecutionContext context)
+        public async Task Execute(IJobExecutionContext context)
         {
             try
             {
@@ -343,7 +348,7 @@ namespace C10Mvc.Controllers
         }
 
 
-        public void Execute(IJobExecutionContext context)
+        public async Task Execute(IJobExecutionContext context)
         {
             try
             {
@@ -378,7 +383,7 @@ namespace C10Mvc.Controllers
 
 
 
-        public void Execute(IJobExecutionContext context)
+        public async Task Execute(IJobExecutionContext context)
         {
             try
             {
@@ -391,6 +396,48 @@ namespace C10Mvc.Controllers
             }
         }
     }
+
+
+    public class MyJob : IJob
+    {
+        public async Task Execute(IJobExecutionContext context)
+        {
+
+            //await test();
+
+            Debug.WriteLine("Hello at " + DateTime.Now.ToString());
+
+
+
+            //await Console.Out.WriteLineAsync("Hello at " + DateTime.Now.ToString());
+        }
+
+        public async Task test() {
+            var client = new HttpClient();
+
+            
+            //Task<string> getStringTask = client.GetStringAsync("https://learn.microsoft.com/dotnet");
+            string apiUrl = "https://learn.microsoft.com/dotnet";
+            HttpResponseMessage response = await client.GetAsync(apiUrl);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string content = await response.Content.ReadAsStringAsync();
+                // 處理回應內容
+                Debug.WriteLine("async at " + content.ToString());
+            }
+
+
+
+            //string Contenets = await getStringTask;
+
+            
+        }
+    }
+
+
+
+
 
 
 

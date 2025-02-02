@@ -6849,6 +6849,41 @@ namespace M10Tools
             }
             toolStripStatusLabel1.Text = "盤後資料轉檔(TSE)完成";
         }
+
+        private void button30_Click(object sender, EventArgs e)
+        {
+            string sSavePath = @"D:\專案資料\M15_113\20240510_四月份資料補遺處理\Temp\";
+            string sOrgFilePath = @"D:\專案資料\M15_113\20240510_四月份資料補遺處理\2120_10min_a_ds_data.xml";
+            string sOrgTime = "2024-04-03 21:20:00";
+            FileInfo fiOrg = new FileInfo(sOrgFilePath);
+
+
+            DateTime dtStart = DateTime.ParseExact("202404032130", "yyyyMMddHHmm", null);
+            DateTime dtFinish = DateTime.ParseExact("202404251100", "yyyyMMddHHmm", null);
+
+
+            for (DateTime x = dtStart; x <= dtFinish; x = x.AddMinutes(10))
+            {
+                //產生當日資料夾
+                string sDayFolder = Path.Combine(sSavePath, x.ToString("MMdd"));
+                Directory.CreateDirectory(sDayFolder);
+
+                //複製XML檔案，另存在當日資料夾，修改檔案名稱
+                string sNewFile = Path.Combine(sDayFolder, string.Format("{0}_10min_a_ds_data.xml", x.ToString("HHmm")));
+                fiOrg.CopyTo(sNewFile, true);
+
+                //取代XML檔案內容，修改為目前時段資料
+                
+                string sNewTime = x.ToString("yyyy-MM-dd HH:mm:00");
+
+                string text = File.ReadAllText(sNewFile);
+                text = text.Replace(sOrgTime, sNewTime);
+                File.WriteAllText(sNewFile, text);
+
+            }
+
+
+        }
     }
 
     public class TumdOnlineData
