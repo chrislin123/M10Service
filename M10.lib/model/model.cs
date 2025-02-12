@@ -832,6 +832,27 @@ namespace M10.lib.model
     }
 
 
+    [Table("BasStationData")]
+    public class BasStationData
+    {
+        //設定key
+        [Key]
+        public int no { get; set; }
+
+        public string stid { get; set; }
+
+        public string stname { get; set; }
+
+        public string county { get; set; }
+
+        public string lat { get; set; }
+
+        public string lng { get; set; }
+
+        public string enable { get; set; }
+
+    }
+
 
 
 
