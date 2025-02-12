@@ -302,7 +302,7 @@
             this.btnImpWeatherData.Name = "btnImpWeatherData";
             this.btnImpWeatherData.Size = new System.Drawing.Size(254, 48);
             this.btnImpWeatherData.TabIndex = 27;
-            this.btnImpWeatherData.Text = "(1)匯入雨量資料(auto+氣象站cwb)";
+            this.btnImpWeatherData.Text = "(1)匯入雨量資料(自動站auto+氣象站cwb)";
             this.btnImpWeatherData.UseVisualStyleBackColor = true;
             this.btnImpWeatherData.Click += new System.EventHandler(this.btnImpWeatherData_Click);
             // 

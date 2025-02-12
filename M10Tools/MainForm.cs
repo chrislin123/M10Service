@@ -1236,6 +1236,8 @@ namespace M10Tools
         /// <param name="e"></param>
         private void btnImpWeatherData_Click(object sender, EventArgs e)
         {
+            //1. auto站跟氣象站cwb都放到"程式根目錄\Weather"目錄下，開啟轉檔
+
             //時間格式已經調整為00-23，但是auto站跟氣象站cwb都是1-24，所以轉檔要注意
             //auto站(全年原始)與氣象站cwb
 
@@ -1366,7 +1368,10 @@ namespace M10Tools
         /// <param name="e"></param>
         private void btnTransWeaRainStatic_Click(object sender, EventArgs e)
         {
-            ShowStatus("取動取得所有要執行的雨量站");
+            //1.for迴圈中，調整要跑的年度後，直接執行，只跑單一程式         
+            
+
+            ShowStatus("取得所有要執行的雨量站");
             //全部的站都要跑都要跑
             ssql = " select distinct stid from WeaRainData order by STID ";
             //ssql = " select distinct stid from WeaRainData where stid = '00H710' order by STID ";
@@ -1383,9 +1388,8 @@ namespace M10Tools
 
                 //StidItem.stid = "466880";
                 //每個STID都要跑1987-2017的資料
-                //每個STID都要跑1987-2017的資料
                 //20210504 雨量站統計資訊年度更新，要改成要跑的年度
-                for (int y = 2023; y <= 2023; y++)
+                for (int y = 2024; y <= 2024; y++)
                 {
                     Application.DoEvents();
                     //雨量站
@@ -1865,9 +1869,9 @@ namespace M10Tools
                         dbDapper.Update(dsl_new);
                     }
 
-                    DateTime dtStart = DateTime.ParseExact("2022010100", "yyyyMMddHH", null);
+                    DateTime dtStart = DateTime.ParseExact("2023080100", "yyyyMMddHH", null);
                     //dtStart = DateTime.ParseExact("2017060200", "yyyyMMddHH", null);
-                    DateTime dtFinish = DateTime.ParseExact("2023123123", "yyyyMMddHH", null);
+                    DateTime dtFinish = DateTime.ParseExact("2024123123", "yyyyMMddHH", null);
                     //dtFinish = DateTime.ParseExact("2009080000", "yyyyMMddHH", null);
 
 
@@ -5682,6 +5686,7 @@ namespace M10Tools
         /// <param name="e"></param>
         private void button24_Click(object sender, EventArgs e)
         {
+            //1. 水保局CVS都放到"程式根目錄\SoilWaterRainDataHis"目錄下，開啟轉檔
 
             string sConstDirectoryPath = Directory.GetCurrentDirectory() + @"\SoilWaterRainDataHis";
             Directory.CreateDirectory(sConstDirectoryPath);
@@ -6387,6 +6392,7 @@ namespace M10Tools
         /// <param name="e"></param>
         private void button27_Click(object sender, EventArgs e)
         {
+            //1. 水利署CVS都放到"程式根目錄\WraRainDataHis"目錄下，開啟轉檔
 
             string sConstDirectoryPath = Directory.GetCurrentDirectory() + @"\WraRainDataHis";
             Directory.CreateDirectory(sConstDirectoryPath);

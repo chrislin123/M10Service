@@ -16,9 +16,9 @@ namespace M10Tools
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new MainForm());
+            Application.Run(new MainForm());
 
-            Application.Run(new FormTest());
+            //Application.Run(new FormTest());
         }
     }
 }
