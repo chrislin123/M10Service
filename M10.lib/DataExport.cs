@@ -421,12 +421,19 @@ namespace M10.lib
                                 CellValue = new CellValue(col)
                             };
 
-                            //判斷是否為數值欄位
-                            if (IsNumeric(col))
+                            if (col != null)
                             {
-                                cell.DataType = CellValues.Number;
+                                //排除科學符號"E"避免Excel顯示異常
+                                if (col.Contains("E") == false && col.Contains("e") == false)
+                                {
+                                    //判斷是否為數值欄位
+                                    if (IsNumeric(col))
+                                    {
+                                        cell.DataType = CellValues.Number;
+                                    }
+                                }
                             }
-
+                            
 
                             newRow.AppendChild(cell);
                         }
