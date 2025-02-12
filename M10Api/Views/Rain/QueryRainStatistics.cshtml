@@ -35,11 +35,21 @@
                 }*@
 
             <div class="form-inline">
-                <select id="Product" name="county" class="form-control"></select>
-                <button class="btn btn-default" id="btnSearch" onclick="Query();">查詢</button>
-                <label for="keyWord">密碼：</label>
-                <input type="text" id="txtpass" name="txtpass" value="" /> 
-                <button class="btn btn-default" id="btnSearch" onclick="Export();">資料匯出</button>   
+                <label for="keyWord">雨量站：</label>
+                <select id="Station" name="Station" class="form-control"></select>
+                <button class="btn btn-success" id="btnSearch" onclick="Query();">查詢</button>
+                <label for="keyWord">搜尋(雨量站代碼)：</label>
+                <input type="text" id="txtSTID" value="" />
+                <button class="btn btn-success" id="btnSearchSTID" onclick="SearchSTID();">搜尋雨量站</button>
+                <br />
+                <label for="keyWord">匯出密碼：</label>
+                <input type="text" id="txtpass" name="txtpass" value="" />
+                <button class="btn btn-success" id="btnSearch" onclick="Export();">單站匯出</button>
+                <select id="ExpAllType" class="form-control">
+                    <option value="ExpAllAvgRain" selected="selected">僅匯出歷年平均雨量資料</option>
+                    <option value="ExpAllStaResult">匯出各年度統計結果</option>
+                </select>
+                <button class="btn btn-success" id="btnExpAll" onclick="ExportAll();">全部匯出</button>
             </div>
             @*</div>*@
         </div>
@@ -195,13 +205,13 @@
 
     $(document).ready(function () {
         $.getJSON('@Url.Action("QueryRainStatisticsGetStidDDL")', { cityId: "test" }, function (data) {
-            $('#Product').empty();
+            $('#Station').empty();
             $.each(data, function (i, item) {
-                $('#Product').append($('<option></option>').val(item.Value).text(item.Text));
+                $('#Station').append($('<option></option>').val(item.Value).text(item.Text));
             });
 
             //設定原本選擇的項目
-            $('#Product').val("@ViewBag.SelectCountry");
+            $('#Station').val("@ViewBag.SelectCountry");
         });
 
         @*$.getJSON('@Url.Action("getAlertSet")', null, function (data) {
@@ -216,7 +226,7 @@
 
         //指定60秒刷新一次
         //setInterval(function () {
-        //    if ($("#Product").val() != null) {
+        //    if ($("#Station").val() != null) {
         //        Query();
         //    }
         //}, 60000);
@@ -224,7 +234,7 @@
     });
 
     function Query() {
-        location.href = '@Url.Action("QueryRainStatistics")' + '?stid=' + $("#Product").val();
+        location.href = '@Url.Action("QueryRainStatistics")' + '?stid=' + $("#Station").val();
     }
 
     function SetAlert() {
@@ -243,14 +253,6 @@
 
 
     function Export() {
-        if ($("#StartDate").val() == "" || $("#EndDate").val() == "") {
-            alert("請選擇起訖日期。");
-            return;
-        }
-        if ($("#Country").val() == "") {
-            alert("請選擇縣市。");
-            return;
-        }
 
         $.ajax({
             type: 'GET',
@@ -267,12 +269,54 @@
                 var sEndDate = $("#EndDate").val();
                 var sCountry = $("#Country").val();
 
-                location.href = '@Url.Action("DownRainStatistics")' + '?stid=' + $("#Product").val();
+                location.href = '@Url.Action("DownRainStatistics")' + '?stid=' + $("#Station").val();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 alert(errorThrown);
             },
         });
+
+    }
+
+
+    function ExportAll() {
+
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("checkPass")',
+            data: { pass: $("#txtpass").val() },
+            dataType: 'JSON',
+            success: function (response) {
+                if (response.pass == "N") {
+                    alert("密碼不符。");
+                    return;
+                }
+
+                //下載資料
+                location.href = '@Url.Action("DownRainStatisticsAll")' + '?ExpAllType=' + $("#ExpAllType").val();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+            },
+        });
+
+        //<select id="ExpAllType" class="form-control">
+        //    <option value="ExpAllAvgRain" selected="selected">僅匯出歷年平均雨量資料</option>
+        //    <option value="ExpAllStaResult">匯出各年度統計結果</option>
+        //</select>
+
+    }
+
+    function SearchSTID() {
+      $.getJSON('@Url.Action("GetStationDDL")', { STID :$("#txtSTID").val()}, function (data) {
+        $('#Station').empty();
+        $.each(data, function (i, item) {
+          $('#Station').append($('<option></option>').val(item.Value).text(item.Text));
+        });
+      });
+
+
+      //Query();
 
     }
 

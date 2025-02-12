@@ -13,6 +13,7 @@ using M10.lib.model;
 using System.Data;
 using System.Dynamic;
 using M10.lib;
+using Microsoft.Ajax.Utilities;
 
 
 namespace M10Api.Controllers
@@ -408,7 +409,9 @@ namespace M10Api.Controllers
             if (string.IsNullOrEmpty(delaytime) == false) ViewBag.delaytime = delaytime;
             if (string.IsNullOrEmpty(coefficient) == false) ViewBag.coefficient = coefficient;
 
-            ssql = @" select * from RtiDetail where 1=1 
+            ssql = @" select RtiDetail.*,BasStationData.stname from RtiDetail 
+                        left join BasStationData on RtiDetail.station = BasStationData.stid
+                        where 1=1 
                         and delaytime = @delaytime 
                         and coefficient = @coefficient 
                         and version = 'new' 
@@ -431,7 +434,9 @@ namespace M10Api.Controllers
             if (string.IsNullOrEmpty(delaytime) == false) ViewBag.delaytime = delaytime;
             if (string.IsNullOrEmpty(coefficient) == false) ViewBag.coefficient = coefficient;
 
-            ssql = @" select * from Rti3Detail where 1=1 
+            ssql = @" select Rti3Detail.*,BasStationData.stname from Rti3Detail 
+                        left join BasStationData on Rti3Detail.station = BasStationData.stid
+                        where 1=1 
                         and delaytime = @delaytime 
                         and coefficient = @coefficient 
                         and version = 'new' 
@@ -1272,6 +1277,258 @@ namespace M10Api.Controllers
                 context.Response.AddHeader("Content-Disposition", string.Format("attachment;filename={0}", filename));
                 Response.End();
             }
+
+            return null;
+        }
+
+        public ActionResult DownRainStatisticsAll(string ExpAllType)
+        {
+
+            //取得Excel需要的資料
+            string ssql = @" 
+                        select WeaRainStatistics.*, BasStationData.stname from WeaRainStatistics 
+                        left join BasStationData on WeaRainStatistics.stid = BasStationData.stid
+                        order by WeaRainStatistics.stid
+                    ";
+            List<BasStationData> lBasStationData = dbDapper.Query<BasStationData>(ssql);
+
+            ssql = @" 
+                        select * from WeaRainStatistics 
+                        order by stid
+                    ";
+            List<WeaRainStatistics> wrs = dbDapper.Query<WeaRainStatistics>(ssql);
+
+            //取得所有站號
+            List<string> allStid = wrs.DistinctBy(x => x.stid).Select(x => x.stid).ToList<string>();
+
+            switch (ExpAllType)
+            {
+                //僅匯出歷年平均雨量資料
+                case "ExpAllAvgRain":
+                                        
+                    List<WeaRainStatistics> wrsAllByStid = new List<WeaRainStatistics>();
+                    //每個站號進行統計
+                    foreach (string item in allStid)
+                    {   
+                        //取得測站名稱
+                        BasStationData bsd = lBasStationData.FirstOrDefault(x => x.stid == item);
+
+                        //取得某個站號雨量統計資料
+                        List<WeaRainStatistics> dataByStid = wrs.Where(x => x.stid == item).ToList();
+
+                        //計算平均值
+                        List<decimal> m01List = dataByStid.Select(c => c.m01).ToList<decimal>();
+                        List<decimal> m02List = dataByStid.Select(c => c.m02).ToList<decimal>();
+                        List<decimal> m03List = dataByStid.Select(c => c.m03).ToList<decimal>();
+                        List<decimal> m04List = dataByStid.Select(c => c.m04).ToList<decimal>();
+                        List<decimal> m05List = dataByStid.Select(c => c.m05).ToList<decimal>();
+                        List<decimal> m06List = dataByStid.Select(c => c.m06).ToList<decimal>();
+                        List<decimal> m07List = dataByStid.Select(c => c.m07).ToList<decimal>();
+                        List<decimal> m08List = dataByStid.Select(c => c.m08).ToList<decimal>();
+                        List<decimal> m09List = dataByStid.Select(c => c.m09).ToList<decimal>();
+                        List<decimal> m10List = dataByStid.Select(c => c.m10).ToList<decimal>();
+                        List<decimal> m11List = dataByStid.Select(c => c.m11).ToList<decimal>();
+                        List<decimal> m12List = dataByStid.Select(c => c.m12).ToList<decimal>();
+                        List<decimal> mavgList = dataByStid.Select(c => c.mavg).ToList<decimal>();
+                        List<decimal> yearsumList = dataByStid.Select(c => c.yearsum).ToList<decimal>();
+
+                        WeaRainStatistics wrsItem = new WeaRainStatistics();
+                        wrsItem.stid = item;
+                        //拿Year欄位當作測站名稱                  
+                        wrsItem.year = bsd == null ? "" : bsd.stname;
+                        wrsItem.m01 = RainControlUtil.CalcRainAvg(m01List);
+                        wrsItem.m02 = RainControlUtil.CalcRainAvg(m02List);
+                        wrsItem.m03 = RainControlUtil.CalcRainAvg(m03List);
+                        wrsItem.m04 = RainControlUtil.CalcRainAvg(m04List);
+                        wrsItem.m05 = RainControlUtil.CalcRainAvg(m05List);
+                        wrsItem.m06 = RainControlUtil.CalcRainAvg(m06List);
+                        wrsItem.m07 = RainControlUtil.CalcRainAvg(m07List);
+                        wrsItem.m08 = RainControlUtil.CalcRainAvg(m08List);
+                        wrsItem.m09 = RainControlUtil.CalcRainAvg(m09List);
+                        wrsItem.m10 = RainControlUtil.CalcRainAvg(m10List);
+                        wrsItem.m11 = RainControlUtil.CalcRainAvg(m11List);
+                        wrsItem.m12 = RainControlUtil.CalcRainAvg(m12List);
+                        wrsItem.mavg = RainControlUtil.CalcRainAvg(mavgList);
+                        wrsItem.yearsum = RainControlUtil.CalcRainAvg(yearsumList);
+
+                        wrsAllByStid.Add(wrsItem);
+                    }
+
+                    //準備Excel資料
+                    List<string> head = new List<string>();
+                    head.Add("測站編號");
+                    head.Add("測站名稱");
+                    head.Add("1月");
+                    head.Add("2月");
+                    head.Add("3月");
+                    head.Add("4月");
+                    head.Add("5月");
+                    head.Add("6月");
+                    head.Add("7月");
+                    head.Add("8月");
+                    head.Add("9月");
+                    head.Add("10月");
+                    head.Add("11月");
+                    head.Add("12月");
+                    head.Add("月平均");
+                    head.Add("年雨量");
+
+                    List<string[]> datas = new List<string[]>();
+                    foreach (WeaRainStatistics item in wrsAllByStid)
+                    {
+                        List<string> cols = new List<string>();
+                        cols.Add(item.stid);
+                        cols.Add(item.year);
+                        cols.Add(item.m01 == -99 ? "*" : item.m01.ToString());
+                        cols.Add(item.m02 == -99 ? "*" : item.m02.ToString());
+                        cols.Add(item.m03 == -99 ? "*" : item.m03.ToString());
+                        cols.Add(item.m04 == -99 ? "*" : item.m04.ToString());
+                        cols.Add(item.m05 == -99 ? "*" : item.m05.ToString());
+                        cols.Add(item.m06 == -99 ? "*" : item.m06.ToString());
+                        cols.Add(item.m07 == -99 ? "*" : item.m07.ToString());
+                        cols.Add(item.m08 == -99 ? "*" : item.m08.ToString());
+                        cols.Add(item.m09 == -99 ? "*" : item.m09.ToString());
+                        cols.Add(item.m10 == -99 ? "*" : item.m10.ToString());
+                        cols.Add(item.m11 == -99 ? "*" : item.m11.ToString());
+                        cols.Add(item.m12 == -99 ? "*" : item.m12.ToString());
+
+                        cols.Add(item.mavg.ToString());
+                        cols.Add(item.yearsum == -99 ? "*" : item.yearsum.ToString());
+                        datas.Add(cols.ToArray());
+                    }
+
+                    //產生Excel
+
+                    //產生檔案路徑
+                    string sTempPath = Path.Combine(Server.MapPath("~/temp/"), DateTime.Now.ToString("yyyyMMdd"));
+                    //建立資料夾
+                    Directory.CreateDirectory(sTempPath);
+
+                    string sFileName = "WeaRainStatisticsAll_" + Guid.NewGuid().ToString() + ".xlsx";
+                    string sSaveFilePath = Path.Combine(sTempPath, "WeaRainStatisticsAll_" + Guid.NewGuid().ToString() + ".xlsx");
+
+                    DataExport de = new DataExport();
+                    Boolean bSuccess = de.ExportListToExcel(sSaveFilePath, head, datas);
+
+                    //下載Excel
+                    if (bSuccess)
+                    {
+                        string filename = string.Format("WeaRainStatisticsAll_雨量站統計資料僅匯出歷年平均雨量資料.xlsx", ExpAllType, ExpAllType);
+
+                        //***** 下載檔案過大，使用特殊方法 *****
+                        HttpContext context = System.Web.HttpContext.Current;
+                        context.Response.TransmitFile(sSaveFilePath);
+                        context.Response.ContentType = "application/vnd.ms-excel";
+                        context.Response.AddHeader("Content-Disposition", string.Format("attachment;filename={0}", filename));
+                        Response.End();
+                    }
+
+                    break;
+
+                //匯出個年度統計結果
+                case "ExpAllStaResult":
+
+                    List<string[]> datasResult = new List<string[]>();
+                    List<WeaRainStatistics> wrsAllResultByStid = new List<WeaRainStatistics>();
+                    //每個站號進行統計
+                    foreach (string item in allStid)
+                    {
+                        //取得測站名稱
+                        BasStationData bsd = lBasStationData.FirstOrDefault(x => x.stid == item);
+
+                        //取得某個站號雨量統計資料
+                        List<WeaRainStatistics> dataByStids = wrs.Where(x => x.stid == item).ToList();
+
+                        foreach (var dataByStid in dataByStids)
+                        {
+                            List<string> cols = new List<string>();
+                            cols.Add(item);
+                            cols.Add(bsd == null ? "" : bsd.stname);
+                            cols.Add(dataByStid.year);
+                            cols.Add(dataByStid.m01 == -99 ? "*" : dataByStid.m01.ToString());
+                            cols.Add(dataByStid.m02 == -99 ? "*" : dataByStid.m02.ToString());
+                            cols.Add(dataByStid.m03 == -99 ? "*" : dataByStid.m03.ToString());
+                            cols.Add(dataByStid.m04 == -99 ? "*" : dataByStid.m04.ToString());
+                            cols.Add(dataByStid.m05 == -99 ? "*" : dataByStid.m05.ToString());
+                            cols.Add(dataByStid.m06 == -99 ? "*" : dataByStid.m06.ToString());
+                            cols.Add(dataByStid.m07 == -99 ? "*" : dataByStid.m07.ToString());
+                            cols.Add(dataByStid.m08 == -99 ? "*" : dataByStid.m08.ToString());
+                            cols.Add(dataByStid.m09 == -99 ? "*" : dataByStid.m09.ToString());
+                            cols.Add(dataByStid.m10 == -99 ? "*" : dataByStid.m10.ToString());
+                            cols.Add(dataByStid.m11 == -99 ? "*" : dataByStid.m11.ToString());
+                            cols.Add(dataByStid.m12 == -99 ? "*" : dataByStid.m12.ToString());
+
+                            cols.Add(dataByStid.mavg.ToString());
+                            cols.Add(dataByStid.yearsum == -99 ? "*" : dataByStid.yearsum.ToString());
+                            cols.Add(dataByStid.max1.ToString());
+                            cols.Add(dataByStid.max1date);
+                            cols.Add(dataByStid.max2.ToString());
+                            cols.Add(dataByStid.max2date);
+                            cols.Add(dataByStid.max3.ToString());
+                            cols.Add(dataByStid.max3date);
+                            cols.Add(dataByStid.raindatecount.ToString());
+
+                            datasResult.Add(cols.ToArray());
+                        }
+                    }
+
+                    //準備Excel資料
+                    List<string> headResult = new List<string>();
+                    headResult.Add("測站編號");
+                    headResult.Add("測站名稱");
+                    headResult.Add("年份");
+                    headResult.Add("1月");
+                    headResult.Add("2月");
+                    headResult.Add("3月");
+                    headResult.Add("4月");
+                    headResult.Add("5月");
+                    headResult.Add("6月");
+                    headResult.Add("7月");
+                    headResult.Add("8月");
+                    headResult.Add("9月");
+                    headResult.Add("10月");
+                    headResult.Add("11月");
+                    headResult.Add("12月");
+                    headResult.Add("月平均");
+                    headResult.Add("年雨量");
+                    headResult.Add("最大1日雨量");
+                    headResult.Add("最大1日發生日");
+                    headResult.Add("最大2日雨量");
+                    headResult.Add("最大2日發生日");
+                    headResult.Add("最大3日雨量");
+                    headResult.Add("最大3日發生日");
+                    headResult.Add("降雨日數");
+
+                    //產生Excel
+
+                    //產生檔案路徑
+                    string sTempPathResult = Path.Combine(Server.MapPath("~/temp/"), DateTime.Now.ToString("yyyyMMdd"));
+                    //建立資料夾
+                    Directory.CreateDirectory(sTempPathResult);
+
+                    string sFileNameResult = "WeaRainStatisticsAllResult_" + Guid.NewGuid().ToString() + ".xlsx";
+                    string sSaveFilePathResult = Path.Combine(sTempPathResult, "WeaRainStatisticsAll_" + Guid.NewGuid().ToString() + ".xlsx");
+
+                    DataExport deResult = new DataExport();
+                    Boolean bSuccessResult = deResult.ExportListToExcel(sSaveFilePathResult, headResult, datasResult);
+
+                    //下載Excel
+                    if (bSuccessResult)
+                    {
+                        string filename = string.Format("WeaRainStatisticsAllResult_雨量站統計資料匯出各年度統計結果.xlsx", ExpAllType, ExpAllType);
+
+                        //***** 下載檔案過大，使用特殊方法 *****
+                        HttpContext context = System.Web.HttpContext.Current;
+                        context.Response.TransmitFile(sSaveFilePathResult);
+                        context.Response.ContentType = "application/vnd.ms-excel";
+                        context.Response.AddHeader("Content-Disposition", string.Format("attachment;filename={0}", filename));
+                        Response.End();
+                    }
+
+                    break;
+
+            }
+            
 
             return null;
         }
