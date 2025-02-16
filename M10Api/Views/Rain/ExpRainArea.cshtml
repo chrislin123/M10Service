@@ -18,11 +18,10 @@
 <div class="row">
     <div class="col-md-12">
         <h1 class="page-header">
-            雨場分割資料(1987~2023)
+            雨場分割資料(1987~2024)
         </h1>
     </div>
 </div>
-
 
 <div class="panel panel-info">
     <div class="panel-heading">匯出</div>
@@ -47,6 +46,42 @@
         </div>
     </div>
 </div>
+<div class="panel panel-info">
+    <div class="panel-heading">條件匯出</div>
+    <div class="panel-body">
+        <div class="col-md-12">
+            <div class="form-inline">
+                <label for="keyWord">匯出年度：</label>
+                <select id="TimeStart" class="form-control">
+                    @*<option value="2020">2020</option>
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                    <option value="2023">2023</option>
+                    <option value="2024" selected="selected">2024</option>*@
+                </select>
+                <label for="keyWord">至</label>
+                <select id="TimeEnd" class="form-control">
+                    @*<option value="2020">2020</option>
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                    <option value="2023">2023</option>
+                    <option value="2024" selected="selected">2024</option>*@
+                </select>
+                <label for="keyWord">匯出單位：</label>
+                <select id="UnitType" class="form-control">
+                    <option value="A1" selected="selected">氣象署自動站</option>
+                    <option value="A2">氣象署氣象站</option>
+                    <option value="A3">水保署</option>
+                    <option value="A4">水利署</option>
+                    <option value="" >全部</option>
+                </select>
+                <button class="btn btn-default" id="btnExport" onclick="ExportOption();">條件資料匯出</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     $(document).ready(function () {
 
@@ -57,6 +92,14 @@
                 $('#Station').append($('<option></option>').val(item.Value).text(item.Text));
             });
         });
+
+        var year = 2024;
+        for (let i = 1987; i <= year; i++) {
+            $('#TimeStart').append($('<option></option>').val(i).text(i));
+            $('#TimeEnd').append($('<option></option>').val(i).text(i));
+        }
+        $('#TimeStart').val(year);
+        $('#TimeEnd').val(year);
 
     });
 
@@ -108,5 +151,30 @@
                 alert(errorThrown);
             },
         });
+    }
+
+    function ExportOption() {
+
+        location.href = '@Url.Action("DownRainAreaOption")' + '?TimeStart=' + $("#TimeStart").val()
+            + '&TimeEnd=' + $("#TimeEnd").val() + '&UnitType=' + $("#UnitType").val()    ;
+
+
+        @*$.ajax({
+            type: 'GET',
+            url: '@Url.Action("checkPass")',
+            data: { pass: $("#txtpass").val() },
+            dataType: 'JSON',
+            success: function (response) {
+                if (response.pass == "N") {
+                    alert("密碼不符。");
+                    return;
+                }
+
+                location.href = '@Url.Action("DownRainAreaAll")';
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                alert(errorThrown);
+            },
+        });*@
     }
 </script>

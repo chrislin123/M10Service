@@ -14,6 +14,7 @@ using System.Data;
 using System.Dynamic;
 using M10.lib;
 using Microsoft.Ajax.Utilities;
+using Elmah.ContentSyndication;
 
 
 namespace M10Api.Controllers
@@ -1294,7 +1295,7 @@ namespace M10Api.Controllers
 
             ssql = @" 
                         select * from WeaRainStatistics 
-                        order by stid
+                        order by stid,year
                     ";
             List<WeaRainStatistics> wrs = dbDapper.Query<WeaRainStatistics>(ssql);
 
@@ -1595,6 +1596,167 @@ namespace M10Api.Controllers
             catch (Exception)
             {
 
+            }
+
+
+            return null;
+        }
+
+        public ActionResult DownRainAreaOption(string TimeStart, string TimeEnd, string UnitType)
+        {
+            //M10Const.RainStationUnit.A1
+
+            //建立Excel表頭
+            List<string> head = new List<string>();
+            head.Add("雨量站編號");
+            head.Add("雨量站名稱");
+            head.Add("場次序號");
+            head.Add("開始降雨時間");
+            head.Add("結束降雨時間");
+            head.Add("降雨延時");
+            head.Add("總降雨量");
+            head.Add("最大時雨量發生時間");
+            head.Add("最大時雨量");
+            head.Add("最大3時累積雨量");
+            head.Add("最大6時累積雨量");
+            head.Add("最大12時累積雨量");
+            head.Add("最大24時累積雨量");
+            head.Add("最大48時累積雨量");
+            head.Add("七天前期雨量(0.6)");
+            head.Add("七天前期雨量(0.7)");
+            head.Add("七天前期雨量(0.8)");
+            head.Add("尖零_尖峰");
+            head.Add("Rt(0.6)");
+            head.Add("Rt(0.7)");
+            head.Add("Rt(0.8)");
+            head.Add("時雨量");
+
+            //取得測站名稱取得所有雨量站基本資料
+            string ssql = @" select * from BasStationData ";
+            List<BasStationData> lBasStationData = dbDapper.Query<BasStationData>(ssql);
+
+            //取得條件雨場分割資料
+            ssql = @"";
+            if (UnitType == "") //全部
+            {
+                ssql = @" 
+                select * from WeaRainArea where TimeStart between '{0}010100' and '{1}123124'
+                order by stid,TimeStart
+                ";
+                ssql = string.Format(ssql, TimeStart, TimeEnd);
+            }
+            else //依照不同雨量站單位
+            {
+                ssql = @" 
+                select * from WeaRainArea where unittype = '{2}' and TimeStart between '{0}010100' and '{1}123124'
+                order by stid,TimeStart
+                ";
+                ssql = string.Format(ssql, TimeStart, TimeEnd, UnitType);
+            }
+            List<WeaRainArea> WeaRainAreaList = dbDapper.Query<WeaRainArea>(ssql);
+
+            DateTime dttest = DateTime.Now;
+            int iIndex = 0;
+            List<string[]> datas = new List<string[]>();
+            foreach (WeaRainArea StidItem in WeaRainAreaList)
+            {
+                iIndex++;
+                //雨量站
+                string sStid = StidItem.stid;
+
+                int iTimeStart = Convert.ToInt32(StidItem.TimeStart);
+                int iTimeEnd = Convert.ToInt32(StidItem.TimeEnd);
+
+
+                //雨量站(1-24)時間格式與C#(0-23)不同
+                StidItem.TimeStart = string.Format("{0}/{1}/{2} {3}:00"
+                    , StidItem.TimeStart.Substring(0, 4)
+                    , StidItem.TimeStart.Substring(4, 2)
+                    , StidItem.TimeStart.Substring(6, 2)
+                    , StidItem.TimeStart.Substring(8, 2)
+                    );
+                StidItem.TimeEnd = string.Format("{0}/{1}/{2} {3}:00"
+                , StidItem.TimeEnd.Substring(0, 4)
+                    , StidItem.TimeEnd.Substring(4, 2)
+                    , StidItem.TimeEnd.Substring(6, 2)
+                    , StidItem.TimeEnd.Substring(8, 2)
+                    );
+                StidItem.MaxRainTime = string.Format("{0}/{1}/{2} {3}:00"
+                    , StidItem.MaxRainTime.Substring(0, 4)
+                    , StidItem.MaxRainTime.Substring(4, 2)
+                    , StidItem.MaxRainTime.Substring(6, 2)
+                    , StidItem.MaxRainTime.Substring(8, 2)
+                    );
+
+                //取得測站名稱
+                BasStationData bsd = lBasStationData.FirstOrDefault(x => x.stid == StidItem.stid);
+
+                List<string> cols = new List<string>();
+                cols.Add(StidItem.stid);
+                cols.Add(bsd == null ? "" : bsd.stname);
+                cols.Add(StidItem.RainAreaSeq.ToString().PadLeft(4, '0'));
+                cols.Add(StidItem.TimeStart);
+                cols.Add(StidItem.TimeEnd);
+                cols.Add(StidItem.RainHour.ToString());
+                cols.Add(StidItem.TotalRain.ToString());
+                cols.Add(StidItem.MaxRainTime);
+                cols.Add(StidItem.MaxRain.ToString());
+                cols.Add(StidItem.Max3Sum.ToString());
+                cols.Add(StidItem.Max6Sum.ToString());
+                cols.Add(StidItem.Max12Sum.ToString());
+                cols.Add(StidItem.Max24Sum.ToString());
+                cols.Add(StidItem.Max48Sum.ToString());
+                cols.Add(StidItem.Pre7DayRain6.ToString());
+                cols.Add(StidItem.Pre7DayRain7.ToString());
+                cols.Add(StidItem.Pre7DayRain8.ToString());
+                cols.Add(StidItem.CumRain.ToString());
+                cols.Add(StidItem.RT6.ToString());
+                cols.Add(StidItem.RT7.ToString());
+                cols.Add(StidItem.RT8.ToString());
+
+                //加入時雨量資料
+                if (StidItem.RainHourList != null)
+                {
+                    List<string> RainHourList = StidItem.RainHourList.Split('|').ToList<string>();
+                    foreach (string subItem in RainHourList)
+                    {
+                        cols.Add(subItem);
+                    }
+                }
+                
+
+                datas.Add(cols.ToArray());
+
+            }
+
+            //產生檔案路徑
+            string sTempPath = Path.Combine(Server.MapPath("~/temp/"), DateTime.Now.ToString("yyyyMMdd"));
+            //建立資料夾
+            Directory.CreateDirectory(sTempPath);
+
+            string sSaveFilePath = Path.Combine(sTempPath, "WeaRainAreaOption_" + Guid.NewGuid().ToString() + ".xlsx");
+
+            DataExport de = new DataExport();            
+            Boolean bSuccess = de.ExportListToExcel(sSaveFilePath, head, datas);
+
+            if (bSuccess)
+            {
+                string UnitTypeName = "全部";
+
+                if (UnitType == "A1") UnitTypeName = M10Const.RainStationUnit.A1;
+                if (UnitType == "A2") UnitTypeName = M10Const.RainStationUnit.A2;
+                if (UnitType == "A3") UnitTypeName = M10Const.RainStationUnit.A3;
+                if (UnitType == "A4") UnitTypeName = M10Const.RainStationUnit.A4;
+                
+
+                string filename = string.Format("WeaRainAreaOption_{0}_{1}_{2}.xlsx", TimeStart, TimeEnd, UnitTypeName);
+
+                //***** 下載檔案過大，使用特殊方法 *****
+                HttpContext context = System.Web.HttpContext.Current;
+                context.Response.TransmitFile(sSaveFilePath);
+                context.Response.ContentType = "application/vnd.ms-excel";
+                context.Response.AddHeader("Content-Disposition", string.Format("attachment;filename={0}", filename));
+                Response.End();
             }
 
 

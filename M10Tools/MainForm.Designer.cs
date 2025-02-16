@@ -77,6 +77,8 @@
             this.button28 = new System.Windows.Forms.Button();
             this.button29 = new System.Windows.Forms.Button();
             this.button30 = new System.Windows.Forms.Button();
+            this.button31 = new System.Windows.Forms.Button();
+            this.button32 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -319,10 +321,10 @@
             // 
             // btnRainAreaSplit
             // 
-            this.btnRainAreaSplit.Location = new System.Drawing.Point(323, 370);
+            this.btnRainAreaSplit.Location = new System.Drawing.Point(323, 372);
             this.btnRainAreaSplit.Margin = new System.Windows.Forms.Padding(4);
             this.btnRainAreaSplit.Name = "btnRainAreaSplit";
-            this.btnRainAreaSplit.Size = new System.Drawing.Size(256, 34);
+            this.btnRainAreaSplit.Size = new System.Drawing.Size(254, 34);
             this.btnRainAreaSplit.TabIndex = 29;
             this.btnRainAreaSplit.Text = "(3)雨場分割";
             this.btnRainAreaSplit.UseVisualStyleBackColor = true;
@@ -330,10 +332,10 @@
             // 
             // button12
             // 
-            this.button12.Location = new System.Drawing.Point(323, 424);
+            this.button12.Location = new System.Drawing.Point(323, 484);
             this.button12.Margin = new System.Windows.Forms.Padding(4);
             this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(256, 34);
+            this.button12.Size = new System.Drawing.Size(254, 34);
             this.button12.TabIndex = 30;
             this.button12.Text = "(4)雨場分割轉Excel";
             this.button12.UseVisualStyleBackColor = true;
@@ -341,7 +343,7 @@
             // 
             // button13
             // 
-            this.button13.Location = new System.Drawing.Point(323, 478);
+            this.button13.Location = new System.Drawing.Point(323, 540);
             this.button13.Margin = new System.Windows.Forms.Padding(4);
             this.button13.Name = "button13";
             this.button13.Size = new System.Drawing.Size(254, 57);
@@ -363,10 +365,10 @@
             // 
             // button15
             // 
-            this.button15.Location = new System.Drawing.Point(323, 555);
+            this.button15.Location = new System.Drawing.Point(323, 619);
             this.button15.Margin = new System.Windows.Forms.Padding(4);
             this.button15.Name = "button15";
-            this.button15.Size = new System.Drawing.Size(250, 34);
+            this.button15.Size = new System.Drawing.Size(254, 34);
             this.button15.TabIndex = 33;
             this.button15.Text = "(5)RTI與RTI3轉檔";
             this.button15.UseVisualStyleBackColor = true;
@@ -607,11 +609,35 @@
             this.button30.UseVisualStyleBackColor = true;
             this.button30.Click += new System.EventHandler(this.button30_Click);
             // 
+            // button31
+            // 
+            this.button31.Location = new System.Drawing.Point(631, 531);
+            this.button31.Margin = new System.Windows.Forms.Padding(4);
+            this.button31.Name = "button31";
+            this.button31.Size = new System.Drawing.Size(250, 34);
+            this.button31.TabIndex = 57;
+            this.button31.Text = "(7-1)更新雨量站基本資料";
+            this.button31.UseVisualStyleBackColor = true;
+            this.button31.Click += new System.EventHandler(this.button31_Click);
+            // 
+            // button32
+            // 
+            this.button32.Location = new System.Drawing.Point(323, 428);
+            this.button32.Margin = new System.Windows.Forms.Padding(4);
+            this.button32.Name = "button32";
+            this.button32.Size = new System.Drawing.Size(254, 34);
+            this.button32.TabIndex = 58;
+            this.button32.Text = "(3-1)雨場分割-單位跟時雨量";
+            this.button32.UseVisualStyleBackColor = true;
+            this.button32.Click += new System.EventHandler(this.button32_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1743, 801);
+            this.Controls.Add(this.button32);
+            this.Controls.Add(this.button31);
             this.Controls.Add(this.button30);
             this.Controls.Add(this.button29);
             this.Controls.Add(this.button28);
@@ -723,6 +749,8 @@
         private System.Windows.Forms.Button button28;
         private System.Windows.Forms.Button button29;
         private System.Windows.Forms.Button button30;
+        private System.Windows.Forms.Button button31;
+        private System.Windows.Forms.Button button32;
     }
 }
 

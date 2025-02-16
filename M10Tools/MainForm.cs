@@ -22,6 +22,8 @@ using Newtonsoft.Json.Linq;
 using RestSharp;
 using CL.Data;
 using System.Globalization;
+using System.Data.SqlTypes;
+using Dapper;
 
 
 namespace M10Tools
@@ -1831,7 +1833,7 @@ namespace M10Tools
                 iIndex++;
                 //雨量站
                 string sStid = StidItem.stid;
-                //sStid = "466880";
+                //sStid = "81M800";
                 //sStid = "C0A680";
 
 
@@ -2143,6 +2145,19 @@ namespace M10Tools
                         }
                     }
 
+                    //該雨量站雨場轉檔完成後，該雨量站更新所有雨場的序號(RainAreaSeq)
+                    ssql = " select * from WeaRainArea where stid = '{0}' order by TimeStart ";
+                    ssql = string.Format(ssql, sStid);
+                    List<WeaRainArea> RainAreaSeqList = dbDapper.Query<WeaRainArea>(ssql);
+
+                    int iIdx = 0;
+                    foreach (WeaRainArea item in RainAreaSeqList)
+                    {
+                        iIdx++;
+                        //ShowStatus(string.Format("[{2}/{3}]{0}-{1}", sStid, item.TimeStart, iIndex.ToString(), StidList.Count.ToString()));
+                        item.RainAreaSeq = iIdx;
+                        dbDapper.Update<WeaRainArea>(item);
+                    }
 
                     //註記已經轉檔完成
                     ssql = @" select * from DataStaticLog where type = '{0}' and key1 = '{1}'  ";
@@ -2328,6 +2343,9 @@ namespace M10Tools
 
             string sDataStaticLogType = M10Const.DataStaticLogType.RainAreaToExcel;
 
+            //取得測站名稱取得所有雨量站基本資料
+            string ssql = @" select * from BasStationData ";
+            List<BasStationData> lBasStationData = dbDapper.Query<BasStationData>(ssql);
 
             ssql = " select distinct stid from WeaRainData order by STID ";
             //只轉水保局雨量站資料
@@ -2402,6 +2420,8 @@ namespace M10Tools
                     //建立表頭
                     List<string> head = new List<string>();
                     head.Add("雨量站編號");
+                    head.Add("雨量站名稱");
+                    head.Add("場次序號");
                     head.Add("開始降雨時間");
                     head.Add("結束降雨時間");
                     head.Add("降雨延時");
@@ -2450,10 +2470,13 @@ namespace M10Tools
                             , item.MaxRainTime.Substring(8, 2)
                             );
 
-
+                        //取得測站名稱
+                        BasStationData bsd = lBasStationData.FirstOrDefault(x => x.stid == item.stid);
 
                         List<string> cols = new List<string>();
                         cols.Add(item.stid);
+                        cols.Add(bsd == null ? "" : bsd.stname);                        
+                        cols.Add(item.RainAreaSeq.ToString().PadLeft(4,'0'));
                         cols.Add(item.TimeStart);
                         cols.Add(item.TimeEnd);
                         cols.Add(item.RainHour.ToString());
@@ -2563,6 +2586,8 @@ namespace M10Tools
             //2.檔案產生後，移動到網頁主機路徑
             //D:\Project\M10\M10主程式\M10ApiDoc\doc\WeaRainArea
 
+            // PS:如果遠端主機因為遠端會斷線，無法轉檔完成，就要把所有excel檔案移到本機，重新做轉檔
+
             string sTempPath = @"c:\temp\WeaRainArea\";
             //建立資料夾
             Directory.CreateDirectory(sTempPath);
@@ -2576,6 +2601,8 @@ namespace M10Tools
             //建立表頭
             List<string> head = new List<string>();
             head.Add("雨量站編號");
+            head.Add("雨量站名稱");
+            head.Add("場次序號");
             head.Add("開始降雨時間");
             head.Add("結束降雨時間");
             head.Add("降雨延時");
@@ -2636,7 +2663,7 @@ namespace M10Tools
             this.Text = string.Format("清單中({0}筆)所有資料一次寫入，非常耗時，預估五分鐘左右。", lstImpTemp.Count());
             //de.AppendListToExcel(sSaveFilePath, lstImpTemp);
 
-            int iWriteCount = 10000;
+            int iWriteCount = 100000;
             while (lstImpTemp.Count != 0)
             {
                 List<string[]> lstAppend1000 = lstImpTemp.Take(iWriteCount).ToList();
@@ -2732,6 +2759,26 @@ namespace M10Tools
 
         private void button15_Click(object sender, EventArgs e)
         {
+
+
+            /* === 執行完畢 要調整RTI及RTI3資料表 要先將原本線上資料(Version= 'new')備份後，再將新轉檔資料(Version= 'temp')改為線上資料(Version= 'new')生效
+             * 
+             * **執行前**
+             * (1-1)先調整程式中變數sVer="轉檔日期(如:20250214)"
+             *    
+             *    string sVer = "20250214";
+             * 
+             * (1-2)SQL 線上資料(Version= 'new')備份
+             *    update RtiDetail  set version = '轉檔日期(如:20250214)' where version = 'new'
+             *    update Rti3Detail set version = '轉檔日期(如:20250214)' where version = 'new'
+             * 
+             * **執行後**
+             * (2)SQL 新轉檔資料(Version= 'temp')改為線上資料(Version= 'new')生效
+             *    update RtiDetail  set version = 'new' where version = 'temp'
+             *    update Rti3Detail  set version = 'new' where version = 'temp'             * 
+             */
+
+
             /*    ====執行前 請先將新版的雨場分割資料匯入RtiData2中====         
              *    20220503 改到程式中執行
              *    WeaRainArea直接匯入 RtiData2        
@@ -2747,19 +2794,7 @@ namespace M10Tools
                 from WeaRainArea 
             */
 
-            /* === 執行完畢 要調整RTI及RTI3資料表 要先將原本線上資料(Version= 'new')備份後，再將新轉檔資料(Version= 'temp')改為線上資料(Version= 'new')生效
-             * 
-             * (1)SQL 線上資料(Version= 'new')備份
-             *    update RtiDetail  set version = '20230620' where version = 'new'
-             *    update Rti3Detail set version = '20230620' where version = 'new'
-             * 
-             * (2)SQL 新轉檔資料(Version= 'temp')改為線上資料(Version= 'new')生效
-             *    update RtiDetail  set version = 'new' where version = 'temp'
-             *    update Rti3Detail  set version = 'new' where version = 'temp'             * 
-             */
-
-
-            string sVer = "20240505";
+            string sVer = "20250214";
 
             //刪除已經存在的RtiData2資料
             ssql = @" delete  RtiData2  
@@ -6889,6 +6924,105 @@ namespace M10Tools
             }
 
 
+        }
+
+        /// <summary>
+        /// 更新雨量站基本資料
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button31_Click(object sender, EventArgs e)
+        {
+            ssql = @" select *  from BasStationDataTemp ";
+            //更新來源-學長提供Excel匯入的來源
+            List<dynamic> stidBasStationDataTemp = dbDapper.Query(ssql);
+
+            foreach (var item in stidBasStationDataTemp)
+            {
+                ssql = @" select * from BasStationData where stid = '{0}' ";                
+                ssql = string.Format(ssql, item.stid);
+                BasStationData dsl_new = dbDapper.QuerySingleOrDefault<BasStationData>(ssql);
+
+                
+                if (dsl_new == null)
+                {
+                    //如果沒有轉檔紀錄，則新增一筆執行中
+                    //寫入統計LOG
+                    dsl_new = new BasStationData();
+                    dsl_new.stid = item.stid;
+                    dsl_new.stname = item.stname;
+                    dsl_new.unittype = item.unittype;
+                    dsl_new.enable = "Y";
+
+                    dbDapper.Insert(dsl_new);
+                }
+                else//已經有轉檔紀錄
+                {
+                    //更新
+                    dsl_new.stname = item.stname;
+                    dsl_new.unittype = item.unittype;
+                    dsl_new.enable = "Y";
+                    dbDapper.Update(dsl_new);
+                }
+            }
+
+        }
+
+        private void button32_Click(object sender, EventArgs e)
+        {
+            //目的1-更新雨場單位
+            //目的2-更新雨場時雨量
+
+            //0-單獨執行
+            //1-跑完雨場分割後，執行該程式
+            
+
+
+            ssql = @" select distinct stid from WeaRainArea order by STID ";            
+            List<dynamic> StidList = dbDapper.Query(ssql);
+
+            int iIndex = 0;
+            foreach (var StidItem in StidList)
+            {
+                iIndex++;
+
+                //取得雨量站歷年雨量資料               
+                ssql = @" select * from BasStationData where stid = @stid ";
+                BasStationData bsd = dbDapper.QuerySingleOrDefault<BasStationData>(ssql, new { stid = StidItem.stid });
+
+                ShowStatus(string.Format("更新雨量站單位[{2}/{3}]{0}-{1}", StidItem.stid, "", iIndex.ToString(), StidList.Count.ToString()));
+                if (bsd != null)
+                {
+                    ssql = @" update WeaRainArea set UnitType = '{0}' where stid = '{1}' ";
+                    ssql = string.Format(ssql, bsd.unittype, StidItem.stid);
+                    dbDapper.Execute(ssql);
+                }
+
+                //取得雨量站歷年雨量資料               
+                ssql = @" select * from WeaRainData where stid = @stid order by time ";
+                List<WeaRainData> wrdList = dbDapper.Query<WeaRainData>(ssql, new { stid = StidItem.stid });
+
+                //取得條件雨場分割資料
+                ssql = @" select * from WeaRainArea where stid = @stid order by stid,TimeStart";
+                List<WeaRainArea> WeaRainAreaList = dbDapper.Query<WeaRainArea>(ssql, new { stid = StidItem.stid });
+
+                foreach (WeaRainArea item in WeaRainAreaList)
+                {
+                    ShowStatus(string.Format("更新雨場時雨量列表[{2}/{3}]{0}-{1}", item.stid, item.TimeStart, iIndex.ToString(), StidList.Count.ToString()));
+
+                    //取得雨場時間起迄
+                    int iTimeStart = Convert.ToInt32(item.TimeStart);
+                    int iTimeEnd = Convert.ToInt32(item.TimeEnd);                   
+
+                    //加入時雨量資料
+                    List<WeaRainData> RainDataList = wrdList.Where(s => Convert.ToInt32(s.time) >= iTimeStart && Convert.ToInt32(s.time) <= iTimeEnd).ToList<WeaRainData>();
+
+                    //更新資料
+                    item.RainHourList = string.Join("|", RainDataList.Select(x => x.PP01.ToString()).ToList<string>());
+                    dbDapper.Update<WeaRainArea>(item);
+
+                }
+            }
         }
     }
 
