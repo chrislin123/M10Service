@@ -775,6 +775,12 @@ namespace M10.lib.model
 
         public decimal RT8 { get; set; }
 
+        public int RainAreaSeq { get; set; }
+
+        public string RainHourList { get; set; }
+
+        public string UnitType { get; set; }
+        
     }
 
     [Table("WraRainDataNew")]
@@ -850,6 +856,8 @@ namespace M10.lib.model
         public string lng { get; set; }
 
         public string enable { get; set; }
+
+        public string unittype { get; set; }
 
     }
 

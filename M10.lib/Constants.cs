@@ -43,8 +43,17 @@ namespace M10.lib
             public const string A2 = "澄色";
             public const string A3 = "紅色";
             public const string AD = "解除";
+        }
 
-
+        /// <summary>
+        /// //UnitType 雨量站單位 => A1:氣象署自動站,A2:氣象署氣象站,A3:水保署,A4:水利署
+        /// </summary>
+        public static class RainStationUnit
+        {
+            public const string A1 = "氣象署自動站";
+            public const string A2 = "氣象署氣象站";
+            public const string A3 = "水保署";
+            public const string A4 = "水利署";
         }
 
         public static class DataStaticLogType
