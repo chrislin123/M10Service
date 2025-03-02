@@ -641,7 +641,7 @@ namespace M10.lib.model
 
         public decimal RT { get; set; }
 
-
+        public string TransYN { get; set; }
     }
 
     [Table("SoilWaterRainDataHis")]
