@@ -1480,6 +1480,19 @@ namespace M10AlertLRTI
                         }
                     }
 
+                    //20251213 新增雨量站停止傳輸，則排除警示
+                    if (RuntimeData == null)
+                    {
+                        LRTIAlertItem.Remark = "雨量站資料停止傳輸";
+                        LRTIAlertItem.statuscheck = "Y";
+                        LRTIAlertItem.nowwarm = "N";
+                        LRTIAlertItem.status = "AD"; //列入解除
+                        LRTIAlertItem.statustime = sDt;
+
+                        //更新
+                        dbDapper.Update<LRTIAlert>(LRTIAlertItem);
+                        continue;
+                    }
 
                     //1.雨量站出現異常訊號：若異常時間超過6小時，直接將已發布地區從清單中剃除，並新增備註欄位標示「雨量站異常」。
                     string sRTime = RuntimeData.RTime;

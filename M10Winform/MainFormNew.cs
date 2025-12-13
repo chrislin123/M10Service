@@ -1,20 +1,22 @@
-﻿using System;
+﻿using CL.Data;
+using FluentFTP;
+using M10.lib;
+using M10.lib.model;
+using NLog;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.IO;
 using System.Xml;
-using CL.Data;
-using System.Globalization;
-using NLog;
-using FluentFTP;
-using System.Net;
-using M10.lib.model;
 
 namespace M10Winform
 {
@@ -40,13 +42,6 @@ namespace M10Winform
         private void MainForm_Load(object sender, EventArgs e)
         {
 
-
-            //FileInfo fi = new FileInfo(@"c:\fix.css1");
-            //FileInfo fi = new FileInfo(@"c:\fix.css");
-            //fi.CopyTo(@"c:\test.css", true);
-            //return;
-
-            //MessageBox.Show(Properties.Settings.Default.test);
             try
             {
                 //相關建立資料夾
@@ -116,10 +111,12 @@ namespace M10Winform
                     FileTransLog(fi.Name);
 
                     //自動歸檔到NAS(FTP)
-                    ArrangeTransFile(fi);
+                    //20251213 移除歸檔NAS
+                    //ArrangeTransFile(fi);
 
                     //存至備份資料夾
-                    fi.CopyTo(folderBack + fi.Name, true);
+                    //20251213 因為NAS備份已經取消，所以不用再移動到備份資料夾
+                    //fi.CopyTo(folderBack + fi.Name, true);
                     fi.Delete();
 
                 }

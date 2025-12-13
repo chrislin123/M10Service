@@ -48,7 +48,8 @@ namespace M10.lib
           message.Attachments.Add(item);
         }
 
-        MySmtp.Credentials = new System.Net.NetworkCredential(SenderAddress, SenderPass);//gmail的帳號密碼System.Net.NetworkCredential(帳號,密碼)
+                
+                MySmtp.Credentials = new System.Net.NetworkCredential(SenderAddress, SenderPass);//gmail的帳號密碼System.Net.NetworkCredential(帳號,密碼)
         MySmtp.EnableSsl = true;//開啟ssl
         MySmtp.Send(message);
       }
