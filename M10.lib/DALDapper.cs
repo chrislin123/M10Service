@@ -136,6 +136,36 @@ namespace M10.lib
             return lResult;
         }
 
+        public List<dynamic> Query(string sql, object param, int? commandTimeout = null)
+        {
+            List<dynamic> lResult = new List<dynamic>();
+
+            if (_ProviderName == "System.Data.SqlClient")
+            {
+                using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                {
+                    // 將 commandTimeout 往下傳遞給底層的原生 Dapper
+                    lResult = cn.Query(sql, param, commandTimeout: commandTimeout).ToList();
+                }
+            }
+            else if (_ProviderName == "MySql.Data.MySqlClient")
+            {
+                using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
+                {
+                    lResult = cn.Query(sql, param, commandTimeout: commandTimeout).ToList();
+                }
+            }
+            else
+            {
+                using (System.Data.SqlClient.SqlConnection cn = SqlClient)
+                {
+                    lResult = cn.Query(sql, param, commandTimeout: commandTimeout).ToList();
+                }
+            }
+
+            return lResult;
+        }
+
         public List<T> Query<T>(string sql) where T : class
         {
             List<T> lResult = new List<T>();

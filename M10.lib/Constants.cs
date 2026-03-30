@@ -54,6 +54,7 @@ namespace M10.lib
             public const string A2 = "氣象署氣象站";
             public const string A3 = "水保署";
             public const string A4 = "水利署";
+            public const string A5 = "北市府";
         }
 
         public static class DataStaticLogType

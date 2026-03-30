@@ -837,6 +837,34 @@ namespace M10.lib.model
 
     }
 
+    [Table("TCGRainDataHis")]
+    public class TCGRainDataHis
+    {
+        //設定key
+        [Key]
+        public long no { get; set; }
+
+        public string Stid { get; set; }
+
+        public string Time { get; set; }
+
+        public decimal Min10 { get; set; }
+
+        public decimal Hour { get; set; }
+
+        public decimal Hour3 { get; set; }
+
+        public decimal Hour6 { get; set; }
+
+        public decimal Hour12 { get; set; }
+
+        public decimal Hour24 { get; set; }
+
+        public decimal DayRainfall { get; set; }
+
+        public decimal RT { get; set; }
+
+    }
 
     [Table("BasStationData")]
     public class BasStationData
@@ -859,6 +887,7 @@ namespace M10.lib.model
 
         public string unittype { get; set; }
 
+        public string remark { get; set; }
     }
 
 
@@ -1639,6 +1668,8 @@ namespace M10.lib.model
         public double? Rti37 { get; set; }
 
         public double? Rti38 { get; set; }
+
+        public double? R3 { get; set; }
 
         public string date { get; set; }
 
