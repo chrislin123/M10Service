@@ -18,7 +18,7 @@
 <div class="row">
     <div class="col-md-12">
         <h1 class="page-header">
-            雨場分割資料(1987~2024)
+            雨場分割資料(1987~2025)
         </h1>
     </div>
 </div>
@@ -30,14 +30,14 @@
             <div class="form-inline">
                 <label for="keyWord">雨量站：</label>
                 <select id="Station" name="Station" class="form-control"></select>
-                @*<label for="keyWord">搜尋(雨量站代碼)：</label>
-                    <input type="text" id="txtSTID" value="" />
-                    <button class="btn btn-default" id="btnSearchSTID" onclick="SearchSTID();">搜尋雨量站</button>
-                    <br />
-                    <label for="keyWord">起始時間：</label>
-                    <input type="text" id="StartDate" name="StartDate" value="" />
-                    <label for="keyWord">結束時間：</label>
-                    <input type="text" id="EndDate" name="EndDate" value="" />*@
+                <label for="keyWord">搜尋(雨量站代碼)：</label>
+                <input type="text" id="txtSTID" value="" />
+                <button class="btn btn-default" id="btnSearchSTID" onclick="SearchSTID();">搜尋雨量站</button>
+                @*<br />
+        <label for="keyWord">起始時間：</label>
+        <input type="text" id="StartDate" name="StartDate" value="" />
+        <label for="keyWord">結束時間：</label>
+        <input type="text" id="EndDate" name="EndDate" value="" />*@
                 <label for="keyWord">密碼：</label>
                 <input type="text" id="txtpass" name="txtpass" value="" />
                 <button class="btn btn-default" id="btnExport" onclick="Export();">資料匯出</button>
@@ -73,7 +73,8 @@
                     <option value="A2">氣象署氣象站</option>
                     <option value="A3">水保署</option>
                     <option value="A4">水利署</option>
-                    <option value="" >全部</option>
+                    <option value="A5">北市府</option>
+                    <option value="">全部</option>
                 </select>
                 <button class="btn btn-default" id="btnExport" onclick="ExportOption();">條件資料匯出</button>
 
@@ -93,18 +94,28 @@
             });
         });
 
-        var year = 2024;
-        for (let i = 1987; i <= year; i++) {
+        $.getJSON('@Url.Action("QueryRainAreaUnitTypeDDL")', null, function (data) {
+            $('#UnitType').empty();
+            $.each(data, function (i, item) {
+                $('#UnitType').append($('<option></option>').val(item.Value).text(item.Text));
+            });
+        });
+
+        var currentYear = new Date().getFullYear();
+        for (let i = 1987; i <= currentYear; i++) {
             $('#TimeStart').append($('<option></option>').val(i).text(i));
             $('#TimeEnd').append($('<option></option>').val(i).text(i));
         }
-        $('#TimeStart').val(year);
-        $('#TimeEnd').val(year);
+
+        // --- 設定預設值 ---
+        $('#TimeStart').val(currentYear - 1); // 設定起始年份為前一年
+        $('#TimeEnd').val(currentYear);       // 設定結束年份為今年
+        //$('#UnitType').val("");       
 
     });
 
     function SearchSTID() {
-        $.getJSON('@Url.Action("GetStationDDL")', { STID: $("#txtSTID").val() }, function (data) {
+        $.getJSON('@Url.Action("GetRainAreaStationDDL")', { STID: $("#txtSTID").val() }, function (data) {
             $('#Station').empty();
             $.each(data, function (i, item) {
                 $('#Station').append($('<option></option>').val(item.Value).text(item.Text));

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using Dapper.Contrib.Extensions;
-using System.Transactions;
+using System;
+using System.Collections.Generic;
 using System.Configuration;
-using MySql.Data;
+using System.Linq;
+using System.Transactions;
 
 
 namespace M10.lib
@@ -19,7 +16,7 @@ namespace M10.lib
         //預設使用MsSQL
         public string _ProviderName = "System.Data.SqlClient";
         public ConnectionStringSettings _objConColl;
-        
+
         public dynamic SqlClient
         {
             get
@@ -37,7 +34,7 @@ namespace M10.lib
                     return new System.Data.SqlClient.SqlConnection(ConnStr);
                 }
                 else if (_ProviderName == "MySql.Data.MySqlClient")
-                {   
+                {
                     return new MySql.Data.MySqlClient.MySqlConnection(ConnStr);
                 }
                 else
@@ -46,7 +43,7 @@ namespace M10.lib
                     return new System.Data.SqlClient.SqlConnection(ConnStr);
                 }
             }
-        }        
+        }
 
         public DALDapper(string pConnStr)
         {
@@ -58,7 +55,7 @@ namespace M10.lib
             _objConColl = objConColl;
             _ConnStr = objConColl.ConnectionString;
             _ProviderName = objConColl.ProviderName;
-        }        
+        }
 
         public string ConnStr
         {
@@ -78,7 +75,7 @@ namespace M10.lib
             List<dynamic> lResult = new List<dynamic>();
 
             if (_ProviderName == "System.Data.SqlClient")
-            { 
+            {
                 using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
                 {
                     lResult = cn.Query(sql).ToList();
@@ -97,7 +94,7 @@ namespace M10.lib
                 {
                     lResult = cn.Query(sql).ToList();
                 }
-            }            
+            }
 
             return lResult;
         }
@@ -177,7 +174,7 @@ namespace M10.lib
                 //    return cn.Query<T>(sql).ToList<T>();
                 //}
 
-                
+
 
                 if (_ProviderName == "System.Data.SqlClient")
                 {
@@ -201,7 +198,7 @@ namespace M10.lib
                     }
                 }
 
-                
+
             }
             catch (Exception)
             {
@@ -337,79 +334,19 @@ namespace M10.lib
             return i;
         }
 
-        public int Execute(string sql, object param)
+        /// <summary>
+        /// 執行 SQL 指令並回傳受影響筆數 (支援參數與逾時設定)
+        /// </summary>
+        public int Execute(string sql, object param, int? commandTimeout = null)
         {
             int i = 0;
-
             try
             {
-                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-                //{
-                //    i = cn.Execute(sql, param);
-                //}
-
-                if (_ProviderName == "System.Data.SqlClient")
+                // 利用類別內定義好的 SqlClient 屬性自動取得正確的 Connection
+                using (System.Data.IDbConnection cn = SqlClient)
                 {
-                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-                    {
-                        i = cn.Execute(sql, param);
-                    }
-                }
-                else if (_ProviderName == "MySql.Data.MySqlClient")
-                {
-                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
-                    {
-                        i = cn.Execute(sql, param);
-                    }
-                }
-                else
-                {
-                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
-                    {
-                        i = cn.Execute(sql, param);
-                    }
-                }
-
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            return i;
-        }
-
-        public int Execute(string sql)
-        {
-            int i = 0;
-
-            try
-            {
-                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-                //{
-                //    i = cn.Execute(sql);
-                //}
-
-                if (_ProviderName == "System.Data.SqlClient")
-                {
-                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-                    {
-                        i = cn.Execute(sql);
-                    }
-                }
-                else if (_ProviderName == "MySql.Data.MySqlClient")
-                {
-                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
-                    {
-                        i = cn.Execute(sql);
-                    }
-                }
-                else
-                {
-                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
-                    {
-                        i = cn.Execute(sql);
-                    }
+                    // 呼叫底層 Dapper 並傳遞 commandTimeout
+                    i = cn.Execute(sql, param, commandTimeout: commandTimeout);
                 }
             }
             catch (Exception ex)
@@ -419,68 +356,32 @@ namespace M10.lib
             return i;
         }
 
-        public int Execute(List<SqlObject> SqlList)
+        /// <summary>
+        /// 執行 SQL 指令 (簡易版)
+        /// </summary>
+        public int Execute(string sql, int? commandTimeout = null)
+        {
+            // 直接導向帶有 param 的版本
+            return Execute(sql, null, commandTimeout);
+        }
+
+        /// <summary>
+        /// 執行多筆 SQL 指令 (含交易)
+        /// </summary>
+        public int Execute(List<SqlObject> SqlList, int? commandTimeout = null)
         {
             int i = 0;
-
             try
             {
-                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-                //{
-                //    using (var transactionScope = new TransactionScope())
-                //    {
-                //        foreach (SqlObject d in SqlList)
-                //        {
-                //            i += cn.Execute(d.sql, d.param);
-                //        }
-
-                //        transactionScope.Complete();
-                //    }
-                //}
-
-                if (_ProviderName == "System.Data.SqlClient")
+                using (System.Data.IDbConnection cn = SqlClient)
                 {
-                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
+                    using (var transactionScope = new TransactionScope())
                     {
-                        using (var transactionScope = new TransactionScope())
+                        foreach (SqlObject d in SqlList)
                         {
-                            foreach (SqlObject d in SqlList)
-                            {
-                                i += cn.Execute(d.sql, d.param);
-                            }
-
-                            transactionScope.Complete();
+                            i += cn.Execute(d.sql, d.param, commandTimeout: commandTimeout);
                         }
-                    }
-                }
-                else if (_ProviderName == "MySql.Data.MySqlClient")
-                {
-                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
-                    {
-                        using (var transactionScope = new TransactionScope())
-                        {
-                            foreach (SqlObject d in SqlList)
-                            {
-                                i += cn.Execute(d.sql, d.param);
-                            }
-
-                            transactionScope.Complete();
-                        }
-                    }
-                }
-                else
-                {
-                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
-                    {
-                        using (var transactionScope = new TransactionScope())
-                        {
-                            foreach (SqlObject d in SqlList)
-                            {
-                                i += cn.Execute(d.sql, d.param);
-                            }
-
-                            transactionScope.Complete();
-                        }
+                        transactionScope.Complete();
                     }
                 }
             }
@@ -695,106 +596,37 @@ namespace M10.lib
             return lResult;
         }
 
-        public object ExecuteScale(string sql, object param)
+        /// <summary>
+        /// ExecuteScalar 執行一個SQL命令返回結果集的第一列的第一行。
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <returns></returns>
+        public object ExecuteScale(string sql, object param, int? commandTimeout = null)
         {
             object oo = null;
-
             try
             {
-                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-                //{
-                //    oo = cn.ExecuteScalar(sql, param);
-                //}
-
-                if (_ProviderName == "System.Data.SqlClient")
+                using (System.Data.IDbConnection cn = SqlClient)
                 {
-                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-                    {
-                        oo = cn.ExecuteScalar(sql, param);
-                    }
-                }
-                else if (_ProviderName == "MySql.Data.MySqlClient")
-                {
-                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
-                    {
-                        oo = cn.ExecuteScalar(sql, param);
-                    }
-                }
-                else
-                {
-                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
-                    {
-                        oo = cn.ExecuteScalar(sql, param);
-                    }
+                    // 這裡要把參數傳給底層的 Dapper ExecuteScalar
+                    oo = cn.ExecuteScalar(sql, param, commandTimeout: commandTimeout);
                 }
             }
             catch (Exception ex)
             {
                 throw ex;
             }
-
             return oo;
         }
 
         /// <summary>
         /// ExecuteScalar 執行一個SQL命令返回結果集的第一列的第一行。
         /// </summary>
-        /// <param name="sql"></param>
-        /// <returns></returns>
-        public object ExecuteScale(string sql)
+        public object ExecuteScale(string sql, int? commandTimeout = null)
         {
-            object oo = null;
-
-            try
-            {
-                //using (var cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-                //{
-                //    oo = cn.ExecuteScalar(sql);
-                //}
-
-                if (_ProviderName == "System.Data.SqlClient")
-                {
-                    using (System.Data.SqlClient.SqlConnection cn = new System.Data.SqlClient.SqlConnection(ConnStr))
-                    {
-                        oo = cn.ExecuteScalar(sql);
-                    }
-                }
-                else if (_ProviderName == "MySql.Data.MySqlClient")
-                {
-                    using (MySql.Data.MySqlClient.MySqlConnection cn = new MySql.Data.MySqlClient.MySqlConnection(ConnStr))
-                    {
-                        oo = cn.ExecuteScalar(sql);
-                    }
-                }
-                else
-                {
-                    using (System.Data.SqlClient.SqlConnection cn = SqlClient)
-                    {
-                        oo = cn.ExecuteScalar(sql);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
-            return oo;
+            // 直接呼叫上面那個帶 param 的版本，傳入 null 即可
+            return ExecuteScale(sql, null, commandTimeout);
         }
-
-        //public List<dynamic> Query(string sql, int currentPage, int recordsPerPage)
-        //{
-        //  using (var cn = new MySql.Data.MySqlClient.MySqlConnection(this.Database.Connection.ConnectionString))
-        //  {
-
-        //    string limit = " LIMIT {0},{1}";
-        //    limit = string.Format(
-        //        limit,
-        //        ((currentPage - 1) < 0 ? 0 : (currentPage - 1) * recordsPerPage),
-        //        recordsPerPage);
-        //    return cn.Query(sql + limit).ToList();
-        //  }
-        //}
 
 
         public DynamicParameters GetNewDynamicParameters()

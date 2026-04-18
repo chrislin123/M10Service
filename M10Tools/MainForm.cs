@@ -1,33 +1,24 @@
 ﻿using CL.Data;
-using Dapper;
 using HtmlAgilityPack;
 using M10.lib;
 using M10.lib.model;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using RestSharp;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Data.SqlTypes;
 using System.Diagnostics;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Reflection;
-using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using static M10.lib.M10Const;
 
 
 namespace M10Tools
@@ -1225,7 +1216,7 @@ namespace M10Tools
                     sFileName = sPath + sFileName;
 
                     //判斷檔案是否存在
-                    if (File.Exists(sFileName) == true)
+                    if (System.IO.File.Exists(sFileName) == true)
                     {
                         continue;
                     }
@@ -1251,7 +1242,7 @@ namespace M10Tools
                     sFileName = sPath + sFileName;
 
                     //判斷檔案是否存在
-                    if (File.Exists(sFileName) == true)
+                    if (System.IO.File.Exists(sFileName) == true)
                     {
                         continue;
                     }
@@ -1346,7 +1337,7 @@ namespace M10Tools
             foreach (FileInfo item in fiList)
             {
                 ShowStatus(item.FullName);
-                string readText = File.ReadAllText(item.FullName, Encoding.Default);
+                string readText = System.IO.File.ReadAllText(item.FullName, Encoding.Default);
 
 
                 List<string> StringList = readText.Split(new string[] { "\n" }, StringSplitOptions.None).ToList<string>();
@@ -1534,7 +1525,7 @@ namespace M10Tools
                 dtTemp.Columns.Add("time", typeof(string));
                 dtTemp.Columns.Add("PP01", typeof(decimal));
 
-                var allLines = File.ReadLines(item.FullName, Encoding.Default)
+                var allLines = System.IO.File.ReadLines(item.FullName, Encoding.Default)
                                    .Select(line => line.Replace("\r", "").Trim())
                                    .Where(line => !string.IsNullOrEmpty(line))
                                    .ToList();
@@ -1665,7 +1656,7 @@ namespace M10Tools
                 Directory.CreateDirectory(okDirPath);
                 string newFullName = Path.Combine(okDirPath, item.Name);
 
-                if (File.Exists(newFullName)) File.Delete(newFullName);
+                if (System.IO.File.Exists(newFullName)) System.IO.File.Delete(newFullName);
                 item.MoveTo(newFullName);
             }
 
@@ -2884,19 +2875,19 @@ namespace M10Tools
             progress.Report("開始取得需要分割的雨量站清單...");
 
             // 只撈出尚未轉檔完成 (非 60)，且沒有其他程式正在執行中 (非 10) 的測站
-            //string ssql = @"
-            //    SELECT a.STID 
-            //    FROM (SELECT DISTINCT STID FROM WeaRainData) a
-            //    LEFT JOIN DataStaticLog b ON b.type = 'RainAreaSplit' AND a.STID = b.key1
-            //    WHERE b.status IS NULL OR (b.status != '60' AND b.status != '10')
-            //    ORDER BY a.STID";
-
             string ssql = @"
                 SELECT a.STID 
-                FROM (SELECT DISTINCT STID FROM WeaRainData where STID in (select distinct stid from TCGRainDataHis)) a
+                FROM (SELECT DISTINCT STID FROM WeaRainData) a
                 LEFT JOIN DataStaticLog b ON b.type = 'RainAreaSplit' AND a.STID = b.key1
                 WHERE b.status IS NULL OR (b.status != '60' AND b.status != '10')
                 ORDER BY a.STID";
+
+            //string ssql = @"
+            //    SELECT a.STID 
+            //    FROM (SELECT DISTINCT STID FROM WeaRainData where STID in (select distinct stid from TCGRainDataHis)) a
+            //    LEFT JOIN DataStaticLog b ON b.type = 'RainAreaSplit' AND a.STID = b.key1
+            //    WHERE b.status IS NULL OR (b.status != '60' AND b.status != '10')
+            //    ORDER BY a.STID";
 
 
             List<dynamic> stidDynamicList = dbDapper.Query(ssql);
@@ -3400,7 +3391,7 @@ namespace M10Tools
                     string sFileName = string.Format("{0}.xlsx", sStid);
                     string sSaveFilePath = Path.Combine(sTempPath, sFileName);
 
-                    if (File.Exists(sSaveFilePath)) File.Delete(sSaveFilePath);
+                    if (System.IO.File.Exists(sSaveFilePath)) System.IO.File.Delete(sSaveFilePath);
 
                     DataExport de = new DataExport();
                     //Boolean bSuccess = de.ExportBigDataToCsv(sSaveFilePath, dt);
@@ -3651,7 +3642,7 @@ namespace M10Tools
                     string sFileName = string.Format("{0}.xlsx", sStid);
                     string sSaveFilePath = Path.Combine(sTempPath, sFileName);
 
-                    if (File.Exists(sSaveFilePath)) File.Delete(sSaveFilePath);
+                    if (System.IO.File.Exists(sSaveFilePath)) System.IO.File.Delete(sSaveFilePath);
 
                     DataExport de = new DataExport();
                     bool bSuccess = de.ExportListToExcel(sSaveFilePath, head, datas);
@@ -3824,7 +3815,7 @@ namespace M10Tools
             string sSaveFilePath = @"c:\temp\" + sFileName;
 
             // 如果舊的大檔存在，先刪除
-            if (File.Exists(sSaveFilePath)) File.Delete(sSaveFilePath);
+            if (System.IO.File.Exists(sSaveFilePath)) System.IO.File.Delete(sSaveFilePath);
 
             FileInfo[] fiList = new DirectoryInfo(sTempPath).GetFiles("*.xlsx", SearchOption.AllDirectories);
             DataExport de = new DataExport();
@@ -4574,7 +4565,7 @@ namespace M10Tools
                     sFileName = sPath + sFileName;
 
                     //判斷檔案是否存在
-                    if (File.Exists(sFileName) == true)
+                    if (System.IO.File.Exists(sFileName) == true)
                     {
                         continue;
                     }
@@ -4601,7 +4592,7 @@ namespace M10Tools
                     sFileName = sPath + sFileName;
 
                     //判斷檔案是否存在
-                    if (File.Exists(sFileName) == true)
+                    if (System.IO.File.Exists(sFileName) == true)
                     {
                         continue;
                     }
@@ -4662,7 +4653,7 @@ namespace M10Tools
                     sFileName = sPath + sFileName;
 
                     //判斷檔案是否存在
-                    if (File.Exists(sFileName) == true)
+                    if (System.IO.File.Exists(sFileName) == true)
                     {
                         continue;
                     }
@@ -4711,12 +4702,12 @@ namespace M10Tools
                     string[] slTemp = item.Name.Replace(item.Extension, "").Split('_');
                     string sDate = slTemp[1];
 
-                    if (File.Exists(item.FullName) == false)
+                    if (System.IO.File.Exists(item.FullName) == false)
                     {
                         continue;
                     }
 
-                    string text = File.ReadAllText(item.FullName, Encoding.GetEncoding(950));
+                    string text = System.IO.File.ReadAllText(item.FullName, Encoding.GetEncoding(950));
 
 
                     if (item.Name.Contains("TSE") == true)
@@ -4952,7 +4943,7 @@ namespace M10Tools
 
                     //移動到備份區
                     string sFullRename = Path.Combine(sPathBak, item.Name);
-                    if (File.Exists(sFullRename) == false)
+                    if (System.IO.File.Exists(sFullRename) == false)
                     {
                         item.MoveTo(sFullRename);
                     }
@@ -4997,7 +4988,7 @@ namespace M10Tools
                     sFileName = sPath + sFileName;
 
                     //判斷檔案是否存在
-                    if (File.Exists(sFileName) == true)
+                    if (System.IO.File.Exists(sFileName) == true)
                     {
                         continue;
                     }
@@ -5023,7 +5014,7 @@ namespace M10Tools
                     sFileName = sPath + sFileName;
 
                     //判斷檔案是否存在
-                    if (File.Exists(sFileName) == true)
+                    if (System.IO.File.Exists(sFileName) == true)
                     {
                         continue;
                     }
@@ -5076,12 +5067,12 @@ namespace M10Tools
                     string[] slTemp = item.Name.Replace(item.Extension, "").Split('_');
                     string sDate = slTemp[2];
 
-                    if (File.Exists(item.FullName) == false)
+                    if (System.IO.File.Exists(item.FullName) == false)
                     {
                         continue;
                     }
 
-                    string text = File.ReadAllText(item.FullName, Encoding.GetEncoding(950));
+                    string text = System.IO.File.ReadAllText(item.FullName, Encoding.GetEncoding(950));
                     List<string> StringList = text.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<string>();
 
                     foreach (string LoopItem in StringList)
@@ -5200,7 +5191,7 @@ namespace M10Tools
 
                         //完成後，移動到備份區
                         string sFullRename = Path.Combine(sPathBak, item.Name);
-                        if (File.Exists(sFullRename) == false)
+                        if (System.IO.File.Exists(sFullRename) == false)
                         {
                             item.MoveTo(sFullRename);
                         }
@@ -5243,12 +5234,12 @@ namespace M10Tools
                     string[] slTemp = item.Name.Replace(item.Extension, "").Split('_');
                     string sDate = slTemp[2];
 
-                    if (File.Exists(item.FullName) == false)
+                    if (System.IO.File.Exists(item.FullName) == false)
                     {
                         continue;
                     }
 
-                    string text = File.ReadAllText(item.FullName, Encoding.GetEncoding(950));
+                    string text = System.IO.File.ReadAllText(item.FullName, Encoding.GetEncoding(950));
                     List<string> StringList = text.Split(new string[] { "\r\n" }, StringSplitOptions.None).ToList<string>();
 
                     Int32 iIndex = 0;
@@ -5393,7 +5384,7 @@ namespace M10Tools
 
                     //完成後，移動到備份區
                     string sFullRename = Path.Combine(sPathBak, item.Name);
-                    if (File.Exists(sFullRename) == false)
+                    if (System.IO.File.Exists(sFullRename) == false)
                     {
                         item.MoveTo(sFullRename);
                     }
@@ -7250,11 +7241,11 @@ namespace M10Tools
             foreach (FileInfo item in fiList)
             {
 
-                string readText = File.ReadAllText(item.FullName, Encoding.Default);
+                string readText = System.IO.File.ReadAllText(item.FullName, Encoding.Default);
                 string sss = readText.Substring(0, 8);
                 List<string> StringList = new List<string>();
 
-                using (FileStream fs = File.Open(item.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (FileStream fs = System.IO.File.Open(item.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     using (BufferedStream bs = new BufferedStream(fs))
                     {
@@ -7456,7 +7447,7 @@ namespace M10Tools
                 dtTemp.Columns.Add("RT", typeof(decimal)).DefaultValue = 0m;     // 新增
 
                 // 直接跳過第一行(標題)，逐行解析
-                var lines = File.ReadLines(item.FullName, Encoding.Default).Skip(1);
+                var lines = System.IO.File.ReadLines(item.FullName, Encoding.Default).Skip(1);
 
                 foreach (string line in lines)
                 {
@@ -7574,7 +7565,7 @@ namespace M10Tools
                 string okDirPath = Path.Combine(item.DirectoryName, "OK");
                 Directory.CreateDirectory(okDirPath);
                 string newFullName = Path.Combine(okDirPath, item.Name);
-                if (File.Exists(newFullName)) File.Delete(newFullName);
+                if (System.IO.File.Exists(newFullName)) System.IO.File.Delete(newFullName);
                 item.MoveTo(newFullName);
             }
 
@@ -10726,11 +10717,11 @@ namespace M10Tools
             foreach (FileInfo item in fiList)
             {
 
-                string readText = File.ReadAllText(item.FullName, Encoding.Default);
+                string readText = System.IO.File.ReadAllText(item.FullName, Encoding.Default);
                 string sss = readText.Substring(0, 8);
                 List<string> StringList = new List<string>();
 
-                using (FileStream fs = File.Open(item.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (FileStream fs = System.IO.File.Open(item.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     using (BufferedStream bs = new BufferedStream(fs))
                     {
@@ -10958,7 +10949,7 @@ namespace M10Tools
                 dtTemp.Columns.Add("RT", typeof(decimal)).DefaultValue = 0m;
 
                 // 直接跳過第一行(標題)，逐行解析
-                var lines = File.ReadLines(item.FullName, Encoding.Default).Skip(1);
+                var lines = System.IO.File.ReadLines(item.FullName, Encoding.Default).Skip(1);
 
                 foreach (string line in lines)
                 {
@@ -11082,7 +11073,7 @@ namespace M10Tools
                 string okDirPath = Path.Combine(item.DirectoryName, "OK");
                 Directory.CreateDirectory(okDirPath);
                 string newFullName = Path.Combine(okDirPath, item.Name);
-                if (File.Exists(newFullName)) File.Delete(newFullName);
+                if (System.IO.File.Exists(newFullName)) System.IO.File.Delete(newFullName);
                 item.MoveTo(newFullName);
             }
 
@@ -11151,11 +11142,11 @@ namespace M10Tools
             foreach (FileInfo item in fiList)
             {
 
-                string readText = File.ReadAllText(item.FullName, Encoding.Default);
+                string readText = System.IO.File.ReadAllText(item.FullName, Encoding.Default);
                 string sss = readText.Substring(0, 8);
                 List<string> StringList = new List<string>();
 
-                using (FileStream fs = File.Open(item.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                using (FileStream fs = System.IO.File.Open(item.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
                     using (BufferedStream bs = new BufferedStream(fs))
                     {
@@ -11371,7 +11362,7 @@ namespace M10Tools
                 dtTemp.Columns.Add("DayRainfall", typeof(decimal)).DefaultValue = 0m;
                 dtTemp.Columns.Add("RT", typeof(decimal)).DefaultValue = 0m;
 
-                var lines = File.ReadLines(item.FullName, Encoding.Default).Skip(1);
+                var lines = System.IO.File.ReadLines(item.FullName, Encoding.Default).Skip(1);
 
                 foreach (string line in lines)
                 {
@@ -11489,7 +11480,7 @@ namespace M10Tools
                 string okDirPath = Path.Combine(item.DirectoryName, "OK");
                 Directory.CreateDirectory(okDirPath);
                 string newFullName = Path.Combine(okDirPath, item.Name);
-                if (File.Exists(newFullName)) File.Delete(newFullName);
+                if (System.IO.File.Exists(newFullName)) System.IO.File.Delete(newFullName);
                 item.MoveTo(newFullName);
             }
 
@@ -11667,9 +11658,9 @@ namespace M10Tools
 
                 string sNewTime = x.ToString("yyyy-MM-dd HH:mm:00");
 
-                string text = File.ReadAllText(sNewFile);
+                string text = System.IO.File.ReadAllText(sNewFile);
                 text = text.Replace(sOrgTime, sNewTime);
-                File.WriteAllText(sNewFile, text);
+                System.IO.File.WriteAllText(sNewFile, text);
 
             }
 
@@ -11899,7 +11890,7 @@ namespace M10Tools
                 dbDapper.Execute(batchUpdateSql);
 
                 LogToMsgText($"氣象局歷史資料轉檔-狀態10清除完成。");
-                
+
             }
             catch (Exception ex)
             {
@@ -11910,7 +11901,7 @@ namespace M10Tools
         private void button3_Click_1(object sender, EventArgs e)
         {
             try
-            {   
+            {
                 string batchUpdateSql = @"
                         delete DataStaticLog where type = 'SoilWaterRainHisSTID' and status  = '10'";
 
@@ -11928,7 +11919,7 @@ namespace M10Tools
         private void button4_Click_1(object sender, EventArgs e)
         {
             try
-            {   
+            {
                 string batchUpdateSql = @"
                         delete DataStaticLog where type = 'WraRainHisSTID' and status  = '10'";
 
@@ -11960,6 +11951,630 @@ namespace M10Tools
                 throw;
             }
         }
+
+        private void button6_Click_1(object sender, EventArgs e)
+        {
+            // 1. 定義同步 SQL 範本
+            // 使用 {0} 代表來源歷史表 (His)，{1} 代表目標測站清單表 (Station)
+            string syncSqlTemplate = @"
+                INSERT INTO {1} (stid)
+                SELECT DISTINCT s.STID
+                FROM {0} s WITH (NOLOCK)
+                WHERE NOT EXISTS (
+                    -- 檢查如果測站表已經有了，就不要重複塞入
+                    SELECT 1 FROM {1} t 
+                    WHERE t.stid = s.STID
+                );";
+
+            try
+            {
+                // 2. 定義需要同步的對照清單 (來源歷史表, 目標測站表, 單位名稱)
+                var syncTasks = new[]
+                {
+                    new { Source = "WeaRainDataHis", Target = "WeaRainStation", Name = "氣象局" },
+                    new { Source = "SoilWaterRainDataHis", Target = "SoilWaterRainStation", Name = "水保局" },
+                    new { Source = "WraRainDataHis", Target = "WraRainStation", Name = "水利署" },
+                    new { Source = "TCGRainDataHis", Target = "TCGRainStation", Name = "北市府" }
+                };
+
+                foreach (var task in syncTasks)
+                {
+                    LogToMsgText($"{task.Name} 測站同步啟動 (全表掃描模式)...");
+
+                    // 格式化 SQL 指令
+                    string finalSql = string.Format(syncSqlTemplate, task.Source, task.Target);
+
+                    // 💡 關鍵優化：指定 600 秒 (10 分鐘) 逾時，避開 Dapper 預設的 30 秒限制 
+                    // 使用 null 作為參數對象 (param)，因為 SQL 內沒有 @ 變數
+                    int icount = dbDapper.Execute(finalSql, null, commandTimeout: 600);
+
+                    LogToMsgText($"{task.Name} 同步完成，新增筆數：{icount}");
+                }
+
+                LogToMsgText("--- 所有單位測站同步作業已全部結束 ---");
+            }
+            catch (Exception ex)
+            {
+                LogToMsgText($"同步發生嚴重錯誤: {ex.Message}");
+                // 拋出例外以供除錯
+                throw;
+            }
+        }
+
+
+        private async void btnMigrateRainStation_Click(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+            if (btn != null) btn.Enabled = false;
+
+            var progress = new Progress<string>(msg =>
+            {
+                LogToMsgText(msg);
+                this.Text = msg;
+            });
+
+            try
+            {
+                // 使用 ContinuousMigration 確保遇到 824 嚴重錯誤斷線時能自動重啟
+                await Task.Run(() => ContinuousMigration(progress));
+                MessageBox.Show("所有可讀取資料已搬移完成！");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"搬移過程發生未預期錯誤: {ex.Message}");
+            }
+            finally
+            {
+                if (btn != null) btn.Enabled = true;
+                this.Text = "搬移完成";
+            }
+        }
+        private void ContinuousMigration(IProgress<string> progress)
+        {
+            bool isComplete = false;
+            int retryCount = 0;
+            string errorLogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"MigrateAutoFix_{DateTime.Now:yyyyMMdd}.csv");
+
+            while (!isComplete)
+            {
+                try
+                {
+                    MigrateCoreLogic(progress, errorLogPath, out isComplete);
+                }
+                catch (Exception ex)
+                {
+                    retryCount++;
+                    int lastNo = GetCurrentMaxNo();
+
+                    // 紀錄錯誤
+                    System.IO.File.AppendAllText(errorLogPath, $"{DateTime.Now:yyyy-MM-dd HH:mm:ss},Retry_{retryCount},ID_{lastNo},\"{ex.Message.Replace("\"", "'")}\"\n", Encoding.UTF8);
+
+                    // 處理 601 錯誤 (NOLOCK 掃描失敗) 或 824 錯誤 (Checksum 損毀)
+                    if (ex.Message.Contains("NOLOCK") || ex.Message.Contains("601") || ex.Message.Contains("824") || ex.Message.Contains("總和檢查碼"))
+                    {
+                        // 每次失敗就往後跳 100 筆，直到跳過損壞區塊為止
+                        int skipDistance = 100;
+                        progress.Report($"[錯誤修復] 偵測到掃描中斷或損毀，強制跳過 ID {lastNo} 之後的 {skipDistance} 筆資料...");
+                        ForceSkipCorruptRow(lastNo, skipDistance);
+                    }
+
+                    Thread.Sleep(2000); // 停頓讓系統釋放資源
+                }
+            }
+        }
+        private void MigrateCoreLogic(IProgress<string> progress, string errorLogPath, out bool isComplete)
+        {
+            isComplete = false;
+            string sourceConnStr = dbDapper.ConnStr;
+            string destConnStr = "Data Source=10.8.0.10;Integrated Security=False;User ID=sa;Password=pass@word1;Connect Timeout=30;Encrypt=False;Initial Catalog=m10_new";
+
+            // 1. 取得進度
+            int lastNo = GetCurrentMaxNo();
+
+            using (SqlConnection sourceConn = new SqlConnection(sourceConnStr))
+            using (SqlConnection destConn = new SqlConnection(destConnStr))
+            {
+                sourceConn.Open();
+                destConn.Open();
+
+                // 2. 移除 COUNT(*)，改用 MAX(no) 估算，避免掃描全表觸發壞軌
+                int maxSourceNo = 0;
+                try
+                {
+                    using (SqlCommand cmdMax = new SqlCommand("SELECT MAX(no) FROM [dbo].[RainStation] WITH (NOLOCK)", sourceConn))
+                        maxSourceNo = Convert.ToInt32(cmdMax.ExecuteScalar());
+                }
+                catch { maxSourceNo = lastNo + 100000; }
+
+                int totalProcessed = 0;
+
+                while (true)
+                {
+                    int currentMaxNo = GetCurrentMaxNo();
+                    DataTable dtBatch = CreateRainStationTable();
+
+                    try
+                    {
+                        // 3. 使用 WITH (NOLOCK) 盡可能減少對毀損頁面的鎖定干擾
+                        string selectSql = "SELECT TOP 100 * FROM [dbo].[RainStation] WITH (NOLOCK) WHERE [no] > @lastNo ORDER BY [no] ASC";
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(selectSql, sourceConn))
+                        {
+                            adapter.SelectCommand.Parameters.AddWithValue("@lastNo", currentMaxNo);
+                            adapter.SelectCommand.CommandTimeout = 300;
+                            adapter.Fill(dtBatch);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // 讀取失敗拋出，觸發外層 ContinuousMigration 的 ForceSkipCorruptRow
+                        throw;
+                    }
+
+                    if (dtBatch.Rows.Count == 0) { isComplete = true; break; }
+
+                    // 4. 寫入目標
+                    using (SqlCommand cmdOn = new SqlCommand("SET IDENTITY_INSERT [dbo].[RainStation] ON", destConn))
+                        cmdOn.ExecuteNonQuery();
+
+                    BulkInsertToDest(dtBatch, destConn);
+
+                    using (SqlCommand cmdOff = new SqlCommand("SET IDENTITY_INSERT [dbo].[RainStation] OFF", destConn))
+                        cmdOff.ExecuteNonQuery();
+
+                    totalProcessed += dtBatch.Rows.Count;
+                    int lastProcessedNo = Convert.ToInt32(dtBatch.Rows[dtBatch.Rows.Count - 1]["no"]);
+                    progress.Report($"[RainStation] 已處理: {totalProcessed} | 目前 ID: {lastProcessedNo} / 終點: {maxSourceNo}");
+                }
+            }
+        }
+
+        private void ForceSkipCorruptRow(int currentNo, int distance)
+        {
+            string destConnStr = "Data Source=10.8.0.10;Integrated Security=False;User ID=sa;Password=pass@word1;Connect Timeout=30;Encrypt=False;Initial Catalog=m10_new";
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(destConnStr))
+                {
+                    conn.Open();
+                    // 在目標庫插入一筆標記，ID 直接設為 currentNo + distance
+                    string sql = @"
+                SET IDENTITY_INSERT [dbo].[RainStation] ON;
+                INSERT INTO [dbo].[RainStation] (no, STNAME, STATUS) 
+                VALUES (@skipNo, 'SKIP_ERROR_601_824', 'SKIP');
+                SET IDENTITY_INSERT [dbo].[RainStation] OFF;";
+
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@skipNo", currentNo + distance);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch
+            {
+                // 如果該 ID 已存在，可能是之前跳過留下的，此時再往後加 1 插入
+                // (此處省略遞迴處理，通常一次 +100 即可繞過)
+            }
+        }
+
+        private int GetCurrentMaxNo()
+        {
+            // 定義目標資料庫的連線字串 (建議從設定檔讀取)
+            string destConnStr = "Data Source=10.8.0.10;Integrated Security=False;User ID=sa;Password=pass@word1;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False;Initial Catalog=m10_new";
+
+            int lastNo = 0;
+            try
+            {
+                // 1. 使用原生 SQL 查詢目前目標表中的最大編號
+                // 使用 ISNULL 確保表空無資料時回傳 0
+                string sql = "SELECT ISNULL(MAX(no), 0) FROM [dbo].[RainStation]";
+
+                using (SqlConnection conn = new SqlConnection(destConnStr))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        lastNo = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // 如果發生錯誤（例如表還不存在），回傳 0 從頭開始
+                lastNo = 0;
+                // 這裡可以選擇是否要 Log 錯誤
+            }
+
+            return lastNo;
+        }
+
+        private DataTable CreateRainStationTable()
+        {
+            DataTable dt = new DataTable();
+            dt.Columns.Add("no", typeof(int));
+            dt.Columns.Add("STID", typeof(string));
+            dt.Columns.Add("STNAME", typeof(string));
+            dt.Columns.Add("STTIME", typeof(string));
+            dt.Columns.Add("LAT", typeof(string));
+            dt.Columns.Add("LON", typeof(string));
+            dt.Columns.Add("ELEV", typeof(string));
+            dt.Columns.Add("RAIN", typeof(string));
+            dt.Columns.Add("MIN10", typeof(string));
+            dt.Columns.Add("HOUR3", typeof(string));
+            dt.Columns.Add("HOUR6", typeof(string));
+            dt.Columns.Add("HOUR12", typeof(string));
+            dt.Columns.Add("HOUR24", typeof(string));
+            dt.Columns.Add("NOW", typeof(string));
+            dt.Columns.Add("COUNTY", typeof(string));
+            dt.Columns.Add("TOWN", typeof(string));
+            dt.Columns.Add("ATTRIBUTE", typeof(string));
+            dt.Columns.Add("diff", typeof(string));
+            dt.Columns.Add("STATUS", typeof(string));
+            dt.Columns.Add("TMX", typeof(string));
+            dt.Columns.Add("TMY", typeof(string));
+            dt.Columns.Add("RTime", typeof(string));
+            dt.Columns.Add("SWCBID", typeof(string));
+            dt.Columns.Add("DebrisRefStation", typeof(string));
+            dt.Columns.Add("EffectiveRainfall", typeof(string));
+            dt.Columns.Add("RT", typeof(string));
+            dt.Columns.Add("Cumulation", typeof(string));
+            dt.Columns.Add("Day1", typeof(string));
+            dt.Columns.Add("Day2", typeof(string));
+            dt.Columns.Add("Day3", typeof(string));
+            dt.Columns.Add("Hour2", typeof(string));
+            dt.Columns.Add("WGS84_lon", typeof(string));
+            dt.Columns.Add("WGS84_lat", typeof(string));
+            dt.Columns.Add("LRTI", typeof(string));
+            dt.Columns.Add("WLRTI", typeof(string));
+            return dt;
+        }
+
+        private void BulkInsertToDest(DataTable dt, SqlConnection conn)
+        {
+            // 關鍵修正：必須加入 SqlBulkCopyOptions.KeepIdentity
+            // TableLock 可以加速寫入，KeepIdentity 則是允許插入自增值(no)
+            SqlBulkCopyOptions options = SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.TableLock;
+
+            using (SqlBulkCopy bulkCopy = new SqlBulkCopy(conn, options, null))
+            {
+                bulkCopy.DestinationTableName = "[dbo].[RainStation]";
+                bulkCopy.BatchSize = 10000; // 建議加大至 10000 提升效能
+                bulkCopy.BulkCopyTimeout = 600;
+
+                // 清除舊有的對應（預防萬一）並重新建立
+                bulkCopy.ColumnMappings.Clear();
+
+                foreach (DataColumn column in dt.Columns)
+                {
+                    // 確保 DataTable 裡的 "no" 確實對應到資料庫裡的 "no"
+                    bulkCopy.ColumnMappings.Add(column.ColumnName, column.ColumnName);
+                }
+
+                try
+                {
+                    bulkCopy.WriteToServer(dt);
+                }
+                catch (SqlException ex)
+                {
+                    // 輸出更詳細的錯誤資訊，方便排除欄位對應問題
+                    throw new Exception($"Bulk寫入失敗，錯誤代碼：{ex.Number}，訊息：{ex.Message}");
+                }
+            }
+        }
+
+
+
+        private async void btnMigrateDataStaticLog_Click(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+            if (btn != null) btn.Enabled = false;
+
+            var progress = new Progress<string>(msg =>
+            {
+                LogToMsgText(msg);
+                this.Text = msg;
+            });
+
+            try
+            {
+                await Task.Run(() => ContinuousMigration_Log(progress));
+                MessageBox.Show("DataStaticLog 搬移完成！");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"搬移發生錯誤: {ex.Message}");
+            }
+            finally
+            {
+                if (btn != null) btn.Enabled = true;
+            }
+        }
+
+        private void ContinuousMigration_Log(IProgress<string> progress)
+        {
+            bool isComplete = false;
+            int retryCount = 0;
+            string errorLogPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"LogMigrateErrorDataStaticLog_{DateTime.Now:yyyyMMdd}.csv");
+
+            if (!System.IO.File.Exists(errorLogPath))
+                System.IO.File.WriteAllText(errorLogPath, "Time,RetryCount,LastNo,ErrorMessage\n", Encoding.UTF8);
+
+            while (!isComplete)
+            {
+                try
+                {
+                    MigrateLogCoreLogic(progress, errorLogPath, out isComplete);
+                }
+                catch (Exception ex)
+                {
+                    retryCount++;
+                    long lastNo = GetCurrentMaxNoDataStaticLog();
+                    string err = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss},{retryCount},{lastNo},\"{ex.Message.Replace("\"", "'")}\"\n";
+                    System.IO.File.AppendAllText(errorLogPath, err, Encoding.UTF8);
+
+                    progress.Report($"[重啟第 {retryCount} 次] 偵測到中斷，由 No {lastNo} 重新啟動...");
+                    Thread.Sleep(2000);
+                }
+            }
+        }
+
+        private void MigrateLogCoreLogic(IProgress<string> progress, string errorLogPath, out bool isComplete)
+        {
+            isComplete = false;
+            string sourceConnStr = dbDapper.ConnStr;
+            //string destConnStr = "Data Source=10.8.0.10;User ID=sa;Password=pass@word1;Initial Catalog=m10_new;Encrypt=False;";
+            string destConnStr = "Data Source=.;User ID=sa;Password=pass@word1;Initial Catalog=m10_new;Encrypt=False;";
+
+            // 1. 取得目前進度 (斷點續傳)
+            long lastNo = GetCurrentMaxNoDataStaticLog();
+
+            using (SqlConnection sourceConn = new SqlConnection(sourceConnStr))
+            using (SqlConnection destConn = new SqlConnection(destConnStr))
+            {
+                sourceConn.Open();
+                destConn.Open();
+
+                // 2. [優化] 廢除 COUNT(*)，改用 MAX(no) 來預估總進度
+                // 因為 COUNT(*) 會掃描全表觸發壞軌，MAX(no) 通常只看索引末端，較安全
+                long maxSourceNo = 0;
+                try
+                {
+                    using (SqlCommand cmdMax = new SqlCommand("SELECT MAX(no) FROM [dbo].[DataStaticLog] WITH (NOLOCK)", sourceConn))
+                    {
+                        cmdMax.CommandTimeout = 60;
+                        maxSourceNo = Convert.ToInt64(cmdMax.ExecuteScalar());
+                    }
+                }
+                catch
+                {
+                    maxSourceNo = lastNo + 1000000; // 萬一連 MAX 都報錯，隨便給個大值讓進度條動
+                }
+
+                long totalProcessed = 0;
+                progress.Report($"偵測到來源表損壞，跳過總數統計，直接從 No > {lastNo} 開始搬移...");
+
+                while (true)
+                {
+                    // 每次重新抓取最後一個成功的 ID
+                    long currentMaxNo = GetCurrentMaxNoDataStaticLog();
+                    DataTable dtBatch = CreateDataStaticLogTable();
+
+                    try
+                    {
+                        // 3. 嘗試抓取 1000 筆
+                        string selectSql = "SELECT TOP 1000 * FROM [dbo].[DataStaticLog] WITH (NOLOCK) WHERE [no] > @lastNo ORDER BY [no] ASC";
+                        using (SqlDataAdapter adapter = new SqlDataAdapter(selectSql, sourceConn))
+                        {
+                            adapter.SelectCommand.Parameters.AddWithValue("@lastNo", currentMaxNo);
+                            adapter.SelectCommand.CommandTimeout = 300;
+                            adapter.Fill(dtBatch);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // 如果 Fill 遇到損毀頁面 824 錯誤，紀錄並拋出，觸發外層 ContinuousMigration 重啟
+                        string errRow = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss},FetchError_824,{currentMaxNo},\"{ex.Message.Replace("\"", "'")}\"\n";
+                        System.IO.File.AppendAllText(errorLogPath, errRow, Encoding.UTF8);
+
+                        // 這裡我們要做一個「強迫進度 +1」的動作，手動跳過損壞的 ID (關鍵！)
+                        ForceSkipBadRow(destConn, currentMaxNo);
+
+                        throw; // 拋出讓外層連線重啟
+                    }
+
+                    if (dtBatch.Rows.Count == 0) { isComplete = true; break; }
+
+                    // 4. 執行 Bulk Insert
+                    try
+                    {
+                        using (SqlCommand cmdOn = new SqlCommand("SET IDENTITY_INSERT [dbo].[DataStaticLog] ON", destConn))
+                            cmdOn.ExecuteNonQuery();
+
+                        BulkInsertDataStaticLog(dtBatch, destConn);
+
+                        using (SqlCommand cmdOff = new SqlCommand("SET IDENTITY_INSERT [dbo].[DataStaticLog] OFF", destConn))
+                            cmdOff.ExecuteNonQuery();
+
+                        totalProcessed += dtBatch.Rows.Count;
+                        long lastProcessedNo = Convert.ToInt64(dtBatch.Rows[dtBatch.Rows.Count - 1]["no"]);
+
+                        // 進度回報：顯示已處理筆數與當前 ID
+                        progress.Report($"[Log] 已處理: {totalProcessed} 筆 | 目前 ID: {lastProcessedNo} / 預計終點: {maxSourceNo}");
+                    }
+                    catch (Exception ex)
+                    {
+                        throw;
+                    }
+                }
+            }
+        }
+
+        // 輔助方法：當遇到損毀點無法讀取時，在目標庫插入一筆「標記錯誤」的空資料，強迫 MAX(no) 往前進
+        private void ForceSkipBadRow(SqlConnection destConn, long badNo)
+        {
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(@"
+            SET IDENTITY_INSERT [dbo].[DataStaticLog] ON;
+            INSERT INTO [dbo].[DataStaticLog] (no, type, key1, logtime) 
+            VALUES (@no, 'CORRUPT_SKIP', 'ERROR_824', GETDATE());
+            SET IDENTITY_INSERT [dbo].[DataStaticLog] OFF;", destConn))
+                {
+                    cmd.Parameters.AddWithValue("@no", badNo + 1);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch { /* 如果該 ID 已存在則忽略 */ }
+        }
+
+        private int GetCurrentMaxNoDataStaticLog()
+        {
+            // 定義目標資料庫的連線字串 (建議從設定檔讀取)
+            string destConnStr = "Data Source=10.8.0.10;Integrated Security=False;User ID=sa;Password=pass@word1;Connect Timeout=15;Encrypt=False;TrustServerCertificate=False;Initial Catalog=m10_new";
+
+            int lastNo = 0;
+            try
+            {
+                // 1. 使用原生 SQL 查詢目前目標表中的最大編號
+                // 使用 ISNULL 確保表空無資料時回傳 0
+                string sql = "SELECT ISNULL(MAX(no), 0) FROM [dbo].[DataStaticLog]";
+
+                using (SqlConnection conn = new SqlConnection(destConnStr))
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand(sql, conn))
+                    {
+                        lastNo = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // 如果發生錯誤（例如表還不存在），回傳 0 從頭開始
+                lastNo = 0;
+                // 這裡可以選擇是否要 Log 錯誤
+            }
+
+            return lastNo;
+        }
+
+        private DataTable CreateDataStaticLogTable()
+        {
+            DataTable dt = new DataTable();
+            // 根據 DataStaticLog.sql 結構建立
+            dt.Columns.Add("no", typeof(long)); // bigint
+            dt.Columns.Add("type", typeof(string));
+            dt.Columns.Add("key1", typeof(string));
+            dt.Columns.Add("key2", typeof(string));
+            dt.Columns.Add("key3", typeof(string));
+            dt.Columns.Add("status", typeof(string));
+            dt.Columns.Add("logtime", typeof(DateTime));
+            return dt;
+        }
+
+        private void BulkInsertDataStaticLog(DataTable dt, SqlConnection conn)
+        {
+            // 使用 TableLock 提高寫入效能，KeepIdentity 保留原始 no
+            using (SqlBulkCopy bulkCopy = new SqlBulkCopy(conn, SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.TableLock, null))
+            {
+                bulkCopy.DestinationTableName = "[dbo].[DataStaticLog]";
+                bulkCopy.BatchSize = 5000;
+                bulkCopy.BulkCopyTimeout = 600;
+
+                foreach (DataColumn column in dt.Columns)
+                    bulkCopy.ColumnMappings.Add(column.ColumnName, column.ColumnName);
+
+                bulkCopy.WriteToServer(dt);
+            }
+        }
+
+        private async void SyncLRTIAlertHis(object sender, EventArgs e)
+        {
+            Button btn = sender as Button;
+            if (btn != null) btn.Enabled = false;
+
+            var progress = new Progress<string>(msg =>
+            {
+                LogToMsgText(msg);
+                this.Text = msg;
+            });
+
+            try
+            {
+                await Task.Run(() => SyncLRTIAlertHis(progress));
+                MessageBox.Show("DataStaticLog 搬移完成！");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"搬移發生錯誤: {ex.Message}");
+            }
+            finally
+            {
+                if (btn != null) btn.Enabled = true;
+            }
+        }
+
+
+        private void SyncLRTIAlertHis(IProgress<string> progress)
+        {
+            string sourceConnStr = dbDapper.ConnStr;
+            string destConnStr = "Data Source=10.8.0.10;User ID=sa;Password=pass@word1;Initial Catalog=m10_new;Encrypt=False;";
+
+            // 1. 取得目標資料庫目前的 MAX(no)
+            long lastNo = 0;
+            using (SqlConnection conn = new SqlConnection(destConnStr))
+            {
+                conn.Open();
+                var cmd = new SqlCommand("SELECT ISNULL(MAX(FileTransNo), 0) FROM [dbo].[FileTransLog]", conn);
+                lastNo = Convert.ToInt64(cmd.ExecuteScalar());
+            }
+
+            progress.Report($"FileTransLog 目前進度：{lastNo}，準備續傳...");
+
+            using (SqlConnection sourceConn = new SqlConnection(sourceConnStr))
+            using (SqlConnection destConn = new SqlConnection(destConnStr))
+            {
+                sourceConn.Open();
+                destConn.Open();
+
+                while (true)
+                {
+                    DataTable dt = new DataTable();
+                    // 2. 抓取大於最後編號的資料
+                    string sql = "SELECT TOP 5000 * FROM [dbo].[FileTransLog] WITH (NOLOCK) WHERE [FileTransNo] > @lastNo ORDER BY [FileTransNo] ASC";
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(sql, sourceConn))
+                    {
+                        adapter.SelectCommand.Parameters.AddWithValue("@lastNo", lastNo);
+                        adapter.Fill(dt);
+                    }
+
+                    if (dt.Rows.Count == 0) break;
+
+                    // 3. 寫入目標 (解決 0xc0202049 錯誤的程式寫法)
+                    using (SqlBulkCopy bulkCopy = new SqlBulkCopy(destConn, SqlBulkCopyOptions.KeepIdentity | SqlBulkCopyOptions.TableLock, null))
+                    {
+                        // 開啟 IDENTITY_INSERT
+                        using (SqlCommand cmdOn = new SqlCommand("SET IDENTITY_INSERT [dbo].[FileTransLog] ON", destConn))
+                            cmdOn.ExecuteNonQuery();
+
+                        bulkCopy.DestinationTableName = "[dbo].[FileTransLog]";
+                        foreach (DataColumn col in dt.Columns)
+                            bulkCopy.ColumnMappings.Add(col.ColumnName, col.ColumnName);
+
+                        bulkCopy.WriteToServer(dt);
+
+                        using (SqlCommand cmdOff = new SqlCommand("SET IDENTITY_INSERT [dbo].[FileTransLog] OFF", destConn))
+                            cmdOff.ExecuteNonQuery();
+                    }
+
+                    lastNo = Convert.ToInt64(dt.Rows[dt.Rows.Count - 1]["FileTransNo"]);
+                    progress.Report($"FileTransLog 同步中... 目前 ID: {lastNo}");
+                }
+            }
+            progress.Report("FileTransLog 同步完成。");
+        }
+
+
     }
 
     public class TumdOnlineData

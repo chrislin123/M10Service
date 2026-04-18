@@ -461,6 +461,7 @@
     <Content Include="Views\Rain\ExpWeaRainHis.cshtml" />
     <Content Include="Views\Rain\ExpSoilWaterRainHis.cshtml" />
     <Content Include="Views\Rain\ExpWraRainHis.cshtml" />
+    <Content Include="Views\Rain\ExpTCGRainHis.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

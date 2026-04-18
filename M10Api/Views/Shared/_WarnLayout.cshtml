@@ -1,4 +1,5 @@
 ﻿<!DOCTYPE html>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -16,7 +17,7 @@
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
 </head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">
         @*<div class="navbar navbar-light navbar-fixed-top" style="background-color: #e3f2fd;">*@
@@ -34,7 +35,7 @@
                 <ul class="nav navbar-nav">
                     <li>@Html.ActionLink("即時降雨監測", "QueryRain", "Rain", new { area = "" }, null)</li>
                     <li>@Html.ActionLink("即時崩塌監測", "warnlist", "warn", new { area = "" }, null)</li>
-                    
+
                     @*<li>@Html.ActionLink("地圖", "map", "map", new { area = "" }, null)</li>*@
                     @*<li>@Html.ActionLink("歷史", "warnhislist", "warn", new { area = "" }, null)</li>*@
                     <li class="dropdown">
@@ -52,10 +53,11 @@
                             <li>@Html.ActionLink("點對點逐時雨量匯出(縣市)", "ExpRainCountry", "Rain", new { area = "" }, null)</li>
                             <li>@Html.ActionLink("點對點逐時雨量匯出(單站)", "ExpRainStation", "Rain", new { area = "" }, null)</li>
                             <li>@Html.ActionLink("點對點累積雨量計算", "ExpStationCoord", "Rain", new { area = "" }, null)</li>
-                            <li>@Html.ActionLink("雨場分割資料(1987~2024)", "ExpRainArea", "Rain", new { area = "" }, null)</li>
-                            <li>@Html.ActionLink("氣象署歷史雨量(1987~2024)", "ExpWeaRainHis", "Rain", new { area = "" }, null)</li>
-                            <li>@Html.ActionLink("農村水保署歷史雨量(2012~2024)", "ExpSoilWaterRainHis", "Rain", new { area = "" }, null)</li>
-                            <li>@Html.ActionLink("水利署歷史雨量(2014~2024)", "ExpWraRainHis", "Rain", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("雨場分割資料(1987~2025)", "ExpRainArea", "Rain", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("氣象署歷史雨量(1987~2025)", "ExpWeaRainHis", "Rain", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("農村水保署歷史雨量(2012~2025)", "ExpSoilWaterRainHis", "Rain", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("水利署歷史雨量(2014~2025)", "ExpWraRainHis", "Rain", new { area = "" }, null)</li>
+                            <li>@Html.ActionLink("北市府歷史雨量(2010~2025)", "ExpTCGRainHis", "Rain", new { area = "" }, null)</li>
                         </ul>
                     </li>
                 </ul>

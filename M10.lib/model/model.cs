@@ -1,10 +1,6 @@
-﻿using System;
+﻿using Dapper.Contrib.Extensions;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dapper.Contrib.Extensions;
-using M10.lib;
 
 namespace M10.lib.model
 {
@@ -780,7 +776,7 @@ namespace M10.lib.model
         public string RainHourList { get; set; }
 
         public string UnitType { get; set; }
-        
+
     }
 
     [Table("WraRainDataNew")]

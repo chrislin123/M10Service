@@ -1,20 +1,16 @@
-﻿using System;
+﻿using M10.lib;
+using M10.lib.model;
+using M10Api.Class;
+using Microsoft.Ajax.Utilities;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Dynamic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using M10Api.Class;
-using Dapper;
-using Dapper.Contrib.Extensions;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json;
-using System.IO;
-using M10.lib.model;
-using System.Data;
-using System.Dynamic;
-using M10.lib;
-using Microsoft.Ajax.Utilities;
-using Elmah.ContentSyndication;
 
 
 namespace M10Api.Controllers
@@ -155,14 +151,32 @@ namespace M10Api.Controllers
                 });
             }
 
-            //if (Countrys.Count != 0)
-            //{
-            //    items.Insert(0, new SelectListItem() { Text = "全部", Value = "全部" });
-            //}
+            return this.Json(items, JsonRequestBehavior.AllowGet);
+        }
 
+        public JsonResult QueryRainAreaUnitTypeDDL()
+        {
+            List<SelectListItem> items = new List<SelectListItem>();
+            items.Insert(0, new SelectListItem() { Text = "全部", Value = "全部" });
+
+            var unittypes = dbDapper.Query(" select unittype,count(*) as total from WeaRainArea group by unittype order by unittype ");
+
+            foreach (var item in unittypes)
+            {
+                if (item.unittype == null)
+                {
+                    item.unittype = "無單位";
+                }
+                items.Add(new SelectListItem()
+                {
+                    Text = $"{item.unittype}(筆數：{item.total})",
+                    Value = item.unittype
+                });
+            }
 
             return this.Json(items, JsonRequestBehavior.AllowGet);
         }
+
 
         public JsonResult GetStationDDL(string STID)
         {
@@ -186,6 +200,48 @@ namespace M10Api.Controllers
 
             return this.Json(items, JsonRequestBehavior.AllowGet);
         }
+
+        public JsonResult GetRainAreaStationDDL(string STID)
+        {
+
+            List<SelectListItem> items = new List<SelectListItem>();
+
+            ssql = @" select stid,stname,enable from BasStationData ";
+            if (string.IsNullOrEmpty(STID) == false) ssql += " where STID like @STID ";
+            ssql += " order by enable desc,stid asc ";
+            var Countrys = dbDapper.Query(ssql, new { STID = "%" + STID + "%" });
+
+            foreach (var item in Countrys)
+            {
+                items.Add(new SelectListItem()
+                {
+                    Text = string.Format("{2}{0}({1})", item.stid, item.stname, item.enable == "Y" ? "" : "[停]"),
+                    Value = item.stid
+                });
+            }
+
+
+
+            //ssql = @" select a.STID,b.COUNTY,b.STNAME from WeaRainStation a
+            //        left join BasStationData b on a.stid = b.stid
+            //         ";
+            //if (string.IsNullOrEmpty(STID) == false) ssql += " where a.STID like @STID ";
+            //ssql += " order by a.STID ";
+
+            //var Stations = dbDapper.Query(ssql, new { STID = "%" + STID + "%" });
+
+            //foreach (var item in Stations)
+            //{
+            //    items.Add(new SelectListItem()
+            //    {
+            //        Text = string.Format("{0}[{1}-{2}]", Convert.ToString(item.STID).ToUpper(), item.COUNTY, item.STNAME),
+            //        Value = item.STID
+            //    });
+            //}
+
+            return this.Json(items, JsonRequestBehavior.AllowGet);
+        }
+
 
         public JsonResult GetWeaRainStationDDL(string STID)
         {
@@ -286,6 +342,33 @@ namespace M10Api.Controllers
             return this.Json(items, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult GetTCGRainStationDDL(string STID)
+        {
+            List<SelectListItem> items = new List<SelectListItem>();
+
+
+            ssql = @" select a.STID,b.COUNTY,b.STNAME from TCGRainStation a
+                    left join BasStationData b on a.stid = b.stid
+                     ";
+            if (string.IsNullOrEmpty(STID) == false) ssql += " where a.STID like @STID ";
+            ssql += " order by a.STID ";
+
+            var Stations = dbDapper.Query(ssql, new { STID = "%" + STID + "%" });
+
+            foreach (var item in Stations)
+            {
+                items.Add(new SelectListItem()
+                {
+                    Text = string.Format("{0}[{1}-{2}]", Convert.ToString(item.STID).ToUpper(), item.COUNTY, item.STNAME),
+                    Value = item.STID
+                });
+            }
+
+            return this.Json(items, JsonRequestBehavior.AllowGet);
+        }
+
+
+
         public JsonResult GetSoilWaterRainStationDDLByCountry(string Country)
         {
             List<SelectListItem> items = new List<SelectListItem>();
@@ -315,6 +398,30 @@ namespace M10Api.Controllers
             List<SelectListItem> items = new List<SelectListItem>();
 
             ssql = @" select a.STID,b.COUNTY,b.STNAME from WraRainStation a
+                    inner join BasStationData b on a.stid = b.stid
+                     ";
+            if (string.IsNullOrEmpty(Country) == false && Country != "全部") ssql += " where b.COUNTY = @COUNTY ";
+            ssql += " order by a.STID ";
+
+            var Stations = dbDapper.Query(ssql, new { COUNTY = Country });
+
+            foreach (var item in Stations)
+            {
+                items.Add(new SelectListItem()
+                {
+                    Text = string.Format("{0}[{1}-{2}]", Convert.ToString(item.STID).ToUpper(), item.COUNTY, item.STNAME),
+                    Value = item.STID
+                });
+            }
+
+            return this.Json(items, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetTCGRainStationDDLByCountry(string Country)
+        {
+            List<SelectListItem> items = new List<SelectListItem>();
+
+            ssql = @" select a.STID,b.COUNTY,b.STNAME from TCGRainStation a
                     inner join BasStationData b on a.stid = b.stid
                      ";
             if (string.IsNullOrEmpty(Country) == false && Country != "全部") ssql += " where b.COUNTY = @COUNTY ";
@@ -705,7 +812,7 @@ namespace M10Api.Controllers
                 dtStart = new DateTime(Convert.ToInt32(aSdt[0]), Convert.ToInt32(aSdt[1]), Convert.ToInt32(aSdt[2]), Convert.ToInt32(aSdt[3]), 0, 1);
                 dtEnd = new DateTime(Convert.ToInt32(aEdt[0]), Convert.ToInt32(aEdt[1]), Convert.ToInt32(aEdt[2]), Convert.ToInt32(aEdt[3]), 59, 59);
             }
-            
+
             string sStartDate = dtStart.ToString("yyyyMMddHH");
             string sEndDate = dtEnd.ToString("yyyyMMddHH");
 
@@ -736,16 +843,16 @@ namespace M10Api.Controllers
             head.Add("Hour24");
             head.Add("DayRainFall");
             head.Add("RT");
-            
+
             List<string[]> datas = new List<string[]>();
             foreach (SoilWaterRainDataHis item in DataList)
-            {   
+            {
                 //日期格式化
                 DateTime MainTime = DateTime.ParseExact(item.Time, "yyyyMMddHH", null);
 
                 List<string> cols = new List<string>();
                 cols.Add(item.Stid);
-                cols.Add(MainTime.ToString("yyyy/MM/dd HH:00"));                
+                cols.Add(MainTime.ToString("yyyy/MM/dd HH:00"));
                 cols.Add(item.Hour.ToString());
                 cols.Add(item.Hour3.ToString());
                 cols.Add(item.Hour6.ToString());
@@ -874,6 +981,102 @@ namespace M10Api.Controllers
             return null;
         }
 
+        public ActionResult DownTCGRainHis(string sd, string ed, string Station)
+        {
+            DateTime dtStart;
+            DateTime dtEnd;
+
+            sd = sd.Replace(' ', '-');
+            ed = ed.Replace(' ', '-');
+
+            if (string.IsNullOrEmpty(sd) || string.IsNullOrEmpty(ed))
+            {
+                dtStart = DateTime.Now;
+                dtEnd = DateTime.Now;
+            }
+            else
+            {
+                string[] aSdt = sd.Split('-');
+                string[] aEdt = ed.Split('-');
+
+                dtStart = new DateTime(Convert.ToInt32(aSdt[0]), Convert.ToInt32(aSdt[1]), Convert.ToInt32(aSdt[2]), Convert.ToInt32(aSdt[3]), 0, 1);
+                dtEnd = new DateTime(Convert.ToInt32(aEdt[0]), Convert.ToInt32(aEdt[1]), Convert.ToInt32(aEdt[2]), Convert.ToInt32(aEdt[3]), 59, 59);
+            }
+
+            string sStartDate = dtStart.ToString("yyyyMMddHH");
+            string sEndDate = dtEnd.ToString("yyyyMMddHH");
+
+            string ssql = @" select * from TCGRainDataHis where 1=1
+                              and STID = @STID
+                              and Time between @sd and @ed                      
+                              order by Time   ";
+
+
+            List<TCGRainDataHis> DataList = new List<TCGRainDataHis>();
+            DataList = dbDapper.Query<TCGRainDataHis>(ssql, new { STID = Station, sd = sStartDate, ed = sEndDate });
+
+            //產生檔案路徑
+            string sTempPath = Path.Combine(Server.MapPath("~/temp/"), DateTime.Now.ToString("yyyyMMdd"));
+            //建立資料夾
+            Directory.CreateDirectory(sTempPath);
+            string sSaveFilePath = Path.Combine(sTempPath, "TCGRainDataHisByStation_" + Guid.NewGuid().ToString() + ".xlsx");
+
+            DataTable dt = Utils.ConvertToDataTable<TCGRainDataHis>(DataList);
+
+
+            List<string> head = new List<string>();
+            head.Add("站號");
+            head.Add("時間");
+            head.Add("Hour");
+            head.Add("Hour3");
+            head.Add("Hour6");
+            head.Add("Hour12");
+            head.Add("Hour24");
+            head.Add("DayRainFall");
+            head.Add("RT");
+
+            List<string[]> datas = new List<string[]>();
+            foreach (TCGRainDataHis item in DataList)
+            {
+                //日期格式化
+                DateTime MainTime = DateTime.ParseExact(item.Time, "yyyyMMddHH", null);
+
+                List<string> cols = new List<string>();
+                cols.Add(item.Stid);
+                cols.Add(MainTime.ToString("yyyy/MM/dd HH:00"));
+                cols.Add(item.Hour.ToString());
+                cols.Add(item.Hour3.ToString());
+                cols.Add(item.Hour6.ToString());
+                cols.Add(item.Hour12.ToString());
+                cols.Add(item.Hour24.ToString());
+                cols.Add(item.DayRainfall.ToString());
+                cols.Add(item.RT.ToString());
+
+                datas.Add(cols.ToArray());
+            }
+
+            DataExport de = new DataExport();
+            Boolean bSuccess = de.ExportListToExcel(sSaveFilePath, head, datas);
+
+            if (bSuccess)
+            {
+                string filename = string.Format("TCGRainDataHis_{0}_{1}_{2}.xlsx", Station, sd, ed).Replace("-", "");
+
+                //ASP.NET 回應大型檔案的注意事項
+                //http://blog.miniasp.com/post/2008/03/11/Caution-about-ASPNET-Response-a-Large-File.aspx
+
+
+                //***** 下載檔案過大，使用特殊方法 *****
+                HttpContext context = System.Web.HttpContext.Current;
+                context.Response.TransmitFile(sSaveFilePath);
+                context.Response.ContentType = "application/vnd.ms-excel";
+                context.Response.AddHeader("Content-Disposition", string.Format("attachment;filename={0}", filename));
+                Response.End();
+            }
+
+            return null;
+        }
+
         public ActionResult DownSumRain(string sd, string ed)
         {
             DateTime dtStart;
@@ -982,6 +1185,11 @@ namespace M10Api.Controllers
         }
 
         public ActionResult ExpWraRainHis()
+        {
+            return View();
+        }
+
+        public ActionResult ExpTCGRainHis()
         {
             return View();
         }
@@ -1306,11 +1514,11 @@ namespace M10Api.Controllers
             {
                 //僅匯出歷年平均雨量資料
                 case "ExpAllAvgRain":
-                                        
+
                     List<WeaRainStatistics> wrsAllByStid = new List<WeaRainStatistics>();
                     //每個站號進行統計
                     foreach (string item in allStid)
-                    {   
+                    {
                         //取得測站名稱
                         BasStationData bsd = lBasStationData.FirstOrDefault(x => x.stid == item);
 
@@ -1529,7 +1737,7 @@ namespace M10Api.Controllers
                     break;
 
             }
-            
+
 
             return null;
         }
@@ -1565,9 +1773,9 @@ namespace M10Api.Controllers
             }
             catch (Exception)
             {
-                   
+
             }
-            
+
 
             return null;
         }
@@ -1723,7 +1931,7 @@ namespace M10Api.Controllers
                         cols.Add(subItem);
                     }
                 }
-                
+
 
                 datas.Add(cols.ToArray());
 
@@ -1736,7 +1944,7 @@ namespace M10Api.Controllers
 
             string sSaveFilePath = Path.Combine(sTempPath, "WeaRainAreaOption_" + Guid.NewGuid().ToString() + ".xlsx");
 
-            DataExport de = new DataExport();            
+            DataExport de = new DataExport();
             Boolean bSuccess = de.ExportListToExcel(sSaveFilePath, head, datas);
 
             if (bSuccess)
@@ -1747,7 +1955,7 @@ namespace M10Api.Controllers
                 if (UnitType == "A2") UnitTypeName = M10Const.RainStationUnit.A2;
                 if (UnitType == "A3") UnitTypeName = M10Const.RainStationUnit.A3;
                 if (UnitType == "A4") UnitTypeName = M10Const.RainStationUnit.A4;
-                
+
 
                 string filename = string.Format("WeaRainAreaOption_{0}_{1}_{2}.xlsx", TimeStart, TimeEnd, UnitTypeName);
 

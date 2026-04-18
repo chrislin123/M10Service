@@ -63,6 +63,10 @@
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
+            this.button8 = new System.Windows.Forms.Button();
+            this.button9 = new System.Windows.Forms.Button();
+            this.button10 = new System.Windows.Forms.Button();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -130,7 +134,7 @@
             // 
             // StockCodeTextBox
             // 
-            this.StockCodeTextBox.Location = new System.Drawing.Point(1263, 19);
+            this.StockCodeTextBox.Location = new System.Drawing.Point(1211, 16);
             this.StockCodeTextBox.Margin = new System.Windows.Forms.Padding(4);
             this.StockCodeTextBox.Name = "StockCodeTextBox";
             this.StockCodeTextBox.Size = new System.Drawing.Size(148, 29);
@@ -342,12 +346,12 @@
             // 
             // button31
             // 
-            this.button31.Location = new System.Drawing.Point(619, 456);
+            this.button31.Location = new System.Drawing.Point(877, 456);
             this.button31.Margin = new System.Windows.Forms.Padding(4);
             this.button31.Name = "button31";
-            this.button31.Size = new System.Drawing.Size(250, 34);
+            this.button31.Size = new System.Drawing.Size(250, 63);
             this.button31.TabIndex = 57;
-            this.button31.Text = "(7-1)更新雨量站基本資料";
+            this.button31.Text = "(7-2)更新雨量站基本資料\r\n每年匯出BasStationData\r\n請學長提供後更新";
             this.button31.UseVisualStyleBackColor = true;
             this.button31.Click += new System.EventHandler(this.button31_Click);
             // 
@@ -436,15 +440,63 @@
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click_1);
             // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(619, 456);
+            this.button6.Margin = new System.Windows.Forms.Padding(4);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(250, 63);
+            this.button6.TabIndex = 57;
+            this.button6.Text = "(7-1)同步來源的雨量站資料";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click_1);
+            // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(1392, 16);
+            this.button8.Margin = new System.Windows.Forms.Padding(4);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(272, 34);
+            this.button8.TabIndex = 62;
+            this.button8.Text = "M10 To M10_New[RainStation]";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.btnMigrateRainStation_Click);
+            // 
+            // button9
+            // 
+            this.button9.Location = new System.Drawing.Point(1392, 70);
+            this.button9.Margin = new System.Windows.Forms.Padding(4);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(272, 34);
+            this.button9.TabIndex = 63;
+            this.button9.Text = "M10 To M10_New[DataStaticLog]";
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.btnMigrateDataStaticLog_Click);
+            // 
+            // button10
+            // 
+            this.button10.Location = new System.Drawing.Point(1392, 124);
+            this.button10.Margin = new System.Windows.Forms.Padding(4);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(272, 34);
+            this.button10.TabIndex = 64;
+            this.button10.Text = "M10 To M10_New[DataStaticLog]";
+            this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.SyncLRTIAlertHis);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 18F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1743, 1288);
+            this.Controls.Add(this.button10);
+            this.Controls.Add(this.button9);
+            this.Controls.Add(this.button8);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.MsgText);
             this.Controls.Add(this.button33);
             this.Controls.Add(this.button32);
+            this.Controls.Add(this.button6);
             this.Controls.Add(this.button31);
             this.Controls.Add(this.button28);
             this.Controls.Add(this.button27);
@@ -524,6 +576,10 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Button button10;
     }
 }
 
