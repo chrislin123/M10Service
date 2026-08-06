@@ -635,6 +635,60 @@ namespace M10.lib
 
             return dp;
         }
+
+        /// <summary>
+        /// 執行 SQL 指令並回傳結果集第一列的第一行 (泛型強型別版本)
+        /// </summary>
+        public T ExecuteScalar<T>(string sql, object param, int? commandTimeout = null)
+        {
+            try
+            {
+                using (System.Data.IDbConnection cn = SqlClient)
+                {
+                    // 呼叫原生 Dapper 的 ExecuteScalar<T>
+                    return cn.ExecuteScalar<T>(sql, param, commandTimeout: commandTimeout);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// 執行 SQL 指令並回傳結果集第一列的第一行 (泛型強型別 簡易版)
+        /// </summary>
+        public T ExecuteScalar<T>(string sql, int? commandTimeout = null)
+        {
+            return ExecuteScalar<T>(sql, null, commandTimeout);
+        }
+
+        /// <summary>
+        /// 執行 SQL 指令並回傳結果集第一列的第一行 (非泛型、回傳 object 版本)
+        /// </summary>
+        public object ExecuteScalar(string sql, object param, int? commandTimeout = null)
+        {
+            try
+            {
+                using (System.Data.IDbConnection cn = SqlClient)
+                {
+                    // 呼叫原生 Dapper 的 ExecuteScalar (回傳 object)
+                    return cn.ExecuteScalar(sql, param, commandTimeout: commandTimeout);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// 執行 SQL 指令並回傳結果集第一列的第一行 (非泛型 簡易版)
+        /// </summary>
+        public object ExecuteScalar(string sql, int? commandTimeout = null)
+        {
+            return ExecuteScalar(sql, null, commandTimeout);
+        }
     }
 
 
@@ -718,6 +772,8 @@ namespace M10.lib
                 return (!string.IsNullOrEmpty(str) && (str == bool.TrueString));
             }
         }
+
+        
 
     }
 }

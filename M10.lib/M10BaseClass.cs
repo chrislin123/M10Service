@@ -14,7 +14,7 @@ namespace M10.lib
         private DALDapper _dbDapper;
         private string _ConnectionString;
         public Logger _logger;
-        private StockHelper _stockhelper;
+        //private StockHelper _stockhelper;
         private ConnectionStringSettings _ConnectionStringSettings;
 
 
@@ -69,17 +69,17 @@ namespace M10.lib
             }
         }
 
-        public StockHelper stockhelper
-        {
-            get
-            {
-                if (_stockhelper == null)
-                {
-                    _stockhelper = new StockHelper();
-                }
-                return _stockhelper;
-            }
+        //public StockHelper stockhelper
+        //{
+        //    get
+        //    {
+        //        if (_stockhelper == null)
+        //        {
+        //            _stockhelper = new StockHelper();
+        //        }
+        //        return _stockhelper;
+        //    }
 
-        }
+        //}
     }
 }
